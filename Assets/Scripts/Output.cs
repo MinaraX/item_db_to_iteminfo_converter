@@ -29,12 +29,24 @@ public class Output : ScriptableObject
 	},
     */
 
-    [Button]
-    public void ConvertSpecificArrayToItemInfo()
+    public void ConvertSpecificArrayToItemInfo(int index)
     {
-        Log("Convert specific array to item info start");
+        targetArrayToConvert = index;
+        ConvertCurrentTargetArrayToItemInfo();
+    }
 
+    [Button]
+    public void ClearAndConvertCurrentTargetArrayToItemInfo()
+    {
         currentOutput = null;
+        ConvertCurrentTargetArrayToItemInfo();
+    }
+
+    [Button]
+    public void ConvertCurrentTargetArrayToItemInfo()
+    {
+        //Log("ConvertCurrentTargetArrayToItemInfo: Start");
+
         currentItemDbData = new List<string>();
         currentItemDbData = ConvertItemDbToListWithoutScript(lines[targetArrayToConvert]);
 
@@ -107,7 +119,7 @@ public class Output : ScriptableObject
         if (!string.IsNullOrEmpty(currentItemDbData[18]))
             currentItemDb.view = int.Parse(currentItemDbData[18]);
 
-        currentOutput = "[" + currentItemDb.id + "] = {\n"
+        currentOutput += "[" + currentItemDb.id + "] = {\n"
             + "unidentifiedDisplayName = \"" + GetName() + "\""
             + ",\nunidentifiedResourceName = \"" + GetResourceName() + "\""
             + ",\nunidentifiedDescriptionName = {\"" + GetDescription() + "\""
@@ -117,9 +129,9 @@ public class Output : ScriptableObject
             + ",\nidentifiedDescriptionName = {\"" + GetDescription() + "\""
             + "},"
             + "\nslotCount = " + GetSlotCount()
-            + ",\nClassNum = " + GetClassNum() + "\n},";
+            + ",\nClassNum = " + GetClassNum() + "\n},\n";
 
-        Log("Convert specific array to item info finished");
+        //Log("ConvertCurrentTargetArrayToItemInfo: Done");
     }
     public int targetArrayToConvert;
 

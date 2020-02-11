@@ -12,11 +12,12 @@ public class SaveFile : MonoBehaviour, IPointerDownHandler
 {
     public Output output;
 
-    // Sample text data
     string _data
     {
         get
         {
+            if (!string.IsNullOrEmpty(output.currentOutput))
+                Debug.Log("output.currentOutput.Length: " + output.currentOutput.Length);
             return output.currentOutput;
         }
     }
