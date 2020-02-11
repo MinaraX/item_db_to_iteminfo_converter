@@ -1,46 +1,89 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using EasyButtons;
 
 public class Converter : MonoBehaviour
 {
     #region Variables
+    [Header("Database")]
     public ItemDatabase itemDatabase;
     public Output output;
+
+    [Header("UI")]
+    public Text txtCurrentItemDb;
+    public Text txtCurrentItemComboDb;
+
+    public Button btnConvert;
+    #endregion
+
+    #region delegate subscription
+    void Awake()
+    {
+        ItemDatabase.onItemDbChanged += ItemDatabase_onItemDbChanged;
+        ItemDatabase.onItemComboDbChanged += ItemDatabase_onItemComboDbChanged;
+    }
+    void OnDestroy()
+    {
+        ItemDatabase.onItemDbChanged -= ItemDatabase_onItemDbChanged;
+        ItemDatabase.onItemComboDbChanged -= ItemDatabase_onItemComboDbChanged;
+    }
+    void ItemDatabase_onItemDbChanged(bool isNull)
+    {
+        if (isNull)
+            txtCurrentItemDb.text = "item_db: Not ready";
+        else
+            txtCurrentItemDb.text = "item_db: Ready";
+    }
+    void ItemDatabase_onItemComboDbChanged(bool isNull)
+    {
+        if (isNull)
+            txtCurrentItemComboDb.text = "item_combo_db: Not ready";
+        else
+            txtCurrentItemComboDb.text = "item_combo_db: Ready";
+    }
     #endregion
 
     void Start()
     {
-        output.currentOutput = "Ready";
+        itemDatabase.Initialize();
+
+        output.currentOutput = null;
+
+        btnConvert.onClick.AddListener(Convert);
     }
 
     [Button]
     public void Convert()
     {
-        Log("Convert start");
+        //Start process
+        Log("Converter: Start");
 
         output.currentOutput = null;
 
-        Log("textAsset_item_db: " + itemDatabase.textAsset_item_db.name);
+        Log("Converter >> is item_db null?: " + string.IsNullOrEmpty(itemDatabase.m_item_db));
 
         //Parsing item_db to List
-        output.lines = TextAssetToList(itemDatabase.textAsset_item_db);
+        Log("Converter: Parsing item_db to list");
+        output.lines = StringToList(itemDatabase.m_item_db);
 
         //Remove comment from List
+        Log("Converter: Remove comment from list");
         for (int i = output.lines.Count - 1; i >= 0; i--)
         {
             if (output.lines[i].Contains("//"))
-            {
                 output.lines.RemoveAt(i);
-            }
         }
 
-        Log("textAsset_item_combo_db: " + itemDatabase.textAsset_item_combo_db.name);
+        Log("Converter >> is item_combo_db null?: " + string.IsNullOrEmpty(itemDatabase.m_item_combo_db));
 
-        Log("Convert finished");
+        //Do nothing for now
 
-        output.currentOutput = "Finished";
+        //Convert here
+
+        //Finished
+        Log("Converter: Done");
     }
 
     void Log(object obj)
@@ -51,5 +94,9 @@ public class Converter : MonoBehaviour
     List<string> TextAssetToList(TextAsset textAsset)
     {
         return new List<string>(textAsset.text.Split('\n'));
+    }
+    List<string> StringToList(string data)
+    {
+        return new List<string>(data.Split('\n'));
     }
 }

@@ -39,7 +39,7 @@ public class Output : ScriptableObject
         currentItemDbData = ConvertItemDbToListWithoutScript(lines[targetArrayToConvert]);
 
         //Test with full parameters
-        currentItemDbData = ConvertItemDbToListWithoutScript("501,Red_Potion,Red Potion,0,10,0,70,15:30,40,5,4,0xFFFFFFFF,63,2,0,4,30:99,1,16,{ itemheal rand(45,65),0; },{},{}");
+        //currentItemDbData = ConvertItemDbToListWithoutScript("501,Red_Potion,Red Potion,0,10,0,70,15:30,40,5,4,0xFFFFFFFF,63,2,0,4,30:99,1,16,{ itemheal rand(45,65),0; },{},{}");
 
         currentItemDb = new ItemDb();
         if (!string.IsNullOrEmpty(currentItemDbData[0]))
@@ -107,14 +107,17 @@ public class Output : ScriptableObject
         if (!string.IsNullOrEmpty(currentItemDbData[18]))
             currentItemDb.view = int.Parse(currentItemDbData[18]);
 
-        currentOutput = "[" + currentItemDb.id + "]={\nunidentifiedDisplayName=\"" + GetName() + "\""
-            + ",\nunidentifiedResourceName=\"" + GetResourceName() + "\""
-            + ",\nunidentifiedDescriptionName={\"" + GetDescription() + "\""
-            + "},\nidentifiedDisplayName=\"" + GetName() + "\""
-            + ",\nidentifiedResourceName=\"" + GetResourceName() + "\""
-            + ",\nidentifiedDescriptionName={\"" + GetDescription() + "\""
-            + "},\nslotCount=" + GetSlotCount()
-            + ",\nClassNum=" + GetClassNum() + "\n},";
+        currentOutput = "[" + currentItemDb.id + "] = {\n"
+            + "unidentifiedDisplayName = \"" + GetName() + "\""
+            + ",\nunidentifiedResourceName = \"" + GetResourceName() + "\""
+            + ",\nunidentifiedDescriptionName = {\"" + GetDescription() + "\""
+            + "},"
+            + "\nidentifiedDisplayName = \"" + GetName() + "\""
+            + ",\nidentifiedResourceName = \"" + GetResourceName() + "\""
+            + ",\nidentifiedDescriptionName = {\"" + GetDescription() + "\""
+            + "},"
+            + "\nslotCount = " + GetSlotCount()
+            + ",\nClassNum = " + GetClassNum() + "\n},";
 
         Log("Convert specific array to item info finished");
     }
