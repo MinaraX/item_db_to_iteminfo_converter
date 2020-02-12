@@ -150,7 +150,58 @@ public class Output : ScriptableObject
     string GetDescription()
     {
         string sum = null;
+        sum += "\n\"^0000CCประเภท:^000000 " + GetItemType() + "\",";
+        //"^0000CCตำแหน่ง:^000000 nnnn",
+        //"^0000CCAtk:^000000 nnnn",
+        //"^0000CCMAtk:^000000 nnnn",
+        //"^0000CCDef:^000000 nnnn",
+        //"^0000CCระยะโจมตี:^000000 nnnn",
+        //"^0000CCอาชีพที่ใช้ได้:^000000 nnnn",
+        //"^0000CCClass ที่ใช้ได้:^000000 nnnn",
+        //"^0000CCเพศที่ใช้ได้:^000000 nnnn",
+        //"^0000CCLevel อาวุธ:^000000 nnnn",
+        //"^0000CCLevel ที่ต้องการ:^000000 nnnn",
+        //"^0000CCLevel ห้ามเกิน:^000000 nnnn",
+        //"^0000CCตีบวก:^000000 nnnn",
+        sum += "\n\"^0000CCน้ำหนัก:^000000 " + GetItemWeight() + "\"";
         return sum;
+    }
+    string GetItemType()
+    {
+        int type = currentItemDb.type;
+
+        if (type == 0)
+            return "ของใช้ฟื้นฟู";
+        else if (type == 2)
+            return "ของกดใช้";
+        else if (type == 3)
+            return "ของอื่น ๆ";
+        else if (type == 4)
+            return "อุปกรณ์สวมใส่";
+        else if (type == 5)
+            return "อาวุธ";
+        else if (type == 6)
+            return "Card";
+        else if (type == 7)
+            return "Pet egg";
+        else if (type == 8)
+            return "อุปกรณ์สวมใส่ Pet";
+        else if (type == 10)
+            return "กระสุน";
+        else if (type == 11)
+            return "ของกดใช้";
+        else if (type == 12)
+            return "อุปกรณ์สวมใส่ Shadow";
+        else if (type == 18)
+            return "ของกดใช้";
+        else
+            return null;
+    }
+    string GetItemWeight()
+    {
+        int weight = currentItemDb.weight;
+        weight /= 10;
+        return weight.ToString("f0");
     }
     string GetSlotCount()
     {
