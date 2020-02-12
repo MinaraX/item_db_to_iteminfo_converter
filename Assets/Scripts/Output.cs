@@ -38,6 +38,7 @@ public class Output : ScriptableObject
     [Button]
     public void ClearAndConvertCurrentTargetArrayToItemInfo()
     {
+        Debug.Log("Output cleared");
         currentOutput = null;
         ConvertCurrentTargetArrayToItemInfo();
     }
@@ -157,9 +158,12 @@ public class Output : ScriptableObject
         //"^0000CCDef:^000000 nnnn",
         //"^0000CCระยะโจมตี:^000000 nnnn",
         //"^0000CCอาชีพที่ใช้ได้:^000000 nnnn",
-        //"^0000CCClass ที่ใช้ได้:^000000 nnnn",
-        //"^0000CCเพศที่ใช้ได้:^000000 nnnn",
-        //"^0000CCLv. อาวุธ:^000000 nnnn",
+        if (IsClassNeeded())
+            sum += "\"^0000CCClass ที่ใช้ได้:^000000 " + GetItemClass() + "\",";
+        if (IsGenderNeeded())
+            sum += "\"^0000CCเพศที่ใช้ได้:^000000 " + GetItemGender() + "\",";
+        if (IsWeaponLevelNeeded())
+            sum += "\"^0000CCLv. อาวุธ:^000000 " + GetItemWeaponLevel() + "\",";
         if (IsEquipMaxLevelNeeded())
             sum += "\"^0000CCLv. ที่ต้องการ:^000000 " + GetItemEquipLevel() + "\",";
         if (IsEquipMaxLevelNeeded())
@@ -199,6 +203,134 @@ public class Output : ScriptableObject
             return "ของกดใช้";
         else
             return null;
+    }
+    [Flags]
+    public enum ItemClass
+    {
+        None = 0,
+        NormalClass = 1,
+        TranscedentClasses = 2,
+        BabyClasses = 4,
+        ThirdClasses = 8,
+        TranscedentThirdClasses = 16,
+        ThirdBabyClasses = 32
+    }
+    bool IsClassNeeded()
+    {
+        int sum = 0;
+
+        int _class = currentItemDb._class;
+
+        ItemClass itemClass = (ItemClass)Enum.Parse(typeof(ItemClass), _class.ToString("f0"));
+
+        // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
+        if (!Enum.IsDefined(typeof(ItemClass), itemClass) && !itemClass.ToString().Contains(","))
+            throw new InvalidOperationException($"{_class.ToString("f0")} is not an underlying value of the YourEnum enumeration.");
+
+        if (itemClass.HasFlag(ItemClass.NormalClass))
+            sum++;
+        if (itemClass.HasFlag(ItemClass.TranscedentClasses))
+            sum++;
+        if (itemClass.HasFlag(ItemClass.BabyClasses))
+            sum++;
+        if (itemClass.HasFlag(ItemClass.ThirdClasses))
+            sum++;
+        if (itemClass.HasFlag(ItemClass.TranscedentThirdClasses))
+            sum++;
+        if (itemClass.HasFlag(ItemClass.ThirdBabyClasses))
+            sum++;
+
+        if (sum >= 6)
+            return false;
+        else
+            return true;
+    }
+    string GetItemClass()
+    {
+        string sum = null;
+
+        int _class = currentItemDb._class;
+
+        ItemClass itemClass = (ItemClass)Enum.Parse(typeof(ItemClass), _class.ToString("f0"));
+
+        // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
+        if (!Enum.IsDefined(typeof(ItemClass), itemClass) && !itemClass.ToString().Contains(","))
+            throw new InvalidOperationException($"{_class.ToString("f0")} is not an underlying value of the YourEnum enumeration.");
+
+        if (itemClass.HasFlag(ItemClass.NormalClass))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Class 1, 2";
+            else
+                sum += ", Class 1 และ 2";
+        }
+        if (itemClass.HasFlag(ItemClass.TranscedentClasses))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Class 1, 2";
+            else
+                sum += ", Class 1 และ 2";
+        }
+        if (itemClass.HasFlag(ItemClass.BabyClasses))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Baby Class 1, 2";
+            else
+                sum += ", Baby Class 1 และ 2";
+        }
+        if (itemClass.HasFlag(ItemClass.ThirdClasses))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Class 3";
+            else
+                sum += ", Class 3";
+        }
+        if (itemClass.HasFlag(ItemClass.TranscedentThirdClasses))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Trans Class 3";
+            else
+                sum += ", Trans Class 3";
+        }
+        if (itemClass.HasFlag(ItemClass.ThirdBabyClasses))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Baby Class 3";
+            else
+                sum += ", Baby Class 3";
+        }
+        return sum;
+    }
+    bool IsGenderNeeded()
+    {
+        int gender = currentItemDb.gender;
+        if (gender != 2)
+            return true;
+        else
+            return false;
+    }
+    string GetItemGender()
+    {
+        int gender = currentItemDb.gender;
+        if (gender == 0)
+            return "หญิง";
+        else if (gender == 1)
+            return "ชาย";
+        else
+            return null;
+    }
+    bool IsWeaponLevelNeeded()
+    {
+        int type = currentItemDb.type;
+        if (type == 5)
+            return true;
+        else
+            return false;
+    }
+    string GetItemWeaponLevel()
+    {
+        int wLv = currentItemDb.wLv;
+        return wLv.ToString("f0");
     }
     bool IsEquipLevelNeeded()
     {
