@@ -119,17 +119,17 @@ public class Output : ScriptableObject
         if (!string.IsNullOrEmpty(currentItemDbData[18]))
             currentItemDb.view = int.Parse(currentItemDbData[18]);
 
-        currentOutput += "[" + currentItemDb.id + "] = {\n"
-            + "unidentifiedDisplayName = \"" + GetName() + "\""
-            + ",\nunidentifiedResourceName = \"" + GetResourceName() + "\""
-            + ",\nunidentifiedDescriptionName = {\"" + GetDescription() + "\""
-            + "},"
-            + "\nidentifiedDisplayName = \"" + GetName() + "\""
-            + ",\nidentifiedResourceName = \"" + GetResourceName() + "\""
-            + ",\nidentifiedDescriptionName = {\"" + GetDescription() + "\""
-            + "},"
-            + "\nslotCount = " + GetSlotCount()
-            + ",\nClassNum = " + GetClassNum() + "\n},\n";
+        currentOutput += "[" + currentItemDb.id + "] = {"
+            + "\nunidentifiedDisplayName = \"" + GetName() + "\","
+            + "\nunidentifiedResourceName = \"" + GetResourceName() + "\","
+            + "\nunidentifiedDescriptionName = {" + GetDescription() + ""
+            + "\n},"
+            + "\nidentifiedDisplayName = \"" + GetName() + "\","
+            + "\nidentifiedResourceName = \"" + GetResourceName() + "\","
+            + "\nidentifiedDescriptionName = {" + GetDescription() + ""
+            + "\n},"
+            + "\nslotCount = " + GetSlotCount() + ","
+            + "\nClassNum = " + GetClassNum() + "\n},\n";
 
         //Log("ConvertCurrentTargetArrayToItemInfo: Done");
     }
@@ -159,10 +159,13 @@ public class Output : ScriptableObject
         //"^0000CCอาชีพที่ใช้ได้:^000000 nnnn",
         //"^0000CCClass ที่ใช้ได้:^000000 nnnn",
         //"^0000CCเพศที่ใช้ได้:^000000 nnnn",
-        //"^0000CCLevel อาวุธ:^000000 nnnn",
-        //"^0000CCLevel ที่ต้องการ:^000000 nnnn",
-        //"^0000CCLevel ห้ามเกิน:^000000 nnnn",
-        //"^0000CCตีบวก:^000000 nnnn",
+        //"^0000CCLv. อาวุธ:^000000 nnnn",
+        if (IsEquipMaxLevelNeeded())
+            sum += "\"^0000CCLv. ที่ต้องการ:^000000 " + GetItemEquipLevel() + "\",";
+        if (IsEquipMaxLevelNeeded())
+            sum += "\"^0000CCLv. ห้ามเกิน:^000000 " + GetItemEquipMaxLevel() + "\",";
+        if (IsRefineableNeeded())
+            sum += "\"^0000CCตีบวก:^000000 " + GetItemRefineable() + "\",";
         sum += "\n\"^0000CCน้ำหนัก:^000000 " + GetItemWeight() + "\"";
         return sum;
     }
@@ -196,6 +199,50 @@ public class Output : ScriptableObject
             return "ของกดใช้";
         else
             return null;
+    }
+    bool IsEquipLevelNeeded()
+    {
+        int eLv = currentItemDb.eLv;
+        if (eLv > 0)
+            return true;
+        else
+            return false;
+    }
+    string GetItemEquipLevel()
+    {
+        int eLv = currentItemDb.eLv;
+        return eLv.ToString("f0");
+    }
+    bool IsEquipMaxLevelNeeded()
+    {
+        int eMaxLv = currentItemDb.eMaxLv;
+        if (eMaxLv > 0)
+            return true;
+        else
+            return false;
+    }
+    string GetItemEquipMaxLevel()
+    {
+        int eMaxLv = currentItemDb.eMaxLv;
+        return eMaxLv.ToString("f0");
+    }
+    bool IsRefineableNeeded()
+    {
+        int type = currentItemDb.type;
+        if (type == 4
+            || type == 5
+            || type == 12)
+            return true;
+        else
+            return false;
+    }
+    string GetItemRefineable()
+    {
+        int refineable = currentItemDb.refineable;
+        if (refineable >= 1)
+            return "ได้";
+        else
+            return "ไม่ได้";
     }
     string GetItemWeight()
     {
