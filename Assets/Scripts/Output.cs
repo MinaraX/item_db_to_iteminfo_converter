@@ -157,7 +157,8 @@ public class Output : ScriptableObject
         //"^0000CCMAtk:^000000 nnnn",
         //"^0000CCDef:^000000 nnnn",
         //"^0000CCระยะโจมตี:^000000 nnnn",
-        //"^0000CCอาชีพที่ใช้ได้:^000000 nnnn",
+        if (IsJobNeeded())
+            sum += "\"^0000CCอาชีพที่ใช้ได้:^000000 " + GetItemJob() + "\",";
         if (IsClassNeeded())
             sum += "\"^0000CCClass ที่ใช้ได้:^000000 " + GetItemClass() + "\",";
         if (IsGenderNeeded())
@@ -204,6 +205,59 @@ public class Output : ScriptableObject
         else
             return null;
     }
+    /// <summary>
+    /// Credit: https://stackoverflow.com/questions/29482/how-to-cast-int-to-enum
+    /// </summary>
+    [Flags]
+    public enum ItemJob
+    {
+        None = 0,
+        Novice = 1,
+        Swordman = 2,
+        Magician = 4,
+        Archer = 8,
+        Acolyte = 10,
+        Merchant = 20,
+        Thief = 40,
+        Knight = 80,
+        Priest = 100,
+        Wizard = 200,
+        Blacksmith = 400,
+        Hunter = 800,
+        Assassin = 1000,
+        Unused = 2000,
+        Crusader = 4000,
+        Monk = 8000,
+        Sage = 10000,
+        Rogue = 20000,
+        Alchemist = 40000,
+        BardDancer = 80000,
+        Unused2 = 100000,
+        Taekwon = 200000,
+        StarGladiator = 400000,
+        SoulLinker = 800000,
+        Gunslinger = 1000000,
+        Ninja = 2000000,
+        Gangsi = 4000000,
+        DeathKnight = 8000000,
+        DarkCollector = 10000000,
+        KagerouOboro = 20000000,
+        Rebellion = 40000000,
+        Summoner = 80000000,
+    }
+    bool IsJobNeeded()
+    {
+        int sum = 0;
+
+        return false;
+    }
+    string GetItemJob()
+    {
+        string sum = null;
+
+        return sum;
+    }
+
     [Flags]
     public enum ItemClass
     {
@@ -260,21 +314,21 @@ public class Output : ScriptableObject
         if (itemClass.HasFlag(ItemClass.NormalClass))
         {
             if (string.IsNullOrEmpty(sum))
-                sum += "Class 1, 2";
+                sum += "Class 1 และ 2";
             else
                 sum += ", Class 1 และ 2";
         }
         if (itemClass.HasFlag(ItemClass.TranscedentClasses))
         {
             if (string.IsNullOrEmpty(sum))
-                sum += "Class 1, 2";
+                sum += "Class 1 และ 2";
             else
                 sum += ", Class 1 และ 2";
         }
         if (itemClass.HasFlag(ItemClass.BabyClasses))
         {
             if (string.IsNullOrEmpty(sum))
-                sum += "Baby Class 1, 2";
+                sum += "Baby Class 1 และ 2";
             else
                 sum += ", Baby Class 1 และ 2";
         }

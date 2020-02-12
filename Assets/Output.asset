@@ -13,28 +13,32 @@ MonoBehaviour:
   m_Name: Output
   m_EditorClassIdentifier: 
   targetArrayToConvert: 0
-  currentOutput: "[501]={\nunidentifiedDisplayName=\"Red Potion\",\nunidentifiedResourceName=\"\xBB\xA1\xB0\xA3\xC6\xF7\xBC\xC7\",\nunidentifiedDescriptionName={\"\"},\nidentifiedDisplayName=\"Red
-    Potion\",\nidentifiedResourceName=\"\xBB\xA1\xB0\xA3\xC6\xF7\xBC\xC7\",\nidentifiedDescriptionName={\"\"},\nslotCount=4,\nClassNum=16\n},"
+  currentOutput: "[501] = {\nunidentifiedDisplayName = \"Red Potion\",\nunidentifiedResourceName
+    = \"\xBB\xA1\xB0\xA3\xC6\xF7\xBC\xC7\",\nunidentifiedDescriptionName = {\n\"^0000CC\u0E1B\u0E23\u0E30\u0E40\u0E20\u0E17:^000000
+    \u0E02\u0E2D\u0E07\u0E43\u0E0A\u0E49\u0E1F\u0E37\u0E49\u0E19\u0E1F\u0E39\",\n\"^0000CC\u0E19\u0E49\u0E33\u0E2B\u0E19\u0E31\u0E01:^000000
+    7\"\n},\nidentifiedDisplayName = \"Red Potion\",\nidentifiedResourceName = \"\xBB\xA1\xB0\xA3\xC6\xF7\xBC\xC7\",\nidentifiedDescriptionName
+    = {\n\"^0000CC\u0E1B\u0E23\u0E30\u0E40\u0E20\u0E17:^000000 \u0E02\u0E2D\u0E07\u0E43\u0E0A\u0E49\u0E1F\u0E37\u0E49\u0E19\u0E1F\u0E39\",\n\"^0000CC\u0E19\u0E49\u0E33\u0E2B\u0E19\u0E31\u0E01:^000000
+    7\"\n},\nslotCount = 0,\nClassNum = 0\n},\n"
   currentItemDbData:
   - 501
   - Red_Potion
   - Red Potion
   - 0
   - 10
-  - 0
+  - 
   - 70
-  - 15:30
-  - 40
-  - 5
-  - 4
+  - 
+  - 
+  - 
+  - 
   - 0xFFFFFFFF
   - 63
   - 2
-  - 0
-  - 4
-  - 30:99
-  - 1
-  - 16
+  - 
+  - 
+  - 
+  - 
+  - 
   currentItemDb:
     id: 501
     aegisName: Red_Potion
@@ -43,20 +47,20 @@ MonoBehaviour:
     buy: 10
     sell: 0
     weight: 70
-    atk: 15
-    mAtk: 30
-    def: 40
-    range: 5
-    slots: 4
+    atk: 0
+    mAtk: 0
+    def: 0
+    range: 0
+    slots: 0
     job: 0xFFFFFFFF
     _class: 63
     gender: 2
     loc: 0
-    wLv: 4
-    eLv: 30
-    eMaxLv: 99
-    refineable: 1
-    view: 16
+    wLv: 0
+    eLv: 0
+    eMaxLv: 0
+    refineable: 0
+    view: 0
   lines:
   - "501,Red_Potion,Red Potion,0,10,,70,,,,,0xFFFFFFFF,63,2,,,,,,{ itemheal rand(45,65),0;
     },{},{}\r"
