@@ -36,10 +36,20 @@ public class Output : ScriptableObject
     }
 
     [Button]
+    public void ClearAll()
+    {
+        currentOutput = null;
+        currentItemDbData = new List<string>();
+        currentItemDb = new ItemDb();
+        lines = new List<string>();
+        Debug.Log("Lines cleared");
+    }
+
+    [Button]
     public void ClearAndConvertCurrentTargetArrayToItemInfo()
     {
-        Debug.Log("Output cleared");
         currentOutput = null;
+        Debug.Log("Output cleared");
         ConvertCurrentTargetArrayToItemInfo();
     }
 
@@ -91,11 +101,11 @@ public class Output : ScriptableObject
         if (!string.IsNullOrEmpty(currentItemDbData[10]))
             currentItemDb.slots = int.Parse(currentItemDbData[10]);
         if (!string.IsNullOrEmpty(currentItemDbData[11]))
-            currentItemDb.job = currentItemDbData[11];
+            currentItemDb.job = Convert.ToUInt32(currentItemDbData[11], 16);
         if (!string.IsNullOrEmpty(currentItemDbData[12]))
             currentItemDb._class = int.Parse(currentItemDbData[12]);
         if (!string.IsNullOrEmpty(currentItemDbData[13]))
-            currentItemDb.gender = int.Parse(currentItemDbData[13]);
+            currentItemDb.gender = currentItemDbData[13];
         if (!string.IsNullOrEmpty(currentItemDbData[14]))
             currentItemDb.loc = int.Parse(currentItemDbData[14]);
         if (!string.IsNullOrEmpty(currentItemDbData[15]))
@@ -158,19 +168,19 @@ public class Output : ScriptableObject
         //"^0000CCDef:^000000 nnnn",
         //"^0000CCระยะโจมตี:^000000 nnnn",
         if (IsJobNeeded())
-            sum += "\"^0000CCอาชีพที่ใช้ได้:^000000 " + GetItemJob() + "\",";
+            sum += "\n\"^0000CCอาชีพที่ใช้ได้:^000000 " + GetItemJob() + "\",";
         if (IsClassNeeded())
-            sum += "\"^0000CCClass ที่ใช้ได้:^000000 " + GetItemClass() + "\",";
+            sum += "\n\"^0000CCClass ที่ใช้ได้:^000000 " + GetItemClass() + "\",";
         if (IsGenderNeeded())
-            sum += "\"^0000CCเพศที่ใช้ได้:^000000 " + GetItemGender() + "\",";
+            sum += "\n\"^0000CCเพศที่ใช้ได้:^000000 " + GetItemGender() + "\",";
         if (IsWeaponLevelNeeded())
-            sum += "\"^0000CCLv. อาวุธ:^000000 " + GetItemWeaponLevel() + "\",";
+            sum += "\n\"^0000CCLv. อาวุธ:^000000 " + GetItemWeaponLevel() + "\",";
         if (IsEquipMaxLevelNeeded())
-            sum += "\"^0000CCLv. ที่ต้องการ:^000000 " + GetItemEquipLevel() + "\",";
+            sum += "\n\"^0000CCLv. ที่ต้องการ:^000000 " + GetItemEquipLevel() + "\",";
         if (IsEquipMaxLevelNeeded())
-            sum += "\"^0000CCLv. ห้ามเกิน:^000000 " + GetItemEquipMaxLevel() + "\",";
+            sum += "\n\"^0000CCLv. ห้ามเกิน:^000000 " + GetItemEquipMaxLevel() + "\",";
         if (IsRefineableNeeded())
-            sum += "\"^0000CCตีบวก:^000000 " + GetItemRefineable() + "\",";
+            sum += "\n\"^0000CCตีบวก:^000000 " + GetItemRefineable() + "\",";
         sum += "\n\"^0000CCน้ำหนัก:^000000 " + GetItemWeight() + "\"";
         return sum;
     }
@@ -206,58 +216,357 @@ public class Output : ScriptableObject
             return null;
     }
     /// <summary>
-    /// Credit: https://stackoverflow.com/questions/29482/how-to-cast-int-to-enum
+    /// Credit: https://stackoverflow.com/questions/14479981/how-do-i-check-if-bitmask-contains-bit/14480058
     /// </summary>
     [Flags]
-    public enum ItemJob
+    public enum ItemJob : uint
     {
-        None = 0,
-        Novice = 1,
-        Swordman = 2,
-        Magician = 4,
-        Archer = 8,
-        Acolyte = 10,
-        Merchant = 20,
-        Thief = 40,
-        Knight = 80,
-        Priest = 100,
-        Wizard = 200,
-        Blacksmith = 400,
-        Hunter = 800,
-        Assassin = 1000,
-        Unused = 2000,
-        Crusader = 4000,
-        Monk = 8000,
-        Sage = 10000,
-        Rogue = 20000,
-        Alchemist = 40000,
-        BardDancer = 80000,
-        Unused2 = 100000,
-        Taekwon = 200000,
-        StarGladiator = 400000,
-        SoulLinker = 800000,
-        Gunslinger = 1000000,
-        Ninja = 2000000,
-        Gangsi = 4000000,
-        DeathKnight = 8000000,
-        DarkCollector = 10000000,
-        KagerouOboro = 20000000,
-        Rebellion = 40000000,
-        Summoner = 80000000,
+        Novice = 0x00000001,
+        Swordman = 0x00000002,
+        Magician = 0x00000004,
+        Archer = 0x00000008,
+        Acolyte = 0x00000010,
+        Merchant = 0x00000020,
+        Thief = 0x00000040,
+        Knight = 0x00000080,
+        Priest = 0x00000100,
+        Wizard = 0x00000200,
+        Blacksmith = 0x00000400,
+        Hunter = 0x00000800,
+        Assassin = 0x00001000,
+        Unused = 0x00002000,
+        Crusader = 0x00004000,
+        Monk = 0x00008000,
+        Sage = 0x00010000,
+        Rogue = 0x00020000,
+        Alchemist = 0x00040000,
+        BardDancer = 0x00080000,
+        Unused2 = 0x00100000,
+        Taekwon = 0x00200000,
+        StarGladiator = 0x00400000,
+        SoulLinker = 0x00800000,
+        Gunslinger = 0x01000000,
+        Ninja = 0x02000000,
+        Gangsi = 0x04000000,
+        DeathKnight = 0x08000000,
+        DarkCollector = 0x10000000,
+        KagerouOboro = 0x20000000,
+        Rebellion = 0x40000000,
+        Summoner = 0x80000000,
     }
     bool IsJobNeeded()
     {
         int sum = 0;
 
-        return false;
+        uint job = currentItemDb.job;
+
+        if (job <= 0)
+            return false;
+
+        ItemJob itemJob = (ItemJob)Enum.Parse(typeof(ItemJob), job.ToString());
+
+        // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
+        if (!Enum.IsDefined(typeof(ItemJob), itemJob) && !itemJob.ToString().Contains(","))
+            throw new InvalidOperationException($"{job.ToString("f0")} is not an underlying value of the YourEnum enumeration.");
+
+        if (itemJob.HasFlag(ItemJob.Novice))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Swordman))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Magician))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Archer))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Acolyte))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Merchant))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Thief))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Knight))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Priest))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Wizard))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Blacksmith))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Hunter))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Assassin))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Unused))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Crusader))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Monk))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Sage))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Rogue))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Alchemist))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.BardDancer))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Unused2))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Taekwon))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.StarGladiator))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.SoulLinker))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Gunslinger))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Ninja))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Gangsi))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.DeathKnight))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.DarkCollector))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.KagerouOboro))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Rebellion))
+            sum++;
+        if (itemJob.HasFlag(ItemJob.Summoner))
+            sum++;
+
+        if (sum >= 32)
+            return false;
+        else
+            return true;
     }
     string GetItemJob()
     {
         string sum = null;
 
+        uint job = currentItemDb.job;
+
+        ItemJob itemJob = (ItemJob)Enum.Parse(typeof(ItemJob), job.ToString("f0"));
+
+        // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
+        if (!Enum.IsDefined(typeof(ItemJob), itemJob) && !itemJob.ToString().Contains(","))
+            throw new InvalidOperationException($"{job.ToString("f0")} is not an underlying value of the YourEnum enumeration.");
+
+        if (itemJob.HasFlag(ItemJob.Novice))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Novice";
+            else
+                sum += ", Novice";
+        }
+        if (itemJob.HasFlag(ItemJob.Swordman))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Swordman";
+            else
+                sum += ", Swordman";
+        }
+        if (itemJob.HasFlag(ItemJob.Magician))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Magician";
+            else
+                sum += ", Magician";
+        }
+        if (itemJob.HasFlag(ItemJob.Archer))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Archer";
+            else
+                sum += ", Archer";
+        }
+        if (itemJob.HasFlag(ItemJob.Acolyte))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Acolyte";
+            else
+                sum += ", Acolyte";
+        }
+        if (itemJob.HasFlag(ItemJob.Merchant))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Merchant";
+            else
+                sum += ", Merchant";
+        }
+        if (itemJob.HasFlag(ItemJob.Thief))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Thief";
+            else
+                sum += ", Thief";
+        }
+        if (itemJob.HasFlag(ItemJob.Knight))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Knight";
+            else
+                sum += ", Knight";
+        }
+        if (itemJob.HasFlag(ItemJob.Priest))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Priest";
+            else
+                sum += ", Priest";
+        }
+        if (itemJob.HasFlag(ItemJob.Wizard))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Wizard";
+            else
+                sum += ", Wizard";
+        }
+        if (itemJob.HasFlag(ItemJob.Blacksmith))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Blacksmith";
+            else
+                sum += ", Blacksmith";
+        }
+        if (itemJob.HasFlag(ItemJob.Hunter))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Hunter";
+            else
+                sum += ", Hunter";
+        }
+        if (itemJob.HasFlag(ItemJob.Assassin))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Assassin";
+            else
+                sum += ", Assassin";
+        }
+        if (itemJob.HasFlag(ItemJob.Crusader))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Crusader";
+            else
+                sum += ", Crusader";
+        }
+        if (itemJob.HasFlag(ItemJob.Monk))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Monk";
+            else
+                sum += ", Monk";
+        }
+        if (itemJob.HasFlag(ItemJob.Sage))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Sage";
+            else
+                sum += ", Sage";
+        }
+        if (itemJob.HasFlag(ItemJob.Rogue))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Rogue";
+            else
+                sum += ", Rogue";
+        }
+        if (itemJob.HasFlag(ItemJob.Alchemist))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Alchemist";
+            else
+                sum += ", Alchemist";
+        }
+        if (itemJob.HasFlag(ItemJob.BardDancer))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Bard & Dancer";
+            else
+                sum += ", Bard & Dancer";
+        }
+        if (itemJob.HasFlag(ItemJob.Taekwon))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Taekwon";
+            else
+                sum += ", Taekwon";
+        }
+        if (itemJob.HasFlag(ItemJob.StarGladiator))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Star Gladiator";
+            else
+                sum += ", Star Gladiator";
+        }
+        if (itemJob.HasFlag(ItemJob.SoulLinker))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Soul Linker";
+            else
+                sum += ", Soul Linker";
+        }
+        if (itemJob.HasFlag(ItemJob.Gunslinger))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Gunslinger";
+            else
+                sum += ", Gunslinger";
+        }
+        if (itemJob.HasFlag(ItemJob.Ninja))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Ninja";
+            else
+                sum += ", Ninja";
+        }
+        if (itemJob.HasFlag(ItemJob.Gangsi))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Gangsi";
+            else
+                sum += ", Gangsi";
+        }
+        if (itemJob.HasFlag(ItemJob.DeathKnight))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Death Knight";
+            else
+                sum += ", Death Knight";
+        }
+        if (itemJob.HasFlag(ItemJob.DarkCollector))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Dark Collector";
+            else
+                sum += ", Dark Collector";
+        }
+        if (itemJob.HasFlag(ItemJob.KagerouOboro))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Kagerou & Oboro";
+            else
+                sum += ", Kagerou & Oboro";
+        }
+        if (itemJob.HasFlag(ItemJob.Rebellion))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Rebellion";
+            else
+                sum += ", Rebellion";
+        }
+        if (itemJob.HasFlag(ItemJob.Summoner))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Summoner";
+            else
+                sum += ", Summoner";
+        }
+
         return sum;
     }
-
+    /// <summary>
+    /// Credit: https://stackoverflow.com/questions/29482/how-to-cast-int-to-enum
+    /// </summary>
     [Flags]
     public enum ItemClass
     {
@@ -274,6 +583,9 @@ public class Output : ScriptableObject
         int sum = 0;
 
         int _class = currentItemDb._class;
+
+        if (_class <= 0)
+            return false;
 
         ItemClass itemClass = (ItemClass)Enum.Parse(typeof(ItemClass), _class.ToString("f0"));
 
@@ -357,15 +669,17 @@ public class Output : ScriptableObject
     }
     bool IsGenderNeeded()
     {
-        int gender = currentItemDb.gender;
-        if (gender != 2)
+        string gender = currentItemDb.gender;
+        if (string.IsNullOrEmpty(gender))
+            return false;
+        if (int.Parse(gender) != 2)
             return true;
         else
             return false;
     }
     string GetItemGender()
     {
-        int gender = currentItemDb.gender;
+        int gender = int.Parse(currentItemDb.gender);
         if (gender == 0)
             return "หญิง";
         else if (gender == 1)
@@ -488,9 +802,9 @@ public class ItemDb
     public int def;
     public int range;
     public int slots;
-    public string job;
+    public uint job;
     public int _class;
-    public int gender;
+    public string gender;
     public int loc;
     public int wLv;
     public int eLv;

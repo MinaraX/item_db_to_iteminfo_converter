@@ -88,10 +88,11 @@ public class Converter : MonoBehaviour
 
         //Convert here
         for (int i = 0; i < output.lines.Count; i++)
-        {
+            output.ConvertSpecificArrayToItemInfo(i);
+        /*{
             Debug.Log("Converter >> Convert index: " + i);
             output.ConvertSpecificArrayToItemInfo(i);
-        }
+        }*/
 
         //Finished
         Log("Converter: Done");
