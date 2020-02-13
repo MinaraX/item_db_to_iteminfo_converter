@@ -220,7 +220,7 @@ public class Output : ScriptableObject
         //Only for armor, weapon, shadow items
         bool isLocNeed = false;
         int type = currentItemDb.type;
-        if (type == 4 || type == 5 || type == 12)
+        if (type == 4 || type == 5 || type == 6 || type == 12)
             isLocNeed = true;
 
         if (!isLocNeed)

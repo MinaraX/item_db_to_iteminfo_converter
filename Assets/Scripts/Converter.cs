@@ -14,6 +14,7 @@ public class Converter : MonoBehaviour
     [Header("UI")]
     public Text txtCurrentItemDb;
     public Text txtCurrentItemComboDb;
+    public GameObject objConvertInProgress;
 
     public Button btnConvert;
     #endregion
@@ -55,6 +56,19 @@ public class Converter : MonoBehaviour
     [Button]
     public void Convert()
     {
+        if (convertProcess != null)
+            StopCoroutine(convertProcess);
+        convertProcess = ConvertProcess();
+        StartCoroutine(convertProcess);
+    }
+
+    IEnumerator convertProcess;
+    IEnumerator ConvertProcess()
+    {
+        objConvertInProgress.SetActive(true);
+
+        yield return null;
+
         //Start process
         Log("Converter: Start");
 
@@ -96,6 +110,10 @@ public class Converter : MonoBehaviour
 
         //Finished
         Log("Converter: Done");
+
+        yield return null;
+
+        objConvertInProgress.SetActive(false);
     }
 
     public int targetLines;
