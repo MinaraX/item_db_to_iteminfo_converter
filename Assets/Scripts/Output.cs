@@ -38,11 +38,12 @@ public class Output : ScriptableObject
     [Button]
     public void ClearAll()
     {
+        targetArrayToConvert = 0;
         currentOutput = null;
         currentItemDbData = new List<string>();
         currentItemDb = new ItemDb();
         lines = new List<string>();
-        Debug.Log("Lines cleared");
+        Debug.Log("Clear all");
     }
 
     [Button]
@@ -162,11 +163,16 @@ public class Output : ScriptableObject
     {
         string sum = null;
         sum += "\n\"^0000CCประเภท:^000000 " + GetItemType() + "\",";
-        //"^0000CCตำแหน่ง:^000000 nnnn",
-        //"^0000CCAtk:^000000 nnnn",
-        //"^0000CCMAtk:^000000 nnnn",
-        //"^0000CCDef:^000000 nnnn",
-        //"^0000CCระยะโจมตี:^000000 nnnn",
+        if (IsLocNeeded())
+            sum += "\n\"^0000CCตำแหน่ง:^000000 " + GetItemLoc() + "\",";
+        if (IsAtkNeeded())
+            sum += "\n\"^0000CCAtk:^000000 " + GetItemAtk() + "\",";
+        if (IsMAtkNeeded())
+            sum += "\n\"^0000CCMAtk:^000000 " + GetItemMAtk() + "\",";
+        if (IsDefNeeded())
+            sum += "\n\"^0000CCDef:^000000 " + GetItemDef() + "\",";
+        if (IsRangeNeeded())
+            sum += "\n\"^0000CCระยะโจมตี:^000000 " + GetItemRange() + "\",";
         if (IsJobNeeded())
             sum += "\n\"^0000CCอาชีพที่ใช้ได้:^000000 " + GetItemJob() + "\",";
         if (IsClassNeeded())
@@ -182,6 +188,247 @@ public class Output : ScriptableObject
         if (IsRefineableNeeded())
             sum += "\n\"^0000CCตีบวก:^000000 " + GetItemRefineable() + "\",";
         sum += "\n\"^0000CCน้ำหนัก:^000000 " + GetItemWeight() + "\"";
+        return sum;
+    }
+    [Flags]
+    public enum ItemLoc
+    {
+        UpperHeadgear = 256,
+        MiddleHeadgear = 512,
+        LowerHeadgear = 1,
+        Armor = 16,
+        Weapon = 2,
+        Shield = 32,
+        Garment = 4,
+        Footgear = 64,
+        AccessoryRight = 8,
+        AccessoryLeft = 128,
+        CostumeTopHeadgear = 1024,
+        CostumeMidHeadgear = 2048,
+        CostumeLowHeadgear = 4096,
+        CostumeGarmentRobe = 8192,
+        Ammo = 32768,
+        ShadowArmor = 65536,
+        ShadowWeapon = 131072,
+        ShadowShield = 262144,
+        ShadowShoes = 524288,
+        ShadowAccessoryRightEarring = 1048576,
+        ShadowAccessoryLeftPendant = 2097152,
+    }
+    bool IsLocNeeded()
+    {
+        //Only for armor, weapon, shadow items
+        bool isLocNeed = false;
+        int type = currentItemDb.type;
+        if (type == 4 || type == 5 || type == 12)
+            isLocNeed = true;
+
+        if (!isLocNeed)
+            return false;
+
+        int loc = currentItemDb.loc;
+
+        if (loc <= 0)
+            return false;
+
+        ItemLoc itemLoc = (ItemLoc)Enum.Parse(typeof(ItemLoc), loc.ToString());
+
+        // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
+        if (!Enum.IsDefined(typeof(ItemLoc), itemLoc) && !itemLoc.ToString().Contains(","))
+            throw new InvalidOperationException($"{loc.ToString("f0")} is not an underlying value of the YourEnum enumeration.");
+
+        return true;
+    }
+    string GetItemLoc()
+    {
+        string sum = null;
+
+        int loc = currentItemDb.loc;
+
+        ItemLoc itemLoc = (ItemLoc)Enum.Parse(typeof(ItemLoc), loc.ToString());
+
+        // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
+        if (!Enum.IsDefined(typeof(ItemLoc), itemLoc) && !itemLoc.ToString().Contains(","))
+            throw new InvalidOperationException($"{loc.ToString("f0")} is not an underlying value of the YourEnum enumeration.");
+
+        if (itemLoc.HasFlag(ItemLoc.UpperHeadgear))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Upper Headgear";
+            else
+                sum += ", Upper Headgear";
+        }
+        if (itemLoc.HasFlag(ItemLoc.MiddleHeadgear))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Middle Headgear";
+            else
+                sum += ", Middle Headgear";
+        }
+        if (itemLoc.HasFlag(ItemLoc.LowerHeadgear))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Lower Headgear";
+            else
+                sum += ", Lower Headgear";
+        }
+        if (itemLoc.HasFlag(ItemLoc.Armor))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Armor";
+            else
+                sum += ", Armor";
+        }
+        if (itemLoc.HasFlag(ItemLoc.Weapon) && itemLoc.HasFlag(ItemLoc.Shield))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Two-Handed Weapon";
+            else
+                sum += ", Two-Handed Weapon";
+        }
+        else
+        {
+            if (itemLoc.HasFlag(ItemLoc.Weapon))
+            {
+                if (string.IsNullOrEmpty(sum))
+                    sum += "Weapon";
+                else
+                    sum += ", Weapon";
+            }
+            if (itemLoc.HasFlag(ItemLoc.Shield))
+            {
+                if (string.IsNullOrEmpty(sum))
+                    sum += "Shield";
+                else
+                    sum += ", Shield";
+            }
+        }
+        if (itemLoc.HasFlag(ItemLoc.Garment))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Garment";
+            else
+                sum += ", Garment";
+        }
+        if (itemLoc.HasFlag(ItemLoc.Footgear))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Footgear";
+            else
+                sum += ", Footgear";
+        }
+        if (itemLoc.HasFlag(ItemLoc.AccessoryRight) && itemLoc.HasFlag(ItemLoc.AccessoryLeft))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Accessory Left or Right";
+            else
+                sum += ", Accessory Left or Right";
+        }
+        else
+        {
+            if (itemLoc.HasFlag(ItemLoc.AccessoryRight))
+            {
+                if (string.IsNullOrEmpty(sum))
+                    sum += "Accessory Right";
+                else
+                    sum += ", Accessory Right";
+            }
+            if (itemLoc.HasFlag(ItemLoc.AccessoryLeft))
+            {
+                if (string.IsNullOrEmpty(sum))
+                    sum += "Accessory Left";
+                else
+                    sum += ", Accessory Left";
+            }
+        }
+        if (itemLoc.HasFlag(ItemLoc.CostumeTopHeadgear))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Costume Top Headgear";
+            else
+                sum += ", Costume Top Headgear";
+        }
+        if (itemLoc.HasFlag(ItemLoc.CostumeMidHeadgear))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Costume Mid Headgear";
+            else
+                sum += ", Costume Mid Headgear";
+        }
+        if (itemLoc.HasFlag(ItemLoc.CostumeLowHeadgear))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Costume Low Headgear";
+            else
+                sum += ", Costume Low Headgear";
+        }
+        if (itemLoc.HasFlag(ItemLoc.CostumeGarmentRobe))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Costume Garment";
+            else
+                sum += ", Costume Garment";
+        }
+        if (itemLoc.HasFlag(ItemLoc.Ammo))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Ammo";
+            else
+                sum += ", Ammo";
+        }
+        if (itemLoc.HasFlag(ItemLoc.ShadowArmor))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Shadow Armor";
+            else
+                sum += ", Shadow Armor";
+        }
+        if (itemLoc.HasFlag(ItemLoc.ShadowWeapon))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Shadow Weapon";
+            else
+                sum += ", Shadow Weapon";
+        }
+        if (itemLoc.HasFlag(ItemLoc.ShadowShield))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Shadow Shield";
+            else
+                sum += ", Shadow Shield";
+        }
+        if (itemLoc.HasFlag(ItemLoc.ShadowShoes))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Shadow Shoes";
+            else
+                sum += ", Shadow Shoes";
+        }
+        if (itemLoc.HasFlag(ItemLoc.ShadowAccessoryRightEarring) && itemLoc.HasFlag(ItemLoc.ShadowAccessoryLeftPendant))
+        {
+            if (string.IsNullOrEmpty(sum))
+                sum += "Shadow Accessory Left or Right";
+            else
+                sum += ", Shadow Accessory Left or Right";
+        }
+        else
+        {
+            if (itemLoc.HasFlag(ItemLoc.ShadowAccessoryRightEarring))
+            {
+                if (string.IsNullOrEmpty(sum))
+                    sum += "Shadow Accessory Right";
+                else
+                    sum += ", Shadow Accessory Right";
+            }
+            if (itemLoc.HasFlag(ItemLoc.ShadowAccessoryLeftPendant))
+            {
+                if (string.IsNullOrEmpty(sum))
+                    sum += "Shadow Accessory Left";
+                else
+                    sum += ", Shadow Accessory Left";
+            }
+        }
+
         return sum;
     }
     string GetItemType()
@@ -214,6 +461,54 @@ public class Output : ScriptableObject
             return "ของกดใช้";
         else
             return null;
+    }
+    bool IsAtkNeeded()
+    {
+        int atk = currentItemDb.atk;
+        if (atk > 0)
+            return true;
+        else
+            return false;
+    }
+    string GetItemAtk()
+    {
+        int atk = currentItemDb.atk;
+        return atk.ToString("f0");
+    }
+    bool IsMAtkNeeded()
+    {
+        int mAtk = currentItemDb.mAtk;
+        if (mAtk > 0)
+            return true;
+        else
+            return false;
+    }
+    string GetItemMAtk()
+    {
+        int mAtk = currentItemDb.mAtk;
+        return mAtk.ToString("f0");
+    }
+    bool IsDefNeeded()
+    {
+        int def = currentItemDb.def;
+        if (def > 0)
+            return true;
+        else
+            return false;
+    }
+    string GetItemDef()
+    {
+        int def = currentItemDb.def;
+        return def.ToString("f0");
+    }
+    bool IsRangeNeeded()
+    {
+        return IsWeaponLevelNeeded();
+    }
+    string GetItemRange()
+    {
+        int range = currentItemDb.range;
+        return range.ToString("f0");
     }
     /// <summary>
     /// Credit: https://stackoverflow.com/questions/14479981/how-do-i-check-if-bitmask-contains-bit/14480058
@@ -760,11 +1055,11 @@ public class Output : ScriptableObject
     }
 
     [TextArea]
-    public string currentOutput;
+    [HideInInspector] public string currentOutput;
     public List<string> currentItemDbData = new List<string>();
     public ItemDb currentItemDb = new ItemDb();
 
-    public List<string> lines = new List<string>();
+    [HideInInspector] public List<string> lines = new List<string>();
 
     public TextAsset textAsset_someTextFiles;
 

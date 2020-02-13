@@ -13,50 +13,24 @@ MonoBehaviour:
   m_Name: Output
   m_EditorClassIdentifier: 
   targetArrayToConvert: 0
-  currentOutput: "[501] = {\nunidentifiedDisplayName = \"Red Potion\",\nunidentifiedResourceName
-    = \"\xBB\xA1\xB0\xA3\xC6\xF7\xBC\xC7\",\nunidentifiedDescriptionName = {\n\"^0000CC\u0E1B\u0E23\u0E30\u0E40\u0E20\u0E17:^000000
-    \u0E02\u0E2D\u0E07\u0E43\u0E0A\u0E49\u0E1F\u0E37\u0E49\u0E19\u0E1F\u0E39\",\"^0000CC\u0E2D\u0E32\u0E0A\u0E35\u0E1E\u0E17\u0E35\u0E48\u0E43\u0E0A\u0E49\u0E44\u0E14\u0E49:^000000
-    \",\n\"^0000CC\u0E19\u0E49\u0E33\u0E2B\u0E19\u0E31\u0E01:^000000 7\"\n},\nidentifiedDisplayName
-    = \"Red Potion\",\nidentifiedResourceName = \"\xBB\xA1\xB0\xA3\xC6\xF7\xBC\xC7\",\nidentifiedDescriptionName
-    = {\n\"^0000CC\u0E1B\u0E23\u0E30\u0E40\u0E20\u0E17:^000000 \u0E02\u0E2D\u0E07\u0E43\u0E0A\u0E49\u0E1F\u0E37\u0E49\u0E19\u0E1F\u0E39\",\"^0000CC\u0E2D\u0E32\u0E0A\u0E35\u0E1E\u0E17\u0E35\u0E48\u0E43\u0E0A\u0E49\u0E44\u0E14\u0E49:^000000
-    \",\n\"^0000CC\u0E19\u0E49\u0E33\u0E2B\u0E19\u0E31\u0E01:^000000 7\"\n},\nslotCount
-    = 0,\nClassNum = 0\n},\n"
-  currentItemDbData:
-  - 501
-  - Red_Potion
-  - Red Potion
-  - 0
-  - 10
-  - 
-  - 70
-  - 
-  - 
-  - 
-  - 
-  - 0xFFFFFFFF
-  - 63
-  - 2
-  - 
-  - 
-  - 
-  - 
-  - 
+  currentOutput: 
+  currentItemDbData: []
   currentItemDb:
-    id: 501
-    aegisName: Red_Potion
-    name: Red Potion
+    id: 0
+    aegisName: 
+    name: 
     type: 0
-    buy: 10
+    buy: 0
     sell: 0
-    weight: 70
+    weight: 0
     atk: 0
     mAtk: 0
     def: 0
     range: 0
     slots: 0
-    job: 4294967295
-    _class: 63
-    gender: 2
+    job: 0
+    _class: 0
+    gender: 
     loc: 0
     wLv: 0
     eLv: 0
