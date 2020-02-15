@@ -22,6 +22,7 @@ public class Output : ScriptableObject
         m_lines = new List<string>();
         currentResourceNames = new List<ItemResourceName>();
         lines_resourceNames = new List<string>();
+        currentItemScriptDatas = new List<ItemDbScriptData>();
         Log("Clear all");
     }
     [Button]
@@ -50,6 +51,7 @@ public class Output : ScriptableObject
         currentOutput = null;
         Log("Output cleared");
         ConvertCurrentTargetArrayToItemInfo();
+        ClipboardExtension.CopyToClipboard(currentOutput);
     }
     [Button]
     public void ConvertCurrentTargetArrayToItemInfo()
@@ -58,6 +60,7 @@ public class Output : ScriptableObject
 
         currentItemDbData = new List<string>();
         currentItemDbData = ConvertItemDbToListWithoutScript(m_lines[targetArrayToConvert]);
+        FetchItemDbScript(m_lines[targetArrayToConvert]);
 
         //Test with full parameters
         //currentItemDbData = ConvertItemDbToListWithoutScript("501,Red_Potion,Red Potion,0,10,0,70,15:30,40,5,4,0xFFFFFFFF,63,2,0,4,30:99,1,16,{ itemheal rand(45,65),0; },{},{}");
@@ -172,6 +175,7 @@ public class Output : ScriptableObject
     string GetDescription()
     {
         string sum = null;
+        sum += "\n\"" + GetItemScripts() + "\",";
         sum += "\n\"^0000CCประเภท:^000000 " + GetItemType() + "\",";
         if (IsLocNeeded())
             sum += "\n\"^0000CCตำแหน่ง:^000000 " + GetItemLoc() + "\",";
@@ -199,6 +203,148 @@ public class Output : ScriptableObject
             sum += "\n\"^0000CCตีบวก:^000000 " + GetItemRefineable() + "\",";
         sum += "\n\"^0000CCน้ำหนัก:^000000 " + GetItemWeight() + "\"";
         return sum;
+    }
+    string GetItemScripts()
+    {
+        string sum = null;
+
+        ItemDbScriptData data = new ItemDbScriptData();
+
+        for (int i = 0; i < currentItemScriptDatas.Count; i++)
+        {
+            var sumData = currentItemScriptDatas[i];
+            if (sumData.id == currentItemDb.id)
+            {
+                data = sumData;
+                break;
+            }
+        }
+
+        sum += data.GetScriptDescription();
+
+        sum += data.GetOnEquipScriptDescription();
+
+        sum += data.GetOnUnequipScriptDescription();
+
+        return sum;
+    }
+    string GetItemType()
+    {
+        int type = currentItemDb.type;
+        int view = currentItemDb.view;
+
+        if (type == 0)
+            return "ของใช้ฟื้นฟู";
+        else if (type == 2)
+            return "ของกดใช้";
+        else if (type == 3)
+            return "ของอื่น ๆ";
+        else if (type == 4)
+            return "อุปกรณ์สวมใส่";
+        else if (type == 5)
+        {
+            if (view == 0)
+                return "bare fist";
+            else if (view == 1)
+                return "Daggers";
+            else if (view == 2)
+                return "One-handed swords";
+            else if (view == 3)
+                return "Two-handed swords";
+            else if (view == 4)
+                return "One-handed spears";
+            else if (view == 5)
+                return "Two-handed spears";
+            else if (view == 6)
+                return "One-handed axes";
+            else if (view == 7)
+                return "Two-handed axes";
+            else if (view == 8)
+                return "Maces";
+            else if (view == 9)
+                return "Unused";
+            else if (view == 10)
+                return "Staves";
+            else if (view == 11)
+                return "Bows";
+            else if (view == 12)
+                return "Knuckles";
+            else if (view == 13)
+                return "Musical Instruments";
+            else if (view == 14)
+                return "Whips";
+            else if (view == 15)
+                return "Books";
+            else if (view == 16)
+                return "Katars";
+            else if (view == 17)
+                return "Revolvers";
+            else if (view == 18)
+                return "Rifles";
+            else if (view == 19)
+                return "Gatling guns";
+            else if (view == 20)
+                return "Shotguns";
+            else if (view == 21)
+                return "Grenade launchers";
+            else if (view == 22)
+                return "Fuuma Shurikens";
+            else if (view == 23)
+                return "Two-handed staves";
+            else if (view == 24)
+                return "Max Type";
+            else if (view == 25)
+                return "Dual-wield Daggers";
+            else if (view == 26)
+                return "Dual-wield Swords";
+            else if (view == 27)
+                return "Dual-wield Axes";
+            else if (view == 28)
+                return "Dagger + Sword";
+            else if (view == 29)
+                return "Dagger + Axe";
+            else if (view == 30)
+                return "Sword + Axe";
+            else
+                return "อาวุธ";
+        }
+        else if (type == 6)
+            return "Card";
+        else if (type == 7)
+            return "Pet egg";
+        else if (type == 8)
+            return "อุปกรณ์สวมใส่ Pet";
+        else if (type == 10)
+        {
+            if (view == 1)
+                return "ลูกธนู";
+            else if (view == 2)
+                return "มีดปา";
+            else if (view == 3)
+                return "ลูกกระสุน";
+            else if (view == 4)
+                return "ลูกปืนใหญ่";
+            else if (view == 5)
+                return "ระเบิด";
+            else if (view == 6)
+                return "ดาวกระจาย";
+            else if (view == 7)
+                return "คุไน";
+            else if (view == 8)
+                return "ลูกกระสุนปืนใหญ่";
+            else if (view == 9)
+                return "ของปา";
+            else
+                return "กระสุน";
+        }
+        else if (type == 11)
+            return "ของกดใช้";
+        else if (type == 12)
+            return "อุปกรณ์สวมใส่ Shadow";
+        else if (type == 18)
+            return "ของกดใช้";
+        else
+            return null;
     }
     [Flags]
     public enum ItemLoc
@@ -440,124 +586,6 @@ public class Output : ScriptableObject
         }
 
         return sum;
-    }
-    string GetItemType()
-    {
-        int type = currentItemDb.type;
-        int view = currentItemDb.view;
-
-        if (type == 0)
-            return "ของใช้ฟื้นฟู";
-        else if (type == 2)
-            return "ของกดใช้";
-        else if (type == 3)
-            return "ของอื่น ๆ";
-        else if (type == 4)
-            return "อุปกรณ์สวมใส่";
-        else if (type == 5)
-        {
-            if (view == 0)
-                return "bare fist";
-            else if (view == 1)
-                return "Daggers";
-            else if (view == 2)
-                return "One-handed swords";
-            else if (view == 3)
-                return "Two-handed swords";
-            else if (view == 4)
-                return "One-handed spears";
-            else if (view == 5)
-                return "Two-handed spears";
-            else if (view == 6)
-                return "One-handed axes";
-            else if (view == 7)
-                return "Two-handed axes";
-            else if (view == 8)
-                return "Maces";
-            else if (view == 9)
-                return "Unused";
-            else if (view == 10)
-                return "Staves";
-            else if (view == 11)
-                return "Bows";
-            else if (view == 12)
-                return "Knuckles";
-            else if (view == 13)
-                return "Musical Instruments";
-            else if (view == 14)
-                return "Whips";
-            else if (view == 15)
-                return "Books";
-            else if (view == 16)
-                return "Katars";
-            else if (view == 17)
-                return "Revolvers";
-            else if (view == 18)
-                return "Rifles";
-            else if (view == 19)
-                return "Gatling guns";
-            else if (view == 20)
-                return "Shotguns";
-            else if (view == 21)
-                return "Grenade launchers";
-            else if (view == 22)
-                return "Fuuma Shurikens";
-            else if (view == 23)
-                return "Two-handed staves";
-            else if (view == 24)
-                return "Max Type";
-            else if (view == 25)
-                return "Dual-wield Daggers";
-            else if (view == 26)
-                return "Dual-wield Swords";
-            else if (view == 27)
-                return "Dual-wield Axes";
-            else if (view == 28)
-                return "Dagger + Sword";
-            else if (view == 29)
-                return "Dagger + Axe";
-            else if (view == 30)
-                return "Sword + Axe";
-            else
-                return "อาวุธ";
-        }
-        else if (type == 6)
-            return "Card";
-        else if (type == 7)
-            return "Pet egg";
-        else if (type == 8)
-            return "อุปกรณ์สวมใส่ Pet";
-        else if (type == 10)
-        {
-            if (view == 1)
-                return "ลูกธนู";
-            else if (view == 2)
-                return "มีดปา";
-            else if (view == 3)
-                return "ลูกกระสุน";
-            else if (view == 4)
-                return "ลูกปืนใหญ่";
-            else if (view == 5)
-                return "ระเบิด";
-            else if (view == 6)
-                return "ดาวกระจาย";
-            else if (view == 7)
-                return "คุไน";
-            else if (view == 8)
-                return "ลูกกระสุนปืนใหญ่";
-            else if (view == 9)
-                return "ของปา";
-            else
-                return "กระสุน";
-        }
-        else if (type == 11)
-            return "ของกดใช้";
-        else if (type == 12)
-            return "อุปกรณ์สวมใส่ Shadow";
-        else if (type == 18)
-            return "ของกดใช้";
-        else
-            return null;
     }
     bool IsAtkNeeded()
     {
@@ -1157,14 +1185,18 @@ public class Output : ScriptableObject
     public string m_currentOutput { get { return currentOutput; } set { currentOutput = value; } }
 
     //item_db
-    public List<string> currentItemDbData = new List<string>();
+    List<string> currentItemDbData = new List<string>();
 
     //itemInfo
-    public ItemDb currentItemDb = new ItemDb();
+    ItemDb currentItemDb = new ItemDb();
 
     //resourceName
     List<ItemResourceName> currentResourceNames = new List<ItemResourceName>();
     public List<ItemResourceName> m_currentResourceNames { get { return currentResourceNames; } set { currentResourceNames = value; } }
+
+    //Item Script
+    [SerializeField] List<ItemDbScriptData> currentItemScriptDatas = new List<ItemDbScriptData>();
+    public List<ItemDbScriptData> m_currentItemScriptDatas { get { return currentItemScriptDatas; } set { currentItemScriptDatas = value; } }
 
     //lines
     List<string> lines = new List<string>();
@@ -1183,6 +1215,62 @@ public class Output : ScriptableObject
         int scriptStartAt = sum.IndexOf("{");
         sum = sum.Substring(0, scriptStartAt - 1);
         return new List<string>(sum.Split(','));
+    }
+
+    void FetchItemDbScript(string data)
+    {
+        //currentItemScriptDatas = new List<ItemDbScriptData>(); //Comment this lines in production
+
+        //Full test
+        //data = "19538,Full_Moon,Full Moon,4,0,,0,,0,,0,0xFFFFFFFF,63,2,1024,,1,0,780,{ autobonus \"{ bonus bBaseAtk,50; }\",10,5000,BF_WEAPON,\"{ specialeffect2 EF_POTION_BERSERK; /* showscript */ }\"; autobonus \"{ bonus bMatk,50; }\",5,5000,BF_MAGIC,\"{ specialeffect2 EF_ENERGYCOAT; /* showscript */ }\"; },{ autobonus \"{ bonus bBaseAtk,50; }\",10,5000,BF_WEAPON,\"{ specialeffect2 EF_POTION_BERSERK; /* showscript */ }\"; autobonus \"{ bonus bMatk,50; }\",5,5000,BF_MAGIC,\"{ specialeffect2 EF_ENERGYCOAT; /* showscript */ }\"; },{ autobonus \"{ bonus bBaseAtk,50; }\",10,5000,BF_WEAPON,\"{ specialeffect2 EF_POTION_BERSERK; /* showscript */ }\"; autobonus \"{ bonus bMatk,50; }\",5,5000,BF_MAGIC,\"{ specialeffect2 EF_ENERGYCOAT; /* showscript */ }\"; }";
+
+        string sum = data;
+        string sumScriptPath = data;
+        int itemId = 0;
+
+        int scriptStartAt = sum.IndexOf("{");
+        sum = sum.Substring(0, scriptStartAt - 1);
+        sumScriptPath = sumScriptPath.Substring(scriptStartAt);
+        string sumSaveScriptPath = sumScriptPath;
+        string sumSaveScriptPath2 = sumScriptPath;
+        string sumSaveScriptPath3 = sumScriptPath;
+
+        List<string> temp_item_db = new List<string>(sum.Split(','));
+        itemId = int.Parse(temp_item_db[0]);
+
+        ItemDbScriptData itemDbScriptData = new ItemDbScriptData();
+        itemDbScriptData.id = itemId;
+
+        //Log("sumScriptPath: " + sumScriptPath);
+
+        int onEquipStartAt = sumScriptPath.IndexOf(",{");
+        string sumScript = sumSaveScriptPath.Substring(0, onEquipStartAt);
+        //Log("sumScript: " + sumScript);
+
+        sumScriptPath = sumScriptPath.Substring(onEquipStartAt + 1);
+        //Log("sumScriptPath: " + sumScriptPath);
+
+        int onUnequipStartAt = sumScriptPath.IndexOf(",{");
+        string sumOnEquipScript = sumSaveScriptPath2.Substring(onEquipStartAt + 1, onUnequipStartAt);
+        //Log("sumOnEquipScript: " + sumOnEquipScript);
+
+        int onUnequipEndAt = sumScriptPath.Length;
+        sumScriptPath = sumScriptPath.Substring(onUnequipStartAt + 1);
+        //Log("sumScriptPath: " + sumScriptPath);
+
+        string sumOnUnequipScript = sumScriptPath;
+        //Log("sumOnUnequipScript: " + sumOnUnequipScript);
+
+        //Script
+        itemDbScriptData.script = sumScript;
+
+        //On equip script
+        itemDbScriptData.onEquipScript = sumOnEquipScript;
+
+        //On unequip script
+        itemDbScriptData.onUnequipScript = sumOnUnequipScript;
+
+        currentItemScriptDatas.Add(itemDbScriptData);
     }
 
     void FetchResourceNamesFromResourceNames(string data)
@@ -1243,14 +1331,52 @@ public class ItemDb
     public int eMaxLv;
     public int refineable;
     public int view;
-    public ItemDbScript script;
-    public ItemDbScript onEquipScript;
-    public ItemDbScript onUnequipScript;
 }
 
 [Serializable]
-public class ItemDbScript
+public class ItemDbScriptData
 {
+    public int id;
+    public string script;
+    public string onEquipScript;
+    public string onUnequipScript;
+
+    public string GetDescription(string data)
+    {
+        string sum = null;
+
+        //itemheal <hp>,<sp>{,<char_id>};
+        if (data.Contains("itemheal"))
+        {
+            sum += "ฟื้นฟู 45~65 HP";
+        }
+
+        return sum;
+    }
+    public string GetScriptDescription()
+    {
+        string sum = null;
+
+        sum += GetDescription(script);
+
+        return sum;
+    }
+    public string GetOnEquipScriptDescription()
+    {
+        string sum = null;
+
+        sum += GetDescription(onEquipScript);
+
+        return sum;
+    }
+    public string GetOnUnequipScriptDescription()
+    {
+        string sum = null;
+
+        sum += GetDescription(onUnequipScript);
+
+        return sum;
+    }
 }
 
 [Serializable]
@@ -1258,5 +1384,23 @@ public class ItemResourceName
 {
     public int id;
     public string resourceName;
+}
+
+/// <summary>
+/// Credit: https://thatfrenchgamedev.com/785/unity-2018-how-to-copy-string-to-clipboard/
+/// </summary>
+public static class ClipboardExtension
+{
+    /// <summary>
+    /// Puts the string into the Clipboard.
+    /// </summary>
+    /// <param name="str"></param>
+    public static void CopyToClipboard(this string str)
+    {
+        var textEditor = new TextEditor();
+        textEditor.text = str;
+        textEditor.SelectAll();
+        textEditor.Copy();
+    }
 }
 #endregion
