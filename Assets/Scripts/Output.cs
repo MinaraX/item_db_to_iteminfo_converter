@@ -3,39 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using EasyButtons;
 using System;
+using System.Text;
 
 [CreateAssetMenu(fileName = "Output", menuName = "Start/Output")]
 public class Output : ScriptableObject
 {
     public ItemDatabase itemDatabase;
-
-    // ID,AegisName,Name,Type,Buy,Sell,Weight,ATK[:MATK],DEF,Range,Slots,Job,Class,Gender,Loc,wLV,eLV[:maxLevel],Refineable,View,{ Script },{ OnEquip_Script },{ OnUnequip_Script }
-    //
-    //501,Red_Potion,Red Potion,0,10,,70,,,,,0xFFFFFFFF,63,2,,,,,,{ itemheal rand(45,65),0; },{},{}
-
-    /*
-     [501] = {
-		unidentifiedDisplayName = "Red Potion",
-		unidentifiedResourceName = "»¡°£Æ÷¼Ç",
-		unidentifiedDescriptionName = {
-		},
-		identifiedDisplayName = "Red Potion",
-		identifiedResourceName = "»¡°£Æ÷¼Ç",
-		identifiedDescriptionName = {
-			"^0000CCType:^000000 Restorative",
-			"^0000CCHeal:^000000 45 ~ 65 HP",
-			"^0000CCWeight:^000000 7"
-		},
-		slotCount = 0,
-		ClassNum = 0
-	},
-    */
-
-    public void ConvertSpecificArrayToItemInfo(int index)
-    {
-        targetArrayToConvert = index;
-        ConvertCurrentTargetArrayToItemInfo();
-    }
+    //public int targetItemIdToFetchResourceName;
+    public int targetArrayToConvert;
 
     [Button]
     public void ClearAll()
@@ -44,19 +19,16 @@ public class Output : ScriptableObject
         currentOutput = null;
         currentItemDbData = new List<string>();
         currentItemDb = new ItemDb();
-        lines = new List<string>();
-        currentResourceName = new ItemResourceName();
-        current_resourceNames = new List<ItemResourceName>();
+        m_lines = new List<string>();
+        currentResourceNames = new List<ItemResourceName>();
         lines_resourceNames = new List<string>();
         Log("Clear all");
     }
-
     [Button]
     public void FetchResourceNameFromResourceNames()
     {
         Log("FetchResourceNameFromResourceNames: Start");
-        currentResourceName = new ItemResourceName();
-        current_resourceNames = new List<ItemResourceName>();
+        currentResourceNames = new List<ItemResourceName>();
         FetchResourceNamesFromResourceNames(itemDatabase.m_resourceNames);
         Log("FetchResourceNameFromResourceNames: Done");
     }
@@ -64,17 +36,14 @@ public class Output : ScriptableObject
     public void FetchResourceNameFromItemInfo()
     {
         Log("FetchResourceName: Start");
-        currentResourceName = new ItemResourceName();
-        current_resourceNames = new List<ItemResourceName>();
+        currentResourceNames = new List<ItemResourceName>();
         Log("FetchResourceName: Done");
     }
-    public int targetItemIdToFetchResourceName;
     public void ConvertCurrentTargetItemIdToFetchResourceName()
     {
         Log("ConvertCurrentTargetItemIdToFetchResourceName: Start");
         Log("ConvertCurrentTargetItemIdToFetchResourceName: Done");
     }
-
     [Button]
     public void ClearAndConvertCurrentTargetArrayToItemInfo()
     {
@@ -82,14 +51,13 @@ public class Output : ScriptableObject
         Log("Output cleared");
         ConvertCurrentTargetArrayToItemInfo();
     }
-
     [Button]
     public void ConvertCurrentTargetArrayToItemInfo()
     {
         //Log("ConvertCurrentTargetArrayToItemInfo: Start");
 
         currentItemDbData = new List<string>();
-        currentItemDbData = ConvertItemDbToListWithoutScript(lines[targetArrayToConvert]);
+        currentItemDbData = ConvertItemDbToListWithoutScript(m_lines[targetArrayToConvert]);
 
         //Test with full parameters
         //currentItemDbData = ConvertItemDbToListWithoutScript("501,Red_Potion,Red Potion,0,10,0,70,15:30,40,5,4,0xFFFFFFFF,63,2,0,4,30:99,1,16,{ itemheal rand(45,65),0; },{},{}");
@@ -174,7 +142,11 @@ public class Output : ScriptableObject
 
         //Log("ConvertCurrentTargetArrayToItemInfo: Done");
     }
-    public int targetArrayToConvert;
+    public void ConvertSpecificArrayToItemInfo(int index)
+    {
+        targetArrayToConvert = index;
+        ConvertCurrentTargetArrayToItemInfo();
+    }
 
     #region Item Description
     string GetName()
@@ -185,9 +157,9 @@ public class Output : ScriptableObject
     {
         string copier = null;
 
-        for (int i = 0; i < current_resourceNames.Count; i++)
+        for (int i = 0; i < currentResourceNames.Count; i++)
         {
-            var sumData = current_resourceNames[i];
+            var sumData = currentResourceNames[i];
             if (sumData.id == currentItemDb.id)
             {
                 copier = sumData.resourceName;
@@ -1181,7 +1153,8 @@ public class Output : ScriptableObject
     #endregion
 
     [TextArea]
-    [HideInInspector] public string currentOutput;
+    string currentOutput;
+    public string m_currentOutput { get { return currentOutput; } set { currentOutput = value; } }
 
     //item_db
     public List<string> currentItemDbData = new List<string>();
@@ -1190,14 +1163,21 @@ public class Output : ScriptableObject
     public ItemDb currentItemDb = new ItemDb();
 
     //resourceName
-    [HideInInspector] public ItemResourceName currentResourceName = new ItemResourceName();
-    [HideInInspector] public List<ItemResourceName> current_resourceNames = new List<ItemResourceName>();
+    List<ItemResourceName> currentResourceNames = new List<ItemResourceName>();
+    public List<ItemResourceName> m_currentResourceNames { get { return currentResourceNames; } set { currentResourceNames = value; } }
 
     //lines
-    [HideInInspector] public List<string> lines = new List<string>();
-    [HideInInspector] public List<string> lines_resourceNames = new List<string>();
+    List<string> lines = new List<string>();
+    public List<string> m_lines { get { return lines; } set { lines = value; } }
+    List<string> lines_resourceNames = new List<string>();
+    public List<string> m_lines_resourceNames { get { return lines_resourceNames; } set { lines_resourceNames = value; } }
 
     List<string> StringSplit(string data, char targetToSplit)
+    {
+        return new List<string>(data.Split(targetToSplit));
+    }
+
+    List<string> StringSplitKorean(string data, char targetToSplit)
     {
         return new List<string>(data.Split(targetToSplit));
     }
@@ -1212,11 +1192,11 @@ public class Output : ScriptableObject
 
     void FetchResourceNamesFromResourceNames(string data)
     {
-        currentResourceName = new ItemResourceName();
-        current_resourceNames = new List<ItemResourceName>();
+        currentResourceNames = new List<ItemResourceName>();
         lines_resourceNames = new List<string>();
-
-        lines_resourceNames = StringSplit(data, '\n');
+        Log("FetchResourceNamesFromResourceNames >> Parsing txt to database start");
+        lines_resourceNames = StringSplitKorean(data, '\n');
+        Log("FetchResourceNamesFromResourceNames >> Parsing txt to database done");
 
         for (int i = 0; i < lines_resourceNames.Count; i++)
             Convert_resourceNames_ToList(lines_resourceNames[i]);
@@ -1224,15 +1204,17 @@ public class Output : ScriptableObject
 
     void Convert_resourceNames_ToList(string data)
     {
-        //Log(data);
+        Log(data);
 
         List<string> sumSplit = StringSplit(data, '=');
 
-        currentResourceName.id = int.Parse(sumSplit[0]);
-        currentResourceName.resourceName = sumSplit[1];
-        //Log(currentResourceName.id + "=" + currentResourceName.resourceName);
+        ItemResourceName newCurrentResourceName = new ItemResourceName();
+        newCurrentResourceName.id = int.Parse(sumSplit[0]);
+        string sumResourceName = sumSplit[1];
+        sumResourceName = sumResourceName.Substring(0, sumResourceName.Length - 1);
+        newCurrentResourceName.resourceName = sumResourceName;
 
-        current_resourceNames.Add(currentResourceName);
+        currentResourceNames.Add(newCurrentResourceName);
     }
 
     void Log(object obj)
@@ -1241,6 +1223,7 @@ public class Output : ScriptableObject
     }
 }
 
+#region Class
 [Serializable]
 public class ItemDb
 {
@@ -1281,3 +1264,4 @@ public class ItemResourceName
     public int id;
     public string resourceName;
 }
+#endregion

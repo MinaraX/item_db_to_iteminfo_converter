@@ -82,36 +82,42 @@ public class Converter : MonoBehaviour
         //Start process
         Log("Converter: Start");
 
-        output.currentOutput = null;
+        //item_db
+        output.m_currentOutput = null;
 
         Log("Converter >> is item_db null: " + string.IsNullOrEmpty(itemDatabase.m_item_db));
 
         //Parsing item_db to List
         Log("Converter: Parsing item_db to list");
-        output.lines = StringToList(itemDatabase.m_item_db);
+        output.m_lines = StringToList(itemDatabase.m_item_db);
 
         //Remove comment from List
         Log("Converter: Remove comment from list");
-        for (int i = output.lines.Count - 1; i >= 0; i--)
+        for (int i = output.m_lines.Count - 1; i >= 0; i--)
         {
-            if (output.lines[i].Contains("//"))
-                output.lines.RemoveAt(i);
+            if (output.m_lines[i].Contains("//"))
+                output.m_lines.RemoveAt(i);
         }
 
         //Remove empty from List
         Log("Converter: Remove empty from list");
-        for (int i = output.lines.Count - 1; i >= 0; i--)
+        for (int i = output.m_lines.Count - 1; i >= 0; i--)
         {
-            if (string.IsNullOrEmpty(output.lines[i]) || string.IsNullOrWhiteSpace(output.lines[i]))
-                output.lines.RemoveAt(i);
+            if (string.IsNullOrEmpty(output.m_lines[i]) || string.IsNullOrWhiteSpace(output.m_lines[i]))
+                output.m_lines.RemoveAt(i);
         }
 
+        //item_combo_db
         Log("Converter >> is item_combo_db null: " + string.IsNullOrEmpty(itemDatabase.m_item_combo_db));
 
         //Do nothing for now
 
+
+        //itemInfo
+        //output.FetchResourceNameFromResourceNames();
+
         //Convert here
-        for (int i = 0; i < output.lines.Count; i++)
+        for (int i = 0; i < output.m_lines.Count; i++)
             output.ConvertSpecificArrayToItemInfo(i);
         /*{
             Debug.Log("Converter >> Convert index: " + i);
@@ -130,7 +136,7 @@ public class Converter : MonoBehaviour
     [Button]
     public void ViewAtTargetLines()
     {
-        Log(output.lines[targetLines]);
+        Log(output.m_lines[targetLines]);
     }
 
     void Log(object obj)

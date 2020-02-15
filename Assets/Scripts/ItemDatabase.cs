@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using EasyButtons;
+using System.Text;
 
 [CreateAssetMenu(fileName = "ItemDatabase", menuName = "Start/ItemDatabase")]
 public class ItemDatabase : ScriptableObject

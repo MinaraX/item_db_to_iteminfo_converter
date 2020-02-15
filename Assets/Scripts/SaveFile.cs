@@ -16,9 +16,9 @@ public class SaveFile : MonoBehaviour, IPointerDownHandler
     {
         get
         {
-            if (!string.IsNullOrEmpty(output.currentOutput))
-                Debug.Log("output.currentOutput.Length: " + output.currentOutput.Length);
-            return output.currentOutput;
+            if (!string.IsNullOrEmpty(output.m_currentOutput))
+                Debug.Log("output.m_currentOutput.Length: " + output.m_currentOutput.Length);
+            return output.m_currentOutput;
         }
     }
 
