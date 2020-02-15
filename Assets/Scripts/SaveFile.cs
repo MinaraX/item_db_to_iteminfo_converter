@@ -54,15 +54,9 @@ public class SaveFile : MonoBehaviour, IPointerDownHandler
 
     void OnClick()
     {
-        int saveCount = PlayerPrefs.GetInt("convertCount");
-        var path = StandaloneFileBrowser.SaveFilePanel("Saving to", "", "iteminfo_" + saveCount, "txt");
-        saveCount++;
-        PlayerPrefs.SetInt("saveCount", saveCount);
-        PlayerPrefs.Save();
+        var path = StandaloneFileBrowser.SaveFilePanel("Saving to", "", "itemInfo_Sak", "txt");
         if (!string.IsNullOrEmpty(path))
-        {
             File.WriteAllText(path, _data);
-        }
     }
 #endif
 }

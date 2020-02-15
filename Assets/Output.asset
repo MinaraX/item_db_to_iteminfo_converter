@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff87445b846b7bc46a07b04753697a80, type: 3}
   m_Name: Output
   m_EditorClassIdentifier: 
+  itemDatabase: {fileID: 11400000, guid: 630cf34160fdbb5459afe2ad44e0a776, type: 2}
+  targetItemIdToFetchResourceName: 0
   targetArrayToConvert: 0
   currentOutput: 
   currentItemDbData: []
@@ -37,5 +39,9 @@ MonoBehaviour:
     eMaxLv: 0
     refineable: 0
     view: 0
+  currentResourceName:
+    id: 0
+    resourceName: 
+  current_resourceNames: []
   lines: []
-  textAsset_someTextFiles: {fileID: 0}
+  lines_resourceNames: []

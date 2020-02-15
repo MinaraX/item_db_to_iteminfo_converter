@@ -7,6 +7,8 @@ using System;
 [CreateAssetMenu(fileName = "Output", menuName = "Start/Output")]
 public class Output : ScriptableObject
 {
+    public ItemDatabase itemDatabase;
+
     // ID,AegisName,Name,Type,Buy,Sell,Weight,ATK[:MATK],DEF,Range,Slots,Job,Class,Gender,Loc,wLV,eLV[:maxLevel],Refineable,View,{ Script },{ OnEquip_Script },{ OnUnequip_Script }
     //
     //501,Red_Potion,Red Potion,0,10,,70,,,,,0xFFFFFFFF,63,2,,,,,,{ itemheal rand(45,65),0; },{},{}
@@ -43,24 +45,28 @@ public class Output : ScriptableObject
         currentItemDbData = new List<string>();
         currentItemDb = new ItemDb();
         lines = new List<string>();
-        Debug.Log("Clear all");
+        currentResourceName = new ItemResourceName();
+        current_resourceNames = new List<ItemResourceName>();
+        lines_resourceNames = new List<string>();
+        Log("Clear all");
     }
 
     [Button]
     public void FetchResourceNameFromResourceNames()
     {
-        Debug.Log("FetchResourceNameFromResourceNames: Start");
+        Log("FetchResourceNameFromResourceNames: Start");
         currentResourceName = new ItemResourceName();
-        resourceNames = new List<ItemResourceName>();
-        Debug.Log("FetchResourceNameFromResourceNames: Done");
+        current_resourceNames = new List<ItemResourceName>();
+        FetchResourceNamesFromResourceNames(itemDatabase.m_resourceNames);
+        Log("FetchResourceNameFromResourceNames: Done");
     }
     [Button]
     public void FetchResourceNameFromItemInfo()
     {
-        Debug.Log("FetchResourceName: Start");
+        Log("FetchResourceName: Start");
         currentResourceName = new ItemResourceName();
-        resourceNames = new List<ItemResourceName>();
-        Debug.Log("FetchResourceName: Done");
+        current_resourceNames = new List<ItemResourceName>();
+        Log("FetchResourceName: Done");
     }
     public int targetItemIdToFetchResourceName;
     public void ConvertCurrentTargetItemIdToFetchResourceName()
@@ -73,7 +79,7 @@ public class Output : ScriptableObject
     public void ClearAndConvertCurrentTargetArrayToItemInfo()
     {
         currentOutput = null;
-        Debug.Log("Output cleared");
+        Log("Output cleared");
         ConvertCurrentTargetArrayToItemInfo();
     }
 
@@ -170,17 +176,26 @@ public class Output : ScriptableObject
     }
     public int targetArrayToConvert;
 
+    #region Item Description
     string GetName()
     {
         return currentItemDb.name;
     }
     string GetResourceName()
     {
-        //string copier = null;
+        string copier = null;
 
-        //[TODO] Create a resource name copier from iteminfo_Sak files
+        for (int i = 0; i < current_resourceNames.Count; i++)
+        {
+            var sumData = current_resourceNames[i];
+            if (sumData.id == currentItemDb.id)
+            {
+                copier = sumData.resourceName;
+                break;
+            }
+        }
 
-        return "»¡°£Æ÷¼Ç";
+        return copier;
     }
     string GetDescription()
     {
@@ -1163,15 +1178,24 @@ public class Output : ScriptableObject
     {
         return currentItemDb.view.ToString("f0");
     }
+    #endregion
 
     [TextArea]
     [HideInInspector] public string currentOutput;
-    public List<string> currentItemDbData = new List<string>();
-    public ItemDb currentItemDb = new ItemDb();
-    public ItemResourceName currentResourceName = new ItemResourceName();
-    [HideInInspector] public List<ItemResourceName> resourceNames = new List<ItemResourceName>();
 
+    //item_db
+    public List<string> currentItemDbData = new List<string>();
+
+    //itemInfo
+    public ItemDb currentItemDb = new ItemDb();
+
+    //resourceName
+    [HideInInspector] public ItemResourceName currentResourceName = new ItemResourceName();
+    [HideInInspector] public List<ItemResourceName> current_resourceNames = new List<ItemResourceName>();
+
+    //lines
     [HideInInspector] public List<string> lines = new List<string>();
+    [HideInInspector] public List<string> lines_resourceNames = new List<string>();
 
     List<string> StringSplit(string data, char targetToSplit)
     {
@@ -1184,6 +1208,31 @@ public class Output : ScriptableObject
         int scriptStartAt = sum.IndexOf("{");
         sum = sum.Substring(0, scriptStartAt - 1);
         return new List<string>(sum.Split(','));
+    }
+
+    void FetchResourceNamesFromResourceNames(string data)
+    {
+        currentResourceName = new ItemResourceName();
+        current_resourceNames = new List<ItemResourceName>();
+        lines_resourceNames = new List<string>();
+
+        lines_resourceNames = StringSplit(data, '\n');
+
+        for (int i = 0; i < lines_resourceNames.Count; i++)
+            Convert_resourceNames_ToList(lines_resourceNames[i]);
+    }
+
+    void Convert_resourceNames_ToList(string data)
+    {
+        //Log(data);
+
+        List<string> sumSplit = StringSplit(data, '=');
+
+        currentResourceName.id = int.Parse(sumSplit[0]);
+        currentResourceName.resourceName = sumSplit[1];
+        //Log(currentResourceName.id + "=" + currentResourceName.resourceName);
+
+        current_resourceNames.Add(currentResourceName);
     }
 
     void Log(object obj)
