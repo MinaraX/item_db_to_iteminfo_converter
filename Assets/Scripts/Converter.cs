@@ -112,7 +112,6 @@ public class Converter : MonoBehaviour
 
         //Do nothing for now
 
-
         //itemInfo
         //output.FetchResourceNameFromResourceNames();
 
@@ -120,7 +119,7 @@ public class Converter : MonoBehaviour
         for (int i = 0; i < output.m_lines.Count; i++)
             output.ConvertSpecificArrayToItemInfo(i);
         /*{
-            Debug.Log("Converter >> Convert index: " + i);
+            Log("Converter >> Convert index: " + i);
             output.ConvertSpecificArrayToItemInfo(i);
         }*/
 

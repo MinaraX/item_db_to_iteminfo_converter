@@ -12,15 +12,7 @@ public class SaveFile : MonoBehaviour, IPointerDownHandler
 {
     public Output output;
 
-    string _data
-    {
-        get
-        {
-            if (!string.IsNullOrEmpty(output.m_currentOutput))
-                Debug.Log("output.m_currentOutput.Length: " + output.m_currentOutput.Length);
-            return output.m_currentOutput;
-        }
-    }
+    string _data { get { return output.m_currentOutput; } }
 
 #if UNITY_WEBGL && !UNITY_EDITOR
     //

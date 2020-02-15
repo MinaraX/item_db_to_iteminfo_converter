@@ -1177,11 +1177,6 @@ public class Output : ScriptableObject
         return new List<string>(data.Split(targetToSplit));
     }
 
-    List<string> StringSplitKorean(string data, char targetToSplit)
-    {
-        return new List<string>(data.Split(targetToSplit));
-    }
-
     List<string> ConvertItemDbToListWithoutScript(string data)
     {
         string sum = data;
@@ -1195,7 +1190,7 @@ public class Output : ScriptableObject
         currentResourceNames = new List<ItemResourceName>();
         lines_resourceNames = new List<string>();
         Log("FetchResourceNamesFromResourceNames >> Parsing txt to database start");
-        lines_resourceNames = StringSplitKorean(data, '\n');
+        lines_resourceNames = StringSplit(data, '\n');
         Log("FetchResourceNamesFromResourceNames >> Parsing txt to database done");
 
         for (int i = 0; i < lines_resourceNames.Count; i++)
