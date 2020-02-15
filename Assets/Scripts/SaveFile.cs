@@ -56,7 +56,7 @@ public class SaveFile : MonoBehaviour, IPointerDownHandler
     {
         var path = StandaloneFileBrowser.SaveFilePanel("Saving to", "", "itemInfo_Sak", "txt");
         if (!string.IsNullOrEmpty(path))
-            File.WriteAllText(path, _data);
+            File.WriteAllText(path, _data, Encoding.UTF8);
     }
 #endif
 }
