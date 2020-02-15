@@ -47,6 +47,29 @@ public class Output : ScriptableObject
     }
 
     [Button]
+    public void FetchResourceNameFromResourceNames()
+    {
+        Debug.Log("FetchResourceNameFromResourceNames: Start");
+        currentResourceName = new ItemResourceName();
+        resourceNames = new List<ItemResourceName>();
+        Debug.Log("FetchResourceNameFromResourceNames: Done");
+    }
+    [Button]
+    public void FetchResourceNameFromItemInfo()
+    {
+        Debug.Log("FetchResourceName: Start");
+        currentResourceName = new ItemResourceName();
+        resourceNames = new List<ItemResourceName>();
+        Debug.Log("FetchResourceName: Done");
+    }
+    public int targetItemIdToFetchResourceName;
+    public void ConvertCurrentTargetItemIdToFetchResourceName()
+    {
+        Log("ConvertCurrentTargetItemIdToFetchResourceName: Start");
+        Log("ConvertCurrentTargetItemIdToFetchResourceName: Done");
+    }
+
+    [Button]
     public void ClearAndConvertCurrentTargetArrayToItemInfo()
     {
         currentOutput = null;
@@ -217,7 +240,7 @@ public class Output : ScriptableObject
     }
     bool IsLocNeeded()
     {
-        //Only for armor, weapon, shadow items
+        //Only for armor, weapon, shadow items, ammo
         bool isLocNeed = false;
         int type = currentItemDb.type;
         if (type == 4 || type == 5 || type == 6 || type == 12)
@@ -434,6 +457,7 @@ public class Output : ScriptableObject
     string GetItemType()
     {
         int type = currentItemDb.type;
+        int view = currentItemDb.view;
 
         if (type == 0)
             return "ของใช้ฟื้นฟู";
@@ -444,7 +468,72 @@ public class Output : ScriptableObject
         else if (type == 4)
             return "อุปกรณ์สวมใส่";
         else if (type == 5)
-            return "อาวุธ";
+        {
+            if (view == 0)
+                return "bare fist";
+            else if (view == 1)
+                return "Daggers";
+            else if (view == 2)
+                return "One-handed swords";
+            else if (view == 3)
+                return "Two-handed swords";
+            else if (view == 4)
+                return "One-handed spears";
+            else if (view == 5)
+                return "Two-handed spears";
+            else if (view == 6)
+                return "One-handed axes";
+            else if (view == 7)
+                return "Two-handed axes";
+            else if (view == 8)
+                return "Maces";
+            else if (view == 9)
+                return "Unused";
+            else if (view == 10)
+                return "Staves";
+            else if (view == 11)
+                return "Bows";
+            else if (view == 12)
+                return "Knuckles";
+            else if (view == 13)
+                return "Musical Instruments";
+            else if (view == 14)
+                return "Whips";
+            else if (view == 15)
+                return "Books";
+            else if (view == 16)
+                return "Katars";
+            else if (view == 17)
+                return "Revolvers";
+            else if (view == 18)
+                return "Rifles";
+            else if (view == 19)
+                return "Gatling guns";
+            else if (view == 20)
+                return "Shotguns";
+            else if (view == 21)
+                return "Grenade launchers";
+            else if (view == 22)
+                return "Fuuma Shurikens";
+            else if (view == 23)
+                return "Two-handed staves";
+            else if (view == 24)
+                return "Max Type";
+            else if (view == 25)
+                return "Dual-wield Daggers";
+            else if (view == 26)
+                return "Dual-wield Swords";
+            else if (view == 27)
+                return "Dual-wield Axes";
+            else if (view == 28)
+                return "Dagger + Sword";
+            else if (view == 29)
+                return "Dagger + Axe";
+            else if (view == 30)
+                return "Sword + Axe";
+            else
+                return "อาวุธ";
+        }
         else if (type == 6)
             return "Card";
         else if (type == 7)
@@ -452,7 +541,28 @@ public class Output : ScriptableObject
         else if (type == 8)
             return "อุปกรณ์สวมใส่ Pet";
         else if (type == 10)
-            return "กระสุน";
+        {
+            if (view == 1)
+                return "ลูกธนู";
+            else if (view == 2)
+                return "มีดปา";
+            else if (view == 3)
+                return "ลูกกระสุน";
+            else if (view == 4)
+                return "ลูกปืนใหญ่";
+            else if (view == 5)
+                return "ระเบิด";
+            else if (view == 6)
+                return "ดาวกระจาย";
+            else if (view == 7)
+                return "คุไน";
+            else if (view == 8)
+                return "ลูกกระสุนปืนใหญ่";
+            else if (view == 9)
+                return "ของปา";
+            else
+                return "กระสุน";
+        }
         else if (type == 11)
             return "ของกดใช้";
         else if (type == 12)
@@ -1058,10 +1168,10 @@ public class Output : ScriptableObject
     [HideInInspector] public string currentOutput;
     public List<string> currentItemDbData = new List<string>();
     public ItemDb currentItemDb = new ItemDb();
+    public ItemResourceName currentResourceName = new ItemResourceName();
+    [HideInInspector] public List<ItemResourceName> resourceNames = new List<ItemResourceName>();
 
     [HideInInspector] public List<string> lines = new List<string>();
-
-    public TextAsset textAsset_someTextFiles;
 
     List<string> StringSplit(string data, char targetToSplit)
     {
@@ -1114,4 +1224,11 @@ public class ItemDb
 [Serializable]
 public class ItemDbScript
 {
+}
+
+[Serializable]
+public class ItemResourceName
+{
+    public int id;
+    public string resourceName;
 }

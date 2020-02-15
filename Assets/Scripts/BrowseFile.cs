@@ -73,6 +73,6 @@ public class BrowseFile : MonoBehaviour, IPointerDownHandler
         }
     }
 
-    public enum FileType { item_db, item_combo_db };
+    public enum FileType { item_db, item_combo_db, itemInfo };
     public FileType fileType;
 }

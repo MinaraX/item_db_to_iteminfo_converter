@@ -25,7 +25,7 @@ namespace Pixelplacement
             {
                 if (_instance == null) 
                 {
-                    Debug.LogError ("Singleton not registered! Make sure the GameObject running your singleton is active in your scene and has a CoreInitialization component attached.");
+                    Debug.LogError ("Singleton not registered! Make sure the GameObject running your singleton is active in your scene and has an Initialization component attached.");
                     return default (T);
                 }
                 return _instance;
@@ -58,9 +58,17 @@ namespace Pixelplacement
         {
             if (_dontDestroyOnLoad)
             {
-                //don't destroy on load only works on root objects so let's force this transform to be a root object:
-                transform.parent = null;
-                DontDestroyOnLoad (gameObject);
+                if (_instance == null)
+                {
+                    //don't destroy on load only works on root objects so let's force this transform to be a root object:
+                    transform.parent = null;
+                    DontDestroyOnLoad(gameObject);
+                }
+                else
+                {
+                    //there is already an instance:
+                    Destroy(gameObject);
+                }
             }
             _instance = instance;
             OnRegistration ();

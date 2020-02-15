@@ -12,8 +12,9 @@ public class Converter : MonoBehaviour
     public Output output;
 
     [Header("UI")]
-    public Text txtCurrentItemDb;
-    public Text txtCurrentItemComboDb;
+    public Text txtCurrent_item_db;
+    public Text txtCurrent_item_combo_db;
+    public Text txtCurrent_itemInfo;
     public GameObject objConvertInProgress;
 
     public Button btnConvert;
@@ -24,25 +25,34 @@ public class Converter : MonoBehaviour
     {
         ItemDatabase.onItemDbChanged += ItemDatabase_onItemDbChanged;
         ItemDatabase.onItemComboDbChanged += ItemDatabase_onItemComboDbChanged;
+        ItemDatabase.onItemInfoChanged += ItemDatabase_onItemInfoChanged;
     }
     void OnDestroy()
     {
         ItemDatabase.onItemDbChanged -= ItemDatabase_onItemDbChanged;
         ItemDatabase.onItemComboDbChanged -= ItemDatabase_onItemComboDbChanged;
+        ItemDatabase.onItemInfoChanged -= ItemDatabase_onItemInfoChanged;
     }
     void ItemDatabase_onItemDbChanged(bool isNull)
     {
         if (isNull)
-            txtCurrentItemDb.text = "item_db: Not ready";
+            txtCurrent_item_db.text = "item_db: Not ready";
         else
-            txtCurrentItemDb.text = "item_db: Ready";
+            txtCurrent_item_db.text = "item_db: Ready";
     }
     void ItemDatabase_onItemComboDbChanged(bool isNull)
     {
         if (isNull)
-            txtCurrentItemComboDb.text = "item_combo_db: Not ready";
+            txtCurrent_item_combo_db.text = "item_combo_db: Not ready";
         else
-            txtCurrentItemComboDb.text = "item_combo_db: Ready";
+            txtCurrent_item_combo_db.text = "item_combo_db: Ready";
+    }
+    void ItemDatabase_onItemInfoChanged(bool isNull)
+    {
+        if (isNull)
+            txtCurrent_itemInfo.text = "itemInfo: Not ready";
+        else
+            txtCurrent_itemInfo.text = "itemInfo: Ready";
     }
     #endregion
 
