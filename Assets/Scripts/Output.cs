@@ -143,7 +143,7 @@ public class Output : ScriptableObject
             + "\nslotCount = " + GetSlotCount() + ","
             + "\nClassNum = " + GetClassNum() + "\n},\n";
 
-        Log("Success convert item_db id: " + currentItemDbData[0]);
+        //Log("Success convert item_db id: " + currentItemDbData[0]);
 
         //Log("ConvertCurrentTargetArrayToItemInfo: Done");
     }

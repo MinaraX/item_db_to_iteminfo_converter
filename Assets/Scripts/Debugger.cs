@@ -28,6 +28,9 @@ public class Debugger : Singleton<Debugger>
         }
     }
 
+    /// <summary>
+    /// Credit: https://answers.unity.com/questions/707636/clear-console-window.html?_ga=2.196194988.1639663591.1581736164-1598702211.1559199933
+    /// </summary>
     public static void ClearConsole()
     {
 #if UNITY_EDITOR
