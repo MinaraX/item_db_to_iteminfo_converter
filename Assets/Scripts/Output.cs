@@ -33,13 +33,13 @@ public class Output : ScriptableObject
         FetchResourceNamesFromResourceNames(itemDatabase.m_resourceNames);
         Log("FetchResourceNameFromResourceNames: Done");
     }
-    [Button]
+    /*[Button]
     public void FetchResourceNameFromItemInfo()
     {
         Log("FetchResourceName: Start");
         currentResourceNames = new List<ItemResourceName>();
         Log("FetchResourceName: Done");
-    }
+    }*/
     public void ConvertCurrentTargetItemIdToFetchResourceName()
     {
         Log("ConvertCurrentTargetItemIdToFetchResourceName: Start");
@@ -142,6 +142,8 @@ public class Output : ScriptableObject
             + "\n},"
             + "\nslotCount = " + GetSlotCount() + ","
             + "\nClassNum = " + GetClassNum() + "\n},\n";
+
+        Log("Success convert item_db id: " + currentItemDbData[0]);
 
         //Log("ConvertCurrentTargetArrayToItemInfo: Done");
     }
@@ -1341,14 +1343,68 @@ public class ItemDbScriptData
     public string onEquipScript;
     public string onUnequipScript;
 
+    string AddDescription(string data, string toAdd)
+    {
+        if (string.IsNullOrEmpty(data))
+            return toAdd;
+        else
+            return "\n" + toAdd;
+    }
     public string GetDescription(string data)
     {
+        //Debugger.ClearConsole();
+
         string sum = null;
 
-        //itemheal <hp>,<sp>{,<char_id>};
-        if (data.Contains("itemheal"))
+        //Log("GetDescription:" + data);
+
+        string functionName = "itemheal";
+        if (data.Contains(functionName))
         {
-            sum += "ฟื้นฟู 45~65 HP";
+            string sumCut = CutFunctionName(data, functionName);
+
+            List<string> allParam = new List<string>();
+
+            if (sumCut.Contains("rand"))
+            {
+                allParam = new List<string>(sumCut.Split(new string[] { "," }, StringSplitOptions.None));
+
+            L_Redo:
+                for (int i = 0; i < allParam.Count; i++)
+                {
+                    //Log("(Before)allParam[" + i + "]: " + allParam[i]);
+                    var sumParam = allParam[i];
+                    if (sumParam.Contains("(") && !sumParam.Contains(")"))
+                    {
+                        allParam[i] += "," + allParam[i + 1];
+                        allParam.RemoveAt(i + 1);
+                        goto L_Redo;
+                    }
+                }
+
+                //for (int i = 0; i < allParam.Count; i++)
+                //    Log("(After)allParam[" + i + "]: " + allParam[i]);
+            }
+            else
+            {
+                allParam = StringSplit(sumCut, ',');
+                //for (int i = 0; i < allParam.Count; i++)
+                //    Log("(After)allParam[" + i + "]: " + allParam[i]);
+            }
+
+            isHadParam1 = false;
+            isHadParam2 = false;
+            isHadParam3 = false;
+            isHadParam4 = false;
+            isHadParam5 = false;
+
+            string param1 = GetValue(allParam[0], 1);
+            string param2 = GetValue(allParam[1], 2);
+
+            if (isHadParam1)
+                sum += AddDescription(sum, "ฟื้นฟู " + param1 + " HP");
+            if (isHadParam2)
+                sum += AddDescription(sum, "ฟื้นฟู " + param2 + " SP");
         }
 
         return sum;
@@ -1376,6 +1432,114 @@ public class ItemDbScriptData
         sum += GetDescription(onUnequipScript);
 
         return sum;
+    }
+
+    string CutFunctionName(string toCut, string functionName)
+    {
+        //Log("CutFunctionName >> toCut: " + toCut + " | functionName: " + functionName);
+
+        int cutStartAt = toCut.IndexOf(functionName);
+
+        string cut = toCut.Substring(cutStartAt + functionName.Length);
+
+        //Log("cut: " + cut);
+
+        int cutEndAt = cut.IndexOf(";");
+
+        cut = cut.Substring(1, cutEndAt - 1);
+
+        //Log("cut: " + cut);
+
+        return cut;
+    }
+
+    bool isHadParam1;
+    bool isHadParam2;
+    bool isHadParam3;
+    bool isHadParam4;
+    bool isHadParam5;
+    string GetValue(string data, int paramCount)
+    {
+        string value = data;
+
+        //Log("GetValue: " + value);
+
+        //rand
+        if (value.Contains("rand"))
+        {
+            //Log("rand");
+
+            int paramStartAt = value.IndexOf("(");
+            //Log("paramStartAt: " + paramStartAt);
+
+            string rand = value.Substring(paramStartAt);
+
+            //Log("GetValue: " + rand);
+
+            int paramEndAt = rand.IndexOf(")");
+            //Log("paramEndAt: " + paramEndAt);
+
+            rand = rand.Substring(1, paramEndAt - 1);
+
+            List<string> allRand = StringSplit(rand, ',');
+
+            //Log("GetValue: " + rand);
+
+            if (paramCount == 1)
+                isHadParam1 = true;
+            else if (paramCount == 2)
+                isHadParam2 = true;
+            else if (paramCount == 3)
+                isHadParam3 = true;
+            else if (paramCount == 4)
+                isHadParam4 = true;
+            else if (paramCount == 5)
+                isHadParam5 = true;
+
+            return allRand[0] + "~" + allRand[1];
+        }
+        //Normal value
+        else
+        {
+            int paramInt = 0;
+
+            if (paramCount == 1)
+                isHadParam1 = int.TryParse(value, out paramInt);
+            else if (paramCount == 2)
+                isHadParam2 = int.TryParse(value, out paramInt);
+            else if (paramCount == 3)
+                isHadParam3 = int.TryParse(value, out paramInt);
+            else if (paramCount == 4)
+                isHadParam4 = int.TryParse(value, out paramInt);
+            else if (paramCount == 5)
+                isHadParam5 = int.TryParse(value, out paramInt);
+
+            if (paramInt <= 0)
+            {
+                if (paramCount == 1)
+                    isHadParam1 = false;
+                else if (paramCount == 2)
+                    isHadParam2 = false;
+                else if (paramCount == 3)
+                    isHadParam3 = false;
+                else if (paramCount == 4)
+                    isHadParam4 = false;
+                else if (paramCount == 5)
+                    isHadParam5 = false;
+            }
+
+            return value;
+        }
+    }
+
+    List<string> StringSplit(string data, char targetToSplit)
+    {
+        return new List<string>(data.Split(targetToSplit));
+    }
+
+    void Log(object obj)
+    {
+        Debug.Log(obj);
     }
 }
 

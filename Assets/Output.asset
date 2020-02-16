@@ -13,46 +13,5 @@ MonoBehaviour:
   m_Name: Output
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 11400000, guid: 630cf34160fdbb5459afe2ad44e0a776, type: 2}
-  targetArrayToConvert: 13140
-  currentItemDbData:
-  - 32351
-  - Estal
-  - Estal
-  - 5
-  - 20
-  - 
-  - 700
-  - 195
-  - 
-  - 1
-  - 2
-  - 0x00040000
-  - 56
-  - 2
-  - 2
-  - 4
-  - 170
-  - 1
-  - 2
-  currentItemDb:
-    id: 32351
-    aegisName: Estal
-    name: Estal
-    type: 5
-    buy: 20
-    sell: 0
-    weight: 700
-    atk: 195
-    mAtk: 0
-    def: 0
-    range: 1
-    slots: 2
-    job: 262144
-    _class: 56
-    gender: 2
-    loc: 2
-    wLv: 4
-    eLv: 170
-    eMaxLv: 0
-    refineable: 1
-    view: 2
+  targetArrayToConvert: 0
+  currentItemScriptDatas: []

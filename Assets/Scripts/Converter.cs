@@ -112,7 +112,7 @@ public class Converter : MonoBehaviour
 
         //Do nothing for now
 
-        //itemInfo
+        //fetch resourceName from itemInfo
         //output.FetchResourceNameFromResourceNames();
 
         //Convert here
@@ -129,6 +129,8 @@ public class Converter : MonoBehaviour
         yield return null;
 
         objConvertInProgress.SetActive(false);
+
+        Log("output.m_lines.Count: " + output.m_lines.Count);
     }
 
     public int targetLines;
