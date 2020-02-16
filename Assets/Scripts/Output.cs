@@ -177,7 +177,9 @@ public class Output : ScriptableObject
     string GetDescription()
     {
         string sum = null;
-        sum += "\n\"" + GetItemScripts() + "\",";
+        string sumItemScripts = GetItemScripts();
+        if (!isItemScriptNull)
+            sum += "\n" + GetItemScripts();
         sum += "\n\"^0000CCประเภท:^000000 " + GetItemType() + "\",";
         if (IsLocNeeded())
             sum += "\n\"^0000CCตำแหน่ง:^000000 " + GetItemLoc() + "\",";
@@ -206,6 +208,7 @@ public class Output : ScriptableObject
         sum += "\n\"^0000CCน้ำหนัก:^000000 " + GetItemWeight() + "\"";
         return sum;
     }
+    bool isItemScriptNull;
     string GetItemScripts()
     {
         string sum = null;
@@ -227,6 +230,8 @@ public class Output : ScriptableObject
         sum += data.GetOnEquipScriptDescription();
 
         sum += data.GetOnUnequipScriptDescription();
+
+        isItemScriptNull = string.IsNullOrEmpty(sum);
 
         return sum;
     }
@@ -1343,12 +1348,49 @@ public class ItemDbScriptData
     public string onEquipScript;
     public string onUnequipScript;
 
+    List<string> GetAllParamerters(string sumCut)
+    {
+        isHadParam1 = false;
+        isHadParam2 = false;
+        isHadParam3 = false;
+        isHadParam4 = false;
+        isHadParam5 = false;
+
+        List<string> allParam = new List<string>();
+        if (sumCut.Contains("rand"))
+        {
+            allParam = new List<string>(sumCut.Split(new string[] { "," }, StringSplitOptions.None));
+
+        L_Redo:
+            for (int i = 0; i < allParam.Count; i++)
+            {
+                //Log("(Before)allParam[" + i + "]: " + allParam[i]);
+                var sumParam = allParam[i];
+                if (sumParam.Contains("(") && !sumParam.Contains(")"))
+                {
+                    allParam[i] += "," + allParam[i + 1];
+                    allParam.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+
+            //for (int i = 0; i < allParam.Count; i++)
+            //    Log("(After)allParam[" + i + "]: " + allParam[i]);
+        }
+        else
+        {
+            allParam = StringSplit(sumCut, ',');
+            //for (int i = 0; i < allParam.Count; i++)
+            //    Log("(After)allParam[" + i + "]: " + allParam[i]);
+        }
+        return allParam;
+    }
     string AddDescription(string data, string toAdd)
     {
         if (string.IsNullOrEmpty(data))
-            return toAdd;
+            return "\"" + toAdd + "\",";
         else
-            return "\n" + toAdd;
+            return "\n\"" + toAdd + "\",";
     }
     public string GetDescription(string data)
     {
@@ -1358,45 +1400,14 @@ public class ItemDbScriptData
 
         //Log("GetDescription:" + data);
 
-        string functionName = "itemheal";
+        string functionName = "";
+        #region itemheal
+        functionName = "itemheal";
         if (data.Contains(functionName))
         {
             string sumCut = CutFunctionName(data, functionName);
 
-            List<string> allParam = new List<string>();
-
-            if (sumCut.Contains("rand"))
-            {
-                allParam = new List<string>(sumCut.Split(new string[] { "," }, StringSplitOptions.None));
-
-            L_Redo:
-                for (int i = 0; i < allParam.Count; i++)
-                {
-                    //Log("(Before)allParam[" + i + "]: " + allParam[i]);
-                    var sumParam = allParam[i];
-                    if (sumParam.Contains("(") && !sumParam.Contains(")"))
-                    {
-                        allParam[i] += "," + allParam[i + 1];
-                        allParam.RemoveAt(i + 1);
-                        goto L_Redo;
-                    }
-                }
-
-                //for (int i = 0; i < allParam.Count; i++)
-                //    Log("(After)allParam[" + i + "]: " + allParam[i]);
-            }
-            else
-            {
-                allParam = StringSplit(sumCut, ',');
-                //for (int i = 0; i < allParam.Count; i++)
-                //    Log("(After)allParam[" + i + "]: " + allParam[i]);
-            }
-
-            isHadParam1 = false;
-            isHadParam2 = false;
-            isHadParam3 = false;
-            isHadParam4 = false;
-            isHadParam5 = false;
+            List<string> allParam = GetAllParamerters(sumCut);
 
             string param1 = GetValue(allParam[0], 1);
             string param2 = GetValue(allParam[1], 2);
@@ -1406,7 +1417,24 @@ public class ItemDbScriptData
             if (isHadParam2)
                 sum += AddDescription(sum, "ฟื้นฟู " + param2 + " SP");
         }
+        #endregion
+        #region percentheal
+        functionName = "percentheal";
+        if (data.Contains(functionName))
+        {
+            string sumCut = CutFunctionName(data, functionName);
 
+            List<string> allParam = GetAllParamerters(sumCut);
+
+            string param1 = GetValue(allParam[0], 1);
+            string param2 = GetValue(allParam[1], 2);
+
+            if (isHadParam1)
+                sum += AddDescription(sum, "ฟื้นฟู " + param1 + " HP%");
+            if (isHadParam2)
+                sum += AddDescription(sum, "ฟื้นฟู " + param2 + " SP%");
+        }
+        #endregion
         return sum;
     }
     public string GetScriptDescription()
