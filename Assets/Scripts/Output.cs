@@ -8,17 +8,13 @@ using System.Text;
 [CreateAssetMenu(fileName = "Output", menuName = "Start/Output")]
 public class Output : ScriptableObject
 {
-    #region Variable
     public ItemDatabase itemDatabase;
-    public int targetArrayToConvert;
-    public string _string;
-    #endregion
 
-    #region Main Buttons
+    #region Clear All Database
     [Button]
     public void ClearAll()
     {
-        targetArrayToConvert = 0;
+        targetArray = 0;
         currentOutput = null;
         currentItemDbData = new List<string>();
         currentItemDb = new ItemDb();
@@ -28,6 +24,9 @@ public class Output : ScriptableObject
         currentItemScriptDatas = new List<ItemDbScriptData>();
         Log("Clear all");
     }
+    #endregion
+
+    #region Resource Name
     [Button]
     public void FetchResourceNameFromResourceNames()
     {
@@ -36,34 +35,41 @@ public class Output : ScriptableObject
         FetchResourceNamesFromResourceNames(itemDatabase.m_resourceNames);
         Log("FetchResourceNameFromResourceNames: Done");
     }
+    void FetchResourceNamesFromResourceNames(string data)
+    {
+        currentResourceNames = new List<ItemResourceName>();
+        lines_resourceNames = new List<string>();
+        Log("FetchResourceNamesFromResourceNames >> Parsing txt to database start");
+        lines_resourceNames = StringSplit.GetStringSplit(data, '\n');
+        Log("FetchResourceNamesFromResourceNames >> Parsing txt to database done");
+
+        for (int i = 0; i < lines_resourceNames.Count; i++)
+            Convert_resourceNames_ToList(lines_resourceNames[i]);
+    }
+    void Convert_resourceNames_ToList(string data)
+    {
+        Log(data);
+
+        List<string> sumSplit = StringSplit.GetStringSplit(data, '=');
+
+        ItemResourceName newCurrentResourceName = new ItemResourceName();
+        newCurrentResourceName.id = int.Parse(sumSplit[0]);
+        string sumResourceName = sumSplit[1];
+        sumResourceName = sumResourceName.Substring(0, sumResourceName.Length - 1);
+        newCurrentResourceName.resourceName = sumResourceName;
+
+        currentResourceNames.Add(newCurrentResourceName);
+    }
     #endregion
 
-    #region Debug Buttons
-    [Button]
-    public void DebugConvertCurrentTargetArrayToItemInfo()
-    {
-        currentOutput = null;
-        Log("Output cleared");
-        ConvertCurrentTargetArrayToItemInfo();
-        ClipboardExtension.CopyToClipboard(currentOutput);
-    }
-    [Button]
-    public void DebugConvertStringToItemInfo()
-    {
-        currentOutput = null;
-        Log("Output cleared");
-        ConvertCurrentTargetArrayToItemInfo(_string);
-        ClipboardExtension.CopyToClipboard(currentOutput);
-    }
-    #endregion
-
+    public int targetArray;
     /// <summary>
     /// Start convert specific lines to item info database
     /// </summary>
     /// <param name="index"></param>
     public void ConvertSpecificArrayToItemInfo(int index)
     {
-        targetArrayToConvert = index;
+        targetArray = index;
         ConvertCurrentTargetArrayToItemInfo();
     }
 
@@ -77,10 +83,10 @@ public class Output : ScriptableObject
 
         currentItemDbData = new List<string>();
         if (input == null)
-            currentItemDbData = ConvertItemDbToListWithoutScript(m_lines[targetArrayToConvert]);
+            currentItemDbData = ConvertItemDbToListWithoutScript(m_lines[targetArray]);
         else
             currentItemDbData = ConvertItemDbToListWithoutScript(input);
-        FetchItemDbScript(m_lines[targetArrayToConvert]);
+        FetchItemDbScript(m_lines[targetArray]);
 
         //Test with full parameters
         //currentItemDbData = ConvertItemDbToListWithoutScript("501,Red_Potion,Red Potion,0,10,0,70,15:30,40,5,4,0xFFFFFFFF,63,2,0,4,30:99,1,16,{ itemheal rand(45,65),0; },{},{}");
@@ -166,6 +172,70 @@ public class Output : ScriptableObject
         //Log("Success convert item_db id: " + currentItemDbData[0]);
 
         //Log("ConvertCurrentTargetArrayToItemInfo: Done");
+    }
+
+    List<string> ConvertItemDbToListWithoutScript(string data)
+    {
+        string sum = data;
+        int scriptStartAt = sum.IndexOf("{");
+        sum = sum.Substring(0, scriptStartAt - 1);
+        return new List<string>(sum.Split(','));
+    }
+
+    void FetchItemDbScript(string data)
+    {
+        //currentItemScriptDatas = new List<ItemDbScriptData>(); //Comment this lines in production
+
+        //Full test
+        //data = "19538,Full_Moon,Full Moon,4,0,,0,,0,,0,0xFFFFFFFF,63,2,1024,,1,0,780,{ autobonus \"{ bonus bBaseAtk,50; }\",10,5000,BF_WEAPON,\"{ specialeffect2 EF_POTION_BERSERK; /* showscript */ }\"; autobonus \"{ bonus bMatk,50; }\",5,5000,BF_MAGIC,\"{ specialeffect2 EF_ENERGYCOAT; /* showscript */ }\"; },{ autobonus \"{ bonus bBaseAtk,50; }\",10,5000,BF_WEAPON,\"{ specialeffect2 EF_POTION_BERSERK; /* showscript */ }\"; autobonus \"{ bonus bMatk,50; }\",5,5000,BF_MAGIC,\"{ specialeffect2 EF_ENERGYCOAT; /* showscript */ }\"; },{ autobonus \"{ bonus bBaseAtk,50; }\",10,5000,BF_WEAPON,\"{ specialeffect2 EF_POTION_BERSERK; /* showscript */ }\"; autobonus \"{ bonus bMatk,50; }\",5,5000,BF_MAGIC,\"{ specialeffect2 EF_ENERGYCOAT; /* showscript */ }\"; }";
+
+        string sum = data;
+        string sumScriptPath = data;
+        int itemId = 0;
+
+        int scriptStartAt = sum.IndexOf("{");
+        sum = sum.Substring(0, scriptStartAt - 1);
+        sumScriptPath = sumScriptPath.Substring(scriptStartAt);
+        string sumSaveScriptPath = sumScriptPath;
+        string sumSaveScriptPath2 = sumScriptPath;
+        string sumSaveScriptPath3 = sumScriptPath;
+
+        List<string> temp_item_db = new List<string>(sum.Split(','));
+        itemId = int.Parse(temp_item_db[0]);
+
+        ItemDbScriptData itemDbScriptData = new ItemDbScriptData();
+        itemDbScriptData.id = itemId;
+
+        //Log("sumScriptPath: " + sumScriptPath);
+
+        int onEquipStartAt = sumScriptPath.IndexOf(",{");
+        string sumScript = sumSaveScriptPath.Substring(0, onEquipStartAt);
+        //Log("sumScript: " + sumScript);
+
+        sumScriptPath = sumScriptPath.Substring(onEquipStartAt + 1);
+        //Log("sumScriptPath: " + sumScriptPath);
+
+        int onUnequipStartAt = sumScriptPath.IndexOf(",{");
+        string sumOnEquipScript = sumSaveScriptPath2.Substring(onEquipStartAt + 1, onUnequipStartAt);
+        //Log("sumOnEquipScript: " + sumOnEquipScript);
+
+        int onUnequipEndAt = sumScriptPath.Length;
+        sumScriptPath = sumScriptPath.Substring(onUnequipStartAt + 1);
+        //Log("sumScriptPath: " + sumScriptPath);
+
+        string sumOnUnequipScript = sumScriptPath;
+        //Log("sumOnUnequipScript: " + sumOnUnequipScript);
+
+        //Script
+        itemDbScriptData.script = sumScript;
+
+        //On equip script
+        itemDbScriptData.onEquipScript = sumOnEquipScript;
+
+        //On unequip script
+        itemDbScriptData.onUnequipScript = sumOnUnequipScript;
+
+        currentItemScriptDatas.Add(itemDbScriptData);
     }
 
     #region Item Description
@@ -1208,6 +1278,25 @@ public class Output : ScriptableObject
     #endregion
 
     #region Debug / View Database
+    [Button]
+    public void DebugConvertCurrentTargetArrayToItemInfo()
+    {
+        currentOutput = null;
+        Log("Output cleared");
+        ConvertCurrentTargetArrayToItemInfo();
+        ClipboardExtension.CopyToClipboard(currentOutput);
+    }
+
+    public string _string;
+    [Button]
+    public void DebugConvertStringToItemInfo()
+    {
+        currentOutput = null;
+        Log("Output cleared");
+        ConvertCurrentTargetArrayToItemInfo(_string);
+        ClipboardExtension.CopyToClipboard(currentOutput);
+    }
+
     [TextArea] string currentOutput;
     public string m_currentOutput { get { return currentOutput; } set { currentOutput = value; } }
 
@@ -1231,97 +1320,6 @@ public class Output : ScriptableObject
     List<string> lines_resourceNames = new List<string>();
     public List<string> m_lines_resourceNames { get { return lines_resourceNames; } set { lines_resourceNames = value; } }
     #endregion
-
-    List<string> ConvertItemDbToListWithoutScript(string data)
-    {
-        string sum = data;
-        int scriptStartAt = sum.IndexOf("{");
-        sum = sum.Substring(0, scriptStartAt - 1);
-        return new List<string>(sum.Split(','));
-    }
-
-    void FetchItemDbScript(string data)
-    {
-        //currentItemScriptDatas = new List<ItemDbScriptData>(); //Comment this lines in production
-
-        //Full test
-        //data = "19538,Full_Moon,Full Moon,4,0,,0,,0,,0,0xFFFFFFFF,63,2,1024,,1,0,780,{ autobonus \"{ bonus bBaseAtk,50; }\",10,5000,BF_WEAPON,\"{ specialeffect2 EF_POTION_BERSERK; /* showscript */ }\"; autobonus \"{ bonus bMatk,50; }\",5,5000,BF_MAGIC,\"{ specialeffect2 EF_ENERGYCOAT; /* showscript */ }\"; },{ autobonus \"{ bonus bBaseAtk,50; }\",10,5000,BF_WEAPON,\"{ specialeffect2 EF_POTION_BERSERK; /* showscript */ }\"; autobonus \"{ bonus bMatk,50; }\",5,5000,BF_MAGIC,\"{ specialeffect2 EF_ENERGYCOAT; /* showscript */ }\"; },{ autobonus \"{ bonus bBaseAtk,50; }\",10,5000,BF_WEAPON,\"{ specialeffect2 EF_POTION_BERSERK; /* showscript */ }\"; autobonus \"{ bonus bMatk,50; }\",5,5000,BF_MAGIC,\"{ specialeffect2 EF_ENERGYCOAT; /* showscript */ }\"; }";
-
-        string sum = data;
-        string sumScriptPath = data;
-        int itemId = 0;
-
-        int scriptStartAt = sum.IndexOf("{");
-        sum = sum.Substring(0, scriptStartAt - 1);
-        sumScriptPath = sumScriptPath.Substring(scriptStartAt);
-        string sumSaveScriptPath = sumScriptPath;
-        string sumSaveScriptPath2 = sumScriptPath;
-        string sumSaveScriptPath3 = sumScriptPath;
-
-        List<string> temp_item_db = new List<string>(sum.Split(','));
-        itemId = int.Parse(temp_item_db[0]);
-
-        ItemDbScriptData itemDbScriptData = new ItemDbScriptData();
-        itemDbScriptData.id = itemId;
-
-        //Log("sumScriptPath: " + sumScriptPath);
-
-        int onEquipStartAt = sumScriptPath.IndexOf(",{");
-        string sumScript = sumSaveScriptPath.Substring(0, onEquipStartAt);
-        //Log("sumScript: " + sumScript);
-
-        sumScriptPath = sumScriptPath.Substring(onEquipStartAt + 1);
-        //Log("sumScriptPath: " + sumScriptPath);
-
-        int onUnequipStartAt = sumScriptPath.IndexOf(",{");
-        string sumOnEquipScript = sumSaveScriptPath2.Substring(onEquipStartAt + 1, onUnequipStartAt);
-        //Log("sumOnEquipScript: " + sumOnEquipScript);
-
-        int onUnequipEndAt = sumScriptPath.Length;
-        sumScriptPath = sumScriptPath.Substring(onUnequipStartAt + 1);
-        //Log("sumScriptPath: " + sumScriptPath);
-
-        string sumOnUnequipScript = sumScriptPath;
-        //Log("sumOnUnequipScript: " + sumOnUnequipScript);
-
-        //Script
-        itemDbScriptData.script = sumScript;
-
-        //On equip script
-        itemDbScriptData.onEquipScript = sumOnEquipScript;
-
-        //On unequip script
-        itemDbScriptData.onUnequipScript = sumOnUnequipScript;
-
-        currentItemScriptDatas.Add(itemDbScriptData);
-    }
-
-    void FetchResourceNamesFromResourceNames(string data)
-    {
-        currentResourceNames = new List<ItemResourceName>();
-        lines_resourceNames = new List<string>();
-        Log("FetchResourceNamesFromResourceNames >> Parsing txt to database start");
-        lines_resourceNames = StringSplit.GetStringSplit(data, '\n');
-        Log("FetchResourceNamesFromResourceNames >> Parsing txt to database done");
-
-        for (int i = 0; i < lines_resourceNames.Count; i++)
-            Convert_resourceNames_ToList(lines_resourceNames[i]);
-    }
-
-    void Convert_resourceNames_ToList(string data)
-    {
-        Log(data);
-
-        List<string> sumSplit = StringSplit.GetStringSplit(data, '=');
-
-        ItemResourceName newCurrentResourceName = new ItemResourceName();
-        newCurrentResourceName.id = int.Parse(sumSplit[0]);
-        string sumResourceName = sumSplit[1];
-        sumResourceName = sumResourceName.Substring(0, sumResourceName.Length - 1);
-        newCurrentResourceName.resourceName = sumResourceName;
-
-        currentResourceNames.Add(newCurrentResourceName);
-    }
 
     void Log(object obj)
     {
@@ -1796,17 +1794,6 @@ public enum Size
     Size_Small, Size_Medium, Size_Large, Size_All
 }
 
-/// <summary>
-/// (Default: BF_SHORT+BF_LONG)
-/// (Default: BF_WEAPON)
-/// (Default: BF_SKILL if type is BF_MISC or BF_MAGIC, BF_NORMAL if type is BF_WEAPON)
-/// 
-/// (Default: Attacked target)
-/// 
-/// (Default: All attacks)
-/// 
-/// (Default: Physical/weapon)
-/// </summary>
 public enum TriggerCriteria
 {
     BF_SHORT, BF_LONG, BF_WEAPON, BF_MAGIC, BF_MISC, BF_NORMAL, BF_SKILL,
@@ -1818,23 +1805,5 @@ public class ItemResourceName
 {
     public int id;
     public string resourceName;
-}
-
-/// <summary>
-/// Credit: https://thatfrenchgamedev.com/785/unity-2018-how-to-copy-string-to-clipboard/
-/// </summary>
-public static class ClipboardExtension
-{
-    /// <summary>
-    /// Puts the string into the Clipboard.
-    /// </summary>
-    /// <param name="str"></param>
-    public static void CopyToClipboard(this string str)
-    {
-        var textEditor = new TextEditor();
-        textEditor.text = str;
-        textEditor.SelectAll();
-        textEditor.Copy();
-    }
 }
 #endregion
