@@ -1297,6 +1297,12 @@ public class Output : ScriptableObject
         ClipboardExtension.CopyToClipboard(currentOutput);
     }
 
+    [Button]
+    public void ViewTargetArrayLines()
+    {
+        Log(m_lines[targetArray]);
+    }
+
     [TextArea] string currentOutput;
     public string m_currentOutput { get { return currentOutput; } set { currentOutput = value; } }
 
@@ -1373,29 +1379,45 @@ public class ItemDbScriptData
     #endregion
 
     #region Get Description Functions
+    string sumScript;
     public string GetScriptDescription()
     {
-        string sum = null;
+        sumScript = null;
 
-        sum += GetDescription(script);
+        string sumDesc = GetDescription(script);
+        sumScript = sumDesc;
 
-        return sum;
+        return sumScript;
     }
+    string sumEquipScript;
     public string GetOnEquipScriptDescription()
     {
-        string sum = null;
+        sumEquipScript = null;
 
-        sum += GetDescription(onEquipScript);
+        string sumDesc = GetDescription(onEquipScript);
+        if (!string.IsNullOrEmpty(sumScript) && !string.IsNullOrEmpty(sumDesc) && !string.IsNullOrWhiteSpace(sumDesc))
+            sumEquipScript = "\n[เมื่อสวมใส่]\n" + sumDesc;
+        else if (!string.IsNullOrEmpty(sumDesc) && !string.IsNullOrWhiteSpace(sumDesc))
+            sumEquipScript = "[เมื่อสวมใส่]\n" + sumDesc;
+        else
+            sumEquipScript = sumDesc;
 
-        return sum;
+        return sumEquipScript;
     }
+    string sumUnequipScript;
     public string GetOnUnequipScriptDescription()
     {
-        string sum = null;
+        sumUnequipScript = null;
 
-        sum += GetDescription(onUnequipScript);
+        string sumDesc = GetDescription(onUnequipScript);
+        if (!string.IsNullOrEmpty(sumEquipScript) && !string.IsNullOrEmpty(sumDesc) && !string.IsNullOrWhiteSpace(sumDesc))
+            sumUnequipScript = "\n[เมื่อถอด]\n" + sumDesc;
+        else if (!string.IsNullOrEmpty(sumDesc) && !string.IsNullOrWhiteSpace(sumDesc))
+            sumUnequipScript = "[เมื่อถอด]\n" + sumDesc;
+        else
+            sumUnequipScript = sumDesc;
 
-        return sum;
+        return sumUnequipScript;
     }
     #endregion
 
@@ -1410,7 +1432,8 @@ public class ItemDbScriptData
 
         string sum = null;
 
-        //Log("GetDescription:" + data);
+        if (!Application.isPlaying)
+            Log("GetDescription:" + data);
 
         //Split all space and merge it again line by line
         List<string> allCut = StringSplit.GetStringSplit(data, ' ');
@@ -1418,7 +1441,10 @@ public class ItemDbScriptData
         for (int i = 0; i < allCut.Count; i++)
         {
             var sumCut = allCut[i];
-            //Log(sumCut);
+
+            if (!Application.isPlaying)
+                Log(sumCut);
+
             if (sumCut.Contains("itemheal"))
             {
                 if (sumCut.Contains("itemheal") && !sumCut.Contains(";"))
@@ -1518,13 +1544,58 @@ public class ItemDbScriptData
 
                 List<string> allParam = GetAllParamerters(sumCut);
 
-                string param1 = GetValue(allParam[0], 1);
-                string param2 = GetValue(allParam[1], 2);
-                string param3 = GetValue(allParam[2], 3);
-                string param4 = GetValue(allParam[3], 4);
+                if (!Application.isPlaying)
+                    Log("allParam.Count: " + allParam.Count);
 
-                if (isHadParam1 && isHadParam2 && isHadParam3)
-                    sum += AddDescription(sum, "มีโอกาส " + param4 + "% ที่จะเกิดสถานะ " + param1 + " เป็นเวลา " + SecFromMilliSec(float.Parse(param2)));
+                string param1 = "";
+                string param2 = "";
+                string param3 = "";
+                string param4 = "";
+                string param5 = "";
+
+                if (allParam.Count > 0)
+                    param1 = GetValue(allParam[0], 1);
+                if (allParam.Count > 1)
+                    param2 = GetValue(allParam[1], 2);
+                if (allParam.Count > 2)
+                    param3 = GetValue(allParam[2], 3);
+                if (allParam.Count > 3)
+                    param4 = GetValue(allParam[3], 4);
+                if (allParam.Count > 4)
+                    param5 = GetValue(allParam[4], 5, true);
+
+                if (!Application.isPlaying)
+                {
+                    Log("isHadParam1: " + isHadParam1 + " | param1: " + param1);
+                    Log("isHadParam2: " + isHadParam2 + " | param2: " + param2);
+                    Log("isHadParam3: " + isHadParam3 + " | param3: " + param3);
+                    Log("isHadParam4: " + isHadParam4 + " | param4: " + param4);
+                    Log("isHadParam5: " + isHadParam5 + " | param5: " + param5);
+                }
+
+                string timer = "";
+                if (param2 == "ตลอดเวลา")
+                    timer = " " + param2;
+                else
+                    timer = " เป็นเวลา " + SecFromMilliSec(float.Parse(param2));
+
+                float rate = 0;
+                if (isHadParam4)
+                    rate = float.Parse(param4);
+                string percent = GetPercent(rate, 100);
+
+                int flag = 0;
+                if (isHadParam5)
+                    flag = int.Parse(param5);
+                else
+                    flag = 1;
+                string sumFlag = Get_sc_start_Flag(flag);
+
+                if (isHadParam1 && isHadParam2 && isHadParam3
+                    || isHadParam1 && isHadParam2)
+                    sum += AddDescription(sum, "มีโอกาส " + percent + " ที่จะเกิดสถานะ " + param1 + timer + sumFlag);
+                else if (isHadParam1)
+                    sum += AddDescription(sum, "มีโอกาส " + percent + " ที่จะเกิดสถานะ " + param1 + sumFlag);
             }
             #endregion
         }
@@ -1540,19 +1611,22 @@ public class ItemDbScriptData
     /// <returns></returns>
     string CutFunctionName(string toCut, string functionName)
     {
-        //Log("CutFunctionName >> toCut: " + toCut + " | functionName: " + functionName);
+        if (!Application.isPlaying)
+            Log("CutFunctionName >> toCut: " + toCut + " | functionName: " + functionName);
 
         int cutStartAt = toCut.IndexOf(functionName);
 
         string cut = toCut.Substring(cutStartAt + functionName.Length);
 
-        //Log("cut: " + cut);
+        if (!Application.isPlaying)
+            Log("cut: " + cut);
 
         int cutEndAt = cut.IndexOf(";");
 
         cut = cut.Substring(1, cutEndAt - 1);
 
-        //Log("cut: " + cut);
+        if (!Application.isPlaying)
+            Log("cut: " + cut);
 
         return cut;
     }
@@ -1606,11 +1680,17 @@ public class ItemDbScriptData
     /// <param name="data"></param>
     /// <param name="paramCount"></param>
     /// <returns></returns>
-    string GetValue(string data, int paramCount)
+    string GetValue(string data, int paramCount, bool isZeroValueOkay = false)
     {
         string value = data;
 
         //Log("GetValue: " + value);
+
+        if (value == "INFINITE_TICK")
+        {
+            SetParamCheck(paramCount, true);
+            return "ตลอดเวลา";
+        }
 
         //rand
         if (value.Contains("rand"))
@@ -1681,7 +1761,7 @@ public class ItemDbScriptData
             }
             else
             {
-                if (paramInt <= 0)
+                if (paramInt <= 0 && !isZeroValueOkay)
                     SetParamCheck(paramCount, false);
                 else
                     SetParamCheck(paramCount, true);
@@ -1693,18 +1773,50 @@ public class ItemDbScriptData
 
     #region Utilities
     /// <summary>
+    /// Get percent wording by rate and divisor
+    /// </summary>
+    /// <param name="rate"></param>
+    /// <param name="divisor"></param>
+    /// <returns></returns>
+    string GetPercent(float rate, int divisor)
+    {
+        var sumRate = rate / divisor;
+        if (rate > divisor)
+            return sumRate.ToString("f0") + "%";
+        else if (rate > 0)
+            return sumRate.ToString("f1") + "%";
+        else
+            return "100%";
+    }
+
+    /// <summary>
     /// Milliseconds to seconds
     /// </summary>
     /// <param name="timer"></param>
     /// <param name="digit"></param>
     /// <returns></returns>
-    string SecFromMilliSec(float timer, string digit = null)
+    string SecFromMilliSec(float timer)
     {
-        if (string.IsNullOrEmpty(digit))
-            digit = "f1";
-        return (timer / 1000).ToString(digit) + " วินาที";
+        if (timer % 1000 != 0)
+            return (timer / 1000).ToString("f1") + " วินาที";
+        else
+            return (timer / 1000).ToString("f0") + " วินาที";
     }
 
+    string Get_sc_start_Flag(int flag)
+    {
+        ScStartFlag scStartFlag = (ScStartFlag)Enum.Parse(typeof(ScStartFlag), flag.ToString("f0"));
+        if (scStartFlag == ScStartFlag.SCSTART_LOADED)
+            return "(สถานะจะคงที่)";
+        else if (scStartFlag == ScStartFlag.SCSTART_NOAVOID)
+            return "(ไม่สามารถยับยั้งการเกิดสถานะนี้ได้)";
+        else if (scStartFlag == ScStartFlag.SCSTART_NOICON)
+            return "(สถานะจะไม่แสดงเป็น Icon)";
+        else if (scStartFlag == ScStartFlag.SCSTART_NORATEDEF)
+            return "(โอกาสจะคงที่)";
+        else
+            return "";
+    }
     /// <summary>
     /// Credit: https://answers.unity.com/questions/803672/capitalize-first-letter-in-textfield-only.html
     /// </summary>
@@ -1798,6 +1910,16 @@ public enum TriggerCriteria
 {
     BF_SHORT, BF_LONG, BF_WEAPON, BF_MAGIC, BF_MISC, BF_NORMAL, BF_SKILL,
     ATF_SELF, ATF_TARGET, ATF_SHORT, ATF_LONG, ATF_WEAPON, ATF_MAGIC, ATF_MISC
+}
+
+[Flags]
+public enum ScStartFlag
+{
+    SCSTART_NOAVOID,
+    SCSTART_NOTICKDEF,
+    SCSTART_LOADED,
+    SCSTART_NORATEDEF,
+    SCSTART_NOICON
 }
 
 [Serializable]
