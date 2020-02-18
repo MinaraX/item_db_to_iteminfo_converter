@@ -89,7 +89,7 @@ public class Converter : MonoBehaviour
 
         //Parsing item_db to List
         Log("Converter: Parsing item_db to list");
-        output.m_lines = StringToList(itemDatabase.m_item_db);
+        output.m_lines = StringSplit.GetStringSplit(itemDatabase.m_item_db, '\n');
 
         //Remove comment from List
         Log("Converter: Remove comment from list");
@@ -133,24 +133,8 @@ public class Converter : MonoBehaviour
         Log("output.m_lines.Count: " + output.m_lines.Count);
     }
 
-    public int targetLines;
-    [Button]
-    public void ViewAtTargetLines()
-    {
-        Log(output.m_lines[targetLines]);
-    }
-
     void Log(object obj)
     {
         Debug.Log(obj);
-    }
-
-    List<string> TextAssetToList(TextAsset textAsset)
-    {
-        return new List<string>(textAsset.text.Split('\n'));
-    }
-    List<string> StringToList(string data)
-    {
-        return new List<string>(data.Split('\n'));
     }
 }

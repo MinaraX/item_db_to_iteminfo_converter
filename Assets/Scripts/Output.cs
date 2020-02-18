@@ -8,10 +8,13 @@ using System.Text;
 [CreateAssetMenu(fileName = "Output", menuName = "Start/Output")]
 public class Output : ScriptableObject
 {
+    #region Variable
     public ItemDatabase itemDatabase;
-    //public int targetItemIdToFetchResourceName;
     public int targetArrayToConvert;
+    public string _string;
+    #endregion
 
+    #region Main Buttons
     [Button]
     public void ClearAll()
     {
@@ -33,20 +36,11 @@ public class Output : ScriptableObject
         FetchResourceNamesFromResourceNames(itemDatabase.m_resourceNames);
         Log("FetchResourceNameFromResourceNames: Done");
     }
-    /*[Button]
-    public void FetchResourceNameFromItemInfo()
-    {
-        Log("FetchResourceName: Start");
-        currentResourceNames = new List<ItemResourceName>();
-        Log("FetchResourceName: Done");
-    }*/
-    public void ConvertCurrentTargetItemIdToFetchResourceName()
-    {
-        Log("ConvertCurrentTargetItemIdToFetchResourceName: Start");
-        Log("ConvertCurrentTargetItemIdToFetchResourceName: Done");
-    }
+    #endregion
+
+    #region Debug Buttons
     [Button]
-    public void ClearAndConvertCurrentTargetArrayToItemInfo()
+    public void DebugConvertCurrentTargetArrayToItemInfo()
     {
         currentOutput = null;
         Log("Output cleared");
@@ -54,12 +48,38 @@ public class Output : ScriptableObject
         ClipboardExtension.CopyToClipboard(currentOutput);
     }
     [Button]
-    public void ConvertCurrentTargetArrayToItemInfo()
+    public void DebugConvertStringToItemInfo()
+    {
+        currentOutput = null;
+        Log("Output cleared");
+        ConvertCurrentTargetArrayToItemInfo(_string);
+        ClipboardExtension.CopyToClipboard(currentOutput);
+    }
+    #endregion
+
+    /// <summary>
+    /// Start convert specific lines to item info database
+    /// </summary>
+    /// <param name="index"></param>
+    public void ConvertSpecificArrayToItemInfo(int index)
+    {
+        targetArrayToConvert = index;
+        ConvertCurrentTargetArrayToItemInfo();
+    }
+
+    /// <summary>
+    /// Convert string to item info database
+    /// </summary>
+    /// <param name="input"></param>
+    void ConvertCurrentTargetArrayToItemInfo(string input = null)
     {
         //Log("ConvertCurrentTargetArrayToItemInfo: Start");
 
         currentItemDbData = new List<string>();
-        currentItemDbData = ConvertItemDbToListWithoutScript(m_lines[targetArrayToConvert]);
+        if (input == null)
+            currentItemDbData = ConvertItemDbToListWithoutScript(m_lines[targetArrayToConvert]);
+        else
+            currentItemDbData = ConvertItemDbToListWithoutScript(input);
         FetchItemDbScript(m_lines[targetArrayToConvert]);
 
         //Test with full parameters
@@ -85,7 +105,7 @@ public class Output : ScriptableObject
             string sum = currentItemDbData[7];
             if (sum.Contains(":"))
             {
-                List<string> sumSplit = StringSplit(sum, ':');
+                List<string> sumSplit = StringSplit.GetStringSplit(sum, ':');
                 currentItemDb.atk = int.Parse(sumSplit[0]);
                 currentItemDb.mAtk = int.Parse(sumSplit[1]);
             }
@@ -116,7 +136,7 @@ public class Output : ScriptableObject
             string sum = currentItemDbData[16];
             if (sum.Contains(":"))
             {
-                List<string> sumSplit = StringSplit(sum, ':');
+                List<string> sumSplit = StringSplit.GetStringSplit(sum, ':');
                 currentItemDb.eLv = int.Parse(sumSplit[0]);
                 currentItemDb.eMaxLv = int.Parse(sumSplit[1]);
             }
@@ -146,11 +166,6 @@ public class Output : ScriptableObject
         //Log("Success convert item_db id: " + currentItemDbData[0]);
 
         //Log("ConvertCurrentTargetArrayToItemInfo: Done");
-    }
-    public void ConvertSpecificArrayToItemInfo(int index)
-    {
-        targetArrayToConvert = index;
-        ConvertCurrentTargetArrayToItemInfo();
     }
 
     #region Item Description
@@ -1192,8 +1207,8 @@ public class Output : ScriptableObject
     }
     #endregion
 
-    [TextArea]
-    string currentOutput;
+    #region Debug / View Database
+    [TextArea] string currentOutput;
     public string m_currentOutput { get { return currentOutput; } set { currentOutput = value; } }
 
     //item_db
@@ -1215,11 +1230,7 @@ public class Output : ScriptableObject
     public List<string> m_lines { get { return lines; } set { lines = value; } }
     List<string> lines_resourceNames = new List<string>();
     public List<string> m_lines_resourceNames { get { return lines_resourceNames; } set { lines_resourceNames = value; } }
-
-    List<string> StringSplit(string data, char targetToSplit)
-    {
-        return new List<string>(data.Split(targetToSplit));
-    }
+    #endregion
 
     List<string> ConvertItemDbToListWithoutScript(string data)
     {
@@ -1290,7 +1301,7 @@ public class Output : ScriptableObject
         currentResourceNames = new List<ItemResourceName>();
         lines_resourceNames = new List<string>();
         Log("FetchResourceNamesFromResourceNames >> Parsing txt to database start");
-        lines_resourceNames = StringSplit(data, '\n');
+        lines_resourceNames = StringSplit.GetStringSplit(data, '\n');
         Log("FetchResourceNamesFromResourceNames >> Parsing txt to database done");
 
         for (int i = 0; i < lines_resourceNames.Count; i++)
@@ -1301,7 +1312,7 @@ public class Output : ScriptableObject
     {
         Log(data);
 
-        List<string> sumSplit = StringSplit(data, '=');
+        List<string> sumSplit = StringSplit.GetStringSplit(data, '=');
 
         ItemResourceName newCurrentResourceName = new ItemResourceName();
         newCurrentResourceName.id = int.Parse(sumSplit[0]);
@@ -1348,55 +1359,53 @@ public class ItemDb
 [Serializable]
 public class ItemDbScriptData
 {
+    #region Variable
     public int id;
     public string script;
     public string onEquipScript;
     public string onUnequipScript;
+    #endregion
 
-    List<string> GetAllParamerters(string sumCut)
+    #region Non-Item Related Variable
+    bool isHadParam1;
+    bool isHadParam2;
+    bool isHadParam3;
+    bool isHadParam4;
+    bool isHadParam5;
+    #endregion
+
+    #region Get Description Functions
+    public string GetScriptDescription()
     {
-        isHadParam1 = false;
-        isHadParam2 = false;
-        isHadParam3 = false;
-        isHadParam4 = false;
-        isHadParam5 = false;
+        string sum = null;
 
-        List<string> allParam = new List<string>();
-        if (sumCut.Contains("rand"))
-        {
-            allParam = new List<string>(sumCut.Split(new string[] { "," }, StringSplitOptions.None));
+        sum += GetDescription(script);
 
-        L_Redo:
-            for (int i = 0; i < allParam.Count; i++)
-            {
-                //Log("(Before)allParam[" + i + "]: " + allParam[i]);
-                var sumParam = allParam[i];
-                if (sumParam.Contains("(") && !sumParam.Contains(")"))
-                {
-                    allParam[i] += "," + allParam[i + 1];
-                    allParam.RemoveAt(i + 1);
-                    goto L_Redo;
-                }
-            }
-
-            //for (int i = 0; i < allParam.Count; i++)
-            //    Log("(After)allParam[" + i + "]: " + allParam[i]);
-        }
-        else
-        {
-            allParam = StringSplit(sumCut, ',');
-            //for (int i = 0; i < allParam.Count; i++)
-            //    Log("(After)allParam[" + i + "]: " + allParam[i]);
-        }
-        return allParam;
+        return sum;
     }
-    string AddDescription(string data, string toAdd)
+    public string GetOnEquipScriptDescription()
     {
-        if (string.IsNullOrEmpty(data))
-            return "\"" + toAdd + "\",";
-        else
-            return "\n\"" + toAdd + "\",";
+        string sum = null;
+
+        sum += GetDescription(onEquipScript);
+
+        return sum;
     }
+    public string GetOnUnequipScriptDescription()
+    {
+        string sum = null;
+
+        sum += GetDescription(onUnequipScript);
+
+        return sum;
+    }
+    #endregion
+
+    /// <summary>
+    /// Get description by each item scripts function
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
     public string GetDescription(string data)
     {
         //Debugger.ClearConsole();
@@ -1406,7 +1415,7 @@ public class ItemDbScriptData
         //Log("GetDescription:" + data);
 
         //Split all space and merge it again line by line
-        List<string> allCut = StringSplit(data, ' ');
+        List<string> allCut = StringSplit.GetStringSplit(data, ' ');
     L_Redo:
         for (int i = 0; i < allCut.Count; i++)
         {
@@ -1433,6 +1442,15 @@ public class ItemDbScriptData
             else if (sumCut.Contains("sc_end"))
             {
                 if (sumCut.Contains("sc_end") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("sc_start"))
+            {
+                if (sumCut.Contains("sc_start") && !sumCut.Contains(";"))
                 {
                     allCut[i] += " " + allCut[i + 1];
                     allCut.RemoveAt(i + 1);
@@ -1482,7 +1500,6 @@ public class ItemDbScriptData
             #endregion
             #region sc_end
             functionName = "sc_end";
-
             if (data.Contains(functionName))
             {
                 string sumCut = CutFunctionName(data, functionName);
@@ -1494,35 +1511,35 @@ public class ItemDbScriptData
                 if (isHadParam1)
                     sum += AddDescription(sum, "รักษาสถานะ " + param1);
             }
+            #endregion
+            #region sc_start
+            functionName = "sc_start";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
+                string param4 = GetValue(allParam[3], 4);
+
+                if (isHadParam1 && isHadParam2 && isHadParam3)
+                    sum += AddDescription(sum, "มีโอกาส " + param4 + "% ที่จะเกิดสถานะ " + param1 + " เป็นเวลา " + SecFromMilliSec(float.Parse(param2)));
+            }
+            #endregion
         }
-        #endregion
-        return sum;
-    }
-    public string GetScriptDescription()
-    {
-        string sum = null;
-
-        sum += GetDescription(script);
-
-        return sum;
-    }
-    public string GetOnEquipScriptDescription()
-    {
-        string sum = null;
-
-        sum += GetDescription(onEquipScript);
-
-        return sum;
-    }
-    public string GetOnUnequipScriptDescription()
-    {
-        string sum = null;
-
-        sum += GetDescription(onUnequipScript);
 
         return sum;
     }
 
+    /// <summary>
+    /// Cut function name out of string
+    /// </summary>
+    /// <param name="toCut"></param>
+    /// <param name="functionName"></param>
+    /// <returns></returns>
     string CutFunctionName(string toCut, string functionName)
     {
         //Log("CutFunctionName >> toCut: " + toCut + " | functionName: " + functionName);
@@ -1542,11 +1559,55 @@ public class ItemDbScriptData
         return cut;
     }
 
-    bool isHadParam1;
-    bool isHadParam2;
-    bool isHadParam3;
-    bool isHadParam4;
-    bool isHadParam5;
+    /// <summary>
+    /// Return all parameter of input parameter
+    /// </summary>
+    /// <param name="sumCut"></param>
+    /// <returns></returns>
+    List<string> GetAllParamerters(string sumCut)
+    {
+        isHadParam1 = false;
+        isHadParam2 = false;
+        isHadParam3 = false;
+        isHadParam4 = false;
+        isHadParam5 = false;
+
+        List<string> allParam = new List<string>();
+        if (sumCut.Contains("rand"))
+        {
+            allParam = new List<string>(sumCut.Split(new string[] { "," }, StringSplitOptions.None));
+
+        L_Redo:
+            for (int i = 0; i < allParam.Count; i++)
+            {
+                //Log("(Before)allParam[" + i + "]: " + allParam[i]);
+                var sumParam = allParam[i];
+                if (sumParam.Contains("(") && !sumParam.Contains(")"))
+                {
+                    allParam[i] += "," + allParam[i + 1];
+                    allParam.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+
+            //for (int i = 0; i < allParam.Count; i++)
+            //    Log("(After)allParam[" + i + "]: " + allParam[i]);
+        }
+        else
+        {
+            allParam = StringSplit.GetStringSplit(sumCut, ',');
+            //for (int i = 0; i < allParam.Count; i++)
+            //    Log("(After)allParam[" + i + "]: " + allParam[i]);
+        }
+        return allParam;
+    }
+
+    /// <summary>
+    /// Return value of given parameters
+    /// </summary>
+    /// <param name="data"></param>
+    /// <param name="paramCount"></param>
+    /// <returns></returns>
     string GetValue(string data, int paramCount)
     {
         string value = data;
@@ -1570,7 +1631,7 @@ public class ItemDbScriptData
 
             rand = rand.Substring(1, paramEndAt - 1);
 
-            List<string> allRand = StringSplit(rand, ',');
+            List<string> allRand = StringSplit.GetStringSplit(rand, ',');
 
             //Log("GetValue: " + rand);
 
@@ -1632,6 +1693,37 @@ public class ItemDbScriptData
         }
     }
 
+    #region Utilities
+    /// <summary>
+    /// Milliseconds to seconds
+    /// </summary>
+    /// <param name="timer"></param>
+    /// <param name="digit"></param>
+    /// <returns></returns>
+    string SecFromMilliSec(float timer, string digit = null)
+    {
+        if (string.IsNullOrEmpty(digit))
+            digit = "f1";
+        return (timer / 1000).ToString(digit) + " วินาที";
+    }
+
+    /// <summary>
+    /// Credit: https://answers.unity.com/questions/803672/capitalize-first-letter-in-textfield-only.html
+    /// </summary>
+    /// <param name="text"></param>
+    /// <returns></returns>
+    string UpperFirst(string text)
+    {
+        return char.ToUpper(text[0]) +
+            ((text.Length > 1) ? text.Substring(1).ToLower() : string.Empty);
+    }
+    #endregion
+
+    /// <summary>
+    /// Set parameter x to true or false for adding description or not add
+    /// </summary>
+    /// <param name="paramCount"></param>
+    /// <param name="isTrue"></param>
     void SetParamCheck(int paramCount, bool isTrue)
     {
         if (paramCount == 1)
@@ -1647,19 +1739,17 @@ public class ItemDbScriptData
     }
 
     /// <summary>
-    /// Credit: https://answers.unity.com/questions/803672/capitalize-first-letter-in-textfield-only.html
+    /// Add description with new line / no new line by string check
     /// </summary>
-    /// <param name="text"></param>
+    /// <param name="data"></param>
+    /// <param name="toAdd"></param>
     /// <returns></returns>
-    string UpperFirst(string text)
+    string AddDescription(string data, string toAdd)
     {
-        return char.ToUpper(text[0]) +
-            ((text.Length > 1) ? text.Substring(1).ToLower() : string.Empty);
-    }
-
-    List<string> StringSplit(string data, char targetToSplit)
-    {
-        return new List<string>(data.Split(targetToSplit));
+        if (string.IsNullOrEmpty(data))
+            return "\"" + toAdd + "\",";
+        else
+            return "\n\"" + toAdd + "\",";
     }
 
     void Log(object obj)

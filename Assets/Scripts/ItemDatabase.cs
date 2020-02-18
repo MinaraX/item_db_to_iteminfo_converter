@@ -9,7 +9,6 @@ public class ItemDatabase : ScriptableObject
 {
     public TextAsset textAsset_item_db;
     public TextAsset textAsset_item_combo_db;
-    public TextAsset textAsset_itemInfo;
     public TextAsset textAsset_resourceNames;
     string item_db;
     public string m_item_db
@@ -79,7 +78,5 @@ public class ItemDatabase : ScriptableObject
             m_item_db = textAsset_item_db.text;
         if (textAsset_item_combo_db)
             m_item_combo_db = textAsset_item_combo_db.text;
-        if (textAsset_itemInfo)
-            m_itemInfo = textAsset_itemInfo.text;
     }
 }
