@@ -1485,8 +1485,8 @@ public class ItemDbScriptData
 
         for (int i = 0; i < allCut.Count; i++)
         {
-            if (!Application.isPlaying)
-                Log("allCut[" + i + "]: " + allCut[i]);
+            //if (!Application.isPlaying)
+            //    Log("allCut[" + i + "]: " + allCut[i]);
 
             data = allCut[i];
 
@@ -1580,7 +1580,7 @@ public class ItemDbScriptData
                 if (param2 == "ตลอดเวลา")
                     timer = " " + param2;
                 else
-                    timer = " เป็นเวลา " + SecFromMilliSec(float.Parse(param2));
+                    timer = " เป็นเวลา " + TimerToStringTimer(float.Parse(param2));
 
                 float rate = 0;
                 if (isHadParam4)
@@ -1798,12 +1798,30 @@ public class ItemDbScriptData
     /// <param name="timer"></param>
     /// <param name="digit"></param>
     /// <returns></returns>
-    string SecFromMilliSec(float timer)
+    string TimerToStringTimer(float timer, float divider = 1000)
     {
-        if (timer % 1000 != 0)
-            return (timer / 1000).ToString("f1") + " วินาที";
+        string sumDecimal = "f0";
+
+        if (timer % divider != 0)
+            sumDecimal = "f1";
+
+        var sumTimer = (timer / divider);
+
+
+        if (sumTimer >= 31536000)
+            return (sumTimer / 31536000).ToString(sumDecimal) + " ปี";
+        else if (sumTimer >= 2628000)
+            return (sumTimer / 2628000).ToString(sumDecimal) + " เดือน";
+        else if (sumTimer >= 604800)
+            return (sumTimer / 604800).ToString(sumDecimal) + " สัปดาห์";
+        else if (sumTimer >= 86400)
+            return (sumTimer / 86400).ToString(sumDecimal) + " วัน";
+        else if (sumTimer >= 3600)
+            return (sumTimer / 3600).ToString(sumDecimal) + " ชั่วโมง";
+        else if (sumTimer >= 60)
+            return (sumTimer / 60).ToString(sumDecimal) + " นาที";
         else
-            return (timer / 1000).ToString("f0") + " วินาที";
+            return sumTimer.ToString(sumDecimal) + " วินาที";
     }
 
     string Get_sc_start_Flag(int flag)
