@@ -1485,6 +1485,9 @@ public class ItemDbScriptData
 
         for (int i = 0; i < allCut.Count; i++)
         {
+            if (!Application.isPlaying)
+                Log("allCut[" + i + "]: " + allCut[i]);
+
             data = allCut[i];
 
             string functionName = "";
@@ -1537,10 +1540,10 @@ public class ItemDbScriptData
             }
             #endregion
             #region sc_start
-            functionName = "sc_start";
+            functionName = "sc_start ";
             if (data.Contains(functionName))
             {
-                string sumCut = CutFunctionName(data, functionName);
+                string sumCut = CutFunctionName(data, functionName, 1);
 
                 List<string> allParam = GetAllParamerters(sumCut);
 
@@ -1609,14 +1612,14 @@ public class ItemDbScriptData
     /// <param name="toCut"></param>
     /// <param name="functionName"></param>
     /// <returns></returns>
-    string CutFunctionName(string toCut, string functionName)
+    string CutFunctionName(string toCut, string functionName, int lengthDecrease = 0)
     {
         if (!Application.isPlaying)
             Log("CutFunctionName >> toCut: " + toCut + " | functionName: " + functionName);
 
         int cutStartAt = toCut.IndexOf(functionName);
 
-        string cut = toCut.Substring(cutStartAt + functionName.Length);
+        string cut = toCut.Substring(cutStartAt + functionName.Length - lengthDecrease);
 
         if (!Application.isPlaying)
             Log("cut: " + cut);
