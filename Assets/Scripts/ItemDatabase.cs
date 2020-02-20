@@ -10,6 +10,7 @@ public class ItemDatabase : ScriptableObject
     public TextAsset textAsset_item_db;
     public TextAsset textAsset_item_combo_db;
     public TextAsset textAsset_resourceNames;
+    public TextAsset textAsset_SkillName;
     string item_db;
     public string m_item_db
     {
@@ -58,12 +59,18 @@ public class ItemDatabase : ScriptableObject
                 onItemInfoChanged?.Invoke(true);
         }
     }
-    //string resourceNames;
     public string m_resourceNames
     {
         get
         {
             return textAsset_resourceNames.text;
+        }
+    }
+    public string m_SkillName
+    {
+        get
+        {
+            return textAsset_SkillName.text;
         }
     }
 

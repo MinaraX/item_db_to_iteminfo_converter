@@ -15,36 +15,35 @@ public class Output : ScriptableObject
     public void ClearAll()
     {
         targetArray = 0;
-        currentOutput = null;
+        m_currentOutput = null;
         currentItemDbData = new List<string>();
         currentItemDb = new ItemDb();
         m_lines = new List<string>();
-        currentResourceNames = new List<ItemResourceName>();
-        lines_resourceNames = new List<string>();
-        currentItemScriptDatas = new List<ItemDbScriptData>();
+        m_currentResourceNames = new List<ItemResourceName>();
+        m_lines_resourceNames = new List<string>();
+        m_currentItemScriptDatas = new List<ItemDbScriptData>();
         Log("Clear all");
     }
     #endregion
 
     #region Resource Name
     [Button]
-    public void FetchResourceNameFromResourceNames()
+    public void FetchResourceName()
     {
-        Log("FetchResourceNameFromResourceNames: Start");
-        currentResourceNames = new List<ItemResourceName>();
-        FetchResourceNamesFromResourceNames(itemDatabase.m_resourceNames);
-        Log("FetchResourceNameFromResourceNames: Done");
+        Log("FetchResourceName: Start");
+        m_currentResourceNames = new List<ItemResourceName>();
+        FetchResourceName(itemDatabase.m_resourceNames);
+        Log("FetchResourceName: Done");
     }
-    void FetchResourceNamesFromResourceNames(string data)
+    void FetchResourceName(string data)
     {
-        currentResourceNames = new List<ItemResourceName>();
-        lines_resourceNames = new List<string>();
-        Log("FetchResourceNamesFromResourceNames >> Parsing txt to database start");
-        lines_resourceNames = StringSplit.GetStringSplit(data, '\n');
-        Log("FetchResourceNamesFromResourceNames >> Parsing txt to database done");
+        m_lines_resourceNames = new List<string>();
+        Log("FetchResourceName >> Parsing txt to database start");
+        m_lines_resourceNames = StringSplit.GetStringSplit(data, '\n');
+        Log("FetchResourceName >> Parsing txt to database done");
 
-        for (int i = 0; i < lines_resourceNames.Count; i++)
-            Convert_resourceNames_ToList(lines_resourceNames[i]);
+        for (int i = 0; i < m_lines_resourceNames.Count; i++)
+            Convert_resourceNames_ToList(m_lines_resourceNames[i]);
     }
     void Convert_resourceNames_ToList(string data)
     {
@@ -58,7 +57,41 @@ public class Output : ScriptableObject
         sumResourceName = sumResourceName.Substring(0, sumResourceName.Length - 1);
         newCurrentResourceName.resourceName = sumResourceName;
 
-        currentResourceNames.Add(newCurrentResourceName);
+        m_currentResourceNames.Add(newCurrentResourceName);
+    }
+    #endregion
+
+    #region Skill Name
+    [Button]
+    public void FetchSkillName()
+    {
+        Log("FetchSkillName: Start");
+        m_currentSkillNames = new List<SkillName>();
+        FetchSkillName(itemDatabase.m_SkillName);
+        Log("FetchSkillName: Done");
+    }
+    void FetchSkillName(string data)
+    {
+        m_lines_SkillName = new List<string>();
+        Log("FetchSkillName >> Parsing txt to database start");
+        m_lines_SkillName = StringSplit.GetStringSplit(data, '\n');
+        Log("FetchSkillName >> Parsing txt to database done");
+
+        for (int i = 0; i < m_lines_SkillName.Count; i++)
+            Convert_SkillName_ToList(m_lines_SkillName[i]);
+    }
+    void Convert_SkillName_ToList(string data)
+    {
+        Log(data);
+
+        List<string> sumSplit = StringSplit.GetStringSplit(data, '=');
+
+        SkillName newSkillName = new SkillName();
+        newSkillName.id = int.Parse(sumSplit[0]);
+        newSkillName.name = sumSplit[1];
+        newSkillName.desc = sumSplit[2];
+
+        m_currentSkillNames.Add(newSkillName);
     }
     #endregion
 
@@ -157,7 +190,7 @@ public class Output : ScriptableObject
         if (!string.IsNullOrEmpty(currentItemDbData[18]))
             currentItemDb.view = int.Parse(currentItemDbData[18]);
 
-        currentOutput += "[" + currentItemDb.id + "] = {"
+        m_currentOutput += "[" + currentItemDb.id + "] = {"
             + "\nunidentifiedDisplayName = \"" + GetName() + "\","
             + "\nunidentifiedResourceName = \"" + GetResourceName() + "\","
             + "\nunidentifiedDescriptionName = {" + GetDescription() + ""
@@ -235,7 +268,7 @@ public class Output : ScriptableObject
         //On unequip script
         itemDbScriptData.onUnequipScript = sumOnUnequipScript;
 
-        currentItemScriptDatas.Add(itemDbScriptData);
+        m_currentItemScriptDatas.Add(itemDbScriptData);
     }
 
     #region Item Description
@@ -247,9 +280,9 @@ public class Output : ScriptableObject
     {
         string copier = null;
 
-        for (int i = 0; i < currentResourceNames.Count; i++)
+        for (int i = 0; i < m_currentResourceNames.Count; i++)
         {
-            var sumData = currentResourceNames[i];
+            var sumData = m_currentResourceNames[i];
             if (sumData.id == currentItemDb.id)
             {
                 copier = sumData.resourceName;
@@ -300,9 +333,9 @@ public class Output : ScriptableObject
 
         ItemDbScriptData data = new ItemDbScriptData();
 
-        for (int i = 0; i < currentItemScriptDatas.Count; i++)
+        for (int i = 0; i < m_currentItemScriptDatas.Count; i++)
         {
-            var sumData = currentItemScriptDatas[i];
+            var sumData = m_currentItemScriptDatas[i];
             if (sumData.id == currentItemDb.id)
             {
                 data = sumData;
@@ -1281,20 +1314,20 @@ public class Output : ScriptableObject
     [Button]
     public void DebugConvertCurrentTargetArrayToItemInfo()
     {
-        currentOutput = null;
+        m_currentOutput = null;
         Log("Output cleared");
         ConvertCurrentTargetArrayToItemInfo();
-        ClipboardExtension.CopyToClipboard(currentOutput);
+        ClipboardExtension.CopyToClipboard(m_currentOutput);
     }
 
     public string _string;
     [Button]
     public void DebugConvertStringToItemInfo()
     {
-        currentOutput = null;
+        m_currentOutput = null;
         Log("Output cleared");
         ConvertCurrentTargetArrayToItemInfo(_string);
-        ClipboardExtension.CopyToClipboard(currentOutput);
+        ClipboardExtension.CopyToClipboard(m_currentOutput);
     }
 
     [Button]
@@ -1316,6 +1349,10 @@ public class Output : ScriptableObject
     List<ItemResourceName> currentResourceNames = new List<ItemResourceName>();
     public List<ItemResourceName> m_currentResourceNames { get { return currentResourceNames; } set { currentResourceNames = value; } }
 
+    //Skill Name
+    List<SkillName> currentSkillNames = new List<SkillName>();
+    public List<SkillName> m_currentSkillNames { get { return currentSkillNames; } set { currentSkillNames = value; } }
+
     //Item Script
     List<ItemDbScriptData> currentItemScriptDatas = new List<ItemDbScriptData>();
     public List<ItemDbScriptData> m_currentItemScriptDatas { get { return currentItemScriptDatas; } set { currentItemScriptDatas = value; } }
@@ -1325,6 +1362,8 @@ public class Output : ScriptableObject
     public List<string> m_lines { get { return lines; } set { lines = value; } }
     List<string> lines_resourceNames = new List<string>();
     public List<string> m_lines_resourceNames { get { return lines_resourceNames; } set { lines_resourceNames = value; } }
+    List<string> lines_SkillName = new List<string>();
+    public List<string> m_lines_SkillName { get { return lines_SkillName; } set { lines_SkillName = value; } }
     #endregion
 
     void Log(object obj)
@@ -1481,6 +1520,15 @@ public class ItemDbScriptData
                     goto L_Redo;
                 }
             }
+            else if (sumCut.Contains("itemskill"))
+            {
+                if (sumCut.Contains("itemskill") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
         }
 
         for (int i = 0; i < allCut.Count; i++)
@@ -1526,10 +1574,10 @@ public class ItemDbScriptData
             }
             #endregion
             #region sc_end
-            functionName = "sc_end";
+            functionName = "sc_end ";
             if (data.Contains(functionName))
             {
-                string sumCut = CutFunctionName(data, functionName);
+                string sumCut = CutFunctionName(data, functionName, 1);
 
                 List<string> allParam = GetAllParamerters(sumCut);
 
@@ -1599,6 +1647,46 @@ public class ItemDbScriptData
                     sum += AddDescription(sum, "มีโอกาส " + percent + " ที่จะเกิดสถานะ " + param1 + timer + sumFlag);
                 else if (isHadParam1)
                     sum += AddDescription(sum, "มีโอกาส " + percent + " ที่จะเกิดสถานะ " + param1 + sumFlag);
+            }
+            #endregion
+            #region itemskill
+            functionName = "itemskill";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                if (!Application.isPlaying)
+                    Log("allParam.Count: " + allParam.Count);
+
+                string param1 = "";
+                string param2 = "";
+                string param3 = "";
+
+                if (allParam.Count > 0)
+                    param1 = GetValue(allParam[0], 1);
+                if (allParam.Count > 1)
+                    param2 = GetValue(allParam[1], 2);
+                if (allParam.Count > 2)
+                    param3 = GetValue(allParam[2], 3);
+
+                if (!Application.isPlaying)
+                {
+                    Log("isHadParam1: " + isHadParam1 + " | param1: " + param1);
+                    Log("isHadParam2: " + isHadParam2 + " | param2: " + param2);
+                    Log("isHadParam3: " + isHadParam3 + " | param3: " + param3);
+                }
+                string sumLv = param1;
+                string sumSkillName = param2;
+                bool isNeedRequirement = false;
+                if (param3 == "true")
+                    isNeedRequirement = true;
+
+                if (isNeedRequirement)
+                    sum += AddDescription(sum, "สามารถใช้ Lv." + sumLv + " " + sumSkillName + "(โดยมีเงื่อนไขการใช้ Skill ดังเดิม)");
+                else
+                    sum += AddDescription(sum, "สามารถใช้ Lv." + sumLv + " " + sumSkillName);
             }
             #endregion
         }
@@ -1774,6 +1862,17 @@ public class ItemDbScriptData
         }
     }
 
+    /// <summary>
+    /// Get correct skill name by skill id or skill name
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    string GetSkillName(string data)
+    {
+        string sum = "";
+        return sum;
+    }
+
     #region Utilities
     /// <summary>
     /// Get percent wording by rate and divisor
@@ -1943,10 +2042,19 @@ public enum ScStartFlag
     SCSTART_NOICON
 }
 
+#endregion
+
 [Serializable]
 public class ItemResourceName
 {
     public int id;
     public string resourceName;
 }
-#endregion
+
+[Serializable]
+public class SkillName
+{
+    public int id;
+    public string name;
+    public string desc;
+}
