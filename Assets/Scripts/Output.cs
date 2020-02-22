@@ -302,6 +302,10 @@ public class Output : ScriptableObject
         string sumOnUnequipScript = sumScriptPath;
         Log("sumOnUnequipScript: " + sumOnUnequipScript);
 
+        sumScript = RemoveComment(sumScript);
+        sumOnEquipScript = RemoveComment(sumOnEquipScript);
+        sumOnUnequipScript = RemoveComment(sumOnUnequipScript);
+
         //Script
         itemDbScriptData.script = sumScript;
 
@@ -314,6 +318,28 @@ public class Output : ScriptableObject
         m_currentItemScriptDatas.Add(itemDbScriptData);
     }
 
+    string RemoveComment(string data)
+    {
+        var sum = data;
+
+        while (sum.Contains("/*") && sum.Contains("*/"))
+        {
+            if (sum.Contains("/*"))
+            {
+                int commentStartAt = sum.IndexOf("/*");
+                sum = sum.Substring(0, commentStartAt);
+            }
+            if (sum.Contains("*/"))
+            {
+                int commentEndAt = sum.IndexOf("*/");
+                sum = sum.Substring(0, commentEndAt);
+            }
+        }
+
+        Log("RemoveComment >> sum: " + sum);
+
+        return sum;
+    }
     #region Item Description
     string GetName()
     {
@@ -1412,7 +1438,8 @@ public class Output : ScriptableObject
 
     void Log(object obj)
     {
-        Debug.Log(obj);
+        if (!Application.isPlaying)
+            Debug.Log(obj);
     }
 }
 
@@ -1461,6 +1488,8 @@ public class ItemDbScriptData
     bool isHadParam3;
     bool isHadParam4;
     bool isHadParam5;
+    bool isHadParam6;
+    bool isHadParam7;
     #endregion
 
     #region Get Description Functions
@@ -1576,6 +1605,15 @@ public class ItemDbScriptData
             else if (sumCut.Contains("getrandgroupitem"))
             {
                 if (sumCut.Contains("getrandgroupitem") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("monster"))
+            {
+                if (sumCut.Contains("monster") && !sumCut.Contains(";"))
                 {
                     allCut[i] += " " + allCut[i + 1];
                     allCut.RemoveAt(i + 1);
@@ -1767,6 +1805,51 @@ public class ItemDbScriptData
                 sum += AddDescription(sum, "กดใช้เพื่อรับ Item ในกลุ่ม " + param1);
             }
             #endregion
+            #region monster
+            functionName = "monster";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                Log("allParam.Count: " + allParam.Count);
+
+                string param1 = "";
+                string param2 = "";
+                string param3 = "";
+                string param4 = "";
+                string param5 = "";
+                string param6 = "";
+                string param7 = "";
+
+                if (allParam.Count > 0)
+                    param1 = allParam[0];
+                if (allParam.Count > 1)
+                    param2 = allParam[1];
+                if (allParam.Count > 2)
+                    param3 = allParam[2];
+                if (allParam.Count > 3)
+                    param4 = allParam[3];
+                if (allParam.Count > 4)
+                    param5 = allParam[4];
+                if (allParam.Count > 5)
+                    param6 = allParam[5];
+                if (allParam.Count > 6)
+                    param7 = allParam[6];
+
+                param5 = param5.Replace("-1-", "");
+                param5 = param5.Replace("MOBG_", "");
+                param5 = param5.Replace("_", " ");
+
+                Log("isHadParam1: " + isHadParam1 + " | param1: " + param1);
+                Log("isHadParam2: " + isHadParam2 + " | param2: " + param2);
+                Log("isHadParam3: " + isHadParam3 + " | param3: " + param3);
+                Log("isHadParam4: " + isHadParam4 + " | param4: " + param4);
+
+                sum += AddDescription(sum, "กดใช้เพื่อเรียก Monster ในกลุ่ม " + param5);
+            }
+            #endregion
         }
 
         return sum;
@@ -1809,6 +1892,8 @@ public class ItemDbScriptData
         isHadParam3 = false;
         isHadParam4 = false;
         isHadParam5 = false;
+        isHadParam6 = false;
+        isHadParam7 = false;
 
         List<string> allParam = new List<string>();
         if (sumCut.Contains("rand"))
@@ -1913,6 +1998,10 @@ public class ItemDbScriptData
                 isHadParam4 = true;
             else if (paramCount == 5)
                 isHadParam5 = true;
+            else if (paramCount == 6)
+                isHadParam6 = true;
+            else if (paramCount == 7)
+                isHadParam7 = true;
 
             return allValue[0] + "~" + allValue[1];
         }
@@ -1949,6 +2038,10 @@ public class ItemDbScriptData
                 isHadParam4 = true;
             else if (paramCount == 5)
                 isHadParam5 = true;
+            else if (paramCount == 6)
+                isHadParam6 = true;
+            else if (paramCount == 7)
+                isHadParam7 = true;
 
             return allValue[0] + "(มากสุด " + allValue[1] + ")";
         }
@@ -2149,6 +2242,10 @@ public class ItemDbScriptData
             isHadParam4 = isTrue;
         else if (paramCount == 5)
             isHadParam5 = isTrue;
+        else if (paramCount == 6)
+            isHadParam6 = isTrue;
+        else if (paramCount == 7)
+            isHadParam7 = isTrue;
     }
 
     /// <summary>
