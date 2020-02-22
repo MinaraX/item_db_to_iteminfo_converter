@@ -152,14 +152,22 @@ public class Output : ScriptableObject
     /// <param name="input"></param>
     void ConvertCurrentTargetArrayToItemInfo(string input = null)
     {
-        Log("ConvertCurrentTargetArrayToItemInfo: Start");
+        if (string.IsNullOrEmpty(input))
+            Log("ConvertCurrentTargetArrayToItemInfo: Start");
+        else
+            Log("DebugConvertStringToItemInfo: Start");
 
         currentItemDbData = new List<string>();
-        if (input == null)
+        if (string.IsNullOrEmpty(input))
+        {
             currentItemDbData = ConvertItemDbToListWithoutScript(m_lines[targetArray]);
+            FetchItemDbScript(m_lines[targetArray]);
+        }
         else
+        {
             currentItemDbData = ConvertItemDbToListWithoutScript(input);
-        FetchItemDbScript(m_lines[targetArray]);
+            FetchItemDbScript(input);
+        }
 
         currentItemDb = new ItemDb();
         if (!string.IsNullOrEmpty(currentItemDbData[0]))
@@ -241,7 +249,10 @@ public class Output : ScriptableObject
 
         Log("Success convert item_db id: " + currentItemDbData[0]);
 
-        Log("ConvertCurrentTargetArrayToItemInfo: Done");
+        if (string.IsNullOrEmpty(input))
+            Log("ConvertCurrentTargetArrayToItemInfo: Done");
+        else
+            Log("DebugConvertStringToItemInfo: Done");
     }
 
     List<string> ConvertItemDbToListWithoutScript(string data)
@@ -1506,7 +1517,6 @@ public class ItemDbScriptData
 
         string sum = null;
 
-
         Log("GetDescription:" + data);
 
         //Split all space and merge it again line by line
@@ -1515,7 +1525,6 @@ public class ItemDbScriptData
         for (int i = 0; i < allCut.Count; i++)
         {
             var sumCut = allCut[i];
-
 
             Log(sumCut);
 
@@ -1558,6 +1567,15 @@ public class ItemDbScriptData
             else if (sumCut.Contains("itemskill"))
             {
                 if (sumCut.Contains("itemskill") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("getrandgroupitem"))
+            {
+                if (sumCut.Contains("getrandgroupitem") && !sumCut.Contains(";"))
                 {
                     allCut[i] += " " + allCut[i + 1];
                     allCut.RemoveAt(i + 1);
@@ -1629,7 +1647,6 @@ public class ItemDbScriptData
 
                 List<string> allParam = GetAllParamerters(sumCut);
 
-
                 Log("allParam.Count: " + allParam.Count);
 
                 string param1 = "";
@@ -1649,14 +1666,11 @@ public class ItemDbScriptData
                 if (allParam.Count > 4)
                     param5 = GetValue(allParam[4], 5, true);
 
-
-                {
-                    Log("isHadParam1: " + isHadParam1 + " | param1: " + param1);
-                    Log("isHadParam2: " + isHadParam2 + " | param2: " + param2);
-                    Log("isHadParam3: " + isHadParam3 + " | param3: " + param3);
-                    Log("isHadParam4: " + isHadParam4 + " | param4: " + param4);
-                    Log("isHadParam5: " + isHadParam5 + " | param5: " + param5);
-                }
+                Log("isHadParam1: " + isHadParam1 + " | param1: " + param1);
+                Log("isHadParam2: " + isHadParam2 + " | param2: " + param2);
+                Log("isHadParam3: " + isHadParam3 + " | param3: " + param3);
+                Log("isHadParam4: " + isHadParam4 + " | param4: " + param4);
+                Log("isHadParam5: " + isHadParam5 + " | param5: " + param5);
 
                 string timer = "";
                 if (param2 == "ตลอดเวลา")
@@ -1691,7 +1705,6 @@ public class ItemDbScriptData
 
                 List<string> allParam = GetAllParamerters(sumCut);
 
-
                 Log("allParam.Count: " + allParam.Count);
 
                 string param1 = "";
@@ -1705,12 +1718,9 @@ public class ItemDbScriptData
                 if (allParam.Count > 2)
                     param3 = allParam[2];
 
-
-                {
-                    Log("isHadParam1: " + isHadParam1 + " | param1: " + param1);
-                    Log("isHadParam2: " + isHadParam2 + " | param2: " + param2);
-                    Log("isHadParam3: " + isHadParam3 + " | param3: " + param3);
-                }
+                Log("isHadParam1: " + isHadParam1 + " | param1: " + param1);
+                Log("isHadParam2: " + isHadParam2 + " | param2: " + param2);
+                Log("isHadParam3: " + isHadParam3 + " | param3: " + param3);
 
                 bool isNeedRequirement = false;
                 if (param3 == "true")
@@ -1720,6 +1730,41 @@ public class ItemDbScriptData
                     sum += AddDescription(sum, "สามารถใช้ Lv." + param2 + " " + param1 + "(โดยมีเงื่อนไขการใช้ Skill ดังเดิม)");
                 else
                     sum += AddDescription(sum, "สามารถใช้ Lv." + param2 + " " + param1);
+            }
+            #endregion
+            #region getrandgroupitem
+            functionName = "getrandgroupitem";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                Log("allParam.Count: " + allParam.Count);
+
+                string param1 = "";
+                string param2 = "";
+                string param3 = "";
+                string param4 = "";
+
+                if (allParam.Count > 0)
+                    param1 = allParam[0];
+                if (allParam.Count > 1)
+                    param2 = GetValue(allParam[1], 2, true);
+                if (allParam.Count > 2)
+                    param3 = allParam[2];
+                if (allParam.Count > 3)
+                    param4 = allParam[3];
+
+                param1 = param1.Replace("IG_", "");
+                param1 = param1.Replace("_", " ");
+
+                Log("isHadParam1: " + isHadParam1 + " | param1: " + param1);
+                Log("isHadParam2: " + isHadParam2 + " | param2: " + param2);
+                Log("isHadParam3: " + isHadParam3 + " | param3: " + param3);
+                Log("isHadParam4: " + isHadParam4 + " | param4: " + param4);
+
+                sum += AddDescription(sum, "กดใช้เพื่อรับ Item ในกลุ่ม " + param1);
             }
             #endregion
         }
@@ -1735,20 +1780,17 @@ public class ItemDbScriptData
     /// <returns></returns>
     string CutFunctionName(string toCut, string functionName, int lengthDecrease = 0)
     {
-
         Log("CutFunctionName >> toCut: " + toCut + " | functionName: " + functionName);
 
         int cutStartAt = toCut.IndexOf(functionName);
 
         string cut = toCut.Substring(cutStartAt + functionName.Length - lengthDecrease);
 
-
         Log("cut: " + cut);
 
         int cutEndAt = cut.IndexOf(";");
 
         cut = cut.Substring(1, cutEndAt - 1);
-
 
         Log("cut: " + cut);
 
@@ -1813,7 +1855,11 @@ public class ItemDbScriptData
         {
             allParam = StringSplit.GetStringSplit(sumCut, ',');
             for (int i = 0; i < allParam.Count; i++)
+            {
+                allParam[i] = allParam[i].Replace("(", "");
+                allParam[i] = allParam[i].Replace(")", "");
                 Log("(After)allParam[" + i + "]: " + allParam[i]);
+            }
         }
         return allParam;
     }
@@ -1827,7 +1873,6 @@ public class ItemDbScriptData
     string GetValue(string data, int paramCount, bool isZeroValueOkay = false)
     {
         string value = data;
-
 
         Log("GetValue: " + value);
 
@@ -1904,7 +1949,6 @@ public class ItemDbScriptData
                 isHadParam4 = true;
             else if (paramCount == 5)
                 isHadParam5 = true;
-
 
             return allValue[0] + "(มากสุด " + allValue[1] + ")";
         }
@@ -2046,7 +2090,6 @@ public class ItemDbScriptData
 
         var sumTimer = (timer / divider);
 
-
         if (sumTimer >= 31536000)
             return (sumTimer / 31536000).ToString(sumDecimal) + " ปี";
         else if (sumTimer >= 2628000)
@@ -2124,8 +2167,8 @@ public class ItemDbScriptData
 
     void Log(object obj)
     {
-
-        Debug.Log(obj);
+        if (!Application.isPlaying)
+            Debug.Log(obj);
     }
 }
 #endregion
