@@ -13,6 +13,5 @@ MonoBehaviour:
   m_Name: Output
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 11400000, guid: 630cf34160fdbb5459afe2ad44e0a776, type: 2}
-  targetArray: 83
-  _string: '585,Wurst,Brusti,11,2,,40,,,,,0xFFFFFFFF,63,2,,,,,,{ itemheal rand(15,20),0;
-    itemskill "PR_MAGNIFICAT",3; },{},{} '
+  targetArray: 6974
+  _string: 

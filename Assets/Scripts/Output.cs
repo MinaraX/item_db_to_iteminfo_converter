@@ -26,6 +26,44 @@ public class Output : ScriptableObject
     }
     #endregion
 
+    #region Parse item database
+    [Button]
+    public void ParseItemDatabase()
+    {
+        itemDatabase.Initialize();
+
+        //item_db
+        m_currentOutput = null;
+
+        Log("Converter >> is item_db null: " + string.IsNullOrEmpty(itemDatabase.m_item_db));
+
+        //Parsing item_db to List
+        Log("Converter: Parsing item_db to list");
+        m_lines = StringSplit.GetStringSplit(itemDatabase.m_item_db, '\n');
+
+        //Remove comment from List
+        Log("Converter: Remove comment from list");
+        for (int i = m_lines.Count - 1; i >= 0; i--)
+        {
+            if (m_lines[i].Contains("//"))
+                m_lines.RemoveAt(i);
+        }
+
+        //Remove empty from List
+        Log("Converter: Remove empty from list");
+        for (int i = m_lines.Count - 1; i >= 0; i--)
+        {
+            if (string.IsNullOrEmpty(m_lines[i]) || string.IsNullOrWhiteSpace(m_lines[i]))
+                m_lines.RemoveAt(i);
+        }
+
+        //item_combo_db
+        Log("Converter >> is item_combo_db null: " + string.IsNullOrEmpty(itemDatabase.m_item_combo_db));
+
+        //Do nothing for now
+    }
+    #endregion
+
     #region Resource Name
     [Button]
     public void FetchResourceName()
@@ -114,7 +152,7 @@ public class Output : ScriptableObject
     /// <param name="input"></param>
     void ConvertCurrentTargetArrayToItemInfo(string input = null)
     {
-        //Log("ConvertCurrentTargetArrayToItemInfo: Start");
+        Log("ConvertCurrentTargetArrayToItemInfo: Start");
 
         currentItemDbData = new List<string>();
         if (input == null)
@@ -122,9 +160,6 @@ public class Output : ScriptableObject
         else
             currentItemDbData = ConvertItemDbToListWithoutScript(input);
         FetchItemDbScript(m_lines[targetArray]);
-
-        //Test with full parameters
-        //currentItemDbData = ConvertItemDbToListWithoutScript("501,Red_Potion,Red Potion,0,10,0,70,15:30,40,5,4,0xFFFFFFFF,63,2,0,4,30:99,1,16,{ itemheal rand(45,65),0; },{},{}");
 
         currentItemDb = new ItemDb();
         if (!string.IsNullOrEmpty(currentItemDbData[0]))
@@ -204,9 +239,9 @@ public class Output : ScriptableObject
             + "\nslotCount = " + GetSlotCount() + ","
             + "\nClassNum = " + GetClassNum() + "\n},\n";
 
-        //Log("Success convert item_db id: " + currentItemDbData[0]);
+        Log("Success convert item_db id: " + currentItemDbData[0]);
 
-        //Log("ConvertCurrentTargetArrayToItemInfo: Done");
+        Log("ConvertCurrentTargetArrayToItemInfo: Done");
     }
 
     List<string> ConvertItemDbToListWithoutScript(string data)
@@ -219,11 +254,6 @@ public class Output : ScriptableObject
 
     void FetchItemDbScript(string data)
     {
-        //currentItemScriptDatas = new List<ItemDbScriptData>(); //Comment this lines in production
-
-        //Full test
-        //data = "19538,Full_Moon,Full Moon,4,0,,0,,0,,0,0xFFFFFFFF,63,2,1024,,1,0,780,{ autobonus \"{ bonus bBaseAtk,50; }\",10,5000,BF_WEAPON,\"{ specialeffect2 EF_POTION_BERSERK; /* showscript */ }\"; autobonus \"{ bonus bMatk,50; }\",5,5000,BF_MAGIC,\"{ specialeffect2 EF_ENERGYCOAT; /* showscript */ }\"; },{ autobonus \"{ bonus bBaseAtk,50; }\",10,5000,BF_WEAPON,\"{ specialeffect2 EF_POTION_BERSERK; /* showscript */ }\"; autobonus \"{ bonus bMatk,50; }\",5,5000,BF_MAGIC,\"{ specialeffect2 EF_ENERGYCOAT; /* showscript */ }\"; },{ autobonus \"{ bonus bBaseAtk,50; }\",10,5000,BF_WEAPON,\"{ specialeffect2 EF_POTION_BERSERK; /* showscript */ }\"; autobonus \"{ bonus bMatk,50; }\",5,5000,BF_MAGIC,\"{ specialeffect2 EF_ENERGYCOAT; /* showscript */ }\"; }";
-
         string sum = data;
         string sumScriptPath = data;
         int itemId = 0;
@@ -241,25 +271,25 @@ public class Output : ScriptableObject
         ItemDbScriptData itemDbScriptData = new ItemDbScriptData();
         itemDbScriptData.id = itemId;
 
-        //Log("sumScriptPath: " + sumScriptPath);
+        Log("sumScriptPath: " + sumScriptPath);
 
         int onEquipStartAt = sumScriptPath.IndexOf(",{");
         string sumScript = sumSaveScriptPath.Substring(0, onEquipStartAt);
-        //Log("sumScript: " + sumScript);
+        Log("sumScript: " + sumScript);
 
         sumScriptPath = sumScriptPath.Substring(onEquipStartAt + 1);
-        //Log("sumScriptPath: " + sumScriptPath);
+        Log("sumScriptPath: " + sumScriptPath);
 
         int onUnequipStartAt = sumScriptPath.IndexOf(",{");
         string sumOnEquipScript = sumSaveScriptPath2.Substring(onEquipStartAt + 1, onUnequipStartAt);
-        //Log("sumOnEquipScript: " + sumOnEquipScript);
+        Log("sumOnEquipScript: " + sumOnEquipScript);
 
         int onUnequipEndAt = sumScriptPath.Length;
         sumScriptPath = sumScriptPath.Substring(onUnequipStartAt + 1);
-        //Log("sumScriptPath: " + sumScriptPath);
+        Log("sumScriptPath: " + sumScriptPath);
 
         string sumOnUnequipScript = sumScriptPath;
-        //Log("sumOnUnequipScript: " + sumOnUnequipScript);
+        Log("sumOnUnequipScript: " + sumOnUnequipScript);
 
         //Script
         itemDbScriptData.script = sumScript;
@@ -1476,8 +1506,8 @@ public class ItemDbScriptData
 
         string sum = null;
 
-        if (!Application.isPlaying)
-            Log("GetDescription:" + data);
+
+        Log("GetDescription:" + data);
 
         //Split all space and merge it again line by line
         List<string> allCut = StringSplit.GetStringSplit(data, ' ');
@@ -1486,8 +1516,8 @@ public class ItemDbScriptData
         {
             var sumCut = allCut[i];
 
-            if (!Application.isPlaying)
-                Log(sumCut);
+
+            Log(sumCut);
 
             if (sumCut.Contains("itemheal"))
             {
@@ -1538,8 +1568,7 @@ public class ItemDbScriptData
 
         for (int i = 0; i < allCut.Count; i++)
         {
-            //if (!Application.isPlaying)
-            //    Log("allCut[" + i + "]: " + allCut[i]);
+            Log("allCut[" + i + "]: " + allCut[i]);
 
             data = allCut[i];
 
@@ -1600,8 +1629,8 @@ public class ItemDbScriptData
 
                 List<string> allParam = GetAllParamerters(sumCut);
 
-                if (!Application.isPlaying)
-                    Log("allParam.Count: " + allParam.Count);
+
+                Log("allParam.Count: " + allParam.Count);
 
                 string param1 = "";
                 string param2 = "";
@@ -1620,7 +1649,7 @@ public class ItemDbScriptData
                 if (allParam.Count > 4)
                     param5 = GetValue(allParam[4], 5, true);
 
-                if (!Application.isPlaying)
+
                 {
                     Log("isHadParam1: " + isHadParam1 + " | param1: " + param1);
                     Log("isHadParam2: " + isHadParam2 + " | param2: " + param2);
@@ -1662,8 +1691,8 @@ public class ItemDbScriptData
 
                 List<string> allParam = GetAllParamerters(sumCut);
 
-                if (!Application.isPlaying)
-                    Log("allParam.Count: " + allParam.Count);
+
+                Log("allParam.Count: " + allParam.Count);
 
                 string param1 = "";
                 string param2 = "";
@@ -1676,7 +1705,7 @@ public class ItemDbScriptData
                 if (allParam.Count > 2)
                     param3 = allParam[2];
 
-                if (!Application.isPlaying)
+
                 {
                     Log("isHadParam1: " + isHadParam1 + " | param1: " + param1);
                     Log("isHadParam2: " + isHadParam2 + " | param2: " + param2);
@@ -1706,22 +1735,22 @@ public class ItemDbScriptData
     /// <returns></returns>
     string CutFunctionName(string toCut, string functionName, int lengthDecrease = 0)
     {
-        if (!Application.isPlaying)
-            Log("CutFunctionName >> toCut: " + toCut + " | functionName: " + functionName);
+
+        Log("CutFunctionName >> toCut: " + toCut + " | functionName: " + functionName);
 
         int cutStartAt = toCut.IndexOf(functionName);
 
         string cut = toCut.Substring(cutStartAt + functionName.Length - lengthDecrease);
 
-        if (!Application.isPlaying)
-            Log("cut: " + cut);
+
+        Log("cut: " + cut);
 
         int cutEndAt = cut.IndexOf(";");
 
         cut = cut.Substring(1, cutEndAt - 1);
 
-        if (!Application.isPlaying)
-            Log("cut: " + cut);
+
+        Log("cut: " + cut);
 
         return cut;
     }
@@ -1747,7 +1776,7 @@ public class ItemDbScriptData
         L_Redo:
             for (int i = 0; i < allParam.Count; i++)
             {
-                //Log("(Before)allParam[" + i + "]: " + allParam[i]);
+                Log("(Before)allParam[" + i + "]: " + allParam[i]);
                 var sumParam = allParam[i];
                 if (sumParam.Contains("(") && !sumParam.Contains(")"))
                 {
@@ -1757,14 +1786,34 @@ public class ItemDbScriptData
                 }
             }
 
-            //for (int i = 0; i < allParam.Count; i++)
-            //    Log("(After)allParam[" + i + "]: " + allParam[i]);
+            for (int i = 0; i < allParam.Count; i++)
+                Log("(After)allParam[" + i + "]: " + allParam[i]);
+        }
+        else if (sumCut.Contains("max"))
+        {
+            allParam = new List<string>(sumCut.Split(new string[] { "," }, StringSplitOptions.None));
+
+        L_Redo:
+            for (int i = 0; i < allParam.Count; i++)
+            {
+                Log("(Before)allParam[" + i + "]: " + allParam[i]);
+                var sumParam = allParam[i];
+                if (sumParam.Contains("(") && !sumParam.Contains(","))
+                {
+                    allParam[i] += "," + allParam[i + 1];
+                    allParam.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+
+            for (int i = 0; i < allParam.Count; i++)
+                Log("(After)allParam[" + i + "]: " + allParam[i]);
         }
         else
         {
             allParam = StringSplit.GetStringSplit(sumCut, ',');
-            //for (int i = 0; i < allParam.Count; i++)
-            //    Log("(After)allParam[" + i + "]: " + allParam[i]);
+            for (int i = 0; i < allParam.Count; i++)
+                Log("(After)allParam[" + i + "]: " + allParam[i]);
         }
         return allParam;
     }
@@ -1779,7 +1828,8 @@ public class ItemDbScriptData
     {
         string value = data;
 
-        //Log("GetValue: " + value);
+
+        Log("GetValue: " + value);
 
         if (value == "INFINITE_TICK")
         {
@@ -1790,23 +1840,23 @@ public class ItemDbScriptData
         //rand
         if (value.Contains("rand"))
         {
-            //Log("rand");
+            Log("rand");
 
             int paramStartAt = value.IndexOf("(");
-            //Log("paramStartAt: " + paramStartAt);
+            Log("paramStartAt: " + paramStartAt);
 
-            string rand = value.Substring(paramStartAt);
+            string sum = value.Substring(paramStartAt);
 
-            //Log("GetValue: " + rand);
+            Log("GetValue: " + sum);
 
-            int paramEndAt = rand.IndexOf(")");
-            //Log("paramEndAt: " + paramEndAt);
+            int paramEndAt = sum.IndexOf(")");
+            Log("paramEndAt: " + paramEndAt);
 
-            rand = rand.Substring(1, paramEndAt - 1);
+            sum = sum.Substring(1, paramEndAt - 1);
 
-            List<string> allRand = StringSplit.GetStringSplit(rand, ',');
+            Log("GetValue: " + sum);
 
-            //Log("GetValue: " + rand);
+            List<string> allValue = StringSplit.GetStringSplit(sum, ',');
 
             if (paramCount == 1)
                 isHadParam1 = true;
@@ -1819,11 +1869,44 @@ public class ItemDbScriptData
             else if (paramCount == 5)
                 isHadParam5 = true;
 
-            return allRand[0] + "~" + allRand[1];
+            return allValue[0] + "~" + allValue[1];
         }
-        else if (value.Contains("max"))//itemskill "AC_CONCENTRATION",max(getskilllv("AC_CONCENTRATION"),3);
+        else if (value.Contains("max"))
         {
-            return "มากสุด";
+            Log("max");
+
+            int paramStartAt = value.IndexOf("(");
+            Log("paramStartAt: " + paramStartAt);
+
+            string sum = value.Substring(paramStartAt);
+
+            Log("GetValue: " + sum);
+
+            sum = sum.Substring(1, sum.Length - 1);
+
+            Log("GetValue: " + sum);
+
+            List<string> allValue = StringSplit.GetStringSplit(sum, ',');
+            for (int i = 0; i < allValue.Count; i++)
+            {
+                Log("allValue[" + i + "]: " + allValue[i]);
+                if (allValue[i].Contains("getskilllv"))
+                    allValue[i] = GetSkillLv(allValue[i]);
+            }
+
+            if (paramCount == 1)
+                isHadParam1 = true;
+            else if (paramCount == 2)
+                isHadParam2 = true;
+            else if (paramCount == 3)
+                isHadParam3 = true;
+            else if (paramCount == 4)
+                isHadParam4 = true;
+            else if (paramCount == 5)
+                isHadParam5 = true;
+
+
+            return allValue[0] + "(มากสุด " + allValue[1] + ")";
         }
         //Normal value
         else
@@ -1833,7 +1916,7 @@ public class ItemDbScriptData
 
             isInteger = int.TryParse(value, out paramInt);
 
-            //Log("isInteger: " + isInteger);
+            Log("isInteger: " + isInteger);
 
             if (!isInteger)
             {
@@ -1871,6 +1954,32 @@ public class ItemDbScriptData
     }
 
     /// <summary>
+    /// Get correct wording for skill name levels
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    string GetSkillLv(string data)
+    {
+        Log("GetSkillLv");
+
+        int paramStartAt = data.IndexOf("(");
+        Log("paramStartAt: " + paramStartAt);
+
+        string sum = data.Substring(paramStartAt + 1);
+
+        Log("GetSkillLv: " + sum);
+
+        int paramEndAt = sum.IndexOf(")");
+        Log("paramEndAt: " + paramEndAt);
+
+        sum = sum.Substring(1, paramEndAt - 2);
+
+        Log("GetSkillLv: " + sum);
+
+        return " (" + GetSkillName(sum) + " ที่เรียนรู้ ";
+    }
+
+    /// <summary>
     /// Get correct skill name by skill id or skill name
     /// </summary>
     /// <param name="data"></param>
@@ -1896,7 +2005,8 @@ public class ItemDbScriptData
             for (int i = 0; i < m_output.m_currentSkillNames.Count; i++)
             {
                 var sumData = m_output.m_currentSkillNames[i];
-                if ("\"" + sumData.name + "\"" == data)
+                if ("\"" + sumData.name + "\"" == data
+                    || (sumData.name == data))
                     return sumData.desc;
             }
         }
@@ -2014,6 +2124,7 @@ public class ItemDbScriptData
 
     void Log(object obj)
     {
+
         Debug.Log(obj);
     }
 }

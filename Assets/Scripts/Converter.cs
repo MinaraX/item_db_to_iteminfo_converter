@@ -82,46 +82,11 @@ public class Converter : MonoBehaviour
         //Start process
         Log("Converter: Start");
 
-        //item_db
-        output.m_currentOutput = null;
-
-        Log("Converter >> is item_db null: " + string.IsNullOrEmpty(itemDatabase.m_item_db));
-
-        //Parsing item_db to List
-        Log("Converter: Parsing item_db to list");
-        output.m_lines = StringSplit.GetStringSplit(itemDatabase.m_item_db, '\n');
-
-        //Remove comment from List
-        Log("Converter: Remove comment from list");
-        for (int i = output.m_lines.Count - 1; i >= 0; i--)
-        {
-            if (output.m_lines[i].Contains("//"))
-                output.m_lines.RemoveAt(i);
-        }
-
-        //Remove empty from List
-        Log("Converter: Remove empty from list");
-        for (int i = output.m_lines.Count - 1; i >= 0; i--)
-        {
-            if (string.IsNullOrEmpty(output.m_lines[i]) || string.IsNullOrWhiteSpace(output.m_lines[i]))
-                output.m_lines.RemoveAt(i);
-        }
-
-        //item_combo_db
-        Log("Converter >> is item_combo_db null: " + string.IsNullOrEmpty(itemDatabase.m_item_combo_db));
-
-        //Do nothing for now
-
-        //fetch resourceName from itemInfo
-        //output.FetchResourceNameFromResourceNames();
+        output.ParseItemDatabase();
 
         //Convert here
         for (int i = 0; i < output.m_lines.Count; i++)
             output.ConvertSpecificArrayToItemInfo(i);
-        /*{
-            Log("Converter >> Convert index: " + i);
-            output.ConvertSpecificArrayToItemInfo(i);
-        }*/
 
         //Finished
         Log("Converter: Done");
