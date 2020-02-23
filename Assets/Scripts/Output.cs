@@ -183,7 +183,6 @@ public class Output : ScriptableObject
     }
     #endregion
 
-
     public int targetArray;
     /// <summary>
     /// Start convert specific lines to item info database
@@ -389,6 +388,7 @@ public class Output : ScriptableObject
 
         return sum;
     }
+
     #region Item Description
     string GetName()
     {
@@ -1685,6 +1685,15 @@ public class ItemDbScriptData
                     goto L_Redo;
                 }
             }
+            else if (sumCut.Contains("pet"))
+            {
+                if (sumCut.Contains("pet") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
         }
 
         for (int i = 0; i < allCut.Count; i++)
@@ -1989,6 +1998,36 @@ public class ItemDbScriptData
                     else if (param1 == "23")
                         finalize = "กดใช้เพื่อเปิดหน้าต่าง Craft Elemental Converters";
                 }
+
+                Log("isHadParam1: " + isHadParam1 + " | param1: " + param1);
+
+                sum += AddDescription(sum, finalize);
+            }
+            #endregion
+            #region pet
+            functionName = "pet ";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                Log("allParam.Count: " + allParam.Count);
+
+                string param1 = "";
+
+                if (allParam.Count > 0)
+                    param1 = GetValue(allParam[0], 1);
+
+                int paramInt = 0;
+                bool isInteger = false;
+
+                isInteger = int.TryParse(param1, out paramInt);
+
+                string finalize = null;
+
+                if (isHadParam1)
+                    finalize = "กดใช้เพื่อเริ่มจับ Monster " + GetMonsterName(paramInt);
 
                 Log("isHadParam1: " + isHadParam1 + " | param1: " + param1);
 
