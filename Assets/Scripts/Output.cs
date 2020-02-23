@@ -15,14 +15,27 @@ public class Output : ScriptableObject
     public void ClearAll()
     {
         targetArray = 0;
+        _string = null;
         m_currentOutput = null;
         currentItemDbData = new List<string>();
         currentItemDb = new ItemDb();
         m_lines = new List<string>();
-        m_currentResourceNames = new List<ItemResourceName>();
         m_lines_resourceNames = new List<string>();
+        m_lines_SkillName = new List<string>();
+        m_lines_MonsterDatabase = new List<string>();
         m_currentItemScriptDatas = new List<ItemDbScriptData>();
+        m_currentResourceNames = new List<ItemResourceName>();
+        m_currentSkillNames = new List<SkillName>();
+        m_currentMonsterDatabases = new List<MonsterDatabase>();
         Log("Clear all");
+    }
+    #endregion
+
+    #region Parse text asset
+    [Button]
+    public void ParseTextAsset()
+    {
+        itemDatabase.Initialize();
     }
     #endregion
 
@@ -30,8 +43,6 @@ public class Output : ScriptableObject
     [Button]
     public void ParseItemDatabase()
     {
-        itemDatabase.Initialize();
-
         //item_db
         m_currentOutput = null;
 
@@ -105,7 +116,7 @@ public class Output : ScriptableObject
     {
         Log("FetchSkillName: Start");
         m_currentSkillNames = new List<SkillName>();
-        FetchSkillName(itemDatabase.m_SkillName);
+        FetchSkillName(itemDatabase.m_skillNames);
         Log("FetchSkillName: Done");
     }
     void FetchSkillName(string data)
@@ -134,6 +145,44 @@ public class Output : ScriptableObject
         m_currentSkillNames.Add(newSkillName);
     }
     #endregion
+
+    #region Monster Database
+    [Button]
+    public void FetchMonsterDatabase()
+    {
+        Log("FetchMonsterDatabase: Start");
+        m_currentMonsterDatabases = new List<MonsterDatabase>();
+        FetchMonsterDatabase(itemDatabase.m_mob_db);
+        Log("FetchMonsterDatabase: Done");
+    }
+    void FetchMonsterDatabase(string data)
+    {
+        m_lines_MonsterDatabase = new List<string>();
+        Log("FetchMonsterDatabase >> Parsing txt to database start");
+        m_lines_MonsterDatabase = StringSplit.GetStringSplit(data, '\n');
+        Log("FetchMonsterDatabase >> Parsing txt to database done");
+
+        for (int i = 0; i < m_lines_MonsterDatabase.Count; i++)
+            Convert_mob_db_ToList(m_lines_MonsterDatabase[i]);
+    }
+    void Convert_mob_db_ToList(string data)
+    {
+        Log(data);
+
+        if (!data.Contains("//") && !string.IsNullOrEmpty(data) && !string.IsNullOrWhiteSpace(data))
+        {
+            List<string> sumSplit = StringSplit.GetStringSplit(data, ',');
+
+            MonsterDatabase newMonsterDatabase = new MonsterDatabase();
+            newMonsterDatabase.id = int.Parse(sumSplit[0]);
+            newMonsterDatabase.name = sumSplit[1];
+            newMonsterDatabase.kROName = sumSplit[2];
+
+            m_currentMonsterDatabases.Add(newMonsterDatabase);
+        }
+    }
+    #endregion
+
 
     public int targetArray;
     /// <summary>
@@ -1424,9 +1473,14 @@ public class Output : ScriptableObject
     List<SkillName> currentSkillNames = new List<SkillName>();
     public List<SkillName> m_currentSkillNames { get { return currentSkillNames; } set { currentSkillNames = value; } }
 
+    //Monster Database
+    List<MonsterDatabase> currentMonsterDatabases = new List<MonsterDatabase>();
+    public List<MonsterDatabase> m_currentMonsterDatabases { get { return currentMonsterDatabases; } set { currentMonsterDatabases = value; } }
+
     //Item Script
     List<ItemDbScriptData> currentItemScriptDatas = new List<ItemDbScriptData>();
     public List<ItemDbScriptData> m_currentItemScriptDatas { get { return currentItemScriptDatas; } set { currentItemScriptDatas = value; } }
+
     //lines
     List<string> lines = new List<string>();
     public List<string> m_lines { get { return lines; } set { lines = value; } }
@@ -1434,6 +1488,8 @@ public class Output : ScriptableObject
     public List<string> m_lines_resourceNames { get { return lines_resourceNames; } set { lines_resourceNames = value; } }
     List<string> lines_SkillName = new List<string>();
     public List<string> m_lines_SkillName { get { return lines_SkillName; } set { lines_SkillName = value; } }
+    List<string> lines_MonsterDatabase = new List<string>();
+    public List<string> m_lines_MonsterDatabase { get { return lines_MonsterDatabase; } set { lines_MonsterDatabase = value; } }
     #endregion
 
     void Log(object obj)
@@ -1838,16 +1894,58 @@ public class ItemDbScriptData
                 if (allParam.Count > 6)
                     param7 = allParam[6];
 
-                param5 = param5.Replace("-1-", "");
-                param5 = param5.Replace("MOBG_", "");
-                param5 = param5.Replace("_", " ");
+                int type = 0;//Normal
+
+                if (param5.Contains("rand"))
+                    type = 1;//Group
+
+                int paramInt = 0;
+                bool isInteger = false;
+
+                isInteger = int.TryParse(param5, out paramInt);
+
+                if (isInteger)
+                    type = 2;//Specific
+
+                string finalize = null;
+
+                if (type <= 0)
+                {
+                    param5 = param5.Replace("-1-", "");
+                    param5 = param5.Replace("MOBG_", "");
+                    param5 = param5.Replace("_", " ");
+
+                    finalize = "กดใช้เพื่อเรียก Monster ในกลุ่ม " + param5;
+                }
+                else if (type == 1)
+                {
+                    if (param1.Contains("rand"))
+                        finalize = "กดใช้เพื่อเรียก Monster ในกลุ่ม " + GetMonsterNameGroup(param1);
+                    else if (param2.Contains("rand"))
+                        finalize = "กดใช้เพื่อเรียก Monster ในกลุ่ม " + GetMonsterNameGroup(param2);
+                    else if (param3.Contains("rand"))
+                        finalize = "กดใช้เพื่อเรียก Monster ในกลุ่ม " + GetMonsterNameGroup(param3);
+                    else if (param4.Contains("rand"))
+                        finalize = "กดใช้เพื่อเรียก Monster ในกลุ่ม " + GetMonsterNameGroup(param4);
+                    else if (param5.Contains("rand"))
+                        finalize = "กดใช้เพื่อเรียก Monster ในกลุ่ม " + GetMonsterNameGroup(param5);
+                    else if (param6.Contains("rand"))
+                        finalize = "กดใช้เพื่อเรียก Monster ในกลุ่ม " + GetMonsterNameGroup(param6);
+                    else if (param7.Contains("rand"))
+                        finalize = "กดใช้เพื่อเรียก Monster ในกลุ่ม " + GetMonsterNameGroup(param7);
+                }
+                else if (type == 2)
+                    finalize = "กดใช้เพื่อเรียก Monster " + GetMonsterName(paramInt);
 
                 Log("isHadParam1: " + isHadParam1 + " | param1: " + param1);
                 Log("isHadParam2: " + isHadParam2 + " | param2: " + param2);
                 Log("isHadParam3: " + isHadParam3 + " | param3: " + param3);
                 Log("isHadParam4: " + isHadParam4 + " | param4: " + param4);
+                Log("isHadParam5: " + isHadParam5 + " | param5: " + param5);
+                Log("isHadParam6: " + isHadParam6 + " | param6: " + param6);
+                Log("isHadParam7: " + isHadParam7 + " | param7: " + param7);
 
-                sum += AddDescription(sum, "กดใช้เพื่อเรียก Monster ในกลุ่ม " + param5);
+                sum += AddDescription(sum, finalize);
             }
             #endregion
         }
@@ -2088,6 +2186,57 @@ public class ItemDbScriptData
 
             return value;
         }
+    }
+
+    /// <summary>
+    /// Get monster name from id
+    /// </summary>
+    /// <returns></returns>
+    string GetMonsterName(int id)
+    {
+        for (int i = 0; i < m_output.m_currentMonsterDatabases.Count; i++)
+        {
+            if (id == m_output.m_currentMonsterDatabases[i].id)
+                return m_output.m_currentMonsterDatabases[i].kROName;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Get monster name group from first given id
+    /// </summary>
+    /// <returns></returns>
+    string GetMonsterNameGroup(string data)
+    {
+        List<string> allParam = new List<string>();
+
+        if (data.Contains("rand"))
+        {
+            string toCut = data;
+            toCut = CutFunctionName(toCut, "rand");
+            toCut = toCut.Replace("(", "");
+            toCut = toCut.Replace(")", "");
+            allParam = new List<string>(toCut.Split(new string[] { "," }, StringSplitOptions.None));
+            for (int i = 0; i < allParam.Count; i++)
+                Log("allParam[" + i + "]: " + allParam[i]);
+        }
+        else
+            return null;
+
+        for (int i = 0; i < m_output.m_currentMonsterDatabases.Count; i++)
+        {
+            if (int.Parse(allParam[0]) == m_output.m_currentMonsterDatabases[i].id)
+            {
+                string groupName = m_output.m_currentMonsterDatabases[i].kROName;
+
+                int monsterNameStartAt = groupName.IndexOf("_");
+
+                string cut = groupName.Substring(monsterNameStartAt + groupName.Length);
+
+                return groupName;
+            }
+        }
+        return null;
     }
 
     /// <summary>
@@ -2339,4 +2488,12 @@ public class SkillName
     public int id;
     public string name;
     public string desc;
+}
+
+[Serializable]
+public class MonsterDatabase
+{
+    public int id;
+    public string name;
+    public string kROName;
 }

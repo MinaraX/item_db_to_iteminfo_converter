@@ -41,9 +41,7 @@ public class BrowseFile : MonoBehaviour, IPointerDownHandler
     {
         var paths = StandaloneFileBrowser.OpenFilePanel("Browse File", "", "txt", false);
         if (paths.Length > 0)
-        {
             StartCoroutine(OutputRoutine(new System.Uri(paths[0]).AbsoluteUri));
-        }
     }
 #endif
 
@@ -68,11 +66,17 @@ public class BrowseFile : MonoBehaviour, IPointerDownHandler
                     itemDatabase.m_item_db = webRequest.downloadHandler.text;
                 else if (fileType == FileType.item_combo_db)
                     itemDatabase.m_item_combo_db = webRequest.downloadHandler.text;
+                else if (fileType == FileType.resourceNames)
+                    itemDatabase.m_resourceNames = webRequest.downloadHandler.text;
+                else if (fileType == FileType.skillNames)
+                    itemDatabase.m_skillNames = webRequest.downloadHandler.text;
+                else if (fileType == FileType.mob_db)
+                    itemDatabase.m_mob_db = webRequest.downloadHandler.text;
                 //Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
             }
         }
     }
 
-    public enum FileType { item_db, item_combo_db, itemInfo };
+    public enum FileType { item_db, item_combo_db, resourceNames, skillNames, mob_db };
     public FileType fileType;
 }

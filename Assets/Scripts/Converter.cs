@@ -12,12 +12,17 @@ public class Converter : MonoBehaviour
     public Output output;
 
     [Header("UI")]
-    public Text txtCurrent_item_db;
-    public Text txtCurrent_item_combo_db;
-    public Text txtCurrent_itemInfo;
+    public Color[] colors;
+    public Image imgCurrent_item_db;
+    public Image imgCurrent_item_combo_db;
+    public Image imgCurrent_resourceNames;
+    public Image imgCurrent_skillNames;
+    public Image imgCurrent_mob_db;
     public GameObject objConvertInProgress;
 
+    public Button btnSync;
     public Button btnConvert;
+    public Button btnSaveAs;
     #endregion
 
     #region delegate subscription
@@ -25,46 +30,106 @@ public class Converter : MonoBehaviour
     {
         ItemDatabase.onItemDbChanged += ItemDatabase_onItemDbChanged;
         ItemDatabase.onItemComboDbChanged += ItemDatabase_onItemComboDbChanged;
-        ItemDatabase.onItemInfoChanged += ItemDatabase_onItemInfoChanged;
+        ItemDatabase.onResourceNamesChanged += ItemDatabase_onResourceNamesChanged;
+        ItemDatabase.onSkillNamesChanged += ItemDatabase_onSkillNamesChanged;
+        ItemDatabase.onMobDbChanged += ItemDatabase_onMobDbChanged;
     }
     void OnDestroy()
     {
         ItemDatabase.onItemDbChanged -= ItemDatabase_onItemDbChanged;
         ItemDatabase.onItemComboDbChanged -= ItemDatabase_onItemComboDbChanged;
-        ItemDatabase.onItemInfoChanged -= ItemDatabase_onItemInfoChanged;
+        ItemDatabase.onResourceNamesChanged -= ItemDatabase_onResourceNamesChanged;
+        ItemDatabase.onSkillNamesChanged -= ItemDatabase_onSkillNamesChanged;
+        ItemDatabase.onMobDbChanged -= ItemDatabase_onMobDbChanged;
     }
     void ItemDatabase_onItemDbChanged(bool isNull)
     {
         if (isNull)
-            txtCurrent_item_db.text = "item_db: Not ready";
+            imgCurrent_item_db.color = colors[0];
         else
-            txtCurrent_item_db.text = "item_db: Ready";
+            imgCurrent_item_db.color = colors[1];
+        CheckButtonState();
     }
     void ItemDatabase_onItemComboDbChanged(bool isNull)
     {
         if (isNull)
-            txtCurrent_item_combo_db.text = "item_combo_db: Not ready";
+            imgCurrent_item_combo_db.color = colors[0];
         else
-            txtCurrent_item_combo_db.text = "item_combo_db: Ready";
+            imgCurrent_item_combo_db.color = colors[1];
+        CheckButtonState();
     }
-    void ItemDatabase_onItemInfoChanged(bool isNull)
+    void ItemDatabase_onResourceNamesChanged(bool isNull)
     {
         if (isNull)
-            txtCurrent_itemInfo.text = "itemInfo: Not ready";
+            imgCurrent_resourceNames.color = colors[0];
         else
-            txtCurrent_itemInfo.text = "itemInfo: Ready";
+            imgCurrent_resourceNames.color = colors[1];
+        CheckButtonState();
+    }
+    void ItemDatabase_onSkillNamesChanged(bool isNull)
+    {
+        if (isNull)
+            imgCurrent_skillNames.color = colors[0];
+        else
+            imgCurrent_skillNames.color = colors[1];
+        CheckButtonState();
+    }
+    void ItemDatabase_onMobDbChanged(bool isNull)
+    {
+        if (isNull)
+            imgCurrent_mob_db.color = colors[0];
+        else
+            imgCurrent_mob_db.color = colors[1];
+        CheckButtonState();
+    }
+    void CheckButtonState()
+    {
+        btnConvert.interactable = false;
+        btnSaveAs.interactable = false;
+
+        if (string.IsNullOrEmpty(itemDatabase.m_item_db)
+            || string.IsNullOrEmpty(itemDatabase.m_item_combo_db)
+            || string.IsNullOrEmpty(itemDatabase.m_resourceNames)
+            || string.IsNullOrEmpty(itemDatabase.m_skillNames)
+            || string.IsNullOrEmpty(itemDatabase.m_mob_db)
+            || output.m_currentResourceNames.Count <= 0
+            || output.m_currentSkillNames.Count <= 0
+            || output.m_currentMonsterDatabases.Count <= 0)
+            btnConvert.interactable = false;
+        else
+            btnConvert.interactable = true;
+
+        if (string.IsNullOrEmpty(output.m_currentOutput))
+            btnSaveAs.interactable = false;
+        else
+            btnSaveAs.interactable = true;
     }
     #endregion
 
     void Start()
     {
+        output.ClearAll();
+
         itemDatabase.Initialize();
 
+        btnSync.onClick.AddListener(Sync);
         btnConvert.onClick.AddListener(Convert);
     }
 
-    [Button]
-    public void Convert()
+    /// <summary>
+    /// Sync all database
+    /// </summary>
+    void Sync()
+    {
+        output.ClearAll();
+        output.ParseItemDatabase();
+        output.FetchResourceName();
+        output.FetchSkillName();
+        output.FetchMonsterDatabase();
+        CheckButtonState();
+    }
+
+    void Convert()
     {
         if (convertProcess != null)
             StopCoroutine(convertProcess);

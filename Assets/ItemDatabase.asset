@@ -17,4 +17,6 @@ MonoBehaviour:
     type: 3}
   textAsset_resourceNames: {fileID: 4900000, guid: fc1b3e1308e75e84ca9d3c12d134360b,
     type: 3}
-  textAsset_SkillName: {fileID: 4900000, guid: 9ac3cc22fbb61684bbb6ddbecdeb7656, type: 3}
+  textAsset_skillNames: {fileID: 4900000, guid: 9ac3cc22fbb61684bbb6ddbecdeb7656,
+    type: 3}
+  textAsset_mob_db: {fileID: 4900000, guid: d29cd0230f87cfb4fa8353a04474b261, type: 3}
