@@ -163,6 +163,8 @@ public class Converter : MonoBehaviour
         objConvertInProgress.SetActive(false);
 
         Log("output.m_lines.Count: " + output.m_lines.Count);
+
+        CheckButtonState();
     }
 
     void Log(object obj)

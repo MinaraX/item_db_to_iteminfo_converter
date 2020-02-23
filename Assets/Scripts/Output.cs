@@ -1969,9 +1969,12 @@ public class ItemDbScriptData
 
         Log("cut: " + cut);
 
-        int cutEndAt = cut.IndexOf(";");
+        if (cut.Contains(";"))
+        {
+            int cutEndAt = cut.IndexOf(";");
 
-        cut = cut.Substring(1, cutEndAt - 1);
+            cut = cut.Substring(1, cutEndAt - 1);
+        }
 
         Log("cut: " + cut);
 
