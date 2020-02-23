@@ -1694,6 +1694,33 @@ public class ItemDbScriptData
                     goto L_Redo;
                 }
             }
+            else if (sumCut.Contains("catchpet"))
+            {
+                if (sumCut.Contains("catchpet") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bpet"))
+            {
+                if (sumCut.Contains("bpet") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("birthpet"))
+            {
+                if (sumCut.Contains("birthpet") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
         }
 
         for (int i = 0; i < allCut.Count; i++)
@@ -2030,6 +2057,58 @@ public class ItemDbScriptData
                     finalize = "กดใช้เพื่อเริ่มจับ Monster " + GetMonsterName(paramInt);
 
                 Log("isHadParam1: " + isHadParam1 + " | param1: " + param1);
+
+                sum += AddDescription(sum, finalize);
+            }
+            #endregion
+            #region catchpet
+            functionName = "catchpet ";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                Log("allParam.Count: " + allParam.Count);
+
+                string param1 = "";
+
+                if (allParam.Count > 0)
+                    param1 = GetValue(allParam[0], 1);
+
+                int paramInt = 0;
+                bool isInteger = false;
+
+                isInteger = int.TryParse(param1, out paramInt);
+
+                string finalize = null;
+
+                if (isHadParam1)
+                    finalize = "กดใช้เพื่อเริ่มจับ Monster " + GetMonsterName(paramInt);
+
+                Log("isHadParam1: " + isHadParam1 + " | param1: " + param1);
+
+                sum += AddDescription(sum, finalize);
+            }
+            #endregion
+            #region bpet
+            functionName = "bpet";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                string finalize = "กดใช้เพื่อฟักไข่ Pet";
+
+                sum += AddDescription(sum, finalize);
+            }
+            #endregion
+            #region birthpet
+            functionName = "birthpet";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                string finalize = "กดใช้เพื่อฟักไข่ Pet";
 
                 sum += AddDescription(sum, finalize);
             }
