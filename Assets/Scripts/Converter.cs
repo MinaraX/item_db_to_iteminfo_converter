@@ -108,6 +108,8 @@ public class Converter : MonoBehaviour
 
     void Start()
     {
+        Screen.SetResolution(480, 720, false);
+
         output.ClearAll();
 
         itemDatabase.Initialize();
