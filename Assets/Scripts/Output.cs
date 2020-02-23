@@ -1676,6 +1676,15 @@ public class ItemDbScriptData
                     goto L_Redo;
                 }
             }
+            else if (sumCut.Contains("produce"))
+            {
+                if (sumCut.Contains("produce") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
         }
 
         for (int i = 0; i < allCut.Count; i++)
@@ -1944,6 +1953,44 @@ public class ItemDbScriptData
                 Log("isHadParam5: " + isHadParam5 + " | param5: " + param5);
                 Log("isHadParam6: " + isHadParam6 + " | param6: " + param6);
                 Log("isHadParam7: " + isHadParam7 + " | param7: " + param7);
+
+                sum += AddDescription(sum, finalize);
+            }
+            #endregion
+            #region produce
+            functionName = "produce";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                Log("allParam.Count: " + allParam.Count);
+
+                string param1 = "";
+
+                if (allParam.Count > 0)
+                    param1 = GetValue(allParam[0], 1);
+
+                string finalize = null;
+
+                if (isHadParam1)
+                {
+                    if (param1 == "1")
+                        finalize = "กดใช้เพื่อเปิดหน้าต่าง Craft Level 1 Weapons";
+                    else if (param1 == "2")
+                        finalize = "กดใช้เพื่อเปิดหน้าต่าง Craft Level 2 Weapons";
+                    else if (param1 == "3")
+                        finalize = "กดใช้เพื่อเปิดหน้าต่าง Craft Level 3 Weapons";
+                    else if (param1 == "21")
+                        finalize = "กดใช้เพื่อเปิดหน้าต่าง Craft Blacksmith's Stones and Metals";
+                    else if (param1 == "22")
+                        finalize = "กดใช้เพื่อเปิดหน้าต่าง Craft Alchemist's Potions, Holy Water, Assassin Cross's Deadly Poison";
+                    else if (param1 == "23")
+                        finalize = "กดใช้เพื่อเปิดหน้าต่าง Craft Elemental Converters";
+                }
+
+                Log("isHadParam1: " + isHadParam1 + " | param1: " + param1);
 
                 sum += AddDescription(sum, finalize);
             }
