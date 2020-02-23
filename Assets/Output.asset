@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: Output
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 11400000, guid: 630cf34160fdbb5459afe2ad44e0a776, type: 2}
-  targetArray: 13141
-  _string: 
+  targetArray: 0
+  _string: 671,Gold_Coin,Gold Coin,2,10000,,0,,,,,0xFFFFFFFF,63,2,,,,,,{ RouletteGold+=1;
+    },{},{}

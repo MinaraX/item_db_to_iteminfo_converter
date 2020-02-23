@@ -1721,6 +1721,51 @@ public class ItemDbScriptData
                     goto L_Redo;
                 }
             }
+            else if (sumCut.Contains("guildgetexp"))
+            {
+                if (sumCut.Contains("guildgetexp") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("Zeny"))
+            {
+                if (sumCut.Contains("Zeny") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("RouletteGold"))
+            {
+                if (sumCut.Contains("RouletteGold") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("RouletteBronze"))
+            {
+                if (sumCut.Contains("RouletteBronze") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("RouletteSilver"))
+            {
+                if (sumCut.Contains("RouletteSilver") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
         }
 
         for (int i = 0; i < allCut.Count; i++)
@@ -2113,6 +2158,90 @@ public class ItemDbScriptData
                 sum += AddDescription(sum, finalize);
             }
             #endregion
+            #region guildgetexp
+            functionName = "guildgetexp";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                    sum += AddDescription(sum, "กดใช้เพื่อเพิ่ม EXP ให้ Guild จำนวน " + param1 + " EXP");
+            }
+            #endregion
+            #region Zeny +=
+            functionName = "Zeny +=";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                    sum += AddDescription(sum, "กดใช้เพื่อรับ " + param1 + " Zeny");
+            }
+            #endregion 
+            #region Zeny+=
+            functionName = "Zeny+=";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                    sum += AddDescription(sum, "กดใช้เพื่อรับ " + param1 + " Zeny");
+            }
+            #endregion
+            #region RouletteGold
+            functionName = "RouletteGold";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                    sum += AddDescription(sum, "กดใช้เพื่อรับ " + param1 + " Roulette Gold");
+            }
+            #endregion
+            #region RouletteBronze
+            functionName = "RouletteBronze";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                    sum += AddDescription(sum, "กดใช้เพื่อรับ " + param1 + " Roulette Bronze");
+            }
+            #endregion 
+            #region RouletteSilver
+            functionName = "RouletteSilver";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                    sum += AddDescription(sum, "กดใช้เพื่อรับ " + param1 + " Roulette Silver");
+            }
+            #endregion
         }
 
         return sum;
@@ -2271,6 +2400,7 @@ public class ItemDbScriptData
 
             return allValue[0] + "~" + allValue[1];
         }
+        //max
         else if (value.Contains("max"))
         {
             Log("max");
@@ -2314,6 +2444,17 @@ public class ItemDbScriptData
         //Normal value
         else
         {
+            if (value == "+")
+            {
+                SetParamCheck(paramCount, true);
+                return "1";
+            }
+            else if (value == "-")
+            {
+                SetParamCheck(paramCount, true);
+                return "-1";
+            }
+
             int paramInt = 0;
             bool isInteger = false;
 
