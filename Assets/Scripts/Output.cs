@@ -15,7 +15,6 @@ public class Output : ScriptableObject
     public void ClearAll()
     {
         targetArray = 0;
-        _string = null;
         m_currentOutput = null;
         currentItemDbData = new List<string>();
         currentItemDb = new ItemDb();
@@ -368,20 +367,13 @@ public class Output : ScriptableObject
 
     string RemoveComment(string data)
     {
-        var sum = data;
+        string sum = data;
 
         while (sum.Contains("/*") && sum.Contains("*/"))
         {
-            if (sum.Contains("/*"))
-            {
-                int commentStartAt = sum.IndexOf("/*");
-                sum = sum.Substring(0, commentStartAt);
-            }
-            if (sum.Contains("*/"))
-            {
-                int commentEndAt = sum.IndexOf("*/");
-                sum = sum.Substring(0, commentEndAt);
-            }
+            int commentStartAt = sum.IndexOf("/*");
+            int commentEndAt = sum.IndexOf("*/");
+            sum = sum.Substring(0, commentStartAt) + sum.Substring(commentEndAt + 2);
         }
 
         Log("RemoveComment >> sum: " + sum);
@@ -1536,9 +1528,7 @@ public class ItemDbScriptData
     public string script;
     public string onEquipScript;
     public string onUnequipScript;
-    #endregion
 
-    #region Non-Item Related Variable
     bool isHadParam1;
     bool isHadParam2;
     bool isHadParam3;
@@ -1546,6 +1536,13 @@ public class ItemDbScriptData
     bool isHadParam5;
     bool isHadParam6;
     bool isHadParam7;
+    bool isParam1Negative;
+    bool isParam2Negative;
+    bool isParam3Negative;
+    bool isParam4Negative;
+    bool isParam5Negative;
+    bool isParam6Negative;
+    bool isParam7Negative;
     #endregion
 
     #region Get Description Functions
@@ -1591,6 +1588,8 @@ public class ItemDbScriptData
     }
     #endregion
 
+    bool isHadEndIf;
+    int toAddEndIfCount;
     /// <summary>
     /// Get description by each item scripts function
     /// </summary>
@@ -1602,6 +1601,8 @@ public class ItemDbScriptData
 
         string sum = null;
 
+        string sumData = data;
+
         Log("GetDescription:" + data);
 
         //Split all space and merge it again line by line
@@ -1611,9 +1612,68 @@ public class ItemDbScriptData
         {
             var sumCut = allCut[i];
 
-            Log(sumCut);
+            Log("allCut[" + i + "]: " + sumCut);
 
-            if (sumCut.Contains("itemheal"))
+            if (sumCut == "if" && allCut[i + 1].Contains("("))
+            {
+                allCut[i] += " " + allCut[i + 1];
+                allCut.RemoveAt(i + 1);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("if(") || sumCut.Contains("if (") || sumCut.Contains("else if(") || sumCut.Contains("else if ("))
+            {
+                int count1 = 0;
+                foreach (char c in sumCut)
+                {
+                    if (c == '(')
+                        count1++;
+                }
+
+                int count2 = 0;
+                foreach (char c in sumCut)
+                {
+                    if (c == ')')
+                        count2++;
+                }
+
+                //Check ()
+                if (count1 != count2)
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+
+                //if not had {}
+                if (!allCut[i + 1].Contains("{"))
+                {
+                    toAddEndIfCount = 0;
+                    isHadEndIf = true;
+                }
+
+                //if had {}
+                if (allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}"))
+                {
+                    allCut[i + 1] += " " + allCut[i + 2];
+                    allCut.RemoveAt(i + 2);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("else"))
+            {
+                //else not had {}
+                if (!allCut[i + 1].Contains("{"))
+                    allCut[i] = "TXT_ELSE";
+                //else had {}
+                if (allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}"))
+                {
+                    //Merge
+                    allCut[i + 1] += " " + allCut[i + 2];
+                    allCut.RemoveAt(i + 2);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("itemheal"))
             {
                 if (sumCut.Contains("itemheal") && !sumCut.Contains(";"))
                 {
@@ -1775,6 +1835,51 @@ public class ItemDbScriptData
             data = allCut[i];
 
             string functionName = "";
+            #region if
+            if (data.Contains("if(") || data.Contains("if (") || data.Contains("else if(") || data.Contains("else if ("))
+            {
+                //Remove spacebar
+                data = MergeWhiteSpace.RemoveWhiteSpace(data);
+                //Remove if(
+                data = data.Substring(3);
+                //Remove )
+                data = data.Substring(0, data.Length - 1);
+                //Replace == to คือ
+                data = data.Replace("==", " คือ ");
+                //Replace != to ไม่เท่ากับ
+                data = data.Replace("!=", " ไม่เท่ากับ ");
+                //Replace || to หรือ
+                data = data.Replace("||", " หรือ ");
+                //Replace && to และ
+                data = data.Replace("&&", " และ ");
+                //Replace Job Name
+                data = data.Replace("Job_", "");
+                //Replace _
+                data = data.Replace("_", " ");
+                //Replace getpartnerid()
+                data = data.Replace("getpartnerid()", "มีคู่สมรส");
+
+                sum += AddDescription(sum, "[ถ้า " + data + "]");
+            }
+            #endregion
+            #region TXT_ELSE
+            functionName = "TXT_ELSE";
+            if (data.Contains(functionName))
+            {
+                sum += AddDescription(sum, "[หากไม่ตรงเงื่อนไข]");
+                allCut.Insert(i + 2, "TXT_ENDELSE");
+            }
+            #endregion
+            #region TXT_ENDELSE
+            functionName = "TXT_ENDELSE";
+            if (data.Contains(functionName))
+                sum += AddDescription(sum, "[สิ้นสุดหากไม่ตรงเงื่อนไข]");
+            #endregion
+            #region TXT_ENDIF
+            functionName = "TXT_ENDIF";
+            if (data.Contains(functionName))
+                sum += AddDescription(sum, "[สิ้นสุดหากตรงเงื่อนไข]");
+            #endregion
             #region itemheal
             functionName = "itemheal";
             if (data.Contains(functionName))
@@ -1787,9 +1892,19 @@ public class ItemDbScriptData
                 string param2 = GetValue(allParam[1], 2);
 
                 if (isHadParam1)
-                    sum += AddDescription(sum, "ฟื้นฟู " + param1 + " HP");
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "เสีย " + param1 + " HP");
+                    else
+                        sum += AddDescription(sum, "ฟื้นฟู " + param1 + " HP");
+                }
                 if (isHadParam2)
-                    sum += AddDescription(sum, "ฟื้นฟู " + param2 + " SP");
+                {
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "เสีย " + param2 + " SP");
+                    else
+                        sum += AddDescription(sum, "ฟื้นฟู " + param2 + " SP");
+                }
             }
             #endregion
             #region percentheal
@@ -1804,9 +1919,19 @@ public class ItemDbScriptData
                 string param2 = GetValue(allParam[1], 2);
 
                 if (isHadParam1)
-                    sum += AddDescription(sum, "ฟื้นฟู HP " + param1 + "%");
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "เสีย HP " + param1 + "%");
+                    else
+                        sum += AddDescription(sum, "ฟื้นฟู HP " + param1 + "%");
+                }
                 if (isHadParam2)
-                    sum += AddDescription(sum, "ฟื้นฟู SP " + param2 + "%");
+                {
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "เสีย SP " + param2 + "%");
+                    else
+                        sum += AddDescription(sum, "ฟื้นฟู SP " + param2 + "%");
+                }
             }
             #endregion
             #region sc_end
@@ -2289,6 +2414,13 @@ public class ItemDbScriptData
         isHadParam5 = false;
         isHadParam6 = false;
         isHadParam7 = false;
+        isParam1Negative = false;
+        isParam2Negative = false;
+        isParam3Negative = false;
+        isParam4Negative = false;
+        isParam5Negative = false;
+        isParam6Negative = false;
+        isParam7Negative = false;
 
         List<string> allParam = new List<string>();
         if (sumCut.Contains("rand"))
@@ -2358,7 +2490,7 @@ public class ItemDbScriptData
 
         if (value == "INFINITE_TICK")
         {
-            SetParamCheck(paramCount, true);
+            SetParamCheck(paramCount, true, true);
             return "ตลอดเวลา";
         }
 
@@ -2446,12 +2578,12 @@ public class ItemDbScriptData
         {
             if (value == "+")
             {
-                SetParamCheck(paramCount, true);
+                SetParamCheck(paramCount, true, false);
                 return "1";
             }
             else if (value == "-")
             {
-                SetParamCheck(paramCount, true);
+                SetParamCheck(paramCount, true, true);
                 return "-1";
             }
 
@@ -2480,17 +2612,23 @@ public class ItemDbScriptData
                         newValue = UpperFirst(newValue);
                     }
 
-                    SetParamCheck(paramCount, true);
+                    SetParamCheck(paramCount, true, false);
 
                     value = newValue;
                 }
             }
             else
             {
-                if (paramInt <= 0 && !isZeroValueOkay)
-                    SetParamCheck(paramCount, false);
+                if (paramInt == 0 && !isZeroValueOkay)
+                    SetParamCheck(paramCount, false, false);
+                else if (paramInt < 0)
+                {
+                    paramInt = paramInt * -1;
+                    value = paramInt.ToString("f0");
+                    SetParamCheck(paramCount, true, true);
+                }
                 else
-                    SetParamCheck(paramCount, true);
+                    SetParamCheck(paramCount, true, false);
             }
 
             return value;
@@ -2688,22 +2826,43 @@ public class ItemDbScriptData
     /// </summary>
     /// <param name="paramCount"></param>
     /// <param name="isTrue"></param>
-    void SetParamCheck(int paramCount, bool isTrue)
+    void SetParamCheck(int paramCount, bool isTrue, bool isNegative)
     {
         if (paramCount == 1)
+        {
             isHadParam1 = isTrue;
+            isParam1Negative = isNegative;
+        }
         else if (paramCount == 2)
+        {
             isHadParam2 = isTrue;
+            isParam2Negative = isNegative;
+        }
         else if (paramCount == 3)
+        {
             isHadParam3 = isTrue;
+            isParam3Negative = isNegative;
+        }
         else if (paramCount == 4)
+        {
             isHadParam4 = isTrue;
+            isParam4Negative = isNegative;
+        }
         else if (paramCount == 5)
+        {
             isHadParam5 = isTrue;
+            isParam5Negative = isNegative;
+        }
         else if (paramCount == 6)
+        {
             isHadParam6 = isTrue;
+            isParam6Negative = isNegative;
+        }
         else if (paramCount == 7)
+        {
             isHadParam7 = isTrue;
+            isParam7Negative = isNegative;
+        }
     }
 
     /// <summary>
@@ -2714,10 +2873,21 @@ public class ItemDbScriptData
     /// <returns></returns>
     string AddDescription(string data, string toAdd)
     {
+        string endIf = null;
+        if (isHadEndIf)
+        {
+            if (toAddEndIfCount >= 1)
+            {
+                isHadEndIf = false;
+                endIf = "\n\"[สิ้นสุดหากตรงเงื่อนไข]\",";
+            }
+            else
+                toAddEndIfCount++;
+        }
         if (string.IsNullOrEmpty(data))
-            return "\"" + toAdd + "\",";
+            return "\"" + toAdd + "\"," + endIf;
         else
-            return "\n\"" + toAdd + "\",";
+            return "\n\"" + toAdd + "\"," + endIf;
     }
 
     void Log(object obj)
@@ -2805,4 +2975,11 @@ public class MonsterDatabase
     public int id;
     public string name;
     public string kROName;
+}
+
+[Serializable]
+public class IfElse
+{
+    public string _if;
+    public string _else;
 }
