@@ -1826,6 +1826,15 @@ public class ItemDbScriptData
                     goto L_Redo;
                 }
             }
+            else if (sumCut.Contains("bInt"))
+            {
+                if (sumCut.Contains("bInt") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
         }
 
         for (int i = 0; i < allCut.Count; i++)
@@ -2365,6 +2374,25 @@ public class ItemDbScriptData
 
                 if (isHadParam1)
                     sum += AddDescription(sum, "กดใช้เพื่อรับ " + param1 + " Roulette Silver");
+            }
+            #endregion
+            #region bInt
+            functionName = "bInt";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "INT -" + param1);
+                    else
+                        sum += AddDescription(sum, "INT + " + param1);
+                }
             }
             #endregion
         }

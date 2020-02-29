@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Output
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 11400000, guid: 630cf34160fdbb5459afe2ad44e0a776, type: 2}
-  targetArray: 0
-  _string: 681,Memory_Of_Wedding,Sweet Memory of Marriage,2,50000,,10,,,,,0xFFFFFFFF,63,2,,,,,,{
-    if (getpartnerid()) sc_start SC_WEDDING,600000,0; },{},{}
+  targetArray: 13141
+  _string: '678,Poison_Bottle,Poison Bottle,2,5000,,100,,,,,0xFFFFFFFF,63,2,,,,,,{
+    if(Class == Job_Assassin_Cross || Class == Job_Guillotine_Cross || Class == Job_Guillotine_Cross_T)
+    { sc_start SC_DPOISON,60000,0; sc_start SC_ASPDPOTION3,60000,9; } else percentheal
+    -100,-100; },{},{} '
