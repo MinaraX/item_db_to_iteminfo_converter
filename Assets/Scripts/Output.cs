@@ -1654,12 +1654,56 @@ public class ItemDbScriptData
                     isHadEndIf = true;
                 }
 
-                //if had {}
+                //if had {
                 if (allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}"))
                 {
                     allCut[i + 1] += " " + allCut[i + 2];
                     allCut.RemoveAt(i + 2);
                     goto L_Redo;
+                }
+                //if had {}
+                else if (allCut[i + 1].Contains("{") && allCut[i + 1].Contains("}"))
+                {
+                    string findTempVar = allCut[i + 1];
+                    if (findTempVar.Contains(".@"))
+                    {
+                        if (findTempVar.Contains(".@") && !findTempVar.Contains(";"))
+                        {
+                            allCut[i] += " " + allCut[i + 1];
+                            allCut.RemoveAt(i + 1);
+                            goto L_Redo;
+                        }
+                        else
+                        {
+                            TempVariables newTempVariables = new TempVariables();
+                            string tempVariablesName = findTempVar;
+                            List<string> allTempVariablesName = StringSplit.GetStringSplit(tempVariablesName, '=');
+                            if (allTempVariablesName.Count >= 2)
+                            {
+                                allTempVariablesName[0] = allTempVariablesName[0].Replace("{", "");
+                                int cutStartAt = allTempVariablesName[1].IndexOf(';');
+                                allTempVariablesName[1] = allTempVariablesName[1].Substring(0, cutStartAt + 1);
+                                newTempVariables.variableName = MergeWhiteSpace.RemoveWhiteSpace(allTempVariablesName[0]);
+                                newTempVariables.value = MergeWhiteSpace.RemoveWhiteSpace(allTempVariablesName[1]);
+
+                                bool isFound = false;
+                                for (int j = 0; j < tempVariables.Count; j++)
+                                {
+                                    if (tempVariables[j].variableName == newTempVariables.variableName)
+                                    {
+                                        isFound = true;
+                                        break;
+                                    }
+                                }
+                                if (!isFound)
+                                {
+                                    Log("newTempVariables.variableName: " + newTempVariables.variableName);
+                                    Log("newTempVariables.value: " + newTempVariables.value);
+                                    tempVariables.Add(newTempVariables);
+                                }
+                            }
+                        }
+                    }
                 }
             }
             else if (sumCut.Contains("else"))
@@ -1723,6 +1767,7 @@ public class ItemDbScriptData
                     {
                         newTempVariables.variableName = MergeWhiteSpace.RemoveWhiteSpace(allTempVariablesName[0]);
                         newTempVariables.value = MergeWhiteSpace.RemoveWhiteSpace(allTempVariablesName[1]);
+
                         bool isFound = false;
                         for (int j = 0; j < tempVariables.Count; j++)
                         {
@@ -1733,7 +1778,11 @@ public class ItemDbScriptData
                             }
                         }
                         if (!isFound)
+                        {
+                            Log("newTempVariables.variableName: " + newTempVariables.variableName);
+                            Log("newTempVariables.value: " + newTempVariables.value);
                             tempVariables.Add(newTempVariables);
+                        }
                     }
                 }
             }
