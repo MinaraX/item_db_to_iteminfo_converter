@@ -1967,10 +1967,20 @@ public class ItemDbScriptData
                     goto L_Redo;
                 }
             }
-            else if (sumCut.Contains("bonus bAgi"))
+            else if (sumCut.Contains("bonus bAgi,"))
             {
-                if (sumCut.Contains("bonus bAgi") && !sumCut.Contains(";"))
+                if (sumCut.Contains("bonus bAgi,") && !sumCut.Contains(";"))
                 {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bAgi ,"))
+            {
+                if (sumCut.Contains("bonus bAgi ,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] = allCut[i].Replace("bonus bAgi ,", "bonus bAgi,");
                     allCut[i] += " " + allCut[i + 1];
                     allCut.RemoveAt(i + 1);
                     goto L_Redo;
@@ -2043,6 +2053,478 @@ public class ItemDbScriptData
             else if (sumCut.Contains("bonus bAgiDexStr"))
             {
                 if (sumCut.Contains("bonus bAgiDexStr") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bMaxHP,"))
+            {
+                if (sumCut.Contains("bonus bMaxHP,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bMaxHP ,"))
+            {
+                if (sumCut.Contains("bonus bMaxHP ,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] = allCut[i].Replace("bonus bMaxHP ,", "bonus bMaxHP,");
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bMaxHPrate"))
+            {
+                if (sumCut.Contains("bonus bMaxHPrate") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bMaxSP,"))
+            {
+                if (sumCut.Contains("bonus bMaxSP,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bMaxSP ,"))
+            {
+                if (sumCut.Contains("bonus bMaxSP ,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] = allCut[i].Replace("bonus bMaxSP ,", "bonus bMaxSP,");
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bMaxSPrate"))
+            {
+                if (sumCut.Contains("bonus bMaxSPrate") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bBaseAtk"))
+            {
+                if (sumCut.Contains("bonus bBaseAtk") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bAtk,"))
+            {
+                if (sumCut.Contains("bonus bAtk,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bAtk ,"))
+            {
+                if (sumCut.Contains("bonus bAtk ,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] = allCut[i].Replace("bonus bAtk ,", "bonus bAtk,");
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bAtk2"))
+            {
+                if (sumCut.Contains("bonus bAtk2") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bAtkRate"))
+            {
+                if (sumCut.Contains("bonus bAtkRate") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bWeaponAtkRate"))
+            {
+                if (sumCut.Contains("bonus bWeaponAtkRate") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bMatk,"))
+            {
+                if (sumCut.Contains("bonus bMatk,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bMatk ,"))
+            {
+                if (sumCut.Contains("bonus bMatk ,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] = allCut[i].Replace("bonus bMatk ,", "bonus bMatk,");
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bMatkRate"))
+            {
+                if (sumCut.Contains("bonus bMatkRate") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bWeaponMatkRate"))
+            {
+                if (sumCut.Contains("bonus bWeaponMatkRate") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bDef,"))
+            {
+                if (sumCut.Contains("bonus bDef,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bDef ,"))
+            {
+                if (sumCut.Contains("bonus bDef ,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] = allCut[i].Replace("bonus bDef ,", "bonus bDef,");
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bDefRate"))
+            {
+                if (sumCut.Contains("bonus bDefRate") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bDef2,"))
+            {
+                if (sumCut.Contains("bonus bDef2,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bDef2 ,"))
+            {
+                if (sumCut.Contains("bonus bDef2 ,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] = allCut[i].Replace("bonus bDef2 ,", "bonus bDef2,");
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bDef2Rate"))
+            {
+                if (sumCut.Contains("bonus bDef2Rate") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bMdef,"))
+            {
+                if (sumCut.Contains("bonus bMdef,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bMdef ,"))
+            {
+                if (sumCut.Contains("bonus bMdef ,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] = allCut[i].Replace("bonus bMdef ,", "bonus bMdef,");
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bMdefRate"))
+            {
+                if (sumCut.Contains("bonus bMdefRate") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bMdef2,"))
+            {
+                if (sumCut.Contains("bonus bMdef2,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bMdef2 ,"))
+            {
+                if (sumCut.Contains("bonus bMdef2 ,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] = allCut[i].Replace("bonus bMdef2 ,", "bonus bMdef2,");
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bMdef2Rate"))
+            {
+                if (sumCut.Contains("bonus bMdef2Rate") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bHit,"))
+            {
+                if (sumCut.Contains("bonus bHit,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bHit ,"))
+            {
+                if (sumCut.Contains("bonus bHit ,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] = allCut[i].Replace("bonus bHit ,", "bonus bHit,");
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bHitRate"))
+            {
+                if (sumCut.Contains("bonus bHitRate") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bCritical,"))
+            {
+                if (sumCut.Contains("bonus bCritical,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bCritical ,"))
+            {
+                if (sumCut.Contains("bonus bCritical ,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] = allCut[i].Replace("bonus bCritical ,", "bonus bCritical,");
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bCriticalLong"))
+            {
+                if (sumCut.Contains("bonus bCriticalLong") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus2 bCriticalAddRace"))
+            {
+                if (sumCut.Contains("bonus2 bCriticalAddRace") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bCriticalRate"))
+            {
+                if (sumCut.Contains("bonus bCriticalRate") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bFlee,"))
+            {
+                if (sumCut.Contains("bonus bFlee,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bFlee ,"))
+            {
+                if (sumCut.Contains("bonus bFlee ,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] = allCut[i].Replace("bonus bFlee ,", "bonus bFlee,");
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bFleeRate"))
+            {
+                if (sumCut.Contains("bonus bFleeRate") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bFlee2,"))
+            {
+                if (sumCut.Contains("bonus bFlee2,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bFlee2 ,"))
+            {
+                if (sumCut.Contains("bonus bFlee2 ,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] = allCut[i].Replace("bonus bFlee2 ,", "bonus bFlee2,");
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bFlee2Rate"))
+            {
+                if (sumCut.Contains("bonus bFlee2Rate") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bPerfectHitRate"))
+            {
+                if (sumCut.Contains("bonus bPerfectHitRate") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bPerfectHitAddRate"))
+            {
+                if (sumCut.Contains("bonus bPerfectHitAddRate") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bSpeedRate"))
+            {
+                if (sumCut.Contains("bonus bSpeedRate") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bSpeedAddRate"))
+            {
+                if (sumCut.Contains("bonus bSpeedAddRate") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bAspd,"))
+            {
+                if (sumCut.Contains("bonus bAspd,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bAspd ,"))
+            {
+                if (sumCut.Contains("bonus bAspd ,") && !sumCut.Contains(";"))
+                {
+                    allCut[i] = allCut[i].Replace("bonus bAspd ,", "bonus bAspd,");
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bAspdRate"))
+            {
+                if (sumCut.Contains("bonus bAspdRate") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bAtkRange"))
+            {
+                if (sumCut.Contains("bonus bAtkRange") && !sumCut.Contains(";"))
+                {
+                    allCut[i] += " " + allCut[i + 1];
+                    allCut.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+            }
+            else if (sumCut.Contains("bonus bAddMaxWeight"))
+            {
+                if (sumCut.Contains("bonus bAddMaxWeight") && !sumCut.Contains(";"))
                 {
                     allCut[i] += " " + allCut[i + 1];
                     allCut.RemoveAt(i + 1);
@@ -2672,15 +3154,15 @@ public class ItemDbScriptData
                     if (isParam1Negative)
                         sum += AddDescription(sum, "STR -" + param1);
                     else
-                        sum += AddDescription(sum, "STR + " + param1);
+                        sum += AddDescription(sum, "STR +" + param1);
                 }
             }
             #endregion
-            #region bonus bAgi
-            functionName = "bonus bAgi";
+            #region bonus bAgi,
+            functionName = "bonus bAgi,";
             if (data.Contains(functionName))
             {
-                string sumCut = CutFunctionName(data, functionName);
+                string sumCut = CutFunctionName(data, functionName, 1);
 
                 List<string> allParam = GetAllParamerters(sumCut);
 
@@ -2691,7 +3173,7 @@ public class ItemDbScriptData
                     if (isParam1Negative)
                         sum += AddDescription(sum, "AGI -" + param1);
                     else
-                        sum += AddDescription(sum, "AGI + " + param1);
+                        sum += AddDescription(sum, "AGI +" + param1);
                 }
             }
             #endregion
@@ -2710,7 +3192,7 @@ public class ItemDbScriptData
                     if (isParam1Negative)
                         sum += AddDescription(sum, "VIT -" + param1);
                     else
-                        sum += AddDescription(sum, "VIT + " + param1);
+                        sum += AddDescription(sum, "VIT +" + param1);
                 }
             }
             #endregion
@@ -2729,7 +3211,7 @@ public class ItemDbScriptData
                     if (isParam1Negative)
                         sum += AddDescription(sum, "INT -" + param1);
                     else
-                        sum += AddDescription(sum, "INT + " + param1);
+                        sum += AddDescription(sum, "INT +" + param1);
                 }
             }
             #endregion
@@ -2748,7 +3230,7 @@ public class ItemDbScriptData
                     if (isParam1Negative)
                         sum += AddDescription(sum, "DEX -" + param1);
                     else
-                        sum += AddDescription(sum, "DEX + " + param1);
+                        sum += AddDescription(sum, "DEX +" + param1);
                 }
             }
             #endregion
@@ -2767,7 +3249,7 @@ public class ItemDbScriptData
                     if (isParam1Negative)
                         sum += AddDescription(sum, "LUK -" + param1);
                     else
-                        sum += AddDescription(sum, "LUK + " + param1);
+                        sum += AddDescription(sum, "LUK +" + param1);
                 }
             }
             #endregion
@@ -2786,7 +3268,7 @@ public class ItemDbScriptData
                     if (isParam1Negative)
                         sum += AddDescription(sum, "All Stats -" + param1);
                     else
-                        sum += AddDescription(sum, "All Stats + " + param1);
+                        sum += AddDescription(sum, "All Stats +" + param1);
                 }
             }
             #endregion
@@ -2805,7 +3287,7 @@ public class ItemDbScriptData
                     if (isParam1Negative)
                         sum += AddDescription(sum, "AGI, VIT -" + param1);
                     else
-                        sum += AddDescription(sum, "AGI, VIT + " + param1);
+                        sum += AddDescription(sum, "AGI, VIT +" + param1);
                 }
             }
             #endregion
@@ -2824,7 +3306,730 @@ public class ItemDbScriptData
                     if (isParam1Negative)
                         sum += AddDescription(sum, "AGI, DEX, STR -" + param1);
                     else
-                        sum += AddDescription(sum, "AGI, DEX, STR + " + param1);
+                        sum += AddDescription(sum, "AGI, DEX, STR +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bMaxHP,
+            functionName = "bonus bMaxHP,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "Max HP -" + param1);
+                    else
+                        sum += AddDescription(sum, "Max HP +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bMaxHPrate
+            functionName = "bonus bMaxHPrate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "Max HP -" + param1 + "%");
+                    else
+                        sum += AddDescription(sum, "Max HP +" + param1 + "%");
+                }
+            }
+            #endregion
+            #region bonus bMaxSP,
+            functionName = "bonus bMaxSP,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "Max SP -" + param1);
+                    else
+                        sum += AddDescription(sum, "Max SP +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bMaxSPrate
+            functionName = "bonus bMaxSPrate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "Max SP -" + param1 + "%");
+                    else
+                        sum += AddDescription(sum, "Max SP +" + param1 + "%");
+                }
+            }
+            #endregion
+            #region bonus bBaseAtk
+            functionName = "bonus bBaseAtk";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "ATK -" + param1);
+                    else
+                        sum += AddDescription(sum, "ATK +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bAtk,
+            functionName = "bonus bAtk,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "ATK -" + param1);
+                    else
+                        sum += AddDescription(sum, "ATK +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bAtk2
+            functionName = "bonus bAtk2";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "ATK -" + param1);
+                    else
+                        sum += AddDescription(sum, "ATK +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bAtkRate
+            functionName = "bonus bAtkRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "ATK -" + param1 + "%");
+                    else
+                        sum += AddDescription(sum, "ATK +" + param1 + "%");
+                }
+            }
+            #endregion
+            #region bonus bWeaponAtkRate
+            functionName = "bonus bWeaponAtkRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "ATK จากอาวุธ -" + param1 + "%");
+                    else
+                        sum += AddDescription(sum, "ATK จากอาวุธ +" + param1 + "%");
+                }
+            }
+            #endregion
+            #region bonus bMatk,
+            functionName = "bonus bMatk,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "MATK -" + param1);
+                    else
+                        sum += AddDescription(sum, "MATK +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bMatkRate
+            functionName = "bonus bMatkRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "MATK -" + param1 + "%");
+                    else
+                        sum += AddDescription(sum, "MATK +" + param1 + "%");
+                }
+            }
+            #endregion
+            #region bonus bWeaponMatkRate
+            functionName = "bonus bWeaponMatkRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "MATK จากอาวุธ -" + param1 + "%");
+                    else
+                        sum += AddDescription(sum, "MATK จากอาวุธ +" + param1 + "%");
+                }
+            }
+            #endregion
+            #region bonus bDef,
+            functionName = "bonus bDef,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "DEF -" + param1);
+                    else
+                        sum += AddDescription(sum, "DEF +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bDefRate
+            functionName = "bonus bDefRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "DEF -" + param1 + "%");
+                    else
+                        sum += AddDescription(sum, "DEF +" + param1 + "%");
+                }
+            }
+            #endregion
+            #region bonus bDef2,
+            functionName = "bonus bDef2,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "DEF จาก VIT -" + param1);
+                    else
+                        sum += AddDescription(sum, "DEF จาก VIT +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bDef2Rate
+            functionName = "bonus bDef2Rate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "DEF จาก VIT -" + param1 + "%");
+                    else
+                        sum += AddDescription(sum, "DEF จาก VIT +" + param1 + "%");
+                }
+            }
+            #endregion
+            #region bonus bMdef,
+            functionName = "bonus bMdef,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "MDEF -" + param1);
+                    else
+                        sum += AddDescription(sum, "MDEF +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bMdefRate
+            functionName = "bonus bMdefRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "MDEF -" + param1 + "%");
+                    else
+                        sum += AddDescription(sum, "MDEF +" + param1 + "%");
+                }
+            }
+            #endregion
+            #region bonus bMdef2,
+            functionName = "bonus bMdef2,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "MDEF จาก INT -" + param1);
+                    else
+                        sum += AddDescription(sum, "MDEF จาก INT +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bMdef2Rate
+            functionName = "bonus bMdef2Rate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "MDEF จาก INT -" + param1 + "%");
+                    else
+                        sum += AddDescription(sum, "MDEF จาก INT +" + param1 + "%");
+                }
+            }
+            #endregion
+            #region bonus bHit,
+            functionName = "bonus bHit,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "HIT -" + param1);
+                    else
+                        sum += AddDescription(sum, "HIT +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bHitRate
+            functionName = "bonus bHitRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "HIT -" + param1 + "%");
+                    else
+                        sum += AddDescription(sum, "HIT +" + param1 + "%");
+                }
+            }
+            #endregion
+            #region bonus bCritical,
+            functionName = "bonus bCritical,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "Critical -" + param1);
+                    else
+                        sum += AddDescription(sum, "Critical +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bCriticalLong
+            functionName = "bonus bCriticalLong";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "(โจมตีกายภาพระยะไกล) Critical -" + param1);
+                    else
+                        sum += AddDescription(sum, "(โจมตีกายภาพระยะไกล) Critical +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bCriticalAddRace
+            functionName = "bonus2 bCriticalAddRace";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "Critical -" + param2 + " กับ " + param1);
+                    else
+                        sum += AddDescription(sum, "Critical +" + param2 + " กับ " + param1);
+                }
+            }
+            #endregion
+            #region bonus bCriticalRate
+            functionName = "bonus bCriticalRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "Critical -" + param1 + "%");
+                    else
+                        sum += AddDescription(sum, "Critical +" + param1 + "%");
+                }
+            }
+            #endregion
+            #region bonus bFlee,
+            functionName = "bonus bFlee,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "Flee -" + param1);
+                    else
+                        sum += AddDescription(sum, "Flee +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bFleeRate
+            functionName = "bonus bFleeRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "Flee -" + param1 + "%");
+                    else
+                        sum += AddDescription(sum, "Flee +" + param1 + "%");
+                }
+            }
+            #endregion
+            #region bonus bFlee2,
+            functionName = "bonus bFlee2,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "Perfect Dodge -" + param1);
+                    else
+                        sum += AddDescription(sum, "Perfect Dodge +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bFlee2Rate
+            functionName = "bonus bFlee2Rate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "Perfect Dodge -" + param1 + "%");
+                    else
+                        sum += AddDescription(sum, "Perfect Dodge +" + param1 + "%");
+                }
+            }
+            #endregion
+            #region bonus bPerfectHitRate
+            functionName = "bonus bPerfectHitRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "Perfect Hit -" + param1 + "% (ใช้ค่ามากสุดเท่านั้น)");
+                    else
+                        sum += AddDescription(sum, "Perfect Hit +" + param1 + "% (ใช้ค่ามากสุดเท่านั้น)");
+                }
+            }
+            #endregion
+            #region bonus bPerfectHitAddRate
+            functionName = "bonus bPerfectHitAddRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "Perfect Hit -" + param1 + "%");
+                    else
+                        sum += AddDescription(sum, "Perfect Hit +" + param1 + "%");
+                }
+            }
+            #endregion
+            #region bonus bSpeedRate
+            functionName = "bonus bSpeedRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "เคลื่อนที่ช้าลง " + param1 + "% (ใช้ค่ามากสุดเท่านั้น)");
+                    else
+                        sum += AddDescription(sum, "เคลื่อนที่เร็วขึ้น " + param1 + "% (ใช้ค่ามากสุดเท่านั้น)");
+                }
+            }
+            #endregion
+            #region bonus bSpeedAddRate
+            functionName = "bonus bSpeedAddRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "เคลื่อนที่ช้าลง " + param1 + "%");
+                    else
+                        sum += AddDescription(sum, "เคลื่อนที่เร็วขึ้น " + param1 + "%");
+                }
+            }
+            #endregion
+            #region bonus bAspd,
+            functionName = "bonus bAspd,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "ASPD -" + param1);
+                    else
+                        sum += AddDescription(sum, "ASPD +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bAspdRate
+            functionName = "bonus bAspdRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "ASPD -" + param1 + "%");
+                    else
+                        sum += AddDescription(sum, "ASPD +" + param1 + "%");
+                }
+            }
+            #endregion
+            #region bonus bAtkRange
+            functionName = "bonus bAtkRange";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "ระยะโจมตี -" + param1);
+                    else
+                        sum += AddDescription(sum, "ระยะโจมตี +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bAddMaxWeight
+            functionName = "bonus bAddMaxWeight";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "แบกของได้น้อยลง -" + param1);
+                    else
+                        sum += AddDescription(sum, "แบกของได้มากขึ้น +" + param1);
                 }
             }
             #endregion
@@ -3246,19 +4451,40 @@ public class ItemDbScriptData
 
             if (!isInteger)
             {
-                SC sc = (SC)Enum.Parse(typeof(SC), value.ToUpper());
-                if (value.ToUpper() == sc.ToString().ToUpper())
-                {
-                    string newValue = sc.ToString();
+                string newValue = value.ToUpper();
 
+                if (newValue.Contains("SC_"))
+                {
                     if (newValue.Contains("SC__"))
                     {
                         newValue = newValue.Substring(4);
+                        newValue = newValue.Replace("_", " ");
                         newValue = UpperFirst(newValue);
                     }
                     else
                     {
                         newValue = newValue.Substring(3);
+                        newValue = newValue.Replace("_", " ");
+                        newValue = UpperFirst(newValue);
+                    }
+
+                    SetParamCheck(paramCount, true, false);
+
+                    value = newValue;
+
+                }
+                else if (newValue.Contains("RC_"))
+                {
+                    if (newValue.Contains("RC__"))
+                    {
+                        newValue = newValue.Substring(4);
+                        newValue = newValue.Replace("_", " ");
+                        newValue = UpperFirst(newValue);
+                    }
+                    else
+                    {
+                        newValue = newValue.Substring(3);
+                        newValue = newValue.Replace("_", " ");
                         newValue = UpperFirst(newValue);
                     }
 
