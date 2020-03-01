@@ -1619,7 +1619,7 @@ public class ItemDbScriptData
 
             if (sumCut == "if" && allCut[i + 1].Contains("("))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("if(") || sumCut.Contains("if (") || sumCut.Contains("else if(") || sumCut.Contains("else if ("))
@@ -1641,7 +1641,7 @@ public class ItemDbScriptData
                 //Check ()
                 if (count1 != count2)
                 {
-                    MergingItemScripts(allCut, i);
+                    MergeItemScripts(allCut, i);
                     goto L_Redo;
                 }
 
@@ -1667,7 +1667,7 @@ public class ItemDbScriptData
                     {
                         if (findTempVar.Contains(".@") && !findTempVar.Contains(";"))
                         {
-                            MergingItemScripts(allCut, i);
+                            MergeItemScripts(allCut, i);
                             goto L_Redo;
                         }
                         else
@@ -1719,34 +1719,34 @@ public class ItemDbScriptData
             }
             else if (sumCut == "bonus" || sumCut == "bonus " || sumCut == " bonus")
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut == "bonus2" || sumCut == "bonus2 " || sumCut == " bonus2")
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut == "bonus3" || sumCut == "bonus3 " || sumCut == " bonus3")
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut == "bonus4" || sumCut == "bonus4 " || sumCut == " bonus4")
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut == "bonus5" || sumCut == "bonus5 " || sumCut == " bonus5")
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains(".@"))
             {
                 if (sumCut.Contains(".@") && !sumCut.Contains(";"))
                 {
-                    MergingItemScripts(allCut, i);
+                    MergeItemScripts(allCut, i);
                     goto L_Redo;
                 }
                 else
@@ -1779,22 +1779,22 @@ public class ItemDbScriptData
             }
             else if (sumCut.Contains("itemheal") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("percentheal") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("sc_end") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("sc_start") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("itemskill") && !sumCut.Contains(";"))
@@ -1806,597 +1806,1197 @@ public class ItemDbScriptData
             }
             else if (sumCut.Contains("skill") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("getrandgroupitem") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("monster") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("produce") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("pet") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("catchpet") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bpet") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("birthpet") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("guildgetexp") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("Zeny") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("RouletteGold") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("RouletteBronze") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("RouletteSilver") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
-                goto L_Redo;
-            }
-            else if (sumCut.Contains("bonus bIntravision") && !sumCut.Contains(";"))
-            {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bStr") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus bAgi,") || sumCut.Contains("bonus bAgi ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bVit") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus bInt,") || sumCut.Contains("bonus bInt ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bDex") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bLuk") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bAllStats") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bAgiVit") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bAgiDexStr") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus bMaxHP,") || sumCut.Contains("bonus bMaxHP ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bMaxHPrate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus bMaxSP,") || sumCut.Contains("bonus bMaxSP ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bMaxSPrate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bBaseAtk") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus bAtk,") || sumCut.Contains("bonus bAtk ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bAtk2") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bAtkRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bWeaponAtkRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus bMatk,") || sumCut.Contains("bonus bMatk ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bMatkRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bWeaponMatkRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus bDef,") || sumCut.Contains("bonus bDef ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bDefRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus bDef2,") || sumCut.Contains("bonus bDef2 ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bDef2Rate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus bMdef,") || sumCut.Contains("bonus bMdef ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bMdefRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus bMdef2,") || sumCut.Contains("bonus bMdef2 ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bMdef2Rate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus bHit,") || sumCut.Contains("bonus bHit ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bHitRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus bCritical,") || sumCut.Contains("bonus bCritical ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bCriticalLong") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bCriticalAddRace") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bCriticalRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus bFlee,") || sumCut.Contains("bonus bFlee ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bFleeRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus bFlee2,") || sumCut.Contains("bonus bFlee2 ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bFlee2Rate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bPerfectHitRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bPerfectHitAddRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bSpeedRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bSpeedAddRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus bAspd,") || sumCut.Contains("bonus bAspd ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bAspdRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bAtkRange") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bAddMaxWeight") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bHPrecovRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bSPrecovRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bHPRegenRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bHPLossRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bSPRegenRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bSPLossRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bRegenPercentHP") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bRegenPercentSP") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bNoRegen") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bUseSPrate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus2 bSkillUseSP,") || sumCut.Contains("bonus2 bSkillUseSP ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bSkillUseSPrate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bSkillAtk") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bLongAtkRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bCritAtkRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bCriticalDef") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus2 bWeaponAtk,") || sumCut.Contains("bonus2 bWeaponAtk ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bWeaponDamageRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bNearAtkDef") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bLongAtkDef") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bMagicAtkDef") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bMiscAtkDef") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bNoWeaponDamage") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bNoMagicDamage") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bNoMiscDamage") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus bHealPower,") || sumCut.Contains("bonus bHealPower ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bHealPower2") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus2 bSkillHeal,") || sumCut.Contains("bonus2 bSkillHeal ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bSkillHeal2") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bAddItemHealRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bAddItemHealRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bAddItemGroupHealRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bCastrate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bCastrate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bFixedCastrate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bFixedCastrate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bVariableCastrate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bVariableCastrate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus bFixedCast,") || sumCut.Contains("bonus bFixedCast ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bSkillFixedCast") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus bVariableCast,") || sumCut.Contains("bonus bVariableCast ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bSkillVariableCast") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus bNoCastCancel,") || sumCut.Contains("bonus bNoCastCancel ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bNoCastCancel2") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bDelayrate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bSkillDelay") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bSkillCooldown") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bAddEle") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus3 bAddEle") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bMagicAddEle") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bSubEle") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus3 bSubEle") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bSubDefEle") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus2 bAddRace,") || sumCut.Contains("bonus2 bAddRace ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus2 bMagicAddRace") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus2 bSubRace,") || sumCut.Contains("bonus2 bSubRace ,")) && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i, true);
+                MergeItemScripts(allCut, i, true);
+                goto L_Redo;
+            }
+            else if ((sumCut.Contains("bonus2 bAddClass,") || sumCut.Contains("bonus2 bAddClass ,")) && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i, true);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bMagicAddClass") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bSubClass") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bAddSize") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bMagicAddSize") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bSubSize") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bNoSizeFix") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bAddDamageClass") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bAddMagicDamageClass") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bAddDefMonster") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bAddMDefMonster") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bAddRace2") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bSubRace2") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bMagicAddRace2") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bSubSkill") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bAbsorbDmgMaxHP") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bAtkEle") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bDefEle") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bMagicAtkEle") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bDefRatioAtkRace") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bDefRatioAtkEle") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bDefRatioAtkClass") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus4 bSetDefRace") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus4 bSetMDefRace") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bIgnoreDefEle") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if ((sumCut.Contains("bonus bIgnoreDefRace,") || sumCut.Contains("bonus bIgnoreDefRace ,")) && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i, true);
+                goto L_Redo;
+            }
+            else if ((sumCut.Contains("bonus bIgnoreDefClass,") || sumCut.Contains("bonus bIgnoreDefClass ,")) && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i, true);
+                goto L_Redo;
+            }
+            else if ((sumCut.Contains("bonus bIgnoreMDefRace,") || sumCut.Contains("bonus bIgnoreMDefRace ,")) && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i, true);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bIgnoreDefRaceRate") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bIgnoreMdefRaceRate") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bIgnoreMdefRace2Rate") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bIgnoreMDefEle") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bIgnoreDefClassRate") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bIgnoreMdefClassRate") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bExpAddRace") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bExpAddClass") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if ((sumCut.Contains("bonus2 bAddEff,") || sumCut.Contains("bonus2 bAddEff ,")) && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i, true);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bAddEff2") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bAddEffWhenHit") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bResEff") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if ((sumCut.Contains("bonus3 bAddEff,") || sumCut.Contains("bonus3 bAddEff ,")) && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i, true);
+                goto L_Redo;
+            }
+            else if ((sumCut.Contains("bonus4 bAddEff,") || sumCut.Contains("bonus4 bAddEff ,")) && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i, true);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus3 bAddEffWhenHit") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus4 bAddEffWhenHit") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus3 bAddEffOnSkill") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus4 bAddEffOnSkill") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus5 bAddEffOnSkill") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bComaClass") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bComaRace") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bWeaponComaEle") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bWeaponComaClass") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bWeaponComaRace") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if ((sumCut.Contains("bonus3 bAutoSpell,") || sumCut.Contains("bonus3 bAutoSpell ,")) && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i, true);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus3 bAutoSpellWhenHit") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if ((sumCut.Contains("bonus4 bAutoSpell,") || sumCut.Contains("bonus4 bAutoSpell ,")) && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i, true);
+                goto L_Redo;
+            }
+            else if ((sumCut.Contains("bonus5 bAutoSpell,") || sumCut.Contains("bonus5 bAutoSpell ,")) && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i, true);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus4 bAutoSpellWhenHit") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus5 bAutoSpellWhenHit") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus4 bAutoSpellOnSkill") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus5 bAutoSpellOnSkill") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bHPDrainValue") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bHPDrainValueRace") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bHpDrainValueClass") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bSPDrainValue") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bSPDrainValueRace") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bSpDrainValueClass") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bHPDrainRate") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bSPDrainRate") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bHPVanishRate") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus3 bHPVanishRaceRate") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus3 bHPVanishRate") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bSPVanishRate") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus3 bSPVanishRaceRate") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus3 bSPVanishRate") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus3 bStateNoRecoverRace") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bHPGainValue") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bSPGainValue") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bSPGainRace") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bLongHPGainValue") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bLongSPGainValue") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bMagicHPGainValue") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bMagicSPGainValue") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bShortWeaponDamageReturn") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bLongWeaponDamageReturn") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bMagicDamageReturn") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bUnstripableWeapon") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bUnstripableArmor") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bUnstripableHelm") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bUnstripableShield") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if ((sumCut.Contains("bonus bUnstripable,") || sumCut.Contains("bonus bUnstripable ,")) && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i, true);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bUnbreakableGarment") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bUnbreakableWeapon") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bUnbreakableArmor") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bUnbreakableHelm") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bUnbreakableShield") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bUnbreakableShoes") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if ((sumCut.Contains("bonus bUnbreakable,") || sumCut.Contains("bonus bUnbreakable ,")) && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i, true);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bBreakWeaponRate") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bBreakArmorRate") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bDropAddRace") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bDropAddClass") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus3 bAddMonsterIdDropItem") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if ((sumCut.Contains("bonus2 bAddMonsterDropItem,") || sumCut.Contains("bonus2 bAddMonsterDropItem ,")) && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i, true);
+                goto L_Redo;
+            }
+            else if ((sumCut.Contains("bonus3 bAddMonsterDropItem,") || sumCut.Contains("bonus3 bAddMonsterDropItem ,")) && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i, true);
+                goto L_Redo;
+            }
+            else if ((sumCut.Contains("bonus3 bAddClassDropItem,") || sumCut.Contains("bonus3 bAddClassDropItem ,")) && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i, true);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bAddMonsterDropItemGroup") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus3 bAddMonsterDropItemGroup") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus3 bAddClassDropItemGroup") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bGetZenyNum") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bAddGetZenyNum") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
             else if (sumCut.Contains("bonus bDoubleRate") && !sumCut.Contains(";"))
             {
-                MergingItemScripts(allCut, i);
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bDoubleAddRate") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bSplashAddRange") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus2 bAddSkillBlow") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bNoKnockback") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bNoGemStone") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bIntravision") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bPerfectHide") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bRestartFullRecover") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bClassChange") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bAddStealRate") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bNoMadoFuel") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("bonus bNoWalkDelay") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
         }
@@ -3912,7 +4512,7 @@ public class ItemDbScriptData
         return sum;
     }
 
-    void MergingItemScripts(List<string> allCut, int i, bool isRemoveWhiteSpace = false)
+    void MergeItemScripts(List<string> allCut, int i, bool isRemoveWhiteSpace = false)
     {
         if (isRemoveWhiteSpace)
             allCut[i] = allCut[i].Replace(" ,", ",");
