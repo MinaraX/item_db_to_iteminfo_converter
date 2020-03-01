@@ -1598,8 +1598,6 @@ public class ItemDbScriptData
     /// <returns></returns>
     public string GetDescription(string data)
     {
-        //Debugger.ClearConsole();
-
         tempVariables = new List<TempVariables>();
 
         string sum = null;
@@ -1608,9 +1606,11 @@ public class ItemDbScriptData
 
         Log("GetDescription:" + data);
 
-        //Split all space and merge it again line by line
+        //Split all space
         List<string> allCut = StringSplit.GetStringSplit(data, ' ');
+
     L_Redo:
+        #region Merge it again line by line
         for (int i = 0; i < allCut.Count; i++)
         {
             var sumCut = allCut[i];
@@ -2314,7 +2314,7 @@ public class ItemDbScriptData
                 MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
-            else if ((sumCut.Contains("bonus bNoCastCancel,") || sumCut.Contains("bonus bNoCastCancel ,")) && !sumCut.Contains(";"))
+            else if ((sumCut.Contains("bonus bNoCastCancel;") || sumCut.Contains("bonus bNoCastCancel ;")) && !sumCut.Contains(";"))
             {
                 MergeItemScripts(allCut, i, true);
                 goto L_Redo;
@@ -2374,9 +2374,9 @@ public class ItemDbScriptData
                 MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
-            else if (sumCut.Contains("bonus2 bMagicAddRace") && !sumCut.Contains(";"))
+            else if ((sumCut.Contains("bonus2 bMagicAddRace,") || sumCut.Contains("bonus2 bMagicAddRace ,")) && !sumCut.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
+                MergeItemScripts(allCut, i, true);
                 goto L_Redo;
             }
             else if ((sumCut.Contains("bonus2 bSubRace,") || sumCut.Contains("bonus2 bSubRace ,")) && !sumCut.Contains(";"))
@@ -2829,7 +2829,7 @@ public class ItemDbScriptData
                 MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
-            else if ((sumCut.Contains("bonus bUnstripable,") || sumCut.Contains("bonus bUnstripable ,")) && !sumCut.Contains(";"))
+            else if ((sumCut.Contains("bonus bUnstripable;") || sumCut.Contains("bonus bUnstripable ;")) && !sumCut.Contains(";"))
             {
                 MergeItemScripts(allCut, i, true);
                 goto L_Redo;
@@ -2944,6 +2944,11 @@ public class ItemDbScriptData
                 MergeItemScripts(allCut, i);
                 goto L_Redo;
             }
+            else if (sumCut.Contains("bonus bSplashRange") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
             else if (sumCut.Contains("bonus bSplashAddRange") && !sumCut.Contains(";"))
             {
                 MergeItemScripts(allCut, i);
@@ -3000,6 +3005,7 @@ public class ItemDbScriptData
                 goto L_Redo;
             }
         }
+        #endregion
 
         for (int i = 0; i < allCut.Count; i++)
         {
@@ -3584,11 +3590,7 @@ public class ItemDbScriptData
                     sum += AddDescription(sum, "กดใช้เพื่อรับ " + param1 + " Roulette Silver");
             }
             #endregion
-            #region bonus bIntravision
-            functionName = "bonus bIntravision";
-            if (data.Contains(functionName))
-                sum += AddDescription(sum, "มองเห็นศัตรูที่ Hidden, Cloaking ได้ตลอดเวลา");
-            #endregion
+
             #region bonus bStr
             functionName = "bonus bStr";
             if (data.Contains(functionName))
@@ -4482,6 +4484,3113 @@ public class ItemDbScriptData
                         sum += AddDescription(sum, "แบกของได้มากขึ้น +" + param1);
                 }
             }
+            #endregion   
+            #region bonus bHPrecovRate
+            functionName = "bonus bHPrecovRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bSPrecovRate
+            functionName = "bonus bSPrecovRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bHPRegenRate
+            functionName = "bonus2 bHPRegenRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bHPLossRate
+            functionName = "bonus2 bHPLossRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSPRegenRate
+            functionName = "bonus2 bSPRegenRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSPLossRate
+            functionName = "bonus2 bSPLossRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bRegenPercentHP
+            functionName = "bonus2 bRegenPercentHP";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bRegenPercentSP
+            functionName = "bonus2 bRegenPercentSP";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bNoRegen
+            functionName = "bonus bNoRegen";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bUseSPrate
+            functionName = "bonus bUseSPrate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSkillUseSP,
+            functionName = "bonus2 bSkillUseSP,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSkillUseSPrate
+            functionName = "bonus2 bSkillUseSPrate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSkillAtk
+            functionName = "bonus2 bSkillAtk";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bLongAtkRate
+            functionName = "bonus bLongAtkRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bCritAtkRate
+            functionName = "bonus bCritAtkRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bCriticalDef
+            functionName = "bonus bCriticalDef";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bWeaponAtk,
+            functionName = "bonus2 bWeaponAtk,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bWeaponDamageRate
+            functionName = "bonus2 bWeaponDamageRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bNearAtkDef
+            functionName = "bonus bNearAtkDef";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bLongAtkDef
+            functionName = "bonus bLongAtkDef";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bMagicAtkDef
+            functionName = "bonus bMagicAtkDef";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bNoWeaponDamage
+            functionName = "bonus bNoWeaponDamage";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bNoMagicDamage
+            functionName = "bonus bNoMagicDamage";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bNoMiscDamage
+            functionName = "bonus bNoMiscDamage";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bHealPower,
+            functionName = "bonus bHealPower,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bHealPower2
+            functionName = "bonus bHealPower2";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSkillHeal,
+            functionName = "bonus2 bSkillHeal,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSkillHeal2
+            functionName = "bonus2 bSkillHeal2";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bAddItemHealRate
+            functionName = "bonus bAddItemHealRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bAddItemHealRate
+            functionName = "bonus2 bAddItemHealRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bAddItemGroupHealRate
+            functionName = "bonus2 bAddItemGroupHealRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bCastrate
+            functionName = "bonus bCastrate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bCastrate
+            functionName = "bonus2 bCastrate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bFixedCastrate
+            functionName = "bonus bFixedCastrate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bFixedCastrate
+            functionName = "bonus2 bFixedCastrate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bVariableCastrate
+            functionName = "bonus bVariableCastrate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bVariableCastrate
+            functionName = "bonus2 bVariableCastrate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bFixedCast,
+            functionName = "bonus bFixedCast,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSkillFixedCast
+            functionName = "bonus2 bSkillFixedCast";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bVariableCast,
+            functionName = "bonus bVariableCast,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSkillVariableCast
+            functionName = "bonus2 bSkillVariableCast";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bNoCastCancel;
+            functionName = "bonus bNoCastCancel;";
+            if (data.Contains(functionName))
+                sum += AddDescription(sum, "nnnn -");
+            #endregion
+            #region bonus bNoCastCancel2
+            functionName = "bonus bNoCastCancel2";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bDelayrate
+            functionName = "bonus bDelayrate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSkillDelay
+            functionName = "bonus2 bSkillDelay";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSkillCooldown
+            functionName = "bonus2 bSkillCooldown";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bAddEle
+            functionName = "bonus2 bAddEle";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus3 bAddEle
+            functionName = "bonus3 bAddEle";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bMagicAddEle
+            functionName = "bonus2 bMagicAddEle";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSubEle
+            functionName = "bonus2 bSubEle";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus3 bSubEle
+            functionName = "bonus3 bSubEle";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSubDefEle
+            functionName = "bonus2 bSubDefEle";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bAddRace,
+            functionName = "bonus2 bAddRace,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bMagicAddRace,
+            functionName = "bMagicAddRace,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSubRace,
+            functionName = "bonus2 bSubRace,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bAddClass,
+            functionName = "bonus2 bAddClass,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bMagicAddClass
+            functionName = "bonus2 bMagicAddClass";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSubClass
+            functionName = "bonus2 bSubClass";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bAddSize
+            functionName = "bonus2 bAddSize";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bMagicAddSize
+            functionName = "bonus2 bMagicAddSize";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSubSize
+            functionName = "bonus2 bSubSize";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bNoSizeFix
+            functionName = "bonus bNoSizeFix";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bAddDamageClass
+            functionName = "bonus2 bAddDamageClass";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bAddMagicDamageClass
+            functionName = "bonus2 bAddMagicDamageClass";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bAddDefMonster
+            functionName = "bonus2 bAddDefMonster";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bAddMDefMonster
+            functionName = "bonus2 bAddMDefMonster";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bAddRace2
+            functionName = "bonus2 bAddRace2";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSubRace2
+            functionName = "bonus2 bSubRace2";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bMagicAddRace2
+            functionName = "bonus2 bMagicAddRace2";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSubSkill
+            functionName = "bonus2 bSubSkill";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bAbsorbDmgMaxHP
+            functionName = "bonus bAbsorbDmgMaxHP";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bAtkEle
+            functionName = "bonus bAtkEle";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bDefEle
+            functionName = "bonus bDefEle";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bMagicAtkEle
+            functionName = "bonus2 bMagicAtkEle";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bDefRatioAtkRace
+            functionName = "bonus bDefRatioAtkRace";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bDefRatioAtkEle
+            functionName = "bonus bDefRatioAtkEle";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bDefRatioAtkClass
+            functionName = "bonus bDefRatioAtkClass";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus4 bSetDefRace
+            functionName = "bonus4 bSetDefRace";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus4 bSetMDefRace
+            functionName = "bonus4 bSetMDefRace";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bIgnoreDefEle
+            functionName = "bonus bIgnoreDefEle";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bIgnoreDefRace,
+            functionName = "bonus bIgnoreDefRace,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bIgnoreDefClass,
+            functionName = "bonus bIgnoreDefClass,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bIgnoreMDefRace,
+            functionName = "bonus bIgnoreMDefRace,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bIgnoreDefRaceRate
+            functionName = "bonus2 bIgnoreDefRaceRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bIgnoreMdefRaceRate
+            functionName = "bonus2 bIgnoreMdefRaceRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bIgnoreMdefRace2Rate
+            functionName = "bonus2 bIgnoreMdefRace2Rate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bIgnoreMDefEle
+            functionName = "bonus bIgnoreMDefEle";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bIgnoreDefClassRate
+            functionName = "bonus2 bIgnoreDefClassRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bIgnoreMdefClassRate
+            functionName = "bonus2 bIgnoreMdefClassRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bExpAddRace
+            functionName = "bonus2 bExpAddRace";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bExpAddClass
+            functionName = "bonus2 bExpAddClass";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bAddEff,
+            functionName = "bonus2 bAddEff,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bAddEff2
+            functionName = "bonus2 bAddEff2";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bAddEffWhenHit
+            functionName = "bonus2 bAddEffWhenHit";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bResEff
+            functionName = "bonus2 bResEff";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus3 bAddEff,
+            functionName = "bonus3 bAddEff,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus4 bAddEff,
+            functionName = "bonus4 bAddEff,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus3 bAddEffWhenHit
+            functionName = "bonus3 bAddEffWhenHit";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus4 bAddEffWhenHit
+            functionName = "bonus4 bAddEffWhenHit";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus3 bAddEffOnSkill
+            functionName = "bonus3 bAddEffOnSkill";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus4 bAddEffOnSkill
+            functionName = "bonus4 bAddEffOnSkill";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus5 bAddEffOnSkill
+            functionName = "bonus5 bAddEffOnSkill";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bComaClass
+            functionName = "bonus2 bComaClass";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bComaRace
+            functionName = "bonus2 bComaRace";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bWeaponComaEle
+            functionName = "bonus2 bWeaponComaEle";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bWeaponComaClass
+            functionName = "bonus2 bWeaponComaClass";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bWeaponComaRace
+            functionName = "bonus2 bWeaponComaRace";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus3 bAutoSpell,
+            functionName = "bonus3 bAutoSpell,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus3 bAutoSpellWhenHit
+            functionName = "bonus3 bAutoSpellWhenHit";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus4 bAutoSpell,
+            functionName = "bonus4 bAutoSpell,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus5 bAutoSpell,
+            functionName = "bonus5 bAutoSpell,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus4 bAutoSpellWhenHit
+            functionName = "bonus4 bAutoSpellWhenHit";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus5 bAutoSpellWhenHit
+            functionName = "bonus5 bAutoSpellWhenHit";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus4 bAutoSpellOnSkill
+            functionName = "bonus4 bAutoSpellOnSkill";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus5 bAutoSpellOnSkill
+            functionName = "bonus5 bAutoSpellOnSkill";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bHPDrainValue
+            functionName = "bonus bHPDrainValue";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bHPDrainValueRace
+            functionName = "bonus2 bHPDrainValueRace";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bHpDrainValueClass
+            functionName = "bonus2 bHpDrainValueClass";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bSPDrainValue
+            functionName = "bonus bSPDrainValue";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSPDrainValueRace
+            functionName = "bonus2 bSPDrainValueRace";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSpDrainValueClass
+            functionName = "bonus2 bSpDrainValueClass";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bHPDrainRate
+            functionName = "bonus2 bHPDrainRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSPDrainRate
+            functionName = "bonus2 bSPDrainRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bHPVanishRate
+            functionName = "bonus2 bHPVanishRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus3 bHPVanishRaceRate
+            functionName = "bonus3 bHPVanishRaceRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus3 bHPVanishRate
+            functionName = "bonus3 bHPVanishRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSPVanishRate
+            functionName = "bonus2 bSPVanishRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus3 bSPVanishRaceRate
+            functionName = "bonus3 bSPVanishRaceRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus3 bSPVanishRate
+            functionName = "bonus3 bSPVanishRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus3 bStateNoRecoverRace
+            functionName = "bonus3 bStateNoRecoverRace";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bHPGainValue
+            functionName = "bonus bHPGainValue";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bSPGainValue
+            functionName = "bonus bSPGainValue";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bSPGainRace
+            functionName = "bonus2 bSPGainRace";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bLongHPGainValue
+            functionName = "bonus bLongHPGainValue";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bLongSPGainValue
+            functionName = "bonus bLongSPGainValue";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bMagicHPGainValue
+            functionName = "bonus bMagicHPGainValue";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bMagicSPGainValue
+            functionName = "bonus bMagicSPGainValue";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bShortWeaponDamageReturn
+            functionName = "bonus bShortWeaponDamageReturn";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bLongWeaponDamageReturn
+            functionName = "bonus bLongWeaponDamageReturn";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bMagicDamageReturn
+            functionName = "bonus bMagicDamageReturn";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bUnstripableWeapon
+            functionName = "bonus bUnstripableWeapon";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bUnstripableArmor
+            functionName = "bonus bUnstripableArmor";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bUnstripableHelm
+            functionName = "bonus bUnstripableHelm";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bUnstripableShield
+            functionName = "bonus bUnstripableShield";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bUnstripable
+            functionName = "bUnstripable";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bUnbreakableGarment
+            functionName = "bonus bUnbreakableGarment";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bUnbreakableWeapon
+            functionName = "bonus bUnbreakableWeapon";
+            if (data.Contains(functionName))
+                sum += AddDescription(sum, "อาวุธจะไม่มีทางชำรุด");
+            #endregion
+            #region bonus bUnbreakableArmor
+            functionName = "bonus bUnbreakableArmor";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bUnbreakableHelm
+            functionName = "bonus bUnbreakableHelm";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bUnbreakableShield
+            functionName = "bonus bUnbreakableShield";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bUnbreakableShoes
+            functionName = "bonus bUnbreakableShoes";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bUnbreakable,
+            functionName = "bonus bUnbreakable,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bBreakWeaponRate
+            functionName = "bonus bBreakWeaponRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bBreakArmorRate
+            functionName = "bonus bBreakArmorRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bDropAddRace
+            functionName = "bonus2 bDropAddRace";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bDropAddClass
+            functionName = "bonus2 bDropAddClass";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus3 bAddMonsterIdDropItem
+            functionName = "bonus3 bAddMonsterIdDropItem";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bAddMonsterDropItem,
+            functionName = "bonus2 bAddMonsterDropItem,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus3 bAddMonsterDropItem,
+            functionName = "bonus3 bAddMonsterDropItem,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus3 bAddClassDropItem,
+            functionName = "bonus3 bAddClassDropItem,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bAddMonsterDropItemGroup
+            functionName = "bonus2 bAddMonsterDropItemGroup";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus3 bAddMonsterDropItemGroup
+            functionName = "bonus3 bAddMonsterDropItemGroup";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus3 bAddClassDropItemGroup
+            functionName = "bonus3 bAddClassDropItemGroup";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bGetZenyNum
+            functionName = "bonus2 bGetZenyNum";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bAddGetZenyNum
+            functionName = "bonus2 bAddGetZenyNum";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
             #endregion
             #region bonus bDoubleRate
             functionName = "bonus bDoubleRate";
@@ -4502,10 +7611,257 @@ public class ItemDbScriptData
                 }
             }
             #endregion
-            #region bonus bUnbreakableWeapon
-            functionName = "bonus bUnbreakableWeapon";
+            #region bonus bDoubleAddRate
+            functionName = "bonus bDoubleAddRate";
             if (data.Contains(functionName))
-                sum += AddDescription(sum, "อาวุธจะไม่มีทางชำรุด");
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bSplashRange
+            functionName = "bonus bSplashRange";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bSplashAddRange
+            functionName = "bonus bSplashAddRange";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus2 bAddSkillBlow
+            functionName = "bonus2 bAddSkillBlow";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bNoKnockback
+            functionName = "bonus bNoKnockback";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bNoGemStone
+            functionName = "bonus bNoGemStone";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bIntravision
+            functionName = "bonus bIntravision";
+            if (data.Contains(functionName))
+                sum += AddDescription(sum, "มองเห็นศัตรูที่ Hidden, Cloaking ได้ตลอดเวลา");
+            #endregion
+            #region bonus bPerfectHide
+            functionName = "bonus bPerfectHide";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bRestartFullRecover
+            functionName = "bonus bRestartFullRecover";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bClassChange
+            functionName = "bonus bClassChange";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bAddStealRate
+            functionName = "bonus bAddStealRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bNoMadoFuel
+            functionName = "bonus bNoMadoFuel";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region bonus bNoWalkDelay
+            functionName = "bonus bNoWalkDelay";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
+            #endregion
+            #region nnnn
+            functionName = "nnnn";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "nnnn -" + param1);
+                    else
+                        sum += AddDescription(sum, "nnnn +" + param1);
+                }
+            }
             #endregion
         }
 
@@ -4515,7 +7871,10 @@ public class ItemDbScriptData
     void MergeItemScripts(List<string> allCut, int i, bool isRemoveWhiteSpace = false)
     {
         if (isRemoveWhiteSpace)
+        {
             allCut[i] = allCut[i].Replace(" ,", ",");
+            allCut[i] = allCut[i].Replace(" ;", ";");
+        }
         allCut[i] += " " + allCut[i + 1];
         allCut.RemoveAt(i + 1);
     }
