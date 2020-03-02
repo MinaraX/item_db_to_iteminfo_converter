@@ -501,7 +501,7 @@ public class Output : ScriptableObject
             else if (view == 9)
                 return "Unused";
             else if (view == 10)
-                return "Staves";
+                return "Staff";
             else if (view == 11)
                 return "Bows";
             else if (view == 12)
@@ -527,7 +527,7 @@ public class Output : ScriptableObject
             else if (view == 22)
                 return "Fuuma Shurikens";
             else if (view == 23)
-                return "Two-handed staves";
+                return "Two-handed staff";
             else if (view == 24)
                 return "Max Type";
             else if (view == 25)
@@ -4498,9 +4498,9 @@ public class ItemDbScriptData
                 if (isHadParam1)
                 {
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                        sum += AddDescription(sum, "อัตราการฟื้นฟู HP ปกติ -" + param1 + "%");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "อัตราการฟื้นฟู HP ปกติ +" + param1 + "%");
                 }
             }
             #endregion
@@ -4517,9 +4517,9 @@ public class ItemDbScriptData
                 if (isHadParam1)
                 {
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                        sum += AddDescription(sum, "อัตราการฟื้นฟู SP ปกติ -" + param1 + "%");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "อัตราการฟื้นฟู SP ปกติ +" + param1 + "%");
                 }
             }
             #endregion
@@ -4532,14 +4532,10 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
-                {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
-                    else
-                        sum += AddDescription(sum, "nnnn +" + param1);
-                }
+                if (isHadParam1 && isHadParam2)
+                    sum += AddDescription(sum, "ฟื้นฟู " + param1 + " HP ทุก ๆ " + TimerToStringTimer(float.Parse(param2)));
             }
             #endregion
             #region bonus2 bHPLossRate
@@ -4551,14 +4547,10 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
-                {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
-                    else
-                        sum += AddDescription(sum, "nnnn +" + param1);
-                }
+                if (isHadParam1 && isHadParam2)
+                    sum += AddDescription(sum, "เสีย " + param1 + " HP ทุก ๆ " + TimerToStringTimer(float.Parse(param2)));
             }
             #endregion
             #region bonus2 bSPRegenRate
@@ -4570,14 +4562,10 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
-                {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
-                    else
-                        sum += AddDescription(sum, "nnnn +" + param1);
-                }
+                if (isHadParam1 && isHadParam2)
+                    sum += AddDescription(sum, "ฟื้นฟู " + param1 + " SP ทุก ๆ " + TimerToStringTimer(float.Parse(param2)));
             }
             #endregion
             #region bonus2 bSPLossRate
@@ -4589,14 +4577,10 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
-                {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
-                    else
-                        sum += AddDescription(sum, "nnnn +" + param1);
-                }
+                if (isHadParam1 && isHadParam2)
+                    sum += AddDescription(sum, "เสีย " + param1 + " HP ทุก ๆ " + TimerToStringTimer(float.Parse(param2)));
             }
             #endregion
             #region bonus2 bRegenPercentHP
@@ -4608,13 +4592,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                        sum += AddDescription(sum, "เสีย " + param1 + "% จาก MaxHP ทุก ๆ " + TimerToStringTimer(float.Parse(param2)));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ฟื้นฟู " + param1 + "% จาก MaxHP ทุก ๆ " + TimerToStringTimer(float.Parse(param2)));
                 }
             }
             #endregion
@@ -4627,13 +4612,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                        sum += AddDescription(sum, "เสีย " + param1 + "% จาก MaxSP ทุก ๆ " + TimerToStringTimer(float.Parse(param2)));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ฟื้นฟู " + param1 + "% จาก MaxSP ทุก ๆ " + TimerToStringTimer(float.Parse(param2)));
                 }
             }
             #endregion
@@ -4649,10 +4635,10 @@ public class ItemDbScriptData
 
                 if (isHadParam1)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
-                    else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                    if (param1 == "1")
+                        sum += AddDescription(sum, "หยุดการฟื้นฟู HP ตลอดเวลา");
+                    else if (param1 == "2")
+                        sum += AddDescription(sum, "หยุดการฟื้นฟู SP ตลอดเวลา");
                 }
             }
             #endregion
@@ -4669,9 +4655,9 @@ public class ItemDbScriptData
                 if (isHadParam1)
                 {
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                        sum += AddDescription(sum, "ใช้ SP น้อยลง " + param1 + "%");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ใช้ SP มากขึ้น " + param1 + "%");
                 }
             }
             #endregion
@@ -4684,13 +4670,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[0], 1);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ใช้ SP มากขึ้น " + param2 + " กับ Skill " + GetSkillName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ใช้ SP น้อยลง " + param2 + " กับ Skill " + GetSkillName(param1));
                 }
             }
             #endregion
@@ -4703,13 +4690,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[0], 1);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ใช้ SP มากขึ้น " + param2 + "% กับ Skill " + GetSkillName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ใช้ SP น้อยลง " + param2 + "% กับ Skill " + GetSkillName(param1));
                 }
             }
             #endregion
@@ -4722,13 +4710,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[0], 1);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "Skill " + GetSkillName(param1) + " เบาลง " + param2 + "%");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "Skill " + GetSkillName(param1) + " แรงขึ้น " + param2 + "%");
                 }
             }
             #endregion
@@ -4745,9 +4734,9 @@ public class ItemDbScriptData
                 if (isHadParam1)
                 {
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                        sum += AddDescription(sum, "โจมตีไกลเบาลง " + param1 + "%");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โจมตีไกลแรงขึ้น " + param1 + "%");
                 }
             }
             #endregion
@@ -4764,9 +4753,9 @@ public class ItemDbScriptData
                 if (isHadParam1)
                 {
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                        sum += AddDescription(sum, "Critical เบาลง " + param1 + "%");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "Critical แรงขึ้น " + param1 + "%");
                 }
             }
             #endregion
@@ -4783,9 +4772,9 @@ public class ItemDbScriptData
                 if (isHadParam1)
                 {
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                        sum += AddDescription(sum, "เพิ่มโอกาสโดน Critical " + param1 + "%");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ลดโอกาสโดน Critical " + param1 + "%");
                 }
             }
             #endregion
@@ -4798,13 +4787,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ATK -" + param2 + " ด้วยอาวุธประเภท " + GetWeaponType(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ATK +" + param2 + " ด้วยอาวุธประเภท " + GetWeaponType(param1));
                 }
             }
             #endregion
@@ -4817,13 +4807,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โจมตีเบาลง " + param2 + "% ด้วยอาวุธประเภท " + GetWeaponType(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โจมตีแรงขึ้น " + param2 + "% ด้วยอาวุธประเภท " + GetWeaponType(param1));
                 }
             }
             #endregion
@@ -4840,9 +4831,9 @@ public class ItemDbScriptData
                 if (isHadParam1)
                 {
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                        sum += AddDescription(sum, "โดนโจมตีกายภาพระยะประชิดแรงขึ้น " + param1 + "%");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โดนโจมตีกายภาพระยะประชิดเบาลง " + param1 + "%");
                 }
             }
             #endregion
@@ -4859,9 +4850,9 @@ public class ItemDbScriptData
                 if (isHadParam1)
                 {
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                        sum += AddDescription(sum, "โดนโจมตีกายภาพระยะไกลแรงขึ้น " + param1 + "%");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โดนโจมตีกายภาพระยะไกลเบาลง " + param1 + "%");
                 }
             }
             #endregion
@@ -8004,6 +7995,8 @@ public class ItemDbScriptData
             return "ตลอดเวลา";
         }
 
+        value = ReplaceAllSpecialValue(value);
+
         bool isFoundTempVariable = false;
         string tempVarName = null;
         string valueFromTempVar = null;
@@ -8019,151 +8012,9 @@ public class ItemDbScriptData
         }
         if (isFoundTempVariable)
         {
-            valueFromTempVar = valueFromTempVar.Replace("getrefine();", "ตามจำนวนตีบวก");
+            valueFromTempVar = ReplaceAllSpecialValue(valueFromTempVar);
             value = value.Replace(tempVarName, valueFromTempVar);
             SetParamCheck(paramCount, true, false);
-            return "(" + value + ")";
-        }
-        //One line if else
-        else if (IsOneLineIfElse(value))
-        {
-            value = ConvertOneLineIfElse(value);
-
-            if (value[0] == '-')
-                SetParamCheck(paramCount, true, true);
-            else
-                SetParamCheck(paramCount, true, false);
-
-            return "(" + value + ")";
-        }
-        //getskilllv
-        else if (value.Contains("getskilllv"))
-        {
-            while (value.Contains("getskilllv"))
-            {
-                value = value.Replace("getskilllv", "ตามจำนวนที่เรียนรู้ Skill ");
-                int circleStartAt = value.IndexOf("(");
-                int circleEndAt = value.IndexOf(")");
-                string sumToCut = value.Substring(circleStartAt + 1);
-                int sumCircleEndAt = sumToCut.IndexOf(")");
-                sumToCut = sumToCut.Substring(0, sumCircleEndAt);
-                sumToCut = GetSkillName(sumToCut);
-                value = value.Substring(0, circleStartAt) + value.Substring(circleEndAt + 1) + sumToCut;
-            }
-
-            if (value[0] == '-')
-                SetParamCheck(paramCount, true, true);
-            else
-                SetParamCheck(paramCount, true, false);
-
-            return "(" + value + ")";
-        }
-        //getrefine
-        else if (value.Contains("getrefine"))
-        {
-            value = value.Replace("getrefine", "(ตามจำนวนตีบวก)");
-
-            if (value[0] == '-')
-                SetParamCheck(paramCount, true, true);
-            else
-                SetParamCheck(paramCount, true, false);
-
-            return "(" + value + ")";
-        }
-        //readparambStr
-        else if (value.Contains("readparambStr"))
-        {
-            value = value.Replace("readparambStr", "(ตาม STR ที่ฝึกฝน)");
-
-            if (value[0] == '-')
-                SetParamCheck(paramCount, true, true);
-            else
-                SetParamCheck(paramCount, true, false);
-
-            return "(" + value + ")";
-        }
-        //readparambAgi
-        else if (value.Contains("readparambAgi"))
-        {
-            value = value.Replace("readparambAgi", "(ตาม AGI ที่ฝึกฝน)");
-
-            if (value[0] == '-')
-                SetParamCheck(paramCount, true, true);
-            else
-                SetParamCheck(paramCount, true, false);
-
-            return "(" + value + ")";
-        }
-        //readparambVit
-        else if (value.Contains("readparambVit"))
-        {
-            value = value.Replace("readparambVit", "(ตาม VIT ที่ฝึกฝน)");
-
-            if (value[0] == '-')
-                SetParamCheck(paramCount, true, true);
-            else
-                SetParamCheck(paramCount, true, false);
-
-            return "(" + value + ")";
-        }
-        //readparambInt
-        else if (value.Contains("readparambInt"))
-        {
-            value = value.Replace("readparambInt", "(ตาม INT ที่ฝึกฝน)");
-
-            if (value[0] == '-')
-                SetParamCheck(paramCount, true, true);
-            else
-                SetParamCheck(paramCount, true, false);
-
-            return "(" + value + ")";
-        }
-        //readparambDex
-        else if (value.Contains("readparambDex"))
-        {
-            value = value.Replace("readparambDex", "(ตาม DEX ที่ฝึกฝน)");
-
-            if (value[0] == '-')
-                SetParamCheck(paramCount, true, true);
-            else
-                SetParamCheck(paramCount, true, false);
-
-            return "(" + value + ")";
-        }
-        //readparambLuk
-        else if (value.Contains("readparambLuk"))
-        {
-            value = value.Replace("readparambLuk", "(ตาม LUK ที่ฝึกฝน)");
-
-            if (value[0] == '-')
-                SetParamCheck(paramCount, true, true);
-            else
-                SetParamCheck(paramCount, true, false);
-
-            return "(" + value + ")";
-        }
-        //BaseLevel
-        else if (value.Contains("BaseLevel"))
-        {
-            value = value.Replace("BaseLevel", "(Level)");
-
-            if (value[0] == '-')
-                SetParamCheck(paramCount, true, true);
-            else
-                SetParamCheck(paramCount, true, false);
-
-            return "(" + value + ")";
-        }
-        //JobLevel
-        else if (value.Contains("JobLevel"))
-        {
-            value = value.Replace("JobLevel", "(Job Level)");
-
-            if (value[0] == '-')
-                SetParamCheck(paramCount, true, true);
-            else
-                SetParamCheck(paramCount, true, false);
-
             return "(" + value + ")";
         }
         //rand
@@ -8328,6 +8179,51 @@ public class ItemDbScriptData
         }
     }
 
+    string ReplaceAllSpecialValue(string data)
+    {
+        string value = data;
+
+        if (IsOneLineIfElse(value))
+            value = ConvertOneLineIfElse(value);
+
+        if (value.Contains("getskilllv"))
+        {
+            while (value.Contains("getskilllv"))
+            {
+                value = value.Replace("getskilllv", "ตามจำนวนที่เรียนรู้ Skill ");
+                int circleStartAt = value.IndexOf("(");
+                int circleEndAt = value.IndexOf(")");
+                string sumToCut = value.Substring(circleStartAt + 1);
+                int sumCircleEndAt = sumToCut.IndexOf(")");
+                sumToCut = sumToCut.Substring(0, sumCircleEndAt);
+                sumToCut = GetSkillName(sumToCut);
+                value = value.Substring(0, circleStartAt) + value.Substring(circleEndAt + 1) + sumToCut;
+            }
+        }
+
+        value = value.Replace("getrefine();", "(ตามจำนวนตีบวก)");
+
+        value = value.Replace("getrefine", "(ตามจำนวนตีบวก)");
+
+        value = value.Replace("readparambStr", "(ตาม STR ที่ฝึกฝน)");
+
+        value = value.Replace("readparambAgi", "(ตาม AGI ที่ฝึกฝน)");
+
+        value = value.Replace("readparambVit", "(ตาม VIT ที่ฝึกฝน)");
+
+        value = value.Replace("readparambInt", "(ตาม INT ที่ฝึกฝน)");
+
+        value = value.Replace("readparambDex", "(ตาม DEX ที่ฝึกฝน)");
+
+        value = value.Replace("readparambLuk", "(ตาม LUK ที่ฝึกฝน)");
+
+        value = value.Replace("BaseLevel", "(Level)");
+
+        value = value.Replace("JobLevel", "(Job Level)");
+
+        return value;
+    }
+
     /// <summary>
     /// Check is one line if else
     /// </summary>
@@ -8485,6 +8381,89 @@ public class ItemDbScriptData
             return sumRate.ToString("f1") + "%";
         else
             return "100%";
+    }
+
+    /// <summary>
+    /// Get weapon type
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    string GetWeaponType(string data)
+    {
+        if (string.IsNullOrEmpty(data))
+            return "";
+
+        WeaponTypeFlag weaponTypeFlag = (WeaponTypeFlag)Enum.Parse(typeof(WeaponTypeFlag), data);
+
+        // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
+        if (!Enum.IsDefined(typeof(WeaponTypeFlag), weaponTypeFlag) && !weaponTypeFlag.ToString().Contains(","))
+            throw new InvalidOperationException($"{data} is not an underlying value of the YourEnum enumeration.");
+
+        if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_FIST))
+            return "ไม่มีอาวุธ";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_DAGGER))
+            return "Daggers";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_1HSWORD))
+            return "One-handed swords";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_2HSWORD))
+            return "Two-handed swords";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_1HSPEAR))
+            return "One-handed spears";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_2HSPEAR))
+            return "Two-handed spears";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_1HAXE))
+            return "One-handed axes";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_2HAXE))
+            return "Two-handed axes";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_MACE))
+            return "Maces";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_2HMACE))
+            return "Two-handed Maces";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_STAFF))
+            return "Staff";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_BOW))
+            return "Bows";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_KNUCKLE))
+            return "Knuckles";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_MUSICAL))
+            return "Musical Instruments";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_WHIP))
+            return "Whips";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_BOOK))
+            return "Books";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_KATAR))
+            return "Katars";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_REVOLVER))
+            return "Revolvers";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_RIFLE))
+            return "Rifles";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_GATLING))
+            return "Gatling guns";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_SHOTGUN))
+            return "Shotguns";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_GRENADE))
+            return "Grenade launchers";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_HUUMA))
+            return "Fuuma Shurikens";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_2HSTAFF))
+            return "Two-handed Staff";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.MAX_WEAPON_TYPE))
+            return "";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_DOUBLE_DD))
+            return "Dual-wield Daggers";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_DOUBLE_SS))
+            return "Dual-wield Swords";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_DOUBLE_AA))
+            return "Dual-wield Axes";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_DOUBLE_DS))
+            return "Dagger + Sword";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_DOUBLE_DA))
+            return "Dagger + Axe";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_DOUBLE_SA))
+            return "Sword + Axe";
+        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.MAX_WEAPON_TYPE_ALL))
+            return "";
+        return "";
     }
 
     /// <summary>
@@ -8673,6 +8652,43 @@ public enum SkillFlag
     SKILL_TEMP = 1,
     SKILL_TEMPLEVEL = 2,
     SKILL_PERM_GRANT = 3
+}
+
+[Flags]
+public enum WeaponTypeFlag
+{
+    W_FIST = 0,
+    W_DAGGER = 1,
+    W_1HSWORD = 2,
+    W_2HSWORD = 3,
+    W_1HSPEAR = 4,
+    W_2HSPEAR = 5,
+    W_1HAXE = 6,
+    W_2HAXE = 7,
+    W_MACE = 8,
+    W_2HMACE = 9,
+    W_STAFF = 10,
+    W_BOW = 11,
+    W_KNUCKLE = 12,
+    W_MUSICAL = 13,
+    W_WHIP = 14,
+    W_BOOK = 15,
+    W_KATAR = 16,
+    W_REVOLVER = 17,
+    W_RIFLE = 18,
+    W_GATLING = 19,
+    W_SHOTGUN = 20,
+    W_GRENADE = 21,
+    W_HUUMA = 22,
+    W_2HSTAFF = 23,
+    MAX_WEAPON_TYPE,
+    W_DOUBLE_DD, // 2 daggers
+    W_DOUBLE_SS, // 2 swords
+    W_DOUBLE_AA, // 2 axes
+    W_DOUBLE_DS, // dagger + sword
+    W_DOUBLE_DA, // dagger + axe
+    W_DOUBLE_SA, // sword + axe
+    MAX_WEAPON_TYPE_ALL,
 }
 
 [Flags]
