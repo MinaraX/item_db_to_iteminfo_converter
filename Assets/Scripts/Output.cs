@@ -5612,13 +5612,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โจมตีกายภาพเบาลง " + param2 + "% กับ Size " + GetSizeName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โจมตีกายภาพแรงขึ้น " + param2 + "% กับ Size " + GetSizeName(param1));
                 }
             }
             #endregion
@@ -5631,13 +5632,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โจมตีเวทย์เบาลง " + param2 + "% กับ Size " + GetSizeName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โจมตีเวทย์แรงขึ้น " + param2 + "% กับ Size " + GetSizeName(param1));
                 }
             }
             #endregion
@@ -5650,34 +5652,21 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โดนโจมตีแรงขึ้น " + param2 + "% กับ Size " + GetClassName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โดนโจมตีเบาลง " + param2 + "% กับ Size " + GetClassName(param1));
                 }
             }
             #endregion
             #region bonus bNoSizeFix
             functionName = "bonus bNoSizeFix";
             if (data.Contains(functionName))
-            {
-                string sumCut = CutFunctionName(data, functionName);
-
-                List<string> allParam = GetAllParamerters(sumCut);
-
-                string param1 = GetValue(allParam[0], 1);
-
-                if (isHadParam1)
-                {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
-                    else
-                        sum += AddDescription(sum, "nnnn +" + param1);
-                }
-            }
+                sum += AddDescription(sum, "ไม่สนใจ Size ของศัตรูในการคำนวณ Damage");
             #endregion
             #region bonus2 bAddDamageClass
             functionName = "bonus2 bAddDamageClass";
@@ -5688,13 +5677,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โจมตีกายภาพเบาลง " + param2 + "% กับ " + GetMIDName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โจมตีกายภาพแรงขึ้น " + param2 + "% กับ " + GetMIDName(param1));
                 }
             }
             #endregion
@@ -8255,6 +8245,7 @@ public class ItemDbScriptData
             if (sum.id == int.Parse(data))
                 return sum.name;
         }
+
         return null;
     }
 
@@ -8338,6 +8329,7 @@ public class ItemDbScriptData
             return "Sword + Axe";
         else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.MAX_WEAPON_TYPE_ALL))
             return "";
+
         return "";
     }
 
@@ -8480,7 +8472,339 @@ public class ItemDbScriptData
         data = data.Replace("<", " น้อยกว่า ");
         data = data.Replace("?", " = ");
         data = data.Replace(":", ", หากไม่ตรงเงื่อนไข = ");
+
         return data;
+    }
+
+    /// <summary>
+    /// Get MID name from value
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    string GetMIDName(string data)
+    {
+        if (string.IsNullOrEmpty(data))
+            return null;
+        int id = int.Parse(data);
+        if (!string.IsNullOrEmpty(GetMonsterName(id)))
+            return GetMonsterName(id);
+        else if (!string.IsNullOrEmpty(GetJobName(id)))
+            return GetJobName(id);
+        else
+            return null;
+    }
+
+    /// <summary>
+    /// Get job name from id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    string GetJobName(int id)
+    {
+        if (id == 0)
+            return "Novice";
+        else if (id == 1)
+            return "Swordman";
+        else if (id == 2)
+            return "Magician";
+        else if (id == 3)
+            return "Archer";
+        else if (id == 4)
+            return "Acolyte";
+        else if (id == 5)
+            return "Merchant";
+        else if (id == 6)
+            return "Thief";
+        else if (id == 7)
+            return "Knight";
+        else if (id == 8)
+            return "Priest";
+        else if (id == 9)
+            return "Wizard";
+        else if (id == 10)
+            return "Blacksmith";
+        else if (id == 11)
+            return "Hunter";
+        else if (id == 12)
+            return "Assassin";
+        else if (id == 13)
+            return "Knight (Peco)";
+        else if (id == 14)
+            return "Crusader";
+        else if (id == 15)
+            return "Monk";
+        else if (id == 16)
+            return "Sage";
+        else if (id == 17)
+            return "Rogue";
+        else if (id == 18)
+            return "Alchemist";
+        else if (id == 19)
+            return "Bard";
+        else if (id == 20)
+            return "Dancer";
+        else if (id == 21)
+            return "Crusader (Peco)";
+        else if (id == 22)
+            return "Wedding";
+        else if (id == 23)
+            return "Super Novice";
+        else if (id == 24)
+            return "Gunslinger";
+        else if (id == 25)
+            return "Ninja";
+        else if (id == 4001)
+            return "Novice High";
+        else if (id == 4002)
+            return "Swordman High";
+        else if (id == 4003)
+            return "Magician High";
+        else if (id == 4004)
+            return "Archer High";
+        else if (id == 4005)
+            return "Acolyte High";
+        else if (id == 4006)
+            return "Merchant High";
+        else if (id == 4007)
+            return "Thief High";
+        else if (id == 4008)
+            return "Lord Knight";
+        else if (id == 4009)
+            return "High Priest";
+        else if (id == 4010)
+            return "High Wizard";
+        else if (id == 4011)
+            return "Whitesmith";
+        else if (id == 4012)
+            return "Sniper";
+        else if (id == 4013)
+            return "Assassin Cross";
+        else if (id == 4014)
+            return "Lord Knight (Peco)";
+        else if (id == 4015)
+            return "Paladin";
+        else if (id == 4016)
+            return "Champion";
+        else if (id == 4017)
+            return "Professor";
+        else if (id == 4018)
+            return "Stalker";
+        else if (id == 4019)
+            return "Creator";
+        else if (id == 4020)
+            return "Clown";
+        else if (id == 4021)
+            return "Gypsy";
+        else if (id == 4022)
+            return "Paladin (Peco)";
+        else if (id == 4023)
+            return "Baby Novice";
+        else if (id == 4024)
+            return "Baby Swordman";
+        else if (id == 4025)
+            return "Baby Magician";
+        else if (id == 4026)
+            return "Baby Archer";
+        else if (id == 4027)
+            return "Baby Acolyte";
+        else if (id == 4028)
+            return "Baby Merchant";
+        else if (id == 4029)
+            return "Baby Thief";
+        else if (id == 4030)
+            return "Baby Knight";
+        else if (id == 4031)
+            return "Baby Priest";
+        else if (id == 4032)
+            return "Baby Wizard";
+        else if (id == 4033)
+            return "Baby Blacksmith";
+        else if (id == 4034)
+            return "Baby Hunter";
+        else if (id == 4035)
+            return "Baby Assassin";
+        else if (id == 4036)
+            return "Baby Knight (Peco)";
+        else if (id == 4037)
+            return "Baby Crusader";
+        else if (id == 4038)
+            return "Baby Monk";
+        else if (id == 4039)
+            return "Baby Sage";
+        else if (id == 4040)
+            return "Baby Rogue";
+        else if (id == 4041)
+            return "Baby Alchemist";
+        else if (id == 4042)
+            return "Baby Bard";
+        else if (id == 4043)
+            return "Baby Dancer";
+        else if (id == 4044)
+            return "Baby Crusader (Peco)";
+        else if (id == 4045)
+            return "Baby Super Novice";
+        else if (id == 4046)
+            return "Taekwon";
+        else if (id == 4047)
+            return "Star Gladiator";
+        else if (id == 4048)
+            return "Star Gladiator (Union)";
+        else if (id == 4049)
+            return "Soul Linker";
+        else if (id == 4050)
+            return "Gangsi";
+        else if (id == 4051)
+            return "Death Knight";
+        else if (id == 4052)
+            return "Dark Collector";
+        else if (id == 4054)
+            return "Rune Knight (Regular)";
+        else if (id == 4055)
+            return "Warlock (Regular)";
+        else if (id == 4056)
+            return "Ranger (Regular)";
+        else if (id == 4057)
+            return "Arch Bishop (Regular)";
+        else if (id == 4058)
+            return "Mechanic (Regular)";
+        else if (id == 4059)
+            return "Guillotine Cross (Regular)";
+        else if (id == 4060)
+            return "Rune Knight (Trans)";
+        else if (id == 4061)
+            return "Warlock (Trans)";
+        else if (id == 4062)
+            return "Ranger (Trans)";
+        else if (id == 4063)
+            return "Arch Bishop (Trans)";
+        else if (id == 4064)
+            return "Mechanic (Trans)";
+        else if (id == 4065)
+            return "Guillotine Cross (Trans)";
+        else if (id == 4066)
+            return "Royal Guard (Regular)";
+        else if (id == 4067)
+            return "Sorcerer (Regular)";
+        else if (id == 4068)
+            return "Minstrel (Regular)";
+        else if (id == 4069)
+            return "Wanderer (Regular)";
+        else if (id == 4070)
+            return "Sura (Regular)";
+        else if (id == 4071)
+            return "Genetic (Regular)";
+        else if (id == 4072)
+            return "Shadow Chaser (Regular)";
+        else if (id == 4073)
+            return "Royal Guard (Trans)";
+        else if (id == 4074)
+            return "Sorcerer (Trans)";
+        else if (id == 4075)
+            return "Minstrel (Trans)";
+        else if (id == 4076)
+            return "Wanderer (Trans)";
+        else if (id == 4077)
+            return "Sura (Trans)";
+        else if (id == 4078)
+            return "Genetic (Trans)";
+        else if (id == 4079)
+            return "Shadow Chaser (Trans)";
+        else if (id == 4080)
+            return "Rune Knight (Dragon) (Regular)";
+        else if (id == 4081)
+            return "Rune Knight (Dragon) (Trans)";
+        else if (id == 4082)
+            return "Royal Guard (Gryphon) (Regular)";
+        else if (id == 4083)
+            return "Royal Guard (Gryphon) (Trans)";
+        else if (id == 4084)
+            return "Ranger (Warg) (Regular)";
+        else if (id == 4085)
+            return "Ranger (Warg) (Trans)";
+        else if (id == 4086)
+            return "Mechanic (Mado) (Regular)";
+        else if (id == 4087)
+            return "Mechanic (Mado) (Trans)";
+        else if (id == 4096)
+            return "Baby Rune Knight";
+        else if (id == 4097)
+            return "Baby Warlock";
+        else if (id == 4098)
+            return "Baby Ranger";
+        else if (id == 4099)
+            return "Baby Arch Bishop";
+        else if (id == 4100)
+            return "Baby Mechanic";
+        else if (id == 4101)
+            return "Baby Guillotine Cross";
+        else if (id == 4102)
+            return "Baby Royal Guard";
+        else if (id == 4103)
+            return "Baby Sorcerer";
+        else if (id == 4104)
+            return "Baby Minstrel";
+        else if (id == 4105)
+            return "Baby Wanderer";
+        else if (id == 4106)
+            return "Baby Sura";
+        else if (id == 4107)
+            return "Baby Genetic";
+        else if (id == 4108)
+            return "Baby Shadow Chaser";
+        else if (id == 4109)
+            return "Baby Rune Knight (Dragon)";
+        else if (id == 4110)
+            return "Baby Royal Guard (Gryphon)";
+        else if (id == 4111)
+            return "Baby Ranger (Warg)";
+        else if (id == 4112)
+            return "Baby Mechanic (Mado)";
+        else if (id == 4190)
+            return "Super Novice (Expanded)";
+        else if (id == 4191)
+            return "Super Baby (Expanded)";
+        else if (id == 4211)
+            return "Kagerou";
+        else if (id == 4212)
+            return "Oboro";
+        else if (id == 4215)
+            return "Rebellion";
+        else if (id == 4218)
+            return "Summoner";
+        else if (id == 4220)
+            return "Baby Summoner";
+        else if (id == 4222)
+            return "Baby Ninja";
+        else if (id == 4223)
+            return "Baby Kagerou";
+        else if (id == 4224)
+            return "Baby Oboro";
+        else if (id == 4225)
+            return "Baby Taekwon";
+        else if (id == 4226)
+            return "Baby Star Gladiator";
+        else if (id == 4227)
+            return "Baby Soul Linker";
+        else if (id == 4228)
+            return "Baby Gunslinger";
+        else if (id == 4229)
+            return "Baby Rebellion";
+        else if (id == 4238)
+            return "Baby Star Gladiator (Union)";
+        else if (id == 4239)
+            return "Star Emperor";
+        else if (id == 4240)
+            return "Soul Reaper";
+        else if (id == 4241)
+            return "Baby Star Emperor";
+        else if (id == 4242)
+            return "Baby Soul Reaper";
+        else if (id == 4243)
+            return "Star Emperor (Union)";
+        else if (id == 4244)
+            return "Baby Star Emperor (Union)";
+        else
+            return null;
     }
 
     /// <summary>
@@ -8494,6 +8818,7 @@ public class ItemDbScriptData
             if (id == m_output.m_currentMonsterDatabases[i].id)
                 return m_output.m_currentMonsterDatabases[i].kROName;
         }
+
         return null;
     }
 
@@ -8531,6 +8856,7 @@ public class ItemDbScriptData
                 return groupName;
             }
         }
+
         return null;
     }
 
@@ -8591,6 +8917,7 @@ public class ItemDbScriptData
                     return sumData.desc;
             }
         }
+
         return null;
     }
 
@@ -8632,6 +8959,7 @@ public class ItemDbScriptData
             return "Wind";
         else if (elementFlag.HasFlag(Element.Ele_All))
             return "ทุกธาตุ";
+
         return "";
     }
 
@@ -8675,6 +9003,7 @@ public class ItemDbScriptData
             return "Undead";
         else if (raceFlag.HasFlag(Race.RC_All))
             return "ทุกเผ่า";
+
         return "";
     }
 
@@ -8702,6 +9031,35 @@ public class ItemDbScriptData
             return "Guardian";
         else if (classFlag.HasFlag(Class.Class_All))
             return "ทุก Class";
+
+        return "";
+    }
+
+    /// <summary>
+    /// Get size name
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    string GetSizeName(string data)
+    {
+        if (string.IsNullOrEmpty(data))
+            return "";
+
+        Size sizeFlag = (Size)Enum.Parse(typeof(Size), data);
+
+        // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
+        if (!Enum.IsDefined(typeof(Size), sizeFlag) && !sizeFlag.ToString().Contains(","))
+            throw new InvalidOperationException($"{data} is not an underlying value of the YourEnum enumeration.");
+
+        if (sizeFlag.HasFlag(Size.Size_Small))
+            return "Small";
+        else if (sizeFlag.HasFlag(Size.Size_Medium))
+            return "Medium";
+        else if (sizeFlag.HasFlag(Size.Size_Large))
+            return "Large";
+        else if (sizeFlag.HasFlag(Size.Size_All))
+            return "ทุก Size";
+
         return "";
     }
 
