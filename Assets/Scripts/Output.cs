@@ -5472,13 +5472,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โดนโจมตีแรงขึ้น " + param2 + "% กับศัตรูที่การป้องกันเป็นธาตุ " + GetElementName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โดนโจมตีเบาลง " + param2 + "% กับศัตรูที่การป้องกันเป็นธาตุ " + GetElementName(param1));
                 }
             }
             #endregion
@@ -5491,13 +5492,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โจมตีกายภาพเบาลง " + param2 + "% กับเผ่า " + GetRaceName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โจมตีกายภาพแรงขึ้น " + param2 + "% กับเผ่า " + GetRaceName(param1));
                 }
             }
             #endregion
@@ -5510,13 +5512,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โจมตีเวทย์เบาลง " + param2 + "% กับเผ่า " + GetRaceName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โจมตีเวทย์แรงขึ้น " + param2 + "% กับเผ่า " + GetRaceName(param1));
                 }
             }
             #endregion
@@ -5529,13 +5532,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โดนโจมตีแรงขึ้น " + param2 + "% กับเผ่า " + GetRaceName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โดนโจมตีเบาลง " + param2 + "% กับเผ่า " + GetRaceName(param1));
                 }
             }
             #endregion
@@ -5548,13 +5552,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โจมตีกายภาพเบาลง " + param2 + "% กับ Class " + GetClassName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โจมตีกายภาพแรงขึ้น " + param2 + "% กับ Class " + GetClassName(param1));
                 }
             }
             #endregion
@@ -5567,13 +5572,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โจมตีเวทย์เบาลง " + param2 + "% กับ Class " + GetClassName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โจมตีเวทย์แรงขึ้น " + param2 + "% กับ Class " + GetClassName(param1));
                 }
             }
             #endregion
@@ -5586,13 +5592,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โดนโจมตีแรงขึ้น " + param2 + "% กับ Class " + GetClassName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โดนโจมตีเบาลง " + param2 + "% กับ Class " + GetClassName(param1));
                 }
             }
             #endregion
@@ -8625,6 +8632,76 @@ public class ItemDbScriptData
             return "Wind";
         else if (elementFlag.HasFlag(Element.Ele_All))
             return "ทุกธาตุ";
+        return "";
+    }
+
+    /// <summary>
+    /// Get race name
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    string GetRaceName(string data)
+    {
+        if (string.IsNullOrEmpty(data))
+            return "";
+
+        Race raceFlag = (Race)Enum.Parse(typeof(Race), data);
+
+        // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
+        if (!Enum.IsDefined(typeof(Race), raceFlag) && !raceFlag.ToString().Contains(","))
+            throw new InvalidOperationException($"{data} is not an underlying value of the YourEnum enumeration.");
+
+        if (raceFlag.HasFlag(Race.RC_Angel))
+            return "Angel";
+        else if (raceFlag.HasFlag(Race.RC_Brute))
+            return "Brute";
+        else if (raceFlag.HasFlag(Race.RC_DemiHuman))
+            return "DemiHuman";
+        else if (raceFlag.HasFlag(Race.RC_Demon))
+            return "Demon";
+        else if (raceFlag.HasFlag(Race.RC_Dragon))
+            return "Dragon";
+        else if (raceFlag.HasFlag(Race.RC_Fish))
+            return "Fish";
+        else if (raceFlag.HasFlag(Race.RC_Formless))
+            return "Formless";
+        else if (raceFlag.HasFlag(Race.RC_Insect))
+            return "Insect";
+        else if (raceFlag.HasFlag(Race.RC_Plant))
+            return "Plant";
+        else if (raceFlag.HasFlag(Race.RC_Player))
+            return "Player";
+        else if (raceFlag.HasFlag(Race.RC_Undead))
+            return "Undead";
+        else if (raceFlag.HasFlag(Race.RC_All))
+            return "ทุกเผ่า";
+        return "";
+    }
+
+    /// <summary>
+    /// Get class name
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    string GetClassName(string data)
+    {
+        if (string.IsNullOrEmpty(data))
+            return "";
+
+        Class classFlag = (Class)Enum.Parse(typeof(Class), data);
+
+        // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
+        if (!Enum.IsDefined(typeof(Class), classFlag) && !classFlag.ToString().Contains(","))
+            throw new InvalidOperationException($"{data} is not an underlying value of the YourEnum enumeration.");
+
+        if (classFlag.HasFlag(Class.Class_Normal))
+            return "Normal";
+        else if (classFlag.HasFlag(Class.Class_Boss))
+            return "Boss";
+        else if (classFlag.HasFlag(Class.Class_Guardian))
+            return "Guardian";
+        else if (classFlag.HasFlag(Class.Class_All))
+            return "ทุก Class";
         return "";
     }
 
