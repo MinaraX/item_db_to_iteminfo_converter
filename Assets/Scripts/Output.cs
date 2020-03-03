@@ -5370,13 +5370,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โจมตีกายภาพเบาลง " + param2 + "% กับธาตุ " + GetElementName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โจมตีกายภาพแรงขึ้น " + param2 + "% กับธาตุ " + GetElementName(param1));
                 }
             }
             #endregion
@@ -5389,13 +5390,15 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โจมตีกายภาพเบาลง " + param2 + "% กับธาตุ " + GetElementName(param1) + GetTriggerCriteria(param3));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โจมตีกายภาพแรงขึ้น " + param2 + "% กับธาตุ " + GetElementName(param1) + GetTriggerCriteria(param3));
                 }
             }
             #endregion
@@ -5408,13 +5411,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โจมตีเวทย์เบาลง " + param2 + "% กับธาตุ " + GetElementName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โจมตีเวทย์แรงขึ้น " + param2 + "% กับธาตุ " + GetElementName(param1));
                 }
             }
             #endregion
@@ -5427,13 +5431,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โดนโจมตีแรงขึ้น " + param2 + "% กับธาตุ " + GetElementName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โดนโจมตีเบาลง " + param2 + "% กับธาตุ " + GetElementName(param1));
                 }
             }
             #endregion
@@ -5446,13 +5451,15 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โดนโจมตีแรงขึ้น " + param2 + "% กับธาตุ " + GetElementName(param1) + GetTriggerCriteria(param3));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โดนโจมตีเบาลง " + param2 + "% กับธาตุ " + GetElementName(param1) + GetTriggerCriteria(param3));
                 }
             }
             #endregion
@@ -7884,6 +7891,12 @@ public class ItemDbScriptData
         return sum;
     }
 
+    /// <summary>
+    /// Merge item script from split
+    /// </summary>
+    /// <param name="allCut"></param>
+    /// <param name="i"></param>
+    /// <param name="isRemoveWhiteSpace"></param>
     void MergeItemScripts(List<string> allCut, int i, bool isRemoveWhiteSpace = false)
     {
         if (isRemoveWhiteSpace)
@@ -8204,192 +8217,6 @@ public class ItemDbScriptData
         }
     }
 
-    string ReplaceAllSpecialValue(string data)
-    {
-        string value = data;
-
-        if (IsOneLineIfElse(value))
-            value = ConvertOneLineIfElse(value);
-
-        if (value.Contains("getskilllv"))
-        {
-            while (value.Contains("getskilllv"))
-            {
-                value = value.Replace("getskilllv", "ตามจำนวนที่เรียนรู้ Skill ");
-                int circleStartAt = value.IndexOf("(");
-                int circleEndAt = value.IndexOf(")");
-                string sumToCut = value.Substring(circleStartAt + 1);
-                int sumCircleEndAt = sumToCut.IndexOf(")");
-                sumToCut = sumToCut.Substring(0, sumCircleEndAt);
-                sumToCut = GetSkillName(sumToCut);
-                value = value.Substring(0, circleStartAt) + value.Substring(circleEndAt + 1) + sumToCut;
-            }
-        }
-
-        value = value.Replace("getrefine();", "(ตามจำนวนตีบวก)");
-
-        value = value.Replace("getrefine", "(ตามจำนวนตีบวก)");
-
-        value = value.Replace("readparambStr", "(ตาม STR ที่ฝึกฝน)");
-
-        value = value.Replace("readparambAgi", "(ตาม AGI ที่ฝึกฝน)");
-
-        value = value.Replace("readparambVit", "(ตาม VIT ที่ฝึกฝน)");
-
-        value = value.Replace("readparambInt", "(ตาม INT ที่ฝึกฝน)");
-
-        value = value.Replace("readparambDex", "(ตาม DEX ที่ฝึกฝน)");
-
-        value = value.Replace("readparambLuk", "(ตาม LUK ที่ฝึกฝน)");
-
-        value = value.Replace("BaseLevel", "(Level)");
-
-        value = value.Replace("JobLevel", "(Job Level)");
-
-        return value;
-    }
-
-    /// <summary>
-    /// Check is one line if else
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    bool IsOneLineIfElse(string data)
-    {
-        if (data.Contains("?"))
-            return true;
-        else
-            return false;
-    }
-
-    /// <summary>
-    /// Convert if else in one line
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    string ConvertOneLineIfElse(string data)
-    {
-        data = data.Replace("getrefine", "หากจำนวนตีบวก");
-        data = data.Replace(">=", " มากกว่าหรือเท่ากับ ");
-        data = data.Replace("<=", " น้อยกว่าหรือเท่ากับ ");
-        data = data.Replace(">", " มากกว่า ");
-        data = data.Replace("<", " น้อยกว่า ");
-        data = data.Replace("?", " = ");
-        data = data.Replace(":", ", หากไม่ตรงเงื่อนไข = ");
-        return data;
-    }
-
-    /// <summary>
-    /// Get monster name from id
-    /// </summary>
-    /// <returns></returns>
-    string GetMonsterName(int id)
-    {
-        for (int i = 0; i < m_output.m_currentMonsterDatabases.Count; i++)
-        {
-            if (id == m_output.m_currentMonsterDatabases[i].id)
-                return m_output.m_currentMonsterDatabases[i].kROName;
-        }
-        return null;
-    }
-
-    /// <summary>
-    /// Get monster name group from first given id
-    /// </summary>
-    /// <returns></returns>
-    string GetMonsterNameGroup(string data)
-    {
-        List<string> allParam = new List<string>();
-
-        if (data.Contains("rand"))
-        {
-            string toCut = data;
-            toCut = CutFunctionName(toCut, "rand");
-            toCut = toCut.Replace("(", "");
-            toCut = toCut.Replace(")", "");
-            allParam = new List<string>(toCut.Split(new string[] { "," }, StringSplitOptions.None));
-            for (int i = 0; i < allParam.Count; i++)
-                Log("allParam[" + i + "]: " + allParam[i]);
-        }
-        else
-            return null;
-
-        for (int i = 0; i < m_output.m_currentMonsterDatabases.Count; i++)
-        {
-            if (int.Parse(allParam[0]) == m_output.m_currentMonsterDatabases[i].id)
-            {
-                string groupName = m_output.m_currentMonsterDatabases[i].kROName;
-
-                int monsterNameStartAt = groupName.IndexOf("_");
-
-                string cut = groupName.Substring(monsterNameStartAt + groupName.Length);
-
-                return groupName;
-            }
-        }
-        return null;
-    }
-
-    /// <summary>
-    /// Get correct wording for skill name levels
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    string GetSkillLv(string data)
-    {
-        Log("GetSkillLv");
-
-        int paramStartAt = data.IndexOf("(");
-        Log("paramStartAt: " + paramStartAt);
-
-        string sum = data.Substring(paramStartAt + 1);
-
-        Log("GetSkillLv: " + sum);
-
-        int paramEndAt = sum.IndexOf(")");
-        Log("paramEndAt: " + paramEndAt);
-
-        sum = sum.Substring(1, paramEndAt - 2);
-
-        Log("GetSkillLv: " + sum);
-
-        return " (" + GetSkillName(sum) + " ที่เรียนรู้ ";
-    }
-
-    /// <summary>
-    /// Get correct skill name by skill id or skill name
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    string GetSkillName(string data)
-    {
-        int paramInt = 0;
-        bool isInteger = false;
-
-        isInteger = int.TryParse(data, out paramInt);
-
-        if (isInteger)
-        {
-            for (int i = 0; i < m_output.m_currentSkillNames.Count; i++)
-            {
-                var sumData = m_output.m_currentSkillNames[i];
-                if (sumData.id == paramInt)
-                    return sumData.desc;
-            }
-        }
-        else
-        {
-            for (int i = 0; i < m_output.m_currentSkillNames.Count; i++)
-            {
-                var sumData = m_output.m_currentSkillNames[i];
-                if ("\"" + sumData.name + "\"" == data
-                    || (sumData.name == data))
-                    return sumData.desc;
-            }
-        }
-        return null;
-    }
-
     #region Utilities
     /// <summary>
     /// Get percent wording by rate and divisor
@@ -8538,6 +8365,11 @@ public class ItemDbScriptData
             return sumTimer.ToString(sumDecimal) + " วินาที";
     }
 
+    /// <summary>
+    /// Get sc_start flag type
+    /// </summary>
+    /// <param name="flag"></param>
+    /// <returns></returns>
     string Get_sc_start_Flag(int flag)
     {
         ScStartFlag scStartFlag = (ScStartFlag)Enum.Parse(typeof(ScStartFlag), flag.ToString("f0"));
@@ -8552,6 +8384,7 @@ public class ItemDbScriptData
         else
             return "";
     }
+
     /// <summary>
     /// Credit: https://answers.unity.com/questions/803672/capitalize-first-letter-in-textfield-only.html
     /// </summary>
@@ -8561,6 +8394,297 @@ public class ItemDbScriptData
     {
         return char.ToUpper(text[0]) +
             ((text.Length > 1) ? text.Substring(1).ToLower() : string.Empty);
+    }
+
+    /// <summary>
+    /// Replace all special wording in value
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    string ReplaceAllSpecialValue(string data)
+    {
+        string value = data;
+
+        if (IsOneLineIfElse(value))
+            value = ConvertOneLineIfElse(value);
+
+        if (value.Contains("getskilllv"))
+        {
+            while (value.Contains("getskilllv"))
+            {
+                value = value.Replace("getskilllv", "ตามจำนวนที่เรียนรู้ Skill ");
+                int circleStartAt = value.IndexOf("(");
+                int circleEndAt = value.IndexOf(")");
+                string sumToCut = value.Substring(circleStartAt + 1);
+                int sumCircleEndAt = sumToCut.IndexOf(")");
+                sumToCut = sumToCut.Substring(0, sumCircleEndAt);
+                sumToCut = GetSkillName(sumToCut);
+                value = value.Substring(0, circleStartAt) + value.Substring(circleEndAt + 1) + sumToCut;
+            }
+        }
+
+        value = value.Replace("getrefine();", "(ตามจำนวนตีบวก)");
+
+        value = value.Replace("getrefine", "(ตามจำนวนตีบวก)");
+
+        value = value.Replace("readparambStr", "(ตาม STR ที่ฝึกฝน)");
+
+        value = value.Replace("readparambAgi", "(ตาม AGI ที่ฝึกฝน)");
+
+        value = value.Replace("readparambVit", "(ตาม VIT ที่ฝึกฝน)");
+
+        value = value.Replace("readparambInt", "(ตาม INT ที่ฝึกฝน)");
+
+        value = value.Replace("readparambDex", "(ตาม DEX ที่ฝึกฝน)");
+
+        value = value.Replace("readparambLuk", "(ตาม LUK ที่ฝึกฝน)");
+
+        value = value.Replace("BaseLevel", "(Level)");
+
+        value = value.Replace("JobLevel", "(Job Level)");
+
+        return value;
+    }
+
+    /// <summary>
+    /// Check is one line if else
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    bool IsOneLineIfElse(string data)
+    {
+        if (data.Contains("?"))
+            return true;
+        else
+            return false;
+    }
+
+    /// <summary>
+    /// Convert if else in one line
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    string ConvertOneLineIfElse(string data)
+    {
+        data = data.Replace("getrefine", "หากจำนวนตีบวก");
+        data = data.Replace(">=", " มากกว่าหรือเท่ากับ ");
+        data = data.Replace("<=", " น้อยกว่าหรือเท่ากับ ");
+        data = data.Replace(">", " มากกว่า ");
+        data = data.Replace("<", " น้อยกว่า ");
+        data = data.Replace("?", " = ");
+        data = data.Replace(":", ", หากไม่ตรงเงื่อนไข = ");
+        return data;
+    }
+
+    /// <summary>
+    /// Get monster name from id
+    /// </summary>
+    /// <returns></returns>
+    string GetMonsterName(int id)
+    {
+        for (int i = 0; i < m_output.m_currentMonsterDatabases.Count; i++)
+        {
+            if (id == m_output.m_currentMonsterDatabases[i].id)
+                return m_output.m_currentMonsterDatabases[i].kROName;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Get monster name group from first given id
+    /// </summary>
+    /// <returns></returns>
+    string GetMonsterNameGroup(string data)
+    {
+        List<string> allParam = new List<string>();
+
+        if (data.Contains("rand"))
+        {
+            string toCut = data;
+            toCut = CutFunctionName(toCut, "rand");
+            toCut = toCut.Replace("(", "");
+            toCut = toCut.Replace(")", "");
+            allParam = new List<string>(toCut.Split(new string[] { "," }, StringSplitOptions.None));
+            for (int i = 0; i < allParam.Count; i++)
+                Log("allParam[" + i + "]: " + allParam[i]);
+        }
+        else
+            return null;
+
+        for (int i = 0; i < m_output.m_currentMonsterDatabases.Count; i++)
+        {
+            if (int.Parse(allParam[0]) == m_output.m_currentMonsterDatabases[i].id)
+            {
+                string groupName = m_output.m_currentMonsterDatabases[i].kROName;
+
+                int monsterNameStartAt = groupName.IndexOf("_");
+
+                string cut = groupName.Substring(monsterNameStartAt + groupName.Length);
+
+                return groupName;
+            }
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Get wording for skill name levels
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    string GetSkillLv(string data)
+    {
+        Log("GetSkillLv");
+
+        int paramStartAt = data.IndexOf("(");
+        Log("paramStartAt: " + paramStartAt);
+
+        string sum = data.Substring(paramStartAt + 1);
+
+        Log("GetSkillLv: " + sum);
+
+        int paramEndAt = sum.IndexOf(")");
+        Log("paramEndAt: " + paramEndAt);
+
+        sum = sum.Substring(1, paramEndAt - 2);
+
+        Log("GetSkillLv: " + sum);
+
+        return " (" + GetSkillName(sum) + " ที่เรียนรู้ ";
+    }
+
+    /// <summary>
+    /// Get skill name by skill id or skill name
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    string GetSkillName(string data)
+    {
+        int paramInt = 0;
+        bool isInteger = false;
+
+        isInteger = int.TryParse(data, out paramInt);
+
+        if (isInteger)
+        {
+            for (int i = 0; i < m_output.m_currentSkillNames.Count; i++)
+            {
+                var sumData = m_output.m_currentSkillNames[i];
+                if (sumData.id == paramInt)
+                    return sumData.desc;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < m_output.m_currentSkillNames.Count; i++)
+            {
+                var sumData = m_output.m_currentSkillNames[i];
+                if ("\"" + sumData.name + "\"" == data
+                    || (sumData.name == data))
+                    return sumData.desc;
+            }
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Get element name
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    string GetElementName(string data)
+    {
+        if (string.IsNullOrEmpty(data))
+            return "";
+
+        Element elementFlag = (Element)Enum.Parse(typeof(Element), data);
+
+        // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
+        if (!Enum.IsDefined(typeof(Element), elementFlag) && !elementFlag.ToString().Contains(","))
+            throw new InvalidOperationException($"{data} is not an underlying value of the YourEnum enumeration.");
+
+        if (elementFlag.HasFlag(Element.Ele_Dark))
+            return "Dark";
+        else if (elementFlag.HasFlag(Element.Ele_Earth))
+            return "Earth";
+        else if (elementFlag.HasFlag(Element.Ele_Fire))
+            return "Fire";
+        else if (elementFlag.HasFlag(Element.Ele_Ghost))
+            return "Ghost";
+        else if (elementFlag.HasFlag(Element.Ele_Holy))
+            return "Holy";
+        else if (elementFlag.HasFlag(Element.Ele_Neutral))
+            return "Neutral";
+        else if (elementFlag.HasFlag(Element.Ele_Poison))
+            return "Poison";
+        else if (elementFlag.HasFlag(Element.Ele_Undead))
+            return "Undead";
+        else if (elementFlag.HasFlag(Element.Ele_Water))
+            return "Water";
+        else if (elementFlag.HasFlag(Element.Ele_Wind))
+            return "Wind";
+        else if (elementFlag.HasFlag(Element.Ele_All))
+            return "ทุกธาตุ";
+        return "";
+    }
+
+    /// <summary>
+    /// Get all trigger criteria from value
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    string GetTriggerCriteria(string data)
+    {
+        if (string.IsNullOrEmpty(data))
+            return "";
+
+        string sum = null;
+
+        List<string> allTriggerCriteria = StringSplit.GetStringSplit(data, '|');
+
+        for (int i = 0; i < allTriggerCriteria.Count; i++)
+        {
+            TriggerCriteria triggerCriteria = (TriggerCriteria)Enum.Parse(typeof(TriggerCriteria), data);
+
+            // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
+            if (!Enum.IsDefined(typeof(Element), triggerCriteria) && !triggerCriteria.ToString().Contains(","))
+                throw new InvalidOperationException($"{data} is not an underlying value of the YourEnum enumeration.");
+
+            if (triggerCriteria.HasFlag(TriggerCriteria.BF_SHORT))
+                sum += ", โจมตีระยะประชิด";
+            if (triggerCriteria.HasFlag(TriggerCriteria.BF_LONG))
+                sum += ", โจมตีระยะไกล";
+            if (triggerCriteria.HasFlag(TriggerCriteria.BF_WEAPON))
+                sum += ", อาวุธ";
+            if (triggerCriteria.HasFlag(TriggerCriteria.BF_MAGIC))
+                sum += ", เวทย์มนต์";
+            if (triggerCriteria.HasFlag(TriggerCriteria.BF_MISC))
+                sum += ", การโจมตีอื่น ๆ";
+            if (triggerCriteria.HasFlag(TriggerCriteria.BF_NORMAL))
+                sum += ", โจมตีกายภาพ";
+            if (triggerCriteria.HasFlag(TriggerCriteria.BF_SKILL))
+                sum += ", โจมตีเวทย์";
+            if (triggerCriteria.HasFlag(TriggerCriteria.ATF_SELF))
+                sum += ", เป้าหมาย: ตนเอง";
+            if (triggerCriteria.HasFlag(TriggerCriteria.ATF_TARGET))
+                sum += ", เป้าหมาย: ศัตรู";
+            if (triggerCriteria.HasFlag(TriggerCriteria.ATF_SHORT))
+                sum += ", โจมตีระยะประชิด";
+            if (triggerCriteria.HasFlag(TriggerCriteria.ATF_LONG))
+                sum += ", โจมตีระยะไกล";
+            if (triggerCriteria.HasFlag(TriggerCriteria.ATF_WEAPON))
+                sum += ", อาวุธ";
+            if (triggerCriteria.HasFlag(TriggerCriteria.ATF_MAGIC))
+                sum += ", เวทย์มนต์";
+            if (triggerCriteria.HasFlag(TriggerCriteria.ATF_MISC))
+                sum += ", การโจมตีอื่น ๆ";
+        }
+
+        Log("GetTriggerCriteria >> sum: " + sum);
+        sum = sum.Substring(1);
+        Log("GetTriggerCriteria >> sum: " + sum);
+
+        return " เงื่อนไข ( " + sum + " )";
     }
     #endregion
 
