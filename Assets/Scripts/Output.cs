@@ -5858,12 +5858,7 @@ public class ItemDbScriptData
                 string param1 = GetValue(allParam[0], 1);
 
                 if (isHadParam1)
-                {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
-                    else
-                        sum += AddDescription(sum, "nnnn +" + param1);
-                }
+                    sum += AddDescription(sum, "การโจมตีเป็นธาตุ " + GetElementName(param1));
             }
             #endregion
             #region bonus bDefEle
@@ -5877,12 +5872,7 @@ public class ItemDbScriptData
                 string param1 = GetValue(allParam[0], 1);
 
                 if (isHadParam1)
-                {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
-                    else
-                        sum += AddDescription(sum, "nnnn +" + param1);
-                }
+                    sum += AddDescription(sum, "การป้องกันเป็นธาตุ " + GetElementName(param1));
             }
             #endregion
             #region bonus2 bMagicAtkEle
@@ -5894,13 +5884,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โจมตีเบาลง " + param2 + "% กับเวทย์มนต์ธาตุ " + GetElementName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "โจมตีแรงขึ้น " + param2 + "% กับเวทย์มนต์ธาตุ " + GetElementName(param1));
                 }
             }
             #endregion
@@ -5915,12 +5906,7 @@ public class ItemDbScriptData
                 string param1 = GetValue(allParam[0], 1);
 
                 if (isHadParam1)
-                {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
-                    else
-                        sum += AddDescription(sum, "nnnn +" + param1);
-                }
+                    sum += AddDescription(sum, "โจมตีแรงขึ้นตาม DEF ของศัตรู กับเผ่า " + GetRaceName(param1));
             }
             #endregion
             #region bonus bDefRatioAtkEle
@@ -5934,12 +5920,7 @@ public class ItemDbScriptData
                 string param1 = GetValue(allParam[0], 1);
 
                 if (isHadParam1)
-                {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
-                    else
-                        sum += AddDescription(sum, "nnnn +" + param1);
-                }
+                    sum += AddDescription(sum, "โจมตีแรงขึ้นตาม DEF ของศัตรู กับธาตุ " + GetElementName(param1));
             }
             #endregion
             #region bonus bDefRatioAtkClass
@@ -5953,12 +5934,7 @@ public class ItemDbScriptData
                 string param1 = GetValue(allParam[0], 1);
 
                 if (isHadParam1)
-                {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
-                    else
-                        sum += AddDescription(sum, "nnnn +" + param1);
-                }
+                    sum += AddDescription(sum, "โจมตีแรงขึ้นตาม DEF ของศัตรู กับ Class " + GetClassName(param1));
             }
             #endregion
             #region bonus4 bSetDefRace
@@ -5970,14 +5946,12 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[0], 1);
+                string param3 = GetValue(allParam[0], 1);
+                string param4 = GetValue(allParam[0], 1);
 
-                if (isHadParam1)
-                {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
-                    else
-                        sum += AddDescription(sum, "nnnn +" + param1);
-                }
+                if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4)
+                    sum += AddDescription(sum, "เมื่อโจมตีกายภาพมีโอกาส " + param2 + "% ทำให้ศัตรูเหลือ DEF " + param4 + " กับเผ่า " + GetRaceName(param1) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param3)));
             }
             #endregion
             #region bonus4 bSetMDefRace
@@ -5989,14 +5963,12 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[0], 1);
+                string param3 = GetValue(allParam[0], 1);
+                string param4 = GetValue(allParam[0], 1);
 
-                if (isHadParam1)
-                {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
-                    else
-                        sum += AddDescription(sum, "nnnn +" + param1);
-                }
+                if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4)
+                    sum += AddDescription(sum, "เมื่อโจมตีกายภาพมีโอกาส " + param2 + "% ทำให้ศัตรูเหลือ MDEF " + param4 + " กับเผ่า " + GetRaceName(param1) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param3)));
             }
             #endregion
             #region bonus bIgnoreDefEle
