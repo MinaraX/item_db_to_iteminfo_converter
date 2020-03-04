@@ -6422,13 +6422,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด Coma กับ Class " + GetClassName(param1) + " เมื่อโจมตี");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด Coma กับ Class " + GetClassName(param1) + " เมื่อโจมตี");
                 }
             }
             #endregion
@@ -6441,13 +6442,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด Coma กับเผ่า " + GetRaceName(param1) + " เมื่อโจมตี");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด Coma กับเผ่า " + GetRaceName(param1) + " เมื่อโจมตี");
                 }
             }
             #endregion
@@ -6460,13 +6462,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด Coma กับธาตุ " + GetElementName(param1) + " เมื่อโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด Coma กับธาตุ " + GetElementName(param1) + " เมื่อโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6479,13 +6482,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด Coma กับ Class " + GetClassName(param1) + " เมื่อโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด Coma กับ Class " + GetClassName(param1) + " เมื่อโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6498,13 +6502,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด Coma กับเผ่า " + GetRaceName(param1) + " เมื่อโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด Coma กับเผ่า " + GetRaceName(param1) + " เมื่อโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6517,13 +6522,15 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam3Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " เมื่อโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " เมื่อโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6536,13 +6543,15 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam3Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " เมื่อโดนโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " เมื่อโดนโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6555,13 +6564,16 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
+                string param4 = GetValue(allParam[3], 4);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam3Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " " + GetAutoSpellFlagName(param4) + " เมื่อโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " " + GetAutoSpellFlagName(param4) + " เมื่อโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6574,13 +6586,17 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
+                string param4 = GetValue(allParam[3], 4);
+                string param5 = GetValue(allParam[4], 5);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4 && isHadParam5)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam3Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " " + GetAutoSpellFlagName(param5) + " เมื่อโจมตีกายภาพ" + GetTriggerCriteria(param4));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " " + GetAutoSpellFlagName(param5) + " เมื่อโจมตีกายภาพ" + GetTriggerCriteria(param4));
                 }
             }
             #endregion
@@ -6593,13 +6609,16 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
+                string param4 = GetValue(allParam[3], 4);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam3Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " " + GetAutoSpellFlagName(param4) + " เมื่อโดนโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " " + GetAutoSpellFlagName(param4) + " เมื่อโดนโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6612,13 +6631,17 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
+                string param4 = GetValue(allParam[3], 4);
+                string param5 = GetValue(allParam[4], 5);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4 && isHadParam5)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam3Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " " + GetAutoSpellFlagName(param5) + " เมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(param4));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " " + GetAutoSpellFlagName(param5) + " เมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(param4));
                 }
             }
             #endregion
@@ -6631,13 +6654,16 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
+                string param4 = GetValue(allParam[3], 4);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam4Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param4, 10) + "% ที่จะร่าย Lv." + param3 + " " + GetSkillName(param1) + " เมื่อร่าย Skill " + GetSkillName(param2));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param4, 10) + "% ที่จะร่าย Lv." + param3 + " " + GetSkillName(param1) + " เมื่อร่าย Skill " + GetSkillName(param2));
                 }
             }
             #endregion
@@ -6650,13 +6676,17 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
+                string param4 = GetValue(allParam[3], 4);
+                string param5 = GetValue(allParam[4], 5);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4 && isHadParam5)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam4Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param4, 10) + "% ที่จะร่าย Lv." + param3 + " " + GetSkillName(param1) + GetAutoSpellOnSkillFlagName(param5, param3) + " เมื่อร่าย Skill " + GetSkillName(param2));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param4, 10) + "% ที่จะร่าย Lv." + param3 + " " + GetSkillName(param1) + GetAutoSpellOnSkillFlagName(param5, param3) + " เมื่อร่าย Skill " + GetSkillName(param2));
                 }
             }
             #endregion
@@ -9029,6 +9059,66 @@ public class ItemDbScriptData
     }
 
     /// <summary>
+    /// Get auto spell flag name
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    string GetAutoSpellFlagName(string data)
+    {
+        if (string.IsNullOrEmpty(data))
+            return null;
+
+        AutoSpellFlag autoSpellFlag = (AutoSpellFlag)Enum.Parse(typeof(AutoSpellFlag), data);
+
+        // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
+        if (!Enum.IsDefined(typeof(AutoSpellFlag), autoSpellFlag) && !autoSpellFlag.ToString().Contains(","))
+            throw new InvalidOperationException($"{data} is not an underlying value of the YourEnum enumeration.");
+
+        string sum = null;
+
+        if (autoSpellFlag.HasFlag(AutoSpellFlag.CastOnEnemy))
+            sum += ", ร่ายใส่ศัตรู";
+        if (autoSpellFlag.HasFlag(AutoSpellFlag.CastOnSelf))
+            sum += ", ร่ายใส่ตนเอง";
+        if (autoSpellFlag.HasFlag(AutoSpellFlag.RandomSkillLvOnEnemy))
+            sum += ", ร่ายสุ่ม Lv. ใส่ศัตรู";
+        if (autoSpellFlag.HasFlag(AutoSpellFlag.UseRandomSkillLv))
+            sum += ", ร่ายสุ่ม Lv.";
+
+        sum = sum.Substring(1);
+
+        return sum;
+    }
+
+    /// <summary>
+    /// Get auto spell on skill flag name
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    string GetAutoSpellOnSkillFlagName(string data, string lv)
+    {
+        if (string.IsNullOrEmpty(data))
+            return null;
+
+        AutoSpellOnSkillFlag autoSpellOnSkillFlag = (AutoSpellOnSkillFlag)Enum.Parse(typeof(AutoSpellOnSkillFlag), data);
+
+        // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
+        if (!Enum.IsDefined(typeof(AutoSpellOnSkillFlag), autoSpellOnSkillFlag) && !autoSpellOnSkillFlag.ToString().Contains(","))
+            throw new InvalidOperationException($"{data} is not an underlying value of the YourEnum enumeration.");
+
+        string sum = null;
+
+        if (autoSpellOnSkillFlag.HasFlag(AutoSpellOnSkillFlag.CastOnSelf))
+            sum += ", ร่ายใส่ตนเอง";
+        if (autoSpellOnSkillFlag.HasFlag(AutoSpellOnSkillFlag.RandomLvSkillFromHighestGivenBonus))
+            sum += ", ร่ายสุ่ม Lv.1~" + lv;
+
+        sum = sum.Substring(1);
+
+        return sum;
+    }
+
+    /// <summary>
     /// Get effect name
     /// </summary>
     /// <param name="data"></param>
@@ -9363,6 +9453,22 @@ public enum ScStartFlag
     SCSTART_LOADED,
     SCSTART_NORATEDEF,
     SCSTART_NOICON
+}
+
+[Flags]
+public enum AutoSpellFlag
+{
+    CastOnSelf = 0,
+    CastOnEnemy = 1,
+    UseRandomSkillLv = 2,
+    RandomSkillLvOnEnemy = 3,
+}
+
+[Flags]
+public enum AutoSpellOnSkillFlag
+{
+    CastOnSelf = 1,
+    RandomLvSkillFromHighestGivenBonus = 2,
 }
 #endregion
 
