@@ -6195,9 +6195,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + param2 + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโจมตีกายภาพ");
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + param2 + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโจมตีกายภาพ");
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6215,9 +6215,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + param2 + "% ที่จะเกิด " + GetEffectName(param1) + " กับตนเองเมื่อโจมตีกายภาพ");
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับตนเองเมื่อโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + param2 + "% ที่จะเกิด " + GetEffectName(param1) + " กับตนเองเมื่อโจมตีกายภาพ");
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับตนเองเมื่อโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6230,13 +6230,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโดนโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโดนโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6249,13 +6250,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะไม่เกิด " + GetEffectName(param1) + " กับตนเอง");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะไม่เกิด " + GetEffectName(param1) + " กับตนเอง");
                 }
             }
             #endregion
@@ -6268,13 +6270,15 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโจมตีกายภาพ" + GetTriggerCriteria(param3));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโจมตีกายภาพ" + GetTriggerCriteria(param3));
                 }
             }
             #endregion
@@ -6287,13 +6291,16 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
+                string param4 = GetValue(allParam[3], 4);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโจมตีกายภาพ" + GetTriggerCriteria(param3) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param4)));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโจมตีกายภาพ" + GetTriggerCriteria(param3) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param4)));
                 }
             }
             #endregion
@@ -6306,13 +6313,15 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(param3));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(param3));
                 }
             }
             #endregion
@@ -6325,13 +6334,16 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
+                string param4 = GetValue(allParam[3], 4);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(param3) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param4)));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(param3) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param4)));
                 }
             }
             #endregion
@@ -6344,13 +6356,15 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam3Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะเกิด " + GetEffectName(param2) + " กับศัตรูเมื่อร่าย Skill " + GetSkillName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะเกิด " + GetEffectName(param2) + " กับศัตรูเมื่อร่าย Skill " + GetSkillName(param1));
                 }
             }
             #endregion
@@ -6363,13 +6377,16 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
+                string param4 = GetValue(allParam[3], 4);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam3Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะเกิด " + GetEffectName(param2) + " กับศัตรูเมื่อร่าย Skill" + GetTriggerCriteria(param1) + GetTriggerCriteria(param4));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะเกิด " + GetEffectName(param2) + " กับศัตรูเมื่อร่าย Skill" + GetTriggerCriteria(param1) + GetTriggerCriteria(param4));
                 }
             }
             #endregion
@@ -6382,13 +6399,17 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
+                string param4 = GetValue(allParam[3], 4);
+                string param5 = GetValue(allParam[4], 5);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4 && isHadParam5)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam3Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะเกิด " + GetEffectName(param2) + " กับศัตรูเมื่อร่าย Skill" + GetTriggerCriteria(param1) + GetTriggerCriteria(param4) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param5)));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะเกิด " + GetEffectName(param2) + " กับศัตรูเมื่อร่าย Skill" + GetTriggerCriteria(param1) + GetTriggerCriteria(param4) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param5)));
                 }
             }
             #endregion
@@ -9144,6 +9165,17 @@ public class ItemDbScriptData
         Log("GetTriggerCriteria >> sum: " + sum);
 
         return " เงื่อนไข ( " + sum + " )";
+    }
+
+    /// <summary>
+    /// Correct amount to showing
+    /// </summary>
+    /// <param name="data"></param>
+    /// <param name="divider"></param>
+    /// <returns></returns>
+    string GetRateByDivider(string data, float divider)
+    {
+        return (float.Parse(data) / divider).ToString("f0");
     }
     #endregion
 
