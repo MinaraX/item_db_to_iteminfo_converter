@@ -6703,9 +6703,9 @@ public class ItemDbScriptData
                 if (isHadParam1)
                 {
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                        sum += AddDescription(sum, "เสีย " + param1 + " HP เมื่อโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ฟื้นฟู " + param1 + " HP เมื่อโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6718,13 +6718,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "เสีย " + param2 + " HP เมื่อโจมตีกายภาพกับเผ่า " + GetRaceName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ฟื้นฟู " + param2 + " HP เมื่อโจมตีกายภาพกับเผ่า " + GetRaceName(param1));
                 }
             }
             #endregion
@@ -6737,13 +6738,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "เสีย " + param2 + " HP เมื่อโจมตีกายภาพกับ Class " + GetClassName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ฟื้นฟู " + param2 + " HP เมื่อโจมตีกายภาพกับ Class " + GetClassName(param1));
                 }
             }
             #endregion
@@ -6760,9 +6762,9 @@ public class ItemDbScriptData
                 if (isHadParam1)
                 {
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                        sum += AddDescription(sum, "เสีย " + param1 + " SP เมื่อโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ฟื้นฟู " + param1 + " SP เมื่อโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6775,13 +6777,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "เสีย " + param2 + " SP เมื่อโจมตีกายภาพกับเผ่า " + GetRaceName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ฟื้นฟู " + param2 + " SP เมื่อโจมตีกายภาพกับเผ่า " + GetRaceName(param1));
                 }
             }
             #endregion
@@ -6794,13 +6797,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "เสีย " + param2 + " SP เมื่อโจมตีกายภาพกับ Class " + GetClassName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ฟื้นฟู " + param2 + " SP เมื่อโจมตีกายภาพกับ Class " + GetClassName(param1));
                 }
             }
             #endregion
@@ -6813,13 +6817,24 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
+                    string sumParam1 = null;
+                    string sumParam2 = null;
+
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                        sumParam1 = "ลดโอกาส";
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sumParam1 = "มีโอกาส";
+
+                    if (isParam2Negative)
+                        sumParam2 = "เสีย";
+                    else
+                        sumParam2 = "ฟื้นฟู";
+
+                    sum += AddDescription(sum, sumParam1 + " " + param1 + "% ที่จะ" + sumParam2 + " HP " + GetRateByDivider(param2, 10) + "% จาก Damage การโจมตีกายภาพที่ทำไป");
                 }
             }
             #endregion
@@ -6832,13 +6847,24 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
+                    string sumParam1 = null;
+                    string sumParam2 = null;
+
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                        sumParam1 = "ลดโอกาส";
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sumParam1 = "มีโอกาส";
+
+                    if (isParam2Negative)
+                        sumParam2 = "เสีย";
+                    else
+                        sumParam2 = "ฟื้นฟู";
+
+                    sum += AddDescription(sum, sumParam1 + " " + param1 + "% ที่จะ" + sumParam2 + " SP " + GetRateByDivider(param2, 10) + "% จาก Damage การโจมตีกายภาพที่ทำไป");
                 }
             }
             #endregion
@@ -6851,13 +6877,24 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
+                    string sumParam1 = null;
+                    string sumParam2 = null;
+
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                        sumParam1 = "ลดโอกาส";
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sumParam1 = "มีโอกาส";
+
+                    if (isParam2Negative)
+                        sumParam2 = "ฟื้นฟู";
+                    else
+                        sumParam2 = "เสีย";
+
+                    sum += AddDescription(sum, sumParam1 + " " + param1 + "% ที่ศัตรูจะ" + sumParam2 + " HP " + GetRateByDivider(param2, 10) + "% จาก Damage การโจมตีกายภาพที่ทำไป");
                 }
             }
             #endregion
@@ -6870,13 +6907,25 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    string sumParam2 = null;
+                    string sumParam3 = null;
+
+                    if (isParam2Negative)
+                        sumParam2 = "ลดโอกาส";
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sumParam2 = "มีโอกาส";
+
+                    if (isParam3Negative)
+                        sumParam3 = "ฟื้นฟู";
+                    else
+                        sumParam3 = "เสีย";
+
+                    sum += AddDescription(sum, sumParam2 + " " + param2 + "% ที่ศัตรูจะ" + sumParam3 + " HP " + GetRateByDivider(param3, 10) + "% กับเผ่า " + GetRaceName(param1) + " จาก Damage การโจมตีกายภาพที่ทำไป");
                 }
             }
             #endregion
@@ -6889,13 +6938,25 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
+                    string sumParam1 = null;
+                    string sumParam2 = null;
+
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                        sumParam1 = "ลดโอกาส";
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sumParam1 = "มีโอกาส";
+
+                    if (isParam2Negative)
+                        sumParam2 = "ฟื้นฟู";
+                    else
+                        sumParam2 = "เสีย";
+
+                    sum += AddDescription(sum, sumParam1 + " " + param1 + "% ที่ศัตรูจะ" + sumParam2 + " HP " + GetRateByDivider(param2, 10) + "% จาก Damage การโจมตีกายภาพที่ทำไป" + GetTriggerCriteria(param3));
                 }
             }
             #endregion
@@ -6908,13 +6969,24 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
+                    string sumParam1 = null;
+                    string sumParam2 = null;
+
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                        sumParam1 = "ลดโอกาส";
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sumParam1 = "มีโอกาส";
+
+                    if (isParam2Negative)
+                        sumParam2 = "ฟื้นฟู";
+                    else
+                        sumParam2 = "เสีย";
+
+                    sum += AddDescription(sum, sumParam1 + " " + param1 + "% ที่ศัตรูจะ" + sumParam2 + " SP " + GetRateByDivider(param2, 10) + "% จาก Damage การโจมตีกายภาพที่ทำไป");
                 }
             }
             #endregion
@@ -6927,13 +6999,25 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    string sumParam2 = null;
+                    string sumParam3 = null;
+
+                    if (isParam2Negative)
+                        sumParam2 = "ลดโอกาส";
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sumParam2 = "มีโอกาส";
+
+                    if (isParam3Negative)
+                        sumParam3 = "ฟื้นฟู";
+                    else
+                        sumParam3 = "เสีย";
+
+                    sum += AddDescription(sum, sumParam2 + " " + param2 + "% ที่ศัตรูจะ" + sumParam3 + " SP " + GetRateByDivider(param3, 10) + "% กับเผ่า " + GetRaceName(param1) + " จาก Damage การโจมตีกายภาพที่ทำไป");
                 }
             }
             #endregion
@@ -6946,13 +7030,25 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
+                    string sumParam1 = null;
+                    string sumParam2 = null;
+
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                        sumParam1 = "ลดโอกาส";
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sumParam1 = "มีโอกาส";
+
+                    if (isParam2Negative)
+                        sumParam2 = "ฟื้นฟู";
+                    else
+                        sumParam2 = "เสีย";
+
+                    sum += AddDescription(sum, sumParam1 + " " + param1 + "% ที่ศัตรูจะ" + sumParam2 + " SP " + GetRateByDivider(param2, 10) + "% จาก Damage การโจมตีกายภาพที่ทำไป" + GetTriggerCriteria(param3));
                 }
             }
             #endregion
@@ -6965,13 +7061,15 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะทำให้ศัตรูเผ่า " + GetRaceName(param1) + " ไม่สามารถฟื้นฟู HP,SP ได้เป็นเวลา " + TimerToStringTimer(float.Parse(param3)) + " เมื่อโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะทำให้ศัตรูเผ่า " + GetRaceName(param1) + " ไม่สามารถฟื้นฟู HP,SP ได้เป็นเวลา " + TimerToStringTimer(float.Parse(param3)) + " เมื่อโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6988,9 +7086,9 @@ public class ItemDbScriptData
                 if (isHadParam1)
                 {
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                        sum += AddDescription(sum, "เสีย " + param1 + " HP เมื่อกำจัดศัตรูด้วยการโจมตีกายภาพระยะประชิด");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ฟื้นฟู " + param1 + " HP เมื่อกำจัดศัตรูด้วยการโจมตีกายภาพระยะประชิด");
                 }
             }
             #endregion
@@ -7007,9 +7105,9 @@ public class ItemDbScriptData
                 if (isHadParam1)
                 {
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                        sum += AddDescription(sum, "เสีย " + param1 + " SP เมื่อกำจัดศัตรูด้วยการโจมตีกายภาพระยะประชิด");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ฟื้นฟู " + param1 + " SP เมื่อกำจัดศัตรูด้วยการโจมตีกายภาพระยะประชิด");
                 }
             }
             #endregion
