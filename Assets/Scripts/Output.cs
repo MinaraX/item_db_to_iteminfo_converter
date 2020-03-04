@@ -6150,13 +6150,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ได้รับ EXP น้อยลง " + param2 + "% กับเผ่า " + GetRaceName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ได้รับ EXP มากขึ้น " + param2 + "% กับเผ่า " + GetRaceName(param1));
                 }
             }
             #endregion
@@ -6169,13 +6170,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ได้รับ EXP น้อยลง " + param2 + "% กับ Class " + GetClassName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ได้รับ EXP มากขึ้น " + param2 + "% กับ Class " + GetClassName(param1));
                 }
             }
             #endregion
@@ -6188,13 +6190,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + param2 + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + param2 + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6207,13 +6210,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ลดโอกาส " + param2 + "% ที่จะเกิด " + GetEffectName(param1) + " กับตนเองเมื่อโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "มีโอกาส " + param2 + "% ที่จะเกิด " + GetEffectName(param1) + " กับตนเองเมื่อโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -8197,7 +8201,7 @@ public class ItemDbScriptData
     string GetWeaponType(string data)
     {
         if (string.IsNullOrEmpty(data))
-            return "";
+            return null;
 
         WeaponTypeFlag weaponTypeFlag = (WeaponTypeFlag)Enum.Parse(typeof(WeaponTypeFlag), data);
 
@@ -8254,7 +8258,7 @@ public class ItemDbScriptData
         else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_2HSTAFF))
             return "Two-handed Staff";
         else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.MAX_WEAPON_TYPE))
-            return "";
+            return null;
         else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_DOUBLE_DD))
             return "Dual-wield Daggers";
         else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_DOUBLE_SS))
@@ -8268,9 +8272,9 @@ public class ItemDbScriptData
         else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_DOUBLE_SA))
             return "Sword + Axe";
         else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.MAX_WEAPON_TYPE_ALL))
-            return "";
+            return null;
 
-        return "";
+        return null;
     }
 
     /// <summary>
@@ -8321,7 +8325,7 @@ public class ItemDbScriptData
         else if (scStartFlag == ScStartFlag.SCSTART_NORATEDEF)
             return "(โอกาสจะคงที่)";
         else
-            return "";
+            return null;
     }
 
     /// <summary>
@@ -8869,7 +8873,7 @@ public class ItemDbScriptData
     string GetElementName(string data)
     {
         if (string.IsNullOrEmpty(data))
-            return "";
+            return null;
 
         Element elementFlag = (Element)Enum.Parse(typeof(Element), data);
 
@@ -8900,7 +8904,7 @@ public class ItemDbScriptData
         else if (elementFlag.HasFlag(Element.Ele_All))
             return "ทุกธาตุ";
 
-        return "";
+        return null;
     }
 
     /// <summary>
@@ -8911,7 +8915,7 @@ public class ItemDbScriptData
     string GetRaceName(string data)
     {
         if (string.IsNullOrEmpty(data))
-            return "";
+            return null;
 
         Race raceFlag = (Race)Enum.Parse(typeof(Race), data);
 
@@ -8944,7 +8948,7 @@ public class ItemDbScriptData
         else if (raceFlag.HasFlag(Race.RC_All))
             return "ทุกเผ่า";
 
-        return "";
+        return null;
     }
 
     /// <summary>
@@ -8955,7 +8959,7 @@ public class ItemDbScriptData
     string GetClassName(string data)
     {
         if (string.IsNullOrEmpty(data))
-            return "";
+            return null;
 
         Class classFlag = (Class)Enum.Parse(typeof(Class), data);
 
@@ -8972,7 +8976,7 @@ public class ItemDbScriptData
         else if (classFlag.HasFlag(Class.Class_All))
             return "ทุก Class";
 
-        return "";
+        return null;
     }
 
     /// <summary>
@@ -8983,7 +8987,7 @@ public class ItemDbScriptData
     string GetSizeName(string data)
     {
         if (string.IsNullOrEmpty(data))
-            return "";
+            return null;
 
         Size sizeFlag = (Size)Enum.Parse(typeof(Size), data);
 
@@ -9000,7 +9004,55 @@ public class ItemDbScriptData
         else if (sizeFlag.HasFlag(Size.Size_All))
             return "ทุก Size";
 
-        return "";
+        return null;
+    }
+
+    /// <summary>
+    /// Get effect name
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    string GetEffectName(string data)
+    {
+        if (string.IsNullOrEmpty(data))
+            return null;
+
+        StatusEffect statusEffectFlag = (StatusEffect)Enum.Parse(typeof(StatusEffect), data);
+
+        // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
+        if (!Enum.IsDefined(typeof(StatusEffect), statusEffectFlag) && !statusEffectFlag.ToString().Contains(","))
+            throw new InvalidOperationException($"{data} is not an underlying value of the YourEnum enumeration.");
+
+        if (statusEffectFlag.HasFlag(StatusEffect.Eff_Bleeding))
+            return "Bleeding";
+        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Blind))
+            return "Blind";
+        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Burning))
+            return "Burning";
+        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Confusion))
+            return "Confusion";
+        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Crystalize))
+            return "Crystalize";
+        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Curse))
+            return "Curse";
+        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_DPoison))
+            return "Deadly Poison";
+        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Fear))
+            return "Fear";
+        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Freeze))
+            return "Freeze";
+        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Poison))
+            return "Poison";
+        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Silence))
+            return "Silence";
+        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Sleep))
+            return "Sleep";
+        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Stone))
+            return "Stone";
+        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Stun))
+            return "Stun";
+
+        return null;
     }
 
     /// <summary>
@@ -9011,7 +9063,7 @@ public class ItemDbScriptData
     string GetMonsterRaceName(string data)
     {
         if (string.IsNullOrEmpty(data))
-            return "";
+            return null;
 
         MonsterRace monsterRaceFlag = (MonsterRace)Enum.Parse(typeof(MonsterRace), data);
 
@@ -9032,7 +9084,7 @@ public class ItemDbScriptData
         else if (monsterRaceFlag.HasFlag(MonsterRace.RC2_Orc))
             return "Orc";
 
-        return "";
+        return null;
     }
 
     /// <summary>
@@ -9043,7 +9095,7 @@ public class ItemDbScriptData
     string GetTriggerCriteria(string data)
     {
         if (string.IsNullOrEmpty(data))
-            return "";
+            return null;
 
         string sum = null;
 
@@ -9173,44 +9225,52 @@ public class ItemDbScriptData
 #endregion
 
 #region enum
+[Flags]
 public enum SC
 {
     SC_STONE, SC_FREEZE, SC_STUN, SC_SLEEP, SC_POISON, SC_CURSE, SC_SILENCE, SC_CONFUSION, SC_BLIND, SC_BLEEDING, SC_DPOISON, SC_PROVOKE, SC_ENDURE, SC_TWOHANDQUICKEN, SC_CONCENTRATE, SC_HIDING, SC_CLOAKING, SC_ENCPOISON, SC_POISONREACT, SC_QUAGMIRE, SC_ANGELUS, SC_BLESSING, SC_SIGNUMCRUCIS, SC_INCREASEAGI, SC_DECREASEAGI, SC_SLOWPOISON, SC_IMPOSITIO, SC_SUFFRAGIUM, SC_ASPERSIO, SC_BENEDICTIO, SC_KYRIE, SC_MAGNIFICAT, SC_GLORIA, SC_AETERNA, SC_ADRENALINE, SC_WEAPONPERFECTION, SC_OVERTHRUST, SC_MAXIMIZEPOWER, SC_TRICKDEAD, SC_LOUD, SC_ENERGYCOAT, SC_BROKENARMOR, SC_BROKENWEAPON, SC_HALLUCINATION, SC_WEIGHT50, SC_WEIGHT90, SC_ASPDPOTION0, SC_ASPDPOTION1, SC_ASPDPOTION2, SC_ASPDPOTION3, SC_SPEEDUP0, SC_SPEEDUP1, SC_ATKPOTION, SC_MATKPOTION, SC_WEDDING, SC_SLOWDOWN, SC_ANKLE, SC_KEEPING, SC_BARRIER, SC_STRIPWEAPON, SC_STRIPSHIELD, SC_STRIPARMOR, SC_STRIPHELM, SC_CP_WEAPON, SC_CP_SHIELD, SC_CP_ARMOR, SC_CP_HELM, SC_AUTOGUARD, SC_REFLECTSHIELD, SC_SPLASHER, SC_PROVIDENCE, SC_DEFENDER, SC_MAGICROD, SC_SPELLBREAKER, SC_AUTOSPELL, SC_SIGHTTRASHER, SC_AUTOBERSERK, SC_SPEARQUICKEN, SC_AUTOCOUNTER, SC_SIGHT, SC_SAFETYWALL, SC_RUWACH, SC_EXTREMITYFIST, SC_EXPLOSIONSPIRITS, SC_COMBO, SC_BLADESTOP_WAIT, SC_BLADESTOP, SC_FIREWEAPON, SC_WATERWEAPON, SC_WINDWEAPON, SC_EARTHWEAPON, SC_VOLCANO, SC_DELUGE, SC_VIOLENTGALE, SC_WATK_ELEMENT, SC_ARMOR, SC_ARMOR_ELEMENT_WATER, SC_NOCHAT, SC_BABY, SC_AURABLADE, SC_PARRYING, SC_CONCENTRATION, SC_TENSIONRELAX, SC_BERSERK, SC_FURY, SC_GOSPEL, SC_ASSUMPTIO, SC_BASILICA, SC_GUILDAURA, SC_MAGICPOWER, SC_EDP, SC_TRUESIGHT, SC_WINDWALK, SC_MELTDOWN, SC_CARTBOOST, SC_CHASEWALK, SC_REJECTSWORD, SC_MARIONETTE, SC_MARIONETTE2, SC_CHANGEUNDEAD, SC_JOINTBEAT, SC_MINDBREAKER, SC_MEMORIZE, SC_FOGWALL, SC_SPIDERWEB, SC_DEVOTION, SC_SACRIFICE, SC_STEELBODY, SC_ORCISH, SC_READYSTORM, SC_READYDOWN, SC_READYTURN, SC_READYCOUNTER, SC_DODGE, SC_RUN, SC_SHADOWWEAPON, SC_ADRENALINE2, SC_GHOSTWEAPON, SC_KAIZEL, SC_KAAHI, SC_KAUPE, SC_ONEHAND, SC_PRESERVE, SC_BATTLEORDERS, SC_REGENERATION, SC_DOUBLECAST, SC_GRAVITATION, SC_MAXOVERTHRUST, SC_LONGING, SC_HERMODE, SC_SHRINK, SC_SIGHTBLASTER, SC_WINKCHARM, SC_CLOSECONFINE, SC_CLOSECONFINE2, SC_DANCING, SC_ELEMENTALCHANGE, SC_RICHMANKIM, SC_ETERNALCHAOS, SC_DRUMBATTLE, SC_NIBELUNGEN, SC_ROKISWEIL, SC_INTOABYSS, SC_SIEGFRIED, SC_WHISTLE, SC_ASSNCROS, SC_POEMBRAGI, SC_APPLEIDUN, SC_MODECHANGE, SC_HUMMING, SC_DONTFORGETME, SC_FORTUNE, SC_SERVICE4U, SC_STOP, SC_SPURT, SC_SPIRIT, SC_COMA, SC_INTRAVISION, SC_INCALLSTATUS, SC_INCSTR, SC_INCAGI, SC_INCVIT, SC_INCINT, SC_INCDEX, SC_INCLUK, SC_INCHIT, SC_INCHITRATE, SC_INCFLEE, SC_INCFLEERATE, SC_INCMHPRATE, SC_INCMSPRATE, SC_INCATKRATE, SC_INCMATKRATE, SC_INCDEFRATE, SC_STRFOOD, SC_AGIFOOD, SC_VITFOOD, SC_INTFOOD, SC_DEXFOOD, SC_LUKFOOD, SC_HITFOOD, SC_FLEEFOOD, SC_BATKFOOD, SC_WATKFOOD, SC_MATKFOOD, SC_SCRESIST, SC_XMAS, SC_WARM, SC_SUN_COMFORT, SC_MOON_COMFORT, SC_STAR_COMFORT, SC_FUSION, SC_SKILLRATE_UP, SC_SKE, SC_KAITE, SC_SWOO, SC_SKA, SC_EARTHSCROLL, SC_MIRACLE, SC_MADNESSCANCEL, SC_ADJUSTMENT, SC_INCREASING, SC_GATLINGFEVER, SC_TATAMIGAESHI, SC_UTSUSEMI, SC_BUNSINJYUTSU, SC_KAENSIN, SC_SUITON, SC_NEN, SC_KNOWLEDGE, SC_SMA, SC_FLING, SC_AVOID, SC_CHANGE, SC_BLOODLUST, SC_FLEET, SC_SPEED, SC_DEFENCE, SC_INCASPDRATE, SC_INCFLEE2, SC_JAILED, SC_ENCHANTARMS, SC_MAGICALATTACK, SC_ARMORCHANGE, SC_CRITICALWOUND, SC_MAGICMIRROR, SC_SLOWCAST, SC_SUMMER, SC_EXPBOOST, SC_ITEMBOOST, SC_BOSSMAPINFO, SC_LIFEINSURANCE, SC_INCCRI, SC_INCDEF, SC_INCBASEATK, SC_FASTCAST, SC_MDEF_RATE, SC_HPREGEN, SC_INCHEALRATE, SC_PNEUMA, SC_AUTOTRADE, SC_KSPROTECTED, SC_ARMOR_RESIST, SC_SPCOST_RATE, SC_COMMONSC_RESIST, SC_SEVENWIND, SC_DEF_RATE, SC_SPREGEN, SC_WALKSPEED, SC_MERC_FLEEUP, SC_MERC_ATKUP, SC_MERC_HPUP, SC_MERC_SPUP, SC_MERC_HITUP, SC_MERC_QUICKEN, SC_REBIRTH, SC_SKILLCASTRATE, SC_DEFRATIOATK, SC_HPDRAIN, SC_SKILLATKBONUS, SC_ITEMSCRIPT, SC_S_LIFEPOTION, SC_L_LIFEPOTION, SC_JEXPBOOST, SC_IGNOREDEF, SC_HELLPOWER, SC_INVINCIBLE, SC_INVINCIBLEOFF, SC_MANU_ATK, SC_MANU_DEF, SC_SPL_ATK, SC_SPL_DEF, SC_MANU_MATK, SC_SPL_MATK, SC_FOOD_STR_CASH, SC_FOOD_AGI_CASH, SC_FOOD_VIT_CASH, SC_FOOD_DEX_CASH, SC_FOOD_INT_CASH, SC_FOOD_LUK_CASH, SC_FEAR, SC_BURNING, SC_FREEZING, SC_ENCHANTBLADE, SC_DEATHBOUND, SC_MILLENNIUMSHIELD, SC_CRUSHSTRIKE, SC_REFRESH, SC_REUSE_REFRESH, SC_GIANTGROWTH, SC_STONEHARDSKIN, SC_VITALITYACTIVATION, SC_STORMBLAST, SC_FIGHTINGSPIRIT, SC_ABUNDANCE, SC_ADORAMUS, SC_EPICLESIS, SC_ORATIO, SC_LAUDAAGNUS, SC_LAUDARAMUS, SC_RENOVATIO, SC_EXPIATIO, SC_DUPLELIGHT, SC_SECRAMENT, SC_WHITEIMPRISON, SC_MARSHOFABYSS, SC_RECOGNIZEDSPELL, SC_STASIS, SC_SPHERE_1, SC_SPHERE_2, SC_SPHERE_3, SC_SPHERE_4, SC_SPHERE_5, SC_READING_SB, SC_FREEZE_SP, SC_FEARBREEZE, SC_ELECTRICSHOCKER, SC_WUGDASH, SC_BITE, SC_CAMOUFLAGE, SC_ACCELERATION, SC_HOVERING, SC_SHAPESHIFT, SC_INFRAREDSCAN, SC_ANALYZE, SC_MAGNETICFIELD, SC_NEUTRALBARRIER, SC_NEUTRALBARRIER_MASTER, SC_STEALTHFIELD, SC_STEALTHFIELD_MASTER, SC_OVERHEAT, SC_OVERHEAT_LIMITPOINT, SC_VENOMIMPRESS, SC_POISONINGWEAPON, SC_WEAPONBLOCKING, SC_CLOAKINGEXCEED, SC_HALLUCINATIONWALK, SC_HALLUCINATIONWALK_POSTDELAY, SC_ROLLINGCUTTER, SC_TOXIN, SC_PARALYSE, SC_VENOMBLEED, SC_MAGICMUSHROOM, SC_DEATHHURT, SC_PYREXIA, SC_OBLIVIONCURSE, SC_LEECHESEND, SC_REFLECTDAMAGE, SC_FORCEOFVANGUARD, SC_SHIELDSPELL_DEF, SC_SHIELDSPELL_MDEF, SC_SHIELDSPELL_REF, SC_EXEEDBREAK, SC_PRESTIGE, SC_BANDING, SC_BANDING_DEFENCE, SC_EARTHDRIVE, SC_INSPIRATION, SC_SPELLFIST, SC_CRYSTALIZE, SC_STRIKING, SC_WARMER, SC_VACUUM_EXTREME, SC_PROPERTYWALK, SC_SWINGDANCE, SC_SYMPHONYOFLOVER, SC_MOONLITSERENADE, SC_RUSHWINDMILL, SC_ECHOSONG, SC_HARMONIZE, SC_VOICEOFSIREN, SC_DEEPSLEEP, SC_SIRCLEOFNATURE, SC_GLOOMYDAY, SC_GLOOMYDAY_SK, SC_SONGOFMANA, SC_DANCEWITHWUG, SC_SATURDAYNIGHTFEVER, SC_LERADSDEW, SC_MELODYOFSINK, SC_BEYONDOFWARCRY, SC_UNLIMITEDHUMMINGVOICE, SC_SITDOWN_FORCE, SC_NETHERWORLD, SC_CRESCENTELBOW, SC_CURSEDCIRCLE_ATKER, SC_CURSEDCIRCLE_TARGET, SC_LIGHTNINGWALK, SC_RAISINGDRAGON, SC_GT_ENERGYGAIN, SC_GT_CHANGE, SC_GT_REVITALIZE, SC_GN_CARTBOOST, SC_THORNSTRAP, SC_BLOODSUCKER, SC_SMOKEPOWDER, SC_TEARGAS, SC_MANDRAGORA, SC_STOMACHACHE, SC_MYSTERIOUS_POWDER, SC_MELON_BOMB, SC_BANANA_BOMB, SC_BANANA_BOMB_SITDOWN, SC_SAVAGE_STEAK, SC_COCKTAIL_WARG_BLOOD, SC_MINOR_BBQ, SC_SIROMA_ICE_TEA, SC_DROCERA_HERB_STEAMED, SC_PUTTI_TAILS_NOODLES, SC_BOOST500, SC_FULL_SWING_K, SC_MANA_PLUS, SC_MUSTLE_M, SC_LIFE_FORCE_F, SC_EXTRACT_WHITE_POTION_Z, SC_VITATA_500, SC_EXTRACT_SALAMINE_JUICE, SC__REPRODUCE, SC__AUTOSHADOWSPELL, SC__SHADOWFORM, SC__BODYPAINT, SC__INVISIBILITY, SC__DEADLYINFECT, SC__ENERVATION, SC__GROOMY, SC__IGNORANCE, SC__LAZINESS, SC__UNLUCKY, SC__WEAKNESS, SC__STRIPACCESSORY, SC__MANHOLE, SC__BLOODYLUST, SC_CIRCLE_OF_FIRE, SC_CIRCLE_OF_FIRE_OPTION, SC_FIRE_CLOAK, SC_FIRE_CLOAK_OPTION, SC_WATER_SCREEN, SC_WATER_SCREEN_OPTION, SC_WATER_DROP, SC_WATER_DROP_OPTION, SC_WATER_BARRIER, SC_WIND_STEP, SC_WIND_STEP_OPTION, SC_WIND_CURTAIN, SC_WIND_CURTAIN_OPTION, SC_ZEPHYR, SC_SOLID_SKIN, SC_SOLID_SKIN_OPTION, SC_STONE_SHIELD, SC_STONE_SHIELD_OPTION, SC_POWER_OF_GAIA, SC_PYROTECHNIC, SC_PYROTECHNIC_OPTION, SC_HEATER, SC_HEATER_OPTION, SC_TROPIC, SC_TROPIC_OPTION, SC_AQUAPLAY, SC_AQUAPLAY_OPTION, SC_COOLER, SC_COOLER_OPTION, SC_CHILLY_AIR, SC_CHILLY_AIR_OPTION, SC_GUST, SC_GUST_OPTION, SC_BLAST, SC_BLAST_OPTION, SC_WILD_STORM, SC_WILD_STORM_OPTION, SC_PETROLOGY, SC_PETROLOGY_OPTION, SC_CURSED_SOIL, SC_CURSED_SOIL_OPTION, SC_UPHEAVAL, SC_UPHEAVAL_OPTION, SC_TIDAL_WEAPON, SC_TIDAL_WEAPON_OPTION, SC_ROCK_CRUSHER, SC_ROCK_CRUSHER_ATK, SC_LEADERSHIP, SC_GLORYWOUNDS, SC_SOULCOLD, SC_HAWKEYES, SC_ODINS_POWER, SC_RAID, SC_FIRE_INSIGNIA, SC_WATER_INSIGNIA, SC_WIND_INSIGNIA, SC_EARTH_INSIGNIA, SC_PUSH_CART, SC_SPELLBOOK1, SC_SPELLBOOK2, SC_SPELLBOOK3, SC_SPELLBOOK4, SC_SPELLBOOK5, SC_SPELLBOOK6, SC_MAXSPELLBOOK, SC_INCMHP, SC_INCMSP, SC_PARTYFLEE, SC_MEIKYOUSISUI, SC_JYUMONJIKIRI, SC_KYOUGAKU, SC_IZAYOI, SC_ZENKAI, SC_KAGEHUMI, SC_KYOMU, SC_KAGEMUSYA, SC_ZANGETSU, SC_GENSOU, SC_AKAITSUKI, SC_STYLE_CHANGE, SC_TINDER_BREAKER, SC_TINDER_BREAKER2, SC_CBC, SC_EQC, SC_GOLDENE_FERSE, SC_ANGRIFFS_MODUS, SC_OVERED_BOOST, SC_LIGHT_OF_REGENE, SC_ASH, SC_GRANITIC_ARMOR, SC_MAGMA_FLOW, SC_PYROCLASTIC, SC_PARALYSIS, SC_PAIN_KILLER, SC_HANBOK, SC_DEFSET, SC_MDEFSET, SC_DARKCROW, SC_FULL_THROTTLE, SC_REBOUND, SC_UNLIMIT, SC_KINGS_GRACE, SC_TELEKINESIS_INTENSE, SC_OFFERTORIUM, SC_FRIGG_SONG, SC_MONSTER_TRANSFORM, SC_ANGEL_PROTECT, SC_ILLUSIONDOPING, SC_FLASHCOMBO, SC_MOONSTAR, SC_SUPER_STAR, SC_HEAT_BARREL, SC_MAGICALBULLET, SC_P_ALTER, SC_E_CHAIN, SC_C_MARKER, SC_ANTI_M_BLAST, SC_B_TRAP, SC_H_MINE, SC_QD_SHOT_READY, SC_MTF_ASPD, SC_MTF_RANGEATK, SC_MTF_MATK, SC_MTF_MLEATKED, SC_MTF_CRIDAMAGE, SC_OKTOBERFEST, SC_STRANGELIGHTS, SC_DECORATION_OF_MUSIC, SC_QUEST_BUFF1, SC_QUEST_BUFF2, SC_QUEST_BUFF3, SC_ALL_RIDING, SC_TEARGAS_SOB, SC__FEINTBOMB, SC__CHAOS, SC_CHASEWALK2, SC_VACUUM_EXTREME_POSTDELAY, SC_MTF_ASPD2, SC_MTF_RANGEATK2, SC_MTF_MATK2, SC_2011RWC_SCROLL, SC_JP_EVENT04, SC_MTF_MHP, SC_MTF_MSP, SC_MTF_PUMPKIN, SC_MTF_HITFLEE, SC_CRIFOOD, SC_ATTHASTE_CASH, SC_REUSE_LIMIT_A, SC_REUSE_LIMIT_B, SC_REUSE_LIMIT_C, SC_REUSE_LIMIT_D, SC_REUSE_LIMIT_E, SC_REUSE_LIMIT_F, SC_REUSE_LIMIT_G, SC_REUSE_LIMIT_H, SC_REUSE_LIMIT_MTF, SC_REUSE_LIMIT_ASPD_POTION, SC_REUSE_MILLENNIUMSHIELD, SC_REUSE_CRUSHSTRIKE, SC_REUSE_STORMBLAST, SC_ALL_RIDING_REUSE_LIMIT, SC_REUSE_LIMIT_ECL, SC_REUSE_LIMIT_RECALL, SC_PROMOTE_HEALTH_RESERCH, SC_ENERGY_DRINK_RESERCH, SC_NORECOVER_STATE, SC_SUHIDE, SC_SU_STOOP, SC_SPRITEMABLE, SC_CATNIPPOWDER, SC_SV_ROOTTWIST, SC_BITESCAR, SC_ARCLOUSEDASH, SC_TUNAPARTY, SC_SHRIMP, SC_FRESHSHRIMP, SC_ACTIVE_MONSTER_TRANSFORM, SC_CLOUD_KILL, SC_LJOSALFAR, SC_MERMAID_LONGING, SC_HAT_EFFECT, SC_FLOWERSMOKE, SC_FSTONE, SC_HAPPINESS_STAR, SC_MAPLE_FALLS, SC_TIME_ACCESSORY, SC_MAGICAL_FEATHER, SC_GVG_GIANT, SC_GVG_GOLEM, SC_GVG_STUN, SC_GVG_STONE, SC_GVG_FREEZ, SC_GVG_SLEEP, SC_GVG_CURSE, SC_GVG_SILENCE, SC_GVG_BLIND, SC_CLAN_INFO, SC_SWORDCLAN, SC_ARCWANDCLAN, SC_GOLDENMACECLAN, SC_CROSSBOWCLAN, SC_JUMPINGCLAN, SC_GEFFEN_MAGIC1, SC_GEFFEN_MAGIC2, SC_GEFFEN_MAGIC3, SC_MAXPAIN, SC_ARMOR_ELEMENT_EARTH, SC_ARMOR_ELEMENT_FIRE, SC_ARMOR_ELEMENT_WIND, SC_DAILYSENDMAILCNT, SC_DORAM_BUF_01, SC_DORAM_BUF_02, SC_HISS, SC_NYANGGRASS, SC_GROOMING, SC_SHRIMPBLESSING, SC_CHATTERING, SC_DORAM_WALKSPEED, SC_DORAM_MATK, SC_DORAM_FLEE2, SC_DORAM_SVSP, SC_FALLEN_ANGEL, SC_CHEERUP, SC_DRESSUP, SC_GLASTHEIM_ATK, SC_GLASTHEIM_DEF, SC_GLASTHEIM_HEAL, SC_GLASTHEIM_HIDDEN, SC_GLASTHEIM_STATE, SC_GLASTHEIM_ITEMDEF, SC_GLASTHEIM_HPSP, SC_LHZ_DUN_N1, SC_LHZ_DUN_N2, SC_LHZ_DUN_N3, SC_LHZ_DUN_N4, SC_ANCILLA, SC_EARTHSHAKER, SC_WEAPONBLOCK_ON, SC_ENTRY_QUEUE_APPLY_DELAY, SC_ENTRY_QUEUE_NOTIFY_ADMISSION_TIME_OUT, SC_EXTREMITYFIST2
 }
 
+[Flags]
 public enum StatusEffect
 {
     Eff_Bleeding, Eff_Blind, Eff_Burning, Eff_Confusion, Eff_Crystalize, Eff_Curse, Eff_DPoison,
     Eff_Fear, Eff_Freeze, Eff_Poison, Eff_Silence, Eff_Sleep, Eff_Stone, Eff_Stun
 }
 
+[Flags]
 public enum Element
 {
     Ele_Dark, Ele_Earth, Ele_Fire, Ele_Ghost, Ele_Holy, Ele_Neutral, Ele_Poison,
     Ele_Undead, Ele_Water, Ele_Wind, Ele_All
 }
 
+[Flags]
 public enum Race
 {
     RC_Angel, RC_Brute, RC_DemiHuman, RC_Demon, RC_Dragon, RC_Fish, RC_Formless,
     RC_Insect, RC_Plant, RC_Player, RC_Undead, RC_All
 }
 
+[Flags]
 public enum MonsterRace
 {
     RC2_Goblin, RC2_Kobold, RC2_Orc, RC2_Golem, RC2_Guardian, RC2_Ninja
 }
 
+[Flags]
 public enum Class
 {
     Class_Normal, Class_Boss, Class_Guardian, Class_All
 }
 
+[Flags]
 public enum Size
 {
     Size_Small, Size_Medium, Size_Large, Size_All
 }
 
+[Flags]
 public enum TriggerCriteria
 {
     BF_SHORT, BF_LONG, BF_WEAPON, BF_MAGIC, BF_MISC, BF_NORMAL, BF_SKILL,
