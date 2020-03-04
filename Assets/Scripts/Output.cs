@@ -5982,12 +5982,7 @@ public class ItemDbScriptData
                 string param1 = GetValue(allParam[0], 1);
 
                 if (isHadParam1)
-                {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
-                    else
-                        sum += AddDescription(sum, "nnnn +" + param1);
-                }
+                    sum += AddDescription(sum, "ไม่สนใจ DEF กับธาตุ " + GetElementName(param1));
             }
             #endregion
             #region bonus bIgnoreDefRace,
@@ -6001,12 +5996,7 @@ public class ItemDbScriptData
                 string param1 = GetValue(allParam[0], 1);
 
                 if (isHadParam1)
-                {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
-                    else
-                        sum += AddDescription(sum, "nnnn +" + param1);
-                }
+                    sum += AddDescription(sum, "ไม่สนใจ DEF กับเผ่า " + GetRaceName(param1));
             }
             #endregion
             #region bonus bIgnoreDefClass,
@@ -6020,12 +6010,7 @@ public class ItemDbScriptData
                 string param1 = GetValue(allParam[0], 1);
 
                 if (isHadParam1)
-                {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
-                    else
-                        sum += AddDescription(sum, "nnnn +" + param1);
-                }
+                    sum += AddDescription(sum, "ไม่สนใจ DEF กับ Class " + GetClassName(param1));
             }
             #endregion
             #region bonus bIgnoreMDefRace,
@@ -6039,12 +6024,7 @@ public class ItemDbScriptData
                 string param1 = GetValue(allParam[0], 1);
 
                 if (isHadParam1)
-                {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
-                    else
-                        sum += AddDescription(sum, "nnnn +" + param1);
-                }
+                    sum += AddDescription(sum, "ไม่สนใจ MDEF กับเผ่า " + GetRaceName(param1));
             }
             #endregion
             #region bonus2 bIgnoreDefRaceRate
@@ -6056,13 +6036,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ไม่สนใจ DEF น้อยลง " + param2 + "% กับเผ่า " + GetRaceName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ไม่สนใจ DEF " + param2 + "% กับเผ่า " + GetRaceName(param1));
                 }
             }
             #endregion
@@ -6075,13 +6056,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ไม่สนใจ MDEF น้อยลง " + param2 + "% กับเผ่า " + GetRaceName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ไม่สนใจ MDEF " + param2 + "% กับเผ่า " + GetRaceName(param1));
                 }
             }
             #endregion
@@ -6094,13 +6076,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ไม่สนใจ MDEF น้อยลง " + param2 + "% กับเผ่า " + GetMonsterRaceName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ไม่สนใจ MDEF " + param2 + "% กับเผ่า " + GetMonsterRaceName(param1));
                 }
             }
             #endregion
@@ -6115,12 +6098,7 @@ public class ItemDbScriptData
                 string param1 = GetValue(allParam[0], 1);
 
                 if (isHadParam1)
-                {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
-                    else
-                        sum += AddDescription(sum, "nnnn +" + param1);
-                }
+                    sum += AddDescription(sum, "ไม่สนใจ MDEF กับธาตุ " + GetElementName(param1));
             }
             #endregion
             #region bonus2 bIgnoreDefClassRate
@@ -6132,13 +6110,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ไม่สนใจ DEF น้อยลง " + param2 + "% กับ Class " + GetClassName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ไม่สนใจ DEF " + param2 + "% กับ Class " + GetClassName(param1));
                 }
             }
             #endregion
@@ -6151,13 +6130,14 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam1)
+                if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam1Negative)
-                        sum += AddDescription(sum, "nnnn -" + param1);
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "ไม่สนใจ MDEF น้อยลง " + param2 + "% กับ Class " + GetClassName(param1));
                     else
-                        sum += AddDescription(sum, "nnnn +" + param1);
+                        sum += AddDescription(sum, "ไม่สนใจ MDEF " + param2 + "% กับ Class " + GetClassName(param1));
                 }
             }
             #endregion
