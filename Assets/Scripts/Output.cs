@@ -3220,9 +3220,9 @@ public class ItemDbScriptData
                     isNeedRequirement = true;
 
                 if (isNeedRequirement)
-                    sum += AddDescription(sum, "สามารถใช้ Lv." + param2 + " " + param1 + "(โดยมีเงื่อนไขการใช้ Skill ดังเดิม)");
+                    sum += AddDescription(sum, "สามารถใช้ Lv. " + param2 + " " + param1 + "(โดยมีเงื่อนไขการใช้ Skill ดังเดิม)");
                 else
-                    sum += AddDescription(sum, "สามารถใช้ Lv." + param2 + " " + param1);
+                    sum += AddDescription(sum, "สามารถใช้ Lv. " + param2 + " " + param1);
             }
             #endregion
             #region skill
@@ -3265,7 +3265,7 @@ public class ItemDbScriptData
                 else if (skillFlag == SkillFlag.SKILL_TEMPLEVEL)
                     txtFlag = "(สามารถทับเลเวลเดิมได้)";
 
-                sum += AddDescription(sum, "สามารถใช้ Lv." + param2 + " " + param1 + txtFlag);
+                sum += AddDescription(sum, "สามารถใช้ Lv. " + param2 + " " + param1 + txtFlag);
 
             }
             #endregion
@@ -6527,9 +6527,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
                     if (isParam3Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " เมื่อโจมตีกายภาพ");
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv. " + param2 + " " + GetSkillName(allParam[0]) + " เมื่อโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " เมื่อโจมตีกายภาพ");
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv. " + param2 + " " + GetSkillName(allParam[0]) + " เมื่อโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6548,9 +6548,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
                     if (isParam3Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " เมื่อโดนโจมตีกายภาพ");
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv. " + param2 + " " + GetSkillName(allParam[0]) + " เมื่อโดนโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " เมื่อโดนโจมตีกายภาพ");
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv. " + param2 + " " + GetSkillName(allParam[0]) + " เมื่อโดนโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6570,9 +6570,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4)
                 {
                     if (isParam3Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[3]) + " เมื่อโจมตีกายภาพ");
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv. " + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[3]) + " เมื่อโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[3]) + " เมื่อโจมตีกายภาพ");
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv. " + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[3]) + " เมื่อโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6593,9 +6593,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4 && isHadParam5)
                 {
                     if (isParam3Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[4]) + " เมื่อโจมตีกายภาพ" + GetTriggerCriteria(allParam[3]));
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv. " + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[4]) + " เมื่อโจมตีกายภาพ" + GetTriggerCriteria(allParam[3]));
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[4]) + " เมื่อโจมตีกายภาพ" + GetTriggerCriteria(allParam[3]));
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv. " + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[4]) + " เมื่อโจมตีกายภาพ" + GetTriggerCriteria(allParam[3]));
                 }
             }
             #endregion
@@ -6615,9 +6615,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4)
                 {
                     if (isParam3Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[3]) + " เมื่อโดนโจมตีกายภาพ");
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv. " + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[3]) + " เมื่อโดนโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[3]) + " เมื่อโดนโจมตีกายภาพ");
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv. " + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[3]) + " เมื่อโดนโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6638,9 +6638,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4 && isHadParam5)
                 {
                     if (isParam3Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[4]) + " เมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(allParam[3]));
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv. " + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[4]) + " เมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(allParam[3]));
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[4]) + " เมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(allParam[3]));
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv. " + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[4]) + " เมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(allParam[3]));
                 }
             }
             #endregion
@@ -6660,9 +6660,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4)
                 {
                     if (isParam4Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param4, 10) + "% ที่จะร่าย Lv." + param3 + " " + GetSkillName(allParam[0]) + " เมื่อร่าย Skill " + GetSkillName(allParam[1]));
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param4, 10) + "% ที่จะร่าย Lv. " + param3 + " " + GetSkillName(allParam[0]) + " เมื่อร่าย Skill " + GetSkillName(allParam[1]));
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param4, 10) + "% ที่จะร่าย Lv." + param3 + " " + GetSkillName(allParam[0]) + " เมื่อร่าย Skill " + GetSkillName(allParam[1]));
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param4, 10) + "% ที่จะร่าย Lv. " + param3 + " " + GetSkillName(allParam[0]) + " เมื่อร่าย Skill " + GetSkillName(allParam[1]));
                 }
             }
             #endregion
@@ -6683,9 +6683,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4 && isHadParam5)
                 {
                     if (isParam4Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param4, 10) + "% ที่จะร่าย Lv." + param3 + " " + GetSkillName(allParam[0]) + GetAutoSpellOnSkillFlagName(param5, param3) + " เมื่อร่าย Skill " + GetSkillName(allParam[1]));
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param4, 10) + "% ที่จะร่าย Lv. " + param3 + " " + GetSkillName(allParam[0]) + GetAutoSpellOnSkillFlagName(param5, param3) + " เมื่อร่าย Skill " + GetSkillName(allParam[1]));
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param4, 10) + "% ที่จะร่าย Lv." + param3 + " " + GetSkillName(allParam[0]) + GetAutoSpellOnSkillFlagName(param5, param3) + " เมื่อร่าย Skill " + GetSkillName(allParam[1]));
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param4, 10) + "% ที่จะร่าย Lv. " + param3 + " " + GetSkillName(allParam[0]) + GetAutoSpellOnSkillFlagName(param5, param3) + " เมื่อร่าย Skill " + GetSkillName(allParam[1]));
                 }
             }
             #endregion
@@ -7907,7 +7907,24 @@ public class ItemDbScriptData
     {
         string value = data;
 
+        value = MergeWhiteSpace.RemoveWhiteSpace(value);
+
         Log("GetValue: " + value);
+
+        //Store temporary variables
+        bool isFoundTempVariable = false;
+        List<string> tempVarName = new List<string>();
+        List<string> valueFromTempVar = new List<string>();
+        for (int i = 0; i < tempVariables.Count; i++)
+        {
+            if (value.Contains(tempVariables[i].variableName))
+            {
+                isFoundTempVariable = true;
+                tempVarName.Add(tempVariables[i].variableName);
+                valueFromTempVar.Add(tempVariables[i].value);
+                Log("valueFromTempVar: " + valueFromTempVar);
+            }
+        }
 
         if (value == "INFINITE_TICK")
         {
@@ -7915,121 +7932,119 @@ public class ItemDbScriptData
             return "ตลอดเวลา";
         }
 
-        value = ReplaceAllSpecialValue(value);
+        //Find special and Substring equal to () count like if check (*If there are function in value then call GetValue again.)
+        bool isHadSpecialCalculation = false;
+        if (value.Contains("("))
+            isHadSpecialCalculation = true;
 
-        bool isFoundTempVariable = false;
-        string tempVarName = null;
-        string valueFromTempVar = null;
-        for (int i = 0; i < tempVariables.Count; i++)
+        //Special value
+        if (isHadSpecialCalculation)
         {
-            if (value.Contains(tempVariables[i].variableName))
+            //pow
+            if (value.Contains("pow"))
             {
-                isFoundTempVariable = true;
-                tempVarName = tempVariables[i].variableName;
-                valueFromTempVar = tempVariables[i].value;
-                Log("valueFromTempVar: " + valueFromTempVar);
+
             }
-        }
-        if (isFoundTempVariable)
-        {
-            valueFromTempVar = ReplaceAllSpecialValue(valueFromTempVar);
-            value = value.Replace(tempVarName, valueFromTempVar);
-            SetParamCheck(paramCount, true, false);
-            return "(" + value + ")";
-        }
-        //rand
-        else if (value.Contains("rand"))
-        {
-            Log("rand");
-
-            int paramStartAt = value.IndexOf("(");
-            Log("paramStartAt: " + paramStartAt);
-
-            string sum = value.Substring(paramStartAt);
-
-            Log("GetValue: " + sum);
-
-            int paramEndAt = sum.IndexOf(")");
-            Log("paramEndAt: " + paramEndAt);
-
-            sum = sum.Substring(1, paramEndAt - 1);
-
-            Log("GetValue: " + sum);
-
-            List<string> allValue = StringSplit.GetStringSplit(sum, ',');
-
-            if (paramCount == 1)
-                isHadParam1 = true;
-            else if (paramCount == 2)
-                isHadParam2 = true;
-            else if (paramCount == 3)
-                isHadParam3 = true;
-            else if (paramCount == 4)
-                isHadParam4 = true;
-            else if (paramCount == 5)
-                isHadParam5 = true;
-            else if (paramCount == 6)
-                isHadParam6 = true;
-            else if (paramCount == 7)
-                isHadParam7 = true;
-
-            return allValue[0] + "~" + allValue[1];
-        }
-        //max
-        else if (value.Contains("max"))
-        {
-            Log("max");
-
-            int paramStartAt = value.IndexOf("(");
-            Log("paramStartAt: " + paramStartAt);
-
-            string sum = value.Substring(paramStartAt);
-
-            Log("GetValue: " + sum);
-
-            sum = sum.Substring(1, sum.Length - 1);
-
-            Log("GetValue: " + sum);
-
-            List<string> allValue = StringSplit.GetStringSplit(sum, ',');
-            for (int i = 0; i < allValue.Count; i++)
+            //min
+            //max
+            //rand
+            if (value.Contains("rand"))
             {
-                Log("allValue[" + i + "]: " + allValue[i]);
-                if (allValue[i].Contains("getskilllv"))
-                    allValue[i] = GetSkillLv(allValue[i]);
+
+                Log("rand");
+
+                int paramStartAt = value.IndexOf("(");
+                Log("paramStartAt: " + paramStartAt);
+
+                string sum = value.Substring(paramStartAt);
+
+                Log("GetValue: " + sum);
+
+                int paramEndAt = sum.IndexOf(")");
+                Log("paramEndAt: " + paramEndAt);
+
+                sum = sum.Substring(1, paramEndAt - 1);
+
+                Log("GetValue: " + sum);
+
+                List<string> allValue = StringSplit.GetStringSplit(sum, ',');
+
+                if (paramCount == 1)
+                    isHadParam1 = true;
+                else if (paramCount == 2)
+                    isHadParam2 = true;
+                else if (paramCount == 3)
+                    isHadParam3 = true;
+                else if (paramCount == 4)
+                    isHadParam4 = true;
+                else if (paramCount == 5)
+                    isHadParam5 = true;
+                else if (paramCount == 6)
+                    isHadParam6 = true;
+                else if (paramCount == 7)
+                    isHadParam7 = true;
+
+                return allValue[0] + "~" + allValue[1];
             }
+            //max
+            if (value.Contains("max"))
+            {
+                Log("max");
 
-            if (paramCount == 1)
-                isHadParam1 = true;
-            else if (paramCount == 2)
-                isHadParam2 = true;
-            else if (paramCount == 3)
-                isHadParam3 = true;
-            else if (paramCount == 4)
-                isHadParam4 = true;
-            else if (paramCount == 5)
-                isHadParam5 = true;
-            else if (paramCount == 6)
-                isHadParam6 = true;
-            else if (paramCount == 7)
-                isHadParam7 = true;
+                int paramStartAt = value.IndexOf("(");
+                Log("paramStartAt: " + paramStartAt);
 
-            return allValue[0] + "(มากสุด " + allValue[1] + ")";
+                string sum = value.Substring(paramStartAt);
+
+                Log("GetValue: " + sum);
+
+                sum = sum.Substring(1, sum.Length - 1);
+
+                Log("GetValue: " + sum);
+
+                List<string> allValue = StringSplit.GetStringSplit(sum, ',');
+                for (int i = 0; i < allValue.Count; i++)
+                {
+                    Log("allValue[" + i + "]: " + allValue[i]);
+                    if (allValue[i].Contains("getskilllv"))
+                        allValue[i] = GetSkillLv(allValue[i]);
+                }
+
+                if (paramCount == 1)
+                    isHadParam1 = true;
+                else if (paramCount == 2)
+                    isHadParam2 = true;
+                else if (paramCount == 3)
+                    isHadParam3 = true;
+                else if (paramCount == 4)
+                    isHadParam4 = true;
+                else if (paramCount == 5)
+                    isHadParam5 = true;
+                else if (paramCount == 6)
+                    isHadParam6 = true;
+                else if (paramCount == 7)
+                    isHadParam7 = true;
+
+                return allValue[0] + "(มากสุด " + allValue[1] + ")";
+            }
         }
         //Normal value
         else
         {
+            //++
             if (value == "+")
             {
                 SetParamCheck(paramCount, true, false);
                 return "1";
             }
+            //--
             else if (value == "-")
             {
                 SetParamCheck(paramCount, true, true);
-                return "-1";
+                return "1";
             }
 
+            //Integer check
             int paramInt = 0;
             bool isInteger = false;
 
@@ -8037,66 +8052,40 @@ public class ItemDbScriptData
 
             Log("isInteger: " + isInteger);
 
-            if (!isInteger)
+            if (isInteger)
             {
-                string newValue = value.ToUpper();
-
-                if (newValue.Contains("SC_"))
-                {
-                    if (newValue.Contains("SC__"))
-                    {
-                        newValue = newValue.Substring(4);
-                        newValue = newValue.Replace("_", " ");
-                        newValue = UpperFirst(newValue);
-                    }
-                    else
-                    {
-                        newValue = newValue.Substring(3);
-                        newValue = newValue.Replace("_", " ");
-                        newValue = UpperFirst(newValue);
-                    }
-
-                    SetParamCheck(paramCount, true, false);
-
-                    value = newValue;
-
-                }
-                else if (newValue.Contains("RC_"))
-                {
-                    if (newValue.Contains("RC__"))
-                    {
-                        newValue = newValue.Substring(4);
-                        newValue = newValue.Replace("_", " ");
-                        newValue = UpperFirst(newValue);
-                    }
-                    else
-                    {
-                        newValue = newValue.Substring(3);
-                        newValue = newValue.Replace("_", " ");
-                        newValue = UpperFirst(newValue);
-                    }
-
-                    SetParamCheck(paramCount, true, false);
-
-                    value = newValue;
-                }
-            }
-            else
-            {
+                //Zero integer
                 if (paramInt == 0 && !isZeroValueOkay)
                     SetParamCheck(paramCount, false, false);
+                //Negative integer
                 else if (paramInt < 0)
                 {
                     paramInt = paramInt * -1;
                     value = paramInt.ToString("f0");
                     SetParamCheck(paramCount, true, true);
                 }
+                //Positive integer
                 else
                     SetParamCheck(paramCount, true, false);
             }
-
-            return value;
         }
+
+        //Replace temporary variables
+        if (isFoundTempVariable)
+        {
+            for (int i = 0; i < tempVarName.Count; i++)
+                value = value.Replace(tempVarName[i], valueFromTempVar[i]);
+
+            SetParamCheck(paramCount, true, false);
+        }
+
+        //Replace special variables
+        value = ReplaceAllSpecialValue(value);
+
+        if (isFoundTempVariable)
+            return "(" + value + ")";
+        else
+            return value;
     }
 
     #region Utilities
@@ -8984,7 +8973,7 @@ public class ItemDbScriptData
         if (autoSpellOnSkillFlag.HasFlag(AutoSpellOnSkillFlag.CastOnSelf))
             sum += ", ร่ายใส่ตนเอง";
         if (autoSpellOnSkillFlag.HasFlag(AutoSpellOnSkillFlag.RandomLvSkillFromHighestGivenBonus))
-            sum += ", ร่ายสุ่ม Lv.1~" + lv;
+            sum += ", ร่ายสุ่ม Lv. 1~" + lv;
 
         sum = sum.Substring(1);
 
