@@ -3172,10 +3172,9 @@ public class ItemDbScriptData
                 else
                     timer = " เป็นเวลา " + TimerToStringTimer(float.Parse(param2));
 
-                float rate = 0;
+                string percent = "0";
                 if (isHadParam4)
-                    rate = float.Parse(param4);
-                string percent = GetPercent(rate, 100);
+                    percent = GetRateByDivider(param4, 100);
 
                 int flag = 0;
                 if (isHadParam5)
@@ -3186,9 +3185,9 @@ public class ItemDbScriptData
 
                 if (isHadParam1 && isHadParam2 && isHadParam3
                     || isHadParam1 && isHadParam2)
-                    sum += AddDescription(sum, "มีโอกาส " + percent + " ที่จะเกิดสถานะ " + param1 + timer + sumFlag);
+                    sum += AddDescription(sum, "มีโอกาส " + percent + "% ที่จะเกิดสถานะ " + param1 + timer + sumFlag);
                 else if (isHadParam1)
-                    sum += AddDescription(sum, "มีโอกาส " + percent + " ที่จะเกิดสถานะ " + param1 + sumFlag);
+                    sum += AddDescription(sum, "มีโอกาส " + percent + "% ที่จะเกิดสถานะ " + param1 + sumFlag);
             }
             #endregion
             #region itemskillz
@@ -4681,9 +4680,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "ใช้ SP มากขึ้น " + param2 + " กับ Skill " + GetSkillName(param1));
+                        sum += AddDescription(sum, "ใช้ SP มากขึ้น " + param2 + " กับ Skill " + GetSkillName(allParam[0]));
                     else
-                        sum += AddDescription(sum, "ใช้ SP น้อยลง " + param2 + " กับ Skill " + GetSkillName(param1));
+                        sum += AddDescription(sum, "ใช้ SP น้อยลง " + param2 + " กับ Skill " + GetSkillName(allParam[0]));
                 }
             }
             #endregion
@@ -4701,9 +4700,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "ใช้ SP มากขึ้น " + param2 + "% กับ Skill " + GetSkillName(param1));
+                        sum += AddDescription(sum, "ใช้ SP มากขึ้น " + param2 + "% กับ Skill " + GetSkillName(allParam[0]));
                     else
-                        sum += AddDescription(sum, "ใช้ SP น้อยลง " + param2 + "% กับ Skill " + GetSkillName(param1));
+                        sum += AddDescription(sum, "ใช้ SP น้อยลง " + param2 + "% กับ Skill " + GetSkillName(allParam[0]));
                 }
             }
             #endregion
@@ -4721,9 +4720,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "Skill " + GetSkillName(param1) + " เบาลง " + param2 + "%");
+                        sum += AddDescription(sum, "Skill " + GetSkillName(allParam[0]) + " เบาลง " + param2 + "%");
                     else
-                        sum += AddDescription(sum, "Skill " + GetSkillName(param1) + " แรงขึ้น " + param2 + "%");
+                        sum += AddDescription(sum, "Skill " + GetSkillName(allParam[0]) + " แรงขึ้น " + param2 + "%");
                 }
             }
             #endregion
@@ -5009,9 +5008,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "Skill " + GetSkillName(param1) + " Heal เบาลง " + param2 + "%");
+                        sum += AddDescription(sum, "Skill " + GetSkillName(allParam[0]) + " Heal เบาลง " + param2 + "%");
                     else
-                        sum += AddDescription(sum, "Skill " + GetSkillName(param1) + " Heal แรงขึ้น " + param2 + "%");
+                        sum += AddDescription(sum, "Skill " + GetSkillName(allParam[0]) + " Heal แรงขึ้น " + param2 + "%");
                 }
             }
             #endregion
@@ -5029,9 +5028,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "โดน Heal จาก Skill " + GetSkillName(param1) + " เบาลง " + param2 + "%");
+                        sum += AddDescription(sum, "โดน Heal จาก Skill " + GetSkillName(allParam[0]) + " เบาลง " + param2 + "%");
                     else
-                        sum += AddDescription(sum, "โดน Heal จาก Skill " + GetSkillName(param1) + " แรงขึ้น " + param2 + "%");
+                        sum += AddDescription(sum, "โดน Heal จาก Skill " + GetSkillName(allParam[0]) + " แรงขึ้น " + param2 + "%");
                 }
             }
             #endregion
@@ -5130,9 +5129,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "ร่าย VCAST กับ Skill " + GetSkillName(param1) + " เร็วขึ้น " + param2 + "%");
+                        sum += AddDescription(sum, "ร่าย VCAST กับ Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + param2 + "%");
                     else
-                        sum += AddDescription(sum, "ร่าย VCAST กับ Skill " + GetSkillName(param1) + " ช้าลง " + param2 + "%");
+                        sum += AddDescription(sum, "ร่าย VCAST กับ Skill " + GetSkillName(allParam[0]) + " ช้าลง " + param2 + "%");
                 }
             }
             #endregion
@@ -5169,9 +5168,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "ร่าย FIXCAST กับ Skill " + GetSkillName(param1) + " เร็วขึ้น " + param2 + "%");
+                        sum += AddDescription(sum, "ร่าย FIXCAST กับ Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + param2 + "%");
                     else
-                        sum += AddDescription(sum, "ร่าย FIXCAST กับ Skill " + GetSkillName(param1) + " ช้าลง " + param2 + "%");
+                        sum += AddDescription(sum, "ร่าย FIXCAST กับ Skill " + GetSkillName(allParam[0]) + " ช้าลง " + param2 + "%");
                 }
             }
             #endregion
@@ -5208,9 +5207,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "ร่าย VCAST กับ Skill " + GetSkillName(param1) + " เร็วขึ้น " + param2 + "%");
+                        sum += AddDescription(sum, "ร่าย VCAST กับ Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + param2 + "%");
                     else
-                        sum += AddDescription(sum, "ร่าย VCAST กับ Skill " + GetSkillName(param1) + " ช้าลง " + param2 + "%");
+                        sum += AddDescription(sum, "ร่าย VCAST กับ Skill " + GetSkillName(allParam[0]) + " ช้าลง " + param2 + "%");
                 }
             }
             #endregion
@@ -5247,9 +5246,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "ร่าย FIXCAST กับ Skill " + GetSkillName(param1) + " เร็วขึ้น " + TimerToStringTimer(float.Parse(param2)));
+                        sum += AddDescription(sum, "ร่าย FIXCAST กับ Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + TimerToStringTimer(float.Parse(param2)));
                     else
-                        sum += AddDescription(sum, "ร่าย FIXCAST กับ Skill " + GetSkillName(param1) + " ช้าลง " + TimerToStringTimer(float.Parse(param2)));
+                        sum += AddDescription(sum, "ร่าย FIXCAST กับ Skill " + GetSkillName(allParam[0]) + " ช้าลง " + TimerToStringTimer(float.Parse(param2)));
                 }
             }
             #endregion
@@ -5286,9 +5285,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "ร่าย VCAST กับ Skill " + GetSkillName(param1) + " เร็วขึ้น " + TimerToStringTimer(float.Parse(param2)));
+                        sum += AddDescription(sum, "ร่าย VCAST กับ Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + TimerToStringTimer(float.Parse(param2)));
                     else
-                        sum += AddDescription(sum, "ร่าย VCAST กับ Skill " + GetSkillName(param1) + " ช้าลง " + TimerToStringTimer(float.Parse(param2)));
+                        sum += AddDescription(sum, "ร่าย VCAST กับ Skill " + GetSkillName(allParam[0]) + " ช้าลง " + TimerToStringTimer(float.Parse(param2)));
                 }
             }
             #endregion
@@ -5335,9 +5334,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "Delay หลังร่ายกับ Skill " + GetSkillName(param1) + " เร็วขึ้น " + TimerToStringTimer(float.Parse(param2)));
+                        sum += AddDescription(sum, "Delay หลังร่ายกับ Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + TimerToStringTimer(float.Parse(param2)));
                     else
-                        sum += AddDescription(sum, "Delay หลังร่ายกับ Skill " + GetSkillName(param1) + " ช้าลง " + TimerToStringTimer(float.Parse(param2)));
+                        sum += AddDescription(sum, "Delay หลังร่ายกับ Skill " + GetSkillName(allParam[0]) + " ช้าลง " + TimerToStringTimer(float.Parse(param2)));
                 }
             }
             #endregion
@@ -5355,9 +5354,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "Cooldown Skill " + GetSkillName(param1) + " เร็วขึ้น " + TimerToStringTimer(float.Parse(param2)));
+                        sum += AddDescription(sum, "Cooldown Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + TimerToStringTimer(float.Parse(param2)));
                     else
-                        sum += AddDescription(sum, "Cooldown Skill " + GetSkillName(param1) + " ช้าลง " + TimerToStringTimer(float.Parse(param2)));
+                        sum += AddDescription(sum, "Cooldown Skill " + GetSkillName(allParam[0]) + " ช้าลง " + TimerToStringTimer(float.Parse(param2)));
                 }
             }
             #endregion
@@ -5375,9 +5374,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "โจมตีกายภาพเบาลง " + param2 + "% กับธาตุ " + GetElementName(param1));
+                        sum += AddDescription(sum, "โจมตีกายภาพเบาลง " + param2 + "% กับธาตุ " + GetElementName(allParam[0]));
                     else
-                        sum += AddDescription(sum, "โจมตีกายภาพแรงขึ้น " + param2 + "% กับธาตุ " + GetElementName(param1));
+                        sum += AddDescription(sum, "โจมตีกายภาพแรงขึ้น " + param2 + "% กับธาตุ " + GetElementName(allParam[0]));
                 }
             }
             #endregion
@@ -5396,9 +5395,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "โจมตีกายภาพเบาลง " + param2 + "% กับธาตุ " + GetElementName(param1) + GetTriggerCriteria(param3));
+                        sum += AddDescription(sum, "โจมตีกายภาพเบาลง " + param2 + "% กับธาตุ " + GetElementName(allParam[0]) + GetTriggerCriteria(allParam[2]));
                     else
-                        sum += AddDescription(sum, "โจมตีกายภาพแรงขึ้น " + param2 + "% กับธาตุ " + GetElementName(param1) + GetTriggerCriteria(param3));
+                        sum += AddDescription(sum, "โจมตีกายภาพแรงขึ้น " + param2 + "% กับธาตุ " + GetElementName(allParam[0]) + GetTriggerCriteria(allParam[2]));
                 }
             }
             #endregion
@@ -5416,9 +5415,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "โจมตีเวทย์เบาลง " + param2 + "% กับธาตุ " + GetElementName(param1));
+                        sum += AddDescription(sum, "โจมตีเวทย์เบาลง " + param2 + "% กับธาตุ " + GetElementName(allParam[0]));
                     else
-                        sum += AddDescription(sum, "โจมตีเวทย์แรงขึ้น " + param2 + "% กับธาตุ " + GetElementName(param1));
+                        sum += AddDescription(sum, "โจมตีเวทย์แรงขึ้น " + param2 + "% กับธาตุ " + GetElementName(allParam[0]));
                 }
             }
             #endregion
@@ -5436,9 +5435,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "โดนโจมตีแรงขึ้น " + param2 + "% กับธาตุ " + GetElementName(param1));
+                        sum += AddDescription(sum, "โดนโจมตีแรงขึ้น " + param2 + "% กับธาตุ " + GetElementName(allParam[0]));
                     else
-                        sum += AddDescription(sum, "โดนโจมตีเบาลง " + param2 + "% กับธาตุ " + GetElementName(param1));
+                        sum += AddDescription(sum, "โดนโจมตีเบาลง " + param2 + "% กับธาตุ " + GetElementName(allParam[0]));
                 }
             }
             #endregion
@@ -5457,9 +5456,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "โดนโจมตีแรงขึ้น " + param2 + "% กับธาตุ " + GetElementName(param1) + GetTriggerCriteria(param3));
+                        sum += AddDescription(sum, "โดนโจมตีแรงขึ้น " + param2 + "% กับธาตุ " + GetElementName(allParam[0]) + GetTriggerCriteria(allParam[2]));
                     else
-                        sum += AddDescription(sum, "โดนโจมตีเบาลง " + param2 + "% กับธาตุ " + GetElementName(param1) + GetTriggerCriteria(param3));
+                        sum += AddDescription(sum, "โดนโจมตีเบาลง " + param2 + "% กับธาตุ " + GetElementName(allParam[0]) + GetTriggerCriteria(allParam[2]));
                 }
             }
             #endregion
@@ -5477,9 +5476,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "โดนโจมตีแรงขึ้น " + param2 + "% กับศัตรูที่การป้องกันเป็นธาตุ " + GetElementName(param1));
+                        sum += AddDescription(sum, "โดนโจมตีแรงขึ้น " + param2 + "% กับศัตรูที่การป้องกันเป็นธาตุ " + GetElementName(allParam[0]));
                     else
-                        sum += AddDescription(sum, "โดนโจมตีเบาลง " + param2 + "% กับศัตรูที่การป้องกันเป็นธาตุ " + GetElementName(param1));
+                        sum += AddDescription(sum, "โดนโจมตีเบาลง " + param2 + "% กับศัตรูที่การป้องกันเป็นธาตุ " + GetElementName(allParam[0]));
                 }
             }
             #endregion
@@ -5682,9 +5681,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "โจมตีกายภาพเบาลง " + param2 + "% กับ " + GetMIDName(param1));
+                        sum += AddDescription(sum, "โจมตีกายภาพเบาลง " + param2 + "% กับ " + GetMIDName(allParam[0]));
                     else
-                        sum += AddDescription(sum, "โจมตีกายภาพแรงขึ้น " + param2 + "% กับ " + GetMIDName(param1));
+                        sum += AddDescription(sum, "โจมตีกายภาพแรงขึ้น " + param2 + "% กับ " + GetMIDName(allParam[0]));
                 }
             }
             #endregion
@@ -5702,9 +5701,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "โจมตีเวทย์เบาลง " + param2 + "% กับ " + GetMIDName(param1));
+                        sum += AddDescription(sum, "โจมตีเวทย์เบาลง " + param2 + "% กับ " + GetMIDName(allParam[0]));
                     else
-                        sum += AddDescription(sum, "โจมตีเวทย์แรงขึ้น " + param2 + "% กับ " + GetMIDName(param1));
+                        sum += AddDescription(sum, "โจมตีเวทย์แรงขึ้น " + param2 + "% กับ " + GetMIDName(allParam[0]));
                 }
             }
             #endregion
@@ -5722,9 +5721,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "โดนโจมตีกายภาพแรงขึ้น " + param2 + "% กับ " + GetMIDName(param1));
+                        sum += AddDescription(sum, "โดนโจมตีกายภาพแรงขึ้น " + param2 + "% กับ " + GetMIDName(allParam[0]));
                     else
-                        sum += AddDescription(sum, "โดนโจมตีกายภาพเบาลง " + param2 + "% กับ " + GetMIDName(param1));
+                        sum += AddDescription(sum, "โดนโจมตีกายภาพเบาลง " + param2 + "% กับ " + GetMIDName(allParam[0]));
                 }
             }
             #endregion
@@ -5742,9 +5741,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "โดนโจมตีเวทย์แรงขึ้น " + param2 + "% กับ " + GetMIDName(param1));
+                        sum += AddDescription(sum, "โดนโจมตีเวทย์แรงขึ้น " + param2 + "% กับ " + GetMIDName(allParam[0]));
                     else
-                        sum += AddDescription(sum, "โดนโจมตีเวทย์เบาลง " + param2 + "% กับ " + GetMIDName(param1));
+                        sum += AddDescription(sum, "โดนโจมตีเวทย์เบาลง " + param2 + "% กับ " + GetMIDName(allParam[0]));
                 }
             }
             #endregion
@@ -5762,9 +5761,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "โจมตีกายภาพเบาลง " + param2 + "% กับเผ่า " + GetMonsterRaceName(param1));
+                        sum += AddDescription(sum, "โจมตีกายภาพเบาลง " + param2 + "% กับเผ่า " + GetMonsterRaceName(allParam[0]));
                     else
-                        sum += AddDescription(sum, "โจมตีกายภาพแรงขึ้น " + param2 + "% กับเผ่า " + GetMonsterRaceName(param1));
+                        sum += AddDescription(sum, "โจมตีกายภาพแรงขึ้น " + param2 + "% กับเผ่า " + GetMonsterRaceName(allParam[0]));
                 }
             }
             #endregion
@@ -5782,9 +5781,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "โดนโจมตีแรงขึ้น " + param2 + "% กับเผ่า " + GetMonsterRaceName(param1));
+                        sum += AddDescription(sum, "โดนโจมตีแรงขึ้น " + param2 + "% กับเผ่า " + GetMonsterRaceName(allParam[0]));
                     else
-                        sum += AddDescription(sum, "โดนโจมตีเบาลง " + param2 + "% กับเผ่า " + GetMonsterRaceName(param1));
+                        sum += AddDescription(sum, "โดนโจมตีเบาลง " + param2 + "% กับเผ่า " + GetMonsterRaceName(allParam[0]));
                 }
             }
             #endregion
@@ -5802,9 +5801,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "โจมตีเวทย์เบาลง " + param2 + "% กับเผ่า " + GetMonsterRaceName(param1));
+                        sum += AddDescription(sum, "โจมตีเวทย์เบาลง " + param2 + "% กับเผ่า " + GetMonsterRaceName(allParam[0]));
                     else
-                        sum += AddDescription(sum, "โจมตีเวทย์แรงขึ้น " + param2 + "% กับเผ่า " + GetMonsterRaceName(param1));
+                        sum += AddDescription(sum, "โจมตีเวทย์แรงขึ้น " + param2 + "% กับเผ่า " + GetMonsterRaceName(allParam[0]));
                 }
             }
             #endregion
@@ -5822,9 +5821,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "โดนโจมตีจาก Skill " + GetSkillName(param1) + " แรงขึ้น " + param2 + "%");
+                        sum += AddDescription(sum, "โดนโจมตีจาก Skill " + GetSkillName(allParam[0]) + " แรงขึ้น " + param2 + "%");
                     else
-                        sum += AddDescription(sum, "โดนโจมตีจาก Skill " + GetSkillName(param1) + " เบาลง " + param2 + "%");
+                        sum += AddDescription(sum, "โดนโจมตีจาก Skill " + GetSkillName(allParam[0]) + " เบาลง " + param2 + "%");
                 }
             }
             #endregion
@@ -5858,7 +5857,7 @@ public class ItemDbScriptData
                 string param1 = GetValue(allParam[0], 1);
 
                 if (isHadParam1)
-                    sum += AddDescription(sum, "การโจมตีเป็นธาตุ " + GetElementName(param1));
+                    sum += AddDescription(sum, "การโจมตีเป็นธาตุ " + GetElementName(allParam[0]));
             }
             #endregion
             #region bonus bDefEle
@@ -5872,7 +5871,7 @@ public class ItemDbScriptData
                 string param1 = GetValue(allParam[0], 1);
 
                 if (isHadParam1)
-                    sum += AddDescription(sum, "การป้องกันเป็นธาตุ " + GetElementName(param1));
+                    sum += AddDescription(sum, "การป้องกันเป็นธาตุ " + GetElementName(allParam[0]));
             }
             #endregion
             #region bonus2 bMagicAtkEle
@@ -5889,9 +5888,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "โจมตีเบาลง " + param2 + "% กับเวทย์มนต์ธาตุ " + GetElementName(param1));
+                        sum += AddDescription(sum, "โจมตีเบาลง " + param2 + "% กับเวทย์มนต์ธาตุ " + GetElementName(allParam[0]));
                     else
-                        sum += AddDescription(sum, "โจมตีแรงขึ้น " + param2 + "% กับเวทย์มนต์ธาตุ " + GetElementName(param1));
+                        sum += AddDescription(sum, "โจมตีแรงขึ้น " + param2 + "% กับเวทย์มนต์ธาตุ " + GetElementName(allParam[0]));
                 }
             }
             #endregion
@@ -5920,7 +5919,7 @@ public class ItemDbScriptData
                 string param1 = GetValue(allParam[0], 1);
 
                 if (isHadParam1)
-                    sum += AddDescription(sum, "โจมตีแรงขึ้นตาม DEF ของศัตรู กับธาตุ " + GetElementName(param1));
+                    sum += AddDescription(sum, "โจมตีแรงขึ้นตาม DEF ของศัตรู กับธาตุ " + GetElementName(allParam[0]));
             }
             #endregion
             #region bonus bDefRatioAtkClass
@@ -5982,7 +5981,7 @@ public class ItemDbScriptData
                 string param1 = GetValue(allParam[0], 1);
 
                 if (isHadParam1)
-                    sum += AddDescription(sum, "ไม่สนใจ DEF กับธาตุ " + GetElementName(param1));
+                    sum += AddDescription(sum, "ไม่สนใจ DEF กับธาตุ " + GetElementName(allParam[0]));
             }
             #endregion
             #region bonus bIgnoreDefRace,
@@ -6081,9 +6080,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "ไม่สนใจ MDEF น้อยลง " + param2 + "% กับเผ่า " + GetMonsterRaceName(param1));
+                        sum += AddDescription(sum, "ไม่สนใจ MDEF น้อยลง " + param2 + "% กับเผ่า " + GetMonsterRaceName(allParam[0]));
                     else
-                        sum += AddDescription(sum, "ไม่สนใจ MDEF " + param2 + "% กับเผ่า " + GetMonsterRaceName(param1));
+                        sum += AddDescription(sum, "ไม่สนใจ MDEF " + param2 + "% กับเผ่า " + GetMonsterRaceName(allParam[0]));
                 }
             }
             #endregion
@@ -6098,7 +6097,7 @@ public class ItemDbScriptData
                 string param1 = GetValue(allParam[0], 1);
 
                 if (isHadParam1)
-                    sum += AddDescription(sum, "ไม่สนใจ MDEF กับธาตุ " + GetElementName(param1));
+                    sum += AddDescription(sum, "ไม่สนใจ MDEF กับธาตุ " + GetElementName(allParam[0]));
             }
             #endregion
             #region bonus2 bIgnoreDefClassRate
@@ -6195,9 +6194,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโจมตีกายภาพ");
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(allParam[0]) + " กับศัตรูเมื่อโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโจมตีกายภาพ");
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(allParam[0]) + " กับศัตรูเมื่อโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6215,9 +6214,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับตนเองเมื่อโจมตีกายภาพ");
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(allParam[0]) + " กับตนเองเมื่อโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับตนเองเมื่อโจมตีกายภาพ");
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(allParam[0]) + " กับตนเองเมื่อโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6235,9 +6234,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโดนโจมตีกายภาพ");
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(allParam[0]) + " กับศัตรูเมื่อโดนโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโดนโจมตีกายภาพ");
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(allParam[0]) + " กับศัตรูเมื่อโดนโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6255,9 +6254,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะไม่เกิด " + GetEffectName(param1) + " กับตนเอง");
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะไม่เกิด " + GetEffectName(allParam[0]) + " กับตนเอง");
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะไม่เกิด " + GetEffectName(param1) + " กับตนเอง");
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะไม่เกิด " + GetEffectName(allParam[0]) + " กับตนเอง");
                 }
             }
             #endregion
@@ -6276,9 +6275,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโจมตีกายภาพ" + GetTriggerCriteria(param3));
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(allParam[0]) + " กับศัตรูเมื่อโจมตีกายภาพ" + GetTriggerCriteria(allParam[2]));
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโจมตีกายภาพ" + GetTriggerCriteria(param3));
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(allParam[0]) + " กับศัตรูเมื่อโจมตีกายภาพ" + GetTriggerCriteria(allParam[2]));
                 }
             }
             #endregion
@@ -6298,9 +6297,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโจมตีกายภาพ" + GetTriggerCriteria(param3) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param4)));
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(allParam[0]) + " กับศัตรูเมื่อโจมตีกายภาพ" + GetTriggerCriteria(allParam[2]) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param4)));
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโจมตีกายภาพ" + GetTriggerCriteria(param3) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param4)));
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(allParam[0]) + " กับศัตรูเมื่อโจมตีกายภาพ" + GetTriggerCriteria(allParam[2]) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param4)));
                 }
             }
             #endregion
@@ -6319,9 +6318,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(param3));
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(allParam[0]) + " กับศัตรูเมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(allParam[2]));
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(param3));
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(allParam[0]) + " กับศัตรูเมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(allParam[2]));
                 }
             }
             #endregion
@@ -6341,9 +6340,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(param3) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param4)));
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(allParam[0]) + " กับศัตรูเมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(allParam[2]) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param4)));
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(param1) + " กับศัตรูเมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(param3) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param4)));
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด " + GetEffectName(allParam[0]) + " กับศัตรูเมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(allParam[2]) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param4)));
                 }
             }
             #endregion
@@ -6362,9 +6361,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
                     if (isParam3Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะเกิด " + GetEffectName(param2) + " กับศัตรูเมื่อร่าย Skill " + GetSkillName(param1));
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะเกิด " + GetEffectName(allParam[1]) + " กับศัตรูเมื่อร่าย Skill " + GetSkillName(allParam[0]));
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะเกิด " + GetEffectName(param2) + " กับศัตรูเมื่อร่าย Skill " + GetSkillName(param1));
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะเกิด " + GetEffectName(allParam[1]) + " กับศัตรูเมื่อร่าย Skill " + GetSkillName(allParam[0]));
                 }
             }
             #endregion
@@ -6384,9 +6383,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4)
                 {
                     if (isParam3Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะเกิด " + GetEffectName(param2) + " กับศัตรูเมื่อร่าย Skill" + GetTriggerCriteria(param1) + GetTriggerCriteria(param4));
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะเกิด " + GetEffectName(allParam[1]) + " กับศัตรูเมื่อร่าย Skill" + GetTriggerCriteria(allParam[0]) + GetTriggerCriteria(allParam[3]));
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะเกิด " + GetEffectName(param2) + " กับศัตรูเมื่อร่าย Skill" + GetTriggerCriteria(param1) + GetTriggerCriteria(param4));
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะเกิด " + GetEffectName(allParam[1]) + " กับศัตรูเมื่อร่าย Skill" + GetTriggerCriteria(allParam[0]) + GetTriggerCriteria(allParam[3]));
                 }
             }
             #endregion
@@ -6407,9 +6406,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4 && isHadParam5)
                 {
                     if (isParam3Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะเกิด " + GetEffectName(param2) + " กับศัตรูเมื่อร่าย Skill" + GetTriggerCriteria(param1) + GetTriggerCriteria(param4) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param5)));
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะเกิด " + GetEffectName(allParam[1]) + " กับศัตรูเมื่อร่าย Skill" + GetTriggerCriteria(allParam[0]) + GetTriggerCriteria(allParam[3]) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param5)));
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะเกิด " + GetEffectName(param2) + " กับศัตรูเมื่อร่าย Skill" + GetTriggerCriteria(param1) + GetTriggerCriteria(param4) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param5)));
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะเกิด " + GetEffectName(allParam[1]) + " กับศัตรูเมื่อร่าย Skill" + GetTriggerCriteria(allParam[0]) + GetTriggerCriteria(allParam[3]) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param5)));
                 }
             }
             #endregion
@@ -6467,9 +6466,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด Coma กับธาตุ " + GetElementName(param1) + " เมื่อโจมตีกายภาพ");
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด Coma กับธาตุ " + GetElementName(allParam[0]) + " เมื่อโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด Coma กับธาตุ " + GetElementName(param1) + " เมื่อโจมตีกายภาพ");
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param2, 100) + "% ที่จะเกิด Coma กับธาตุ " + GetElementName(allParam[0]) + " เมื่อโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6528,9 +6527,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
                     if (isParam3Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " เมื่อโจมตีกายภาพ");
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " เมื่อโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " เมื่อโจมตีกายภาพ");
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " เมื่อโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6549,9 +6548,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
                     if (isParam3Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " เมื่อโดนโจมตีกายภาพ");
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " เมื่อโดนโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " เมื่อโดนโจมตีกายภาพ");
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " เมื่อโดนโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6571,9 +6570,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4)
                 {
                     if (isParam3Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " " + GetAutoSpellFlagName(param4) + " เมื่อโจมตีกายภาพ");
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[3]) + " เมื่อโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " " + GetAutoSpellFlagName(param4) + " เมื่อโจมตีกายภาพ");
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[3]) + " เมื่อโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6594,9 +6593,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4 && isHadParam5)
                 {
                     if (isParam3Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " " + GetAutoSpellFlagName(param5) + " เมื่อโจมตีกายภาพ" + GetTriggerCriteria(param4));
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[4]) + " เมื่อโจมตีกายภาพ" + GetTriggerCriteria(allParam[3]));
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " " + GetAutoSpellFlagName(param5) + " เมื่อโจมตีกายภาพ" + GetTriggerCriteria(param4));
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[4]) + " เมื่อโจมตีกายภาพ" + GetTriggerCriteria(allParam[3]));
                 }
             }
             #endregion
@@ -6616,9 +6615,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4)
                 {
                     if (isParam3Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " " + GetAutoSpellFlagName(param4) + " เมื่อโดนโจมตีกายภาพ");
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[3]) + " เมื่อโดนโจมตีกายภาพ");
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " " + GetAutoSpellFlagName(param4) + " เมื่อโดนโจมตีกายภาพ");
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[3]) + " เมื่อโดนโจมตีกายภาพ");
                 }
             }
             #endregion
@@ -6639,9 +6638,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4 && isHadParam5)
                 {
                     if (isParam3Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " " + GetAutoSpellFlagName(param5) + " เมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(param4));
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[4]) + " เมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(allParam[3]));
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(param1) + " " + GetAutoSpellFlagName(param5) + " เมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(param4));
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param3, 10) + "% ที่จะร่าย Lv." + param2 + " " + GetSkillName(allParam[0]) + " " + GetAutoSpellFlagName(allParam[4]) + " เมื่อโดนโจมตีกายภาพ" + GetTriggerCriteria(allParam[3]));
                 }
             }
             #endregion
@@ -6661,9 +6660,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4)
                 {
                     if (isParam4Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param4, 10) + "% ที่จะร่าย Lv." + param3 + " " + GetSkillName(param1) + " เมื่อร่าย Skill " + GetSkillName(param2));
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param4, 10) + "% ที่จะร่าย Lv." + param3 + " " + GetSkillName(allParam[0]) + " เมื่อร่าย Skill " + GetSkillName(allParam[1]));
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param4, 10) + "% ที่จะร่าย Lv." + param3 + " " + GetSkillName(param1) + " เมื่อร่าย Skill " + GetSkillName(param2));
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param4, 10) + "% ที่จะร่าย Lv." + param3 + " " + GetSkillName(allParam[0]) + " เมื่อร่าย Skill " + GetSkillName(allParam[1]));
                 }
             }
             #endregion
@@ -6684,9 +6683,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4 && isHadParam5)
                 {
                     if (isParam4Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param4, 10) + "% ที่จะร่าย Lv." + param3 + " " + GetSkillName(param1) + GetAutoSpellOnSkillFlagName(param5, param3) + " เมื่อร่าย Skill " + GetSkillName(param2));
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param4, 10) + "% ที่จะร่าย Lv." + param3 + " " + GetSkillName(allParam[0]) + GetAutoSpellOnSkillFlagName(param5, param3) + " เมื่อร่าย Skill " + GetSkillName(allParam[1]));
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param4, 10) + "% ที่จะร่าย Lv." + param3 + " " + GetSkillName(param1) + GetAutoSpellOnSkillFlagName(param5, param3) + " เมื่อร่าย Skill " + GetSkillName(param2));
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param4, 10) + "% ที่จะร่าย Lv." + param3 + " " + GetSkillName(allParam[0]) + GetAutoSpellOnSkillFlagName(param5, param3) + " เมื่อร่าย Skill " + GetSkillName(allParam[1]));
                 }
             }
             #endregion
@@ -6956,7 +6955,7 @@ public class ItemDbScriptData
                     else
                         sumParam2 = "เสีย";
 
-                    sum += AddDescription(sum, sumParam1 + " " + param1 + "% ที่ศัตรูจะ" + sumParam2 + " HP " + GetRateByDivider(param2, 10) + "% จาก Damage การโจมตีกายภาพที่ทำไป" + GetTriggerCriteria(param3));
+                    sum += AddDescription(sum, sumParam1 + " " + param1 + "% ที่ศัตรูจะ" + sumParam2 + " HP " + GetRateByDivider(param2, 10) + "% จาก Damage การโจมตีกายภาพที่ทำไป" + GetTriggerCriteria(allParam[2]));
                 }
             }
             #endregion
@@ -7048,7 +7047,7 @@ public class ItemDbScriptData
                     else
                         sumParam2 = "เสีย";
 
-                    sum += AddDescription(sum, sumParam1 + " " + param1 + "% ที่ศัตรูจะ" + sumParam2 + " SP " + GetRateByDivider(param2, 10) + "% จาก Damage การโจมตีกายภาพที่ทำไป" + GetTriggerCriteria(param3));
+                    sum += AddDescription(sum, sumParam1 + " " + param1 + "% ที่ศัตรูจะ" + sumParam2 + " SP " + GetRateByDivider(param2, 10) + "% จาก Damage การโจมตีกายภาพที่ทำไป" + GetTriggerCriteria(allParam[2]));
                 }
             }
             #endregion
@@ -7431,9 +7430,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2 && isHadParam3)
                 {
                     if (isParam3Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะ Drop " + GetItemName(param1) + " เมื่อกำจัด " + GetMIDName(param2));
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะ Drop " + GetItemName(param1) + " เมื่อกำจัด " + GetMIDName(allParam[1]));
                     else
-                        sum += AddDescription(sum, "เพิ่มโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะ Drop " + GetItemName(param1) + " เมื่อกำจัด " + GetMIDName(param2));
+                        sum += AddDescription(sum, "เพิ่มโอกาส " + GetRateByDivider(param3, 100) + "% ที่จะ Drop " + GetItemName(param1) + " เมื่อกำจัด " + GetMIDName(allParam[1]));
                 }
             }
             #endregion
@@ -7690,9 +7689,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "เมื่อร่าย Skill " + GetSkillName(param1) + " จะลดการทำให้ศัตรูกระเด็น " + param2 + " ช่อง ");
+                        sum += AddDescription(sum, "เมื่อร่าย Skill " + GetSkillName(allParam[0]) + " จะลดการทำให้ศัตรูกระเด็น " + param2 + " ช่อง ");
                     else
-                        sum += AddDescription(sum, "เมื่อร่าย Skill " + GetSkillName(param1) + " จะทำให้ศัตรูกระเด็น " + param2 + " ช่อง ");
+                        sum += AddDescription(sum, "เมื่อร่าย Skill " + GetSkillName(allParam[0]) + " จะทำให้ศัตรูกระเด็น " + param2 + " ช่อง ");
                 }
             }
             #endregion
@@ -8101,23 +8100,6 @@ public class ItemDbScriptData
     }
 
     #region Utilities
-    /// <summary>
-    /// Get percent wording by rate and divisor
-    /// </summary>
-    /// <param name="rate"></param>
-    /// <param name="divisor"></param>
-    /// <returns></returns>
-    string GetPercent(float rate, int divisor)
-    {
-        var sumRate = rate / divisor;
-        if (rate > divisor)
-            return sumRate.ToString("f0") + "%";
-        else if (rate > 0)
-            return sumRate.ToString("f1") + "%";
-        else
-            return "100%";
-    }
-
     /// <summary>
     /// Get item name by ID
     /// </summary>
