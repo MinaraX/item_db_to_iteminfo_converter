@@ -1621,7 +1621,7 @@ public class ItemDbScriptData
         {
             var sumCut = allCut[i];
 
-            Log("(Merging) allCut[" + i + "]: " + sumCut);
+            //Log("(Merging) allCut[" + i + "]: " + sumCut);
 
             if (sumCut == "if" && allCut[i + 1].Contains("("))
             {
@@ -7840,60 +7840,41 @@ public class ItemDbScriptData
         isParam6Negative = false;
         isParam7Negative = false;
 
-        List<string> allParam = new List<string>();
-        if (sumCut.Contains("rand"))
-        {
-            allParam = new List<string>(sumCut.Split(new string[] { "," }, StringSplitOptions.None));
+        var allParam = StringSplit.GetStringSplit(sumCut, ',');
 
+        for (int i = 0; i < allParam.Count; i++)
+        {
         L_Redo:
-            for (int i = 0; i < allParam.Count; i++)
+            var sumParam = allParam[i];
+            //Check ()
+            int count1 = 0;
+            foreach (char c in sumParam)
             {
-                Log("(Before)allParam[" + i + "]: " + allParam[i]);
-                var sumParam = allParam[i];
-                if (sumParam.Contains("(") && !sumParam.Contains(")"))
-                {
-                    allParam[i] += "," + allParam[i + 1];
-                    allParam.RemoveAt(i + 1);
-                    goto L_Redo;
-                }
+                if (c == '(')
+                    count1++;
             }
 
-            for (int i = 0; i < allParam.Count; i++)
-                Log("(After)allParam[" + i + "]: " + allParam[i]);
+            int count2 = 0;
+            foreach (char c in sumParam)
+            {
+                if (c == ')')
+                    count2++;
+            }
+
+            if (count1 != count2)
+            {
+                allParam[i] += "," + allParam[i + 1];
+                allParam.RemoveAt(i + 1);
+                goto L_Redo;
+            }
         }
-        else if (sumCut.Contains("max"))
+
+        if (!Application.isPlaying)
         {
-            allParam = new List<string>(sumCut.Split(new string[] { "," }, StringSplitOptions.None));
-
-        L_Redo:
             for (int i = 0; i < allParam.Count; i++)
-            {
-                Log("(Before)allParam[" + i + "]: " + allParam[i]);
-                var sumParam = allParam[i];
-                if (sumParam.Contains("(") && !sumParam.Contains(","))
-                {
-                    allParam[i] += "," + allParam[i + 1];
-                    allParam.RemoveAt(i + 1);
-                    goto L_Redo;
-                }
-            }
-
-            for (int i = 0; i < allParam.Count; i++)
-                Log("(After)allParam[" + i + "]: " + allParam[i]);
+                Debug.Log("allParam[" + i + "]: " + allParam[i]);
         }
-        else
-        {
-            allParam = StringSplit.GetStringSplit(sumCut, ',');
-            for (int i = 0; i < allParam.Count; i++)
-            {
-                if (!allParam[i].Contains("getskilllv"))
-                {
-                    allParam[i] = allParam[i].Replace("(", "");
-                    allParam[i] = allParam[i].Replace(")", "");
-                }
-                Log("(After)allParam[" + i + "]: " + allParam[i]);
-            }
-        }
+
         return allParam;
     }
 
@@ -7903,71 +7884,112 @@ public class ItemDbScriptData
     /// <param name="data"></param>
     /// <param name="paramCount"></param>
     /// <returns></returns>
-    string GetValue(string data, int paramCount, bool isZeroValueOkay = false)
+    string GetValue(string data, int paramCount = -1, bool isZeroValueOkay = false)
     {
-        string value = data;
+        data = MergeWhiteSpace.RemoveWhiteSpace(data);
 
-        value = MergeWhiteSpace.RemoveWhiteSpace(value);
+        Log("GetValue: " + data);
 
-        Log("GetValue: " + value);
-
-        //Store temporary variables
+        //Use store temporary variables if found in this value
         bool isFoundTempVariable = false;
         List<string> tempVarName = new List<string>();
         List<string> valueFromTempVar = new List<string>();
         for (int i = 0; i < tempVariables.Count; i++)
         {
-            if (value.Contains(tempVariables[i].variableName))
+            if (data.Contains(tempVariables[i].variableName))
             {
                 isFoundTempVariable = true;
+
                 tempVarName.Add(tempVariables[i].variableName);
+                Log("GetValue >> Found variableName: " + tempVariables[i].variableName);
+
                 valueFromTempVar.Add(tempVariables[i].value);
-                Log("valueFromTempVar: " + valueFromTempVar);
+                Log("GetValue >> Found value: " + tempVariables[i].value);
             }
         }
 
-        if (value == "INFINITE_TICK")
+        if (data == "INFINITE_TICK")
         {
             SetParamCheck(paramCount, true, true);
             return "ตลอดเวลา";
         }
 
-        //Find special and Substring equal to () count like if check (*If there are function in value then call GetValue again.)
-        bool isHadSpecialCalculation = false;
-        if (value.Contains("("))
-            isHadSpecialCalculation = true;
+        bool isHadFunction = false;
 
-        //Special value
-        if (isHadSpecialCalculation)
+        if (data.Contains("("))
+            isHadFunction = true;
+
+        if (isHadFunction)
         {
-            //pow
-            if (value.Contains("pow"))
+            if (data.Contains("pow"))
             {
+                Log("pow");// pow(min(14,.@r)-3,1)
 
+                int paramStartAt = data.IndexOf("(");
+
+                data = data.Substring(paramStartAt + 1);// min(14,.@r)-3,1)
+                Log("pow >> GetValue: " + data);
+                data = data.Substring(0, data.Length - 1);// min(14,.@r)-3,1
+                Log("pow >> GetValue: " + data);
+
+                var allValue = StringSplit.GetStringSplit(data, ',');
+
+                // min(14
+                // .@r)-3
+                // 1
+
+                for (int i = 0; i < allValue.Count; i++)
+                {
+                    Log("pow >>  allValue[" + i + "]: " + allValue[i]);
+                    if (i > 0)
+                        allValue[i] = "," + allValue[i];
+                    Log("pow >>  allValue[" + i + "]: " + allValue[i]);
+                }
+
+                // min(14
+                // ,.@r)-3
+                // ,1
+
+                allValue = CheckSpecialValue(allValue);// 14-3,1
+
+                allValue = StringSplit.GetStringSplit(data, ',');
+
+                // 14-3
+                // ,1
+
+                //Simple math function check each value (Example: 14-3 = 11)
+                for (int i = 0; i < allValue.Count; i++)
+                {
+
+                }
+
+                int toPow = int.Parse(allValue[0]);
+                int powCount = int.Parse(allValue[1]);
+                while (powCount > 1)
+                {
+                    toPow *= toPow;
+                    powCount--;
+                }
+
+                return toPow.ToString("f0");
             }
-            //min
-            //max
-            //rand
-            if (value.Contains("rand"))
+            else if (data.Contains("rand"))
             {
-
                 Log("rand");
 
-                int paramStartAt = value.IndexOf("(");
-                Log("paramStartAt: " + paramStartAt);
+                int paramStartAt = data.IndexOf("(");
 
-                string sum = value.Substring(paramStartAt);
+                string sumCut = data.Substring(paramStartAt);
 
-                Log("GetValue: " + sum);
+                Log("GetValue: " + sumCut);
 
-                int paramEndAt = sum.IndexOf(")");
-                Log("paramEndAt: " + paramEndAt);
+                int paramEndAt = sumCut.IndexOf(")");
 
-                sum = sum.Substring(1, paramEndAt - 1);
+                sumCut = sumCut.Substring(1, paramEndAt - 1);
 
-                Log("GetValue: " + sum);
+                Log("GetValue: " + sumCut);
 
-                List<string> allValue = StringSplit.GetStringSplit(sum, ',');
+                List<string> allValue = StringSplit.GetStringSplit(sumCut, ',');
 
                 if (paramCount == 1)
                     isHadParam1 = true;
@@ -7986,29 +8008,112 @@ public class ItemDbScriptData
 
                 return allValue[0] + "~" + allValue[1];
             }
-            //max
-            if (value.Contains("max"))
+            else if (data.Contains("min"))
+            {
+                Log("min");// min(14,.@r)
+
+                int paramStartAt = data.IndexOf("(");
+
+                data = data.Substring(paramStartAt + 1);// 14,.@r)
+                Log("min >> GetValue: " + data);
+                data = data.Substring(0, data.Length - 1);// 14,.@r
+                Log("min >> GetValue: " + data);
+
+                var allValue = StringSplit.GetStringSplit(data, ',');
+
+                // 14
+                // .@r
+
+                for (int i = 0; i < allValue.Count; i++)
+                {
+                    Log("min >>  allValue[" + i + "]: " + allValue[i]);
+                    if (i > 0)
+                        allValue[i] = "," + allValue[i];
+                    Log("min >>  allValue[" + i + "]: " + allValue[i]);
+                }
+
+                // 14
+                // ,.@r
+
+                allValue = CheckSpecialValue(allValue);// 14,.@r
+
+                allValue = StringSplit.GetStringSplit(data, ',');
+
+                // 14
+                // .@r
+
+                //Simple math function check each value (Example: 14-3 = 11)
+                for (int i = 0; i < allValue.Count; i++)
+                {
+
+                }
+
+                // 14
+                // .@r
+
+                bool isHadNonInteger = false;
+                string nonIntegerText = null;
+
+                int min = 0;
+                for (int i = 0; i < allValue.Count; i++)
+                {
+                    int paramInt = 0;
+                    bool isInteger = false;
+
+                    isInteger = int.TryParse(allValue[i], out paramInt);
+
+                    if (isInteger)
+                    {
+                        if (min == 0 || min > paramInt)
+                            min = paramInt;
+                    }
+                    else
+                    {
+                        isHadNonInteger = true;
+
+                        //Replace temporary variables
+                        if (isFoundTempVariable)
+                        {
+                            for (int j = 0; j < tempVarName.Count; j++)
+                                allValue[i] = allValue[i].Replace(tempVarName[j], valueFromTempVar[j]);
+
+                            SetParamCheck(paramCount, true, false);
+                        }
+
+                        allValue[i] = ReplaceAllSpecialValue(allValue[i]);
+
+                        nonIntegerText = allValue[i];
+                    }
+                }
+
+                if (isHadNonInteger)
+                    return "(" + nonIntegerText + " มากสุด " + min + ")";
+                else
+                    return "(มากสุด " + min + ")";
+            }
+            else if (data.Contains("max"))
             {
                 Log("max");
 
-                int paramStartAt = value.IndexOf("(");
-                Log("paramStartAt: " + paramStartAt);
+                int paramStartAt = data.IndexOf("(");
 
-                string sum = value.Substring(paramStartAt);
+                string sumCut = data.Substring(paramStartAt);
 
-                Log("GetValue: " + sum);
+                Log("GetValue: " + sumCut);
 
-                sum = sum.Substring(1, sum.Length - 1);
+                sumCut = sumCut.Substring(1, sumCut.Length - 1);
 
-                Log("GetValue: " + sum);
+                Log("GetValue: " + sumCut);
 
-                List<string> allValue = StringSplit.GetStringSplit(sum, ',');
+                List<string> allValue = StringSplit.GetStringSplit(sumCut, ',');
                 for (int i = 0; i < allValue.Count; i++)
                 {
                     Log("allValue[" + i + "]: " + allValue[i]);
                     if (allValue[i].Contains("getskilllv"))
                         allValue[i] = GetSkillLv(allValue[i]);
                 }
+
+                //Find max value here
 
                 if (paramCount == 1)
                     isHadParam1 = true;
@@ -8032,13 +8137,13 @@ public class ItemDbScriptData
         else
         {
             //++
-            if (value == "+")
+            if (data == "+")
             {
                 SetParamCheck(paramCount, true, false);
                 return "1";
             }
             //--
-            else if (value == "-")
+            else if (data == "-")
             {
                 SetParamCheck(paramCount, true, true);
                 return "1";
@@ -8048,7 +8153,7 @@ public class ItemDbScriptData
             int paramInt = 0;
             bool isInteger = false;
 
-            isInteger = int.TryParse(value, out paramInt);
+            isInteger = int.TryParse(data, out paramInt);
 
             Log("isInteger: " + isInteger);
 
@@ -8061,7 +8166,7 @@ public class ItemDbScriptData
                 else if (paramInt < 0)
                 {
                     paramInt = paramInt * -1;
-                    value = paramInt.ToString("f0");
+                    data = paramInt.ToString("f0");
                     SetParamCheck(paramCount, true, true);
                 }
                 //Positive integer
@@ -8074,18 +8179,92 @@ public class ItemDbScriptData
         if (isFoundTempVariable)
         {
             for (int i = 0; i < tempVarName.Count; i++)
-                value = value.Replace(tempVarName[i], valueFromTempVar[i]);
+                data = data.Replace(tempVarName[i], valueFromTempVar[i]);
 
             SetParamCheck(paramCount, true, false);
         }
 
         //Replace special variables
-        value = ReplaceAllSpecialValue(value);
+        data = ReplaceAllSpecialValue(data);
 
         if (isFoundTempVariable)
-            return "(" + value + ")";
+            return "(" + data + ")";
         else
-            return value;
+            return data;
+    }
+    List<string> CheckSpecialValue(List<string> allValue)
+    {
+        // min(14
+        // ,.@r)-3
+        // ,1
+
+        //Check special function inside value
+        for (int i = 0; i < allValue.Count; i++)
+        {
+            if (allValue[i].Contains("min") || allValue[i].Contains("max") || allValue[i].Contains("rand") || allValue[i].Contains("pow"))
+            {
+            L_Redo:
+                var sumValue = allValue[i];
+
+                int count1 = 0;
+                foreach (char c in sumValue)
+                {
+                    if (c == '(')
+                        count1++;
+                }
+
+                int count2 = 0;
+                foreach (char c in sumValue)
+                {
+                    if (c == ')')
+                        count2++;
+                }
+
+                if (count1 != count2)
+                {
+                    allValue[i] += allValue[i + 1];
+                    allValue.RemoveAt(i + 1);
+                    goto L_Redo;
+                }
+
+                // min(14,.@r)-3
+                // ,1
+
+                int endOfFunctionAt = 0;
+                for (int j = 0; j < sumValue.Length; j++)
+                {
+
+                    if (sumValue[j] == ')')
+                    {
+                        endOfFunctionAt++;
+                        if (endOfFunctionAt == count2)
+                        {
+                            endOfFunctionAt = j;
+                            break;
+                        }
+                    }
+                }
+
+                //Substring and save last string
+                var sumCut = sumValue.Substring(0, endOfFunctionAt + 1); // min(14,.@r)
+                Log("CheckSpecialValue >> sumCut: " + sumCut);
+
+                sumCut = GetValue(sumCut);//14
+                Log("CheckSpecialValue >> sumCut: " + sumCut);
+
+                allValue[i] = sumCut + allValue[i].Substring(endOfFunctionAt);   // 14-3
+                Log("CheckSpecialValue >> allValue[" + i + "]: " + allValue[i]);
+
+                //,1
+
+                //14-3
+                //,1
+            }
+            else
+                Log("Not found special value in index: " + i);
+        }
+
+        return allValue;
     }
 
     #region Utilities
@@ -9142,6 +9321,9 @@ public class ItemDbScriptData
     /// <param name="isTrue"></param>
     void SetParamCheck(int paramCount, bool isTrue, bool isNegative)
     {
+        if (paramCount == -1)
+            return;
+
         if (paramCount == 1)
         {
             isHadParam1 = isTrue;
