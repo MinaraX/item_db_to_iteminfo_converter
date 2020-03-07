@@ -7910,7 +7910,7 @@ public class ItemDbScriptData
 
         if (data == "INFINITE_TICK")
         {
-            SetParamCheck(paramCount, true, true);
+            SetParamCheck(paramCount, true, false);
             return "ตลอดเวลา";
         }
 
@@ -7923,20 +7923,16 @@ public class ItemDbScriptData
         {
             if (data.Contains("pow"))
             {
-                Log("pow");// pow(min(14,.@r)-3,1)
+                Log("pow");
 
                 int paramStartAt = data.IndexOf("(");
 
-                data = data.Substring(paramStartAt + 1);// min(14,.@r)-3,1)
+                data = data.Substring(paramStartAt + 1);
                 Log("pow >> GetValue: " + data);
-                data = data.Substring(0, data.Length - 1);// min(14,.@r)-3,1
+                data = data.Substring(0, data.Length - 1);
                 Log("pow >> GetValue: " + data);
 
                 var allValue = StringSplit.GetStringSplit(data, ',');
-
-                // min(14
-                // .@r)-3
-                // 1
 
                 for (int i = 0; i < allValue.Count; i++)
                 {
@@ -7946,32 +7942,25 @@ public class ItemDbScriptData
                     Log("pow >>  allValue[" + i + "]: " + allValue[i]);
                 }
 
-                // min(14
-                // ,.@r)-3
-                // ,1
+                Log("pow >>  start CheckSpecialValue");
+                allValue = CheckSpecialValue(allValue);
+                Log("pow >>  finish CheckSpecialValue");
 
-                allValue = CheckSpecialValue(allValue);// 14-3,1
-
-                allValue = StringSplit.GetStringSplit(data, ',');
-
-                // 14-3
-                // ,1
-
-                //Simple math function check each value (Example: 14-3 = 11)
+                Log("pow >>  start CheckMath");
                 for (int i = 0; i < allValue.Count; i++)
-                {
+                    allValue[i] = CheckMath(allValue[i]);
+                Log("pow >>  finish CheckMath");
 
-                }
+                for (int i = 0; i < allValue.Count; i++)
+                    Log("pow >>  allValue[" + i + "]: " + allValue[i]);
 
-                int toPow = int.Parse(allValue[0]);
-                int powCount = int.Parse(allValue[1]);
-                while (powCount > 1)
-                {
-                    toPow *= toPow;
-                    powCount--;
-                }
+                for (int i = 0; i < allValue.Count; i++)
+                    allValue[i] = allValue[i].Replace(",", "");
 
-                return toPow.ToString("f0");
+                SetParamCheck(paramCount, true, false);
+
+                Log(allValue[0] + " ยกกำลัง " + allValue[1]);
+                return allValue[0] + " ยกกำลัง " + allValue[1];
             }
             else if (data.Contains("rand"))
             {
@@ -8010,19 +7999,16 @@ public class ItemDbScriptData
             }
             else if (data.Contains("min"))
             {
-                Log("min");// min(14,.@r)
+                Log("min");
 
                 int paramStartAt = data.IndexOf("(");
 
-                data = data.Substring(paramStartAt + 1);// 14,.@r)
+                data = data.Substring(paramStartAt + 1);
                 Log("min >> GetValue: " + data);
-                data = data.Substring(0, data.Length - 1);// 14,.@r
+                data = data.Substring(0, data.Length - 1);
                 Log("min >> GetValue: " + data);
 
                 var allValue = StringSplit.GetStringSplit(data, ',');
-
-                // 14
-                // .@r
 
                 for (int i = 0; i < allValue.Count; i++)
                 {
@@ -8032,24 +8018,14 @@ public class ItemDbScriptData
                     Log("min >>  allValue[" + i + "]: " + allValue[i]);
                 }
 
-                // 14
-                // ,.@r
+                Log("min >>  start CheckSpecialValue");
+                allValue = CheckSpecialValue(allValue);
+                Log("min >>  finish CheckSpecialValue");
 
-                allValue = CheckSpecialValue(allValue);// 14,.@r
-
-                allValue = StringSplit.GetStringSplit(data, ',');
-
-                // 14
-                // .@r
-
-                //Simple math function check each value (Example: 14-3 = 11)
+                Log("min >>  start CheckMath");
                 for (int i = 0; i < allValue.Count; i++)
-                {
-
-                }
-
-                // 14
-                // .@r
+                    allValue[i] = CheckMath(allValue[i]);
+                Log("min >>  finish CheckMath");
 
                 bool isHadNonInteger = false;
                 string nonIntegerText = null;
@@ -8097,40 +8073,69 @@ public class ItemDbScriptData
 
                 int paramStartAt = data.IndexOf("(");
 
-                string sumCut = data.Substring(paramStartAt);
+                data = data.Substring(paramStartAt + 1);
+                Log("max >> GetValue: " + data);
+                data = data.Substring(0, data.Length - 1);
+                Log("max >> GetValue: " + data);
 
-                Log("GetValue: " + sumCut);
+                var allValue = StringSplit.GetStringSplit(data, ',');
 
-                sumCut = sumCut.Substring(1, sumCut.Length - 1);
-
-                Log("GetValue: " + sumCut);
-
-                List<string> allValue = StringSplit.GetStringSplit(sumCut, ',');
                 for (int i = 0; i < allValue.Count; i++)
                 {
-                    Log("allValue[" + i + "]: " + allValue[i]);
-                    if (allValue[i].Contains("getskilllv"))
-                        allValue[i] = GetSkillLv(allValue[i]);
+                    Log("max >>  allValue[" + i + "]: " + allValue[i]);
+                    if (i > 0)
+                        allValue[i] = "," + allValue[i];
+                    Log("max >>  allValue[" + i + "]: " + allValue[i]);
                 }
 
-                //Find max value here
+                Log("max >>  start CheckSpecialValue");
+                allValue = CheckSpecialValue(allValue);
+                Log("max >>  finish CheckSpecialValue");
 
-                if (paramCount == 1)
-                    isHadParam1 = true;
-                else if (paramCount == 2)
-                    isHadParam2 = true;
-                else if (paramCount == 3)
-                    isHadParam3 = true;
-                else if (paramCount == 4)
-                    isHadParam4 = true;
-                else if (paramCount == 5)
-                    isHadParam5 = true;
-                else if (paramCount == 6)
-                    isHadParam6 = true;
-                else if (paramCount == 7)
-                    isHadParam7 = true;
+                Log("max >>  start CheckMath");
+                for (int i = 0; i < allValue.Count; i++)
+                    allValue[i] = CheckMath(allValue[i]);
+                Log("max >>  finish CheckMath");
 
-                return allValue[0] + "(มากสุด " + allValue[1] + ")";
+                bool isHadNonInteger = false;
+                string nonIntegerText = null;
+
+                int max = 0;
+                for (int i = 0; i < allValue.Count; i++)
+                {
+                    int paramInt = 0;
+                    bool isInteger = false;
+
+                    isInteger = int.TryParse(allValue[i], out paramInt);
+
+                    if (isInteger)
+                    {
+                        if (max == 0 || max < paramInt)
+                            max = paramInt;
+                    }
+                    else
+                    {
+                        isHadNonInteger = true;
+
+                        //Replace temporary variables
+                        if (isFoundTempVariable)
+                        {
+                            for (int j = 0; j < tempVarName.Count; j++)
+                                allValue[i] = allValue[i].Replace(tempVarName[j], valueFromTempVar[j]);
+
+                            SetParamCheck(paramCount, true, false);
+                        }
+
+                        allValue[i] = ReplaceAllSpecialValue(allValue[i]);
+
+                        nonIntegerText = allValue[i];
+                    }
+                }
+
+                if (isHadNonInteger)
+                    return "(" + nonIntegerText + " มากสุด " + max + ")";
+                else
+                    return "(มากสุด " + max + ")";
             }
         }
         //Normal value
@@ -8192,6 +8197,12 @@ public class ItemDbScriptData
         else
             return data;
     }
+
+    /// <summary>
+    /// Continue deep check inside value
+    /// </summary>
+    /// <param name="allValue"></param>
+    /// <returns></returns>
     List<string> CheckSpecialValue(List<string> allValue)
     {
         // min(14
@@ -8233,7 +8244,6 @@ public class ItemDbScriptData
                 int endOfFunctionAt = 0;
                 for (int j = 0; j < sumValue.Length; j++)
                 {
-
                     if (sumValue[j] == ')')
                     {
                         endOfFunctionAt++;
@@ -8265,6 +8275,50 @@ public class ItemDbScriptData
         }
 
         return allValue;
+    }
+
+    /// <summary>
+    /// Simple Math Calculation
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    string CheckMath(string data)
+    {
+        List<string> dataSplit = StringSplit.GetStringSplitAll(data);
+        //List<MathCalculation> mathCalculations = new List<MathCalculation>();
+        MathCalculation mathCalculation = new MathCalculation();
+        for (int i = 0; i < dataSplit.Count; i++)
+        {
+            var sum = dataSplit[i];
+
+            sum = sum.Replace(",", "");
+
+            bool isOperator = false;
+            if (sum == "+" || sum == "-" || sum == "*" || sum == "/")
+                isOperator = true;
+
+            if (mathCalculation.IsAllFilled())
+            {
+                //mathCalculations.Add(mathCalculation);
+                //mathCalculation = new MathCalculation();
+                break;
+            }
+            else if (isOperator)
+                mathCalculation.SetOperator(sum);
+            else
+                mathCalculation.AddParams(sum);
+        }
+
+        if (mathCalculation._operator == "+")
+            return (int.Parse(mathCalculation.a) + int.Parse(mathCalculation.b)).ToString("f0");
+        else if (mathCalculation._operator == "-")
+            return (int.Parse(mathCalculation.a) - int.Parse(mathCalculation.b)).ToString("f0");
+        else if (mathCalculation._operator == "*")
+            return (int.Parse(mathCalculation.a) * int.Parse(mathCalculation.b)).ToString("f0");
+        else if (mathCalculation._operator == "/")
+            return (int.Parse(mathCalculation.a) / int.Parse(mathCalculation.b)).ToString("f0");
+
+        return data;
     }
 
     #region Utilities
@@ -9555,4 +9609,33 @@ public class IfElse
 {
     public string _if;
     public string _else;
+}
+
+[Serializable]
+public class MathCalculation
+{
+    public string a;
+    public string b;
+    public string _operator;
+
+    public bool IsAllFilled()
+    {
+        if (!string.IsNullOrEmpty(a) && !string.IsNullOrEmpty(b) && !string.IsNullOrEmpty(_operator))
+            return true;
+        else
+            return false;
+    }
+
+    public void SetOperator(string _operator)
+    {
+        this._operator = _operator;
+    }
+
+    public void AddParams(string param)
+    {
+        if (string.IsNullOrEmpty(a))
+            a = param;
+        else
+            b = param;
+    }
 }
