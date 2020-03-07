@@ -1595,8 +1595,6 @@ public class ItemDbScriptData
     #endregion
 
     List<TempVariables> tempVariables = new List<TempVariables>();
-    bool isHadEndIf;
-    int toAddEndIfCount;
     /// <summary>
     /// Get description by each item scripts function
     /// </summary>
@@ -1621,7 +1619,7 @@ public class ItemDbScriptData
         {
             var sumCut = allCut[i];
 
-            //Log("(Merging) allCut[" + i + "]: " + sumCut);
+            Log("(Merging) allCut[" + i + "]: " + sumCut);
 
             if (sumCut == "if" && allCut[i + 1].Contains("("))
             {
@@ -1652,14 +1650,11 @@ public class ItemDbScriptData
                 }
 
                 //if not had {}
-                if (!allCut[i + 1].Contains("{"))
+                if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}"))
                 {
-                    toAddEndIfCount = 0;
-                    isHadEndIf = true;
                 }
-
                 //if had {
-                if (allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}"))
+                else if (allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}"))
                 {
                     allCut[i + 1] += " " + allCut[i + 2];
                     allCut.RemoveAt(i + 2);
@@ -1700,11 +1695,43 @@ public class ItemDbScriptData
                                 }
                                 if (!isFound)
                                 {
-                                    Log("newTempVariables.variableName: " + newTempVariables.variableName);
-                                    Log("newTempVariables.value: " + newTempVariables.value);
+                                    Log("(if) newTempVariables.variableName: " + newTempVariables.variableName);
+                                    Log("(if) newTempVariables.value: " + newTempVariables.value);
                                     tempVariables.Add(newTempVariables);
                                 }
                             }
+                        }
+                    }
+
+                    //Remove first '{' and end '}'
+                    allCut[i + 1] = allCut[i + 1].Substring(1, allCut[i + 1].Length - 2);
+                    Log(allCut[i + 1]);
+
+                    //Then split by ';'
+                    var splitBonus = StringSplit.GetStringSplit(allCut[i + 1], ';');
+
+                    //Then re-add ';'
+                    for (int j = 0; j < splitBonus.Count; j++)
+                    {
+                        if (splitBonus[j] == "" || splitBonus[j] == " " || string.IsNullOrEmpty(splitBonus[j]) || string.IsNullOrWhiteSpace(splitBonus[j]))
+                            splitBonus.RemoveAt(j);
+                        else
+                            splitBonus[j] = splitBonus[j] + ";";
+                    }
+
+                    //Set next index to splitBonus[0]
+                    allCut[i + 1] = splitBonus[0];
+
+                    //Add to list
+                    for (int j = 0; j < splitBonus.Count; j++)
+                    {
+                        //Log("splitBonus: " + splitBonus[j]);
+                        if (j > 0)
+                        {
+                            if (j == splitBonus.Count - 1)
+                                allCut.Insert(i + 1, splitBonus[j]);
+                            else
+                                allCut.Insert(i + 1, splitBonus[j]);
                         }
                     }
                 }
@@ -1712,15 +1739,88 @@ public class ItemDbScriptData
             else if (sumCut.Contains("else"))
             {
                 //else not had {}
-                if (!allCut[i + 1].Contains("{"))
-                    allCut[i] = "TXT_ELSE";
-                //else had {}
-                if (allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}"))
+                if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}"))
                 {
-                    //Merge
+                }
+                //else had {
+                else if (allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}"))
+                {
                     allCut[i + 1] += " " + allCut[i + 2];
                     allCut.RemoveAt(i + 2);
                     goto L_Redo;
+                }
+                //else had {}
+                else if (allCut[i + 1].Contains("{") && allCut[i + 1].Contains("}"))
+                {
+                    string findTempVar = allCut[i + 1];
+                    if (findTempVar.Contains(".@"))
+                    {
+                        if (findTempVar.Contains(".@") && !findTempVar.Contains(";"))
+                        {
+                            MergeItemScripts(allCut, i);
+                            goto L_Redo;
+                        }
+                        else
+                        {
+                            TempVariables newTempVariables = new TempVariables();
+                            string tempVariablesName = findTempVar;
+                            List<string> allTempVariablesName = StringSplit.GetStringSplit(tempVariablesName, '=');
+                            if (allTempVariablesName.Count >= 2)
+                            {
+                                allTempVariablesName[0] = allTempVariablesName[0].Replace("{", "");
+                                int cutStartAt = allTempVariablesName[1].IndexOf(';');
+                                allTempVariablesName[1] = allTempVariablesName[1].Substring(0, cutStartAt + 1);
+                                newTempVariables.variableName = MergeWhiteSpace.RemoveWhiteSpace(allTempVariablesName[0]);
+                                newTempVariables.value = MergeWhiteSpace.RemoveWhiteSpace(allTempVariablesName[1]);
+
+                                bool isFound = false;
+                                for (int j = 0; j < tempVariables.Count; j++)
+                                {
+                                    if (tempVariables[j].variableName == newTempVariables.variableName)
+                                    {
+                                        isFound = true;
+                                        break;
+                                    }
+                                }
+                                if (!isFound)
+                                {
+                                    Log("(else) newTempVariables.variableName: " + newTempVariables.variableName);
+                                    Log("(else) newTempVariables.value: " + newTempVariables.value);
+                                    tempVariables.Add(newTempVariables);
+                                }
+                            }
+                        }
+                    }
+
+                    //Remove first '{' and end '}'
+                    allCut[i + 1] = allCut[i + 1].Substring(1, allCut[i + 1].Length - 1);
+
+                    //Then split by ';'
+                    var splitBonus = StringSplit.GetStringSplit(allCut[i + 1], ';');
+
+                    //Then re-add ';'
+                    for (int j = 0; j < splitBonus.Count; j++)
+                    {
+                        if (splitBonus[j] == "" || splitBonus[j] == " " || string.IsNullOrEmpty(splitBonus[j]) || string.IsNullOrWhiteSpace(splitBonus[j]))
+                            splitBonus.RemoveAt(j);
+                        else
+                            splitBonus[j] = splitBonus[j] + ";";
+                    }
+
+                    //Set next index to splitBonus[0]
+                    allCut[i + 1] = splitBonus[0];
+
+                    //Add to list
+                    for (int j = 0; j < splitBonus.Count; j++)
+                    {
+                        if (j > 0)
+                        {
+                            if (j == splitBonus.Count - 1)
+                                allCut.Insert(i + 1, splitBonus[j]);
+                            else
+                                allCut.Insert(i + 1, splitBonus[j]);
+                        }
+                    }
                 }
             }
             else if (sumCut == "bonus" || sumCut == "bonus " || sumCut == " bonus")
@@ -3031,39 +3131,65 @@ public class ItemDbScriptData
                 data = data.Substring(3);
                 //Remove )
                 data = data.Substring(0, data.Length - 1);
-                //Replace == to คือ
                 data = data.Replace("==", " คือ ");
-                //Replace != to ไม่เท่ากับ
                 data = data.Replace("!=", " ไม่เท่ากับ ");
-                //Replace || to หรือ
                 data = data.Replace("||", " หรือ ");
-                //Replace && to และ
                 data = data.Replace("&&", " และ ");
-                //Replace Job Name
+                data = data.Replace(">", " มากกว่า ");
+                data = data.Replace(">=", " มากกว่าหรือเท่ากับ ");
+                data = data.Replace("<", " น้อยกว่า ");
+                data = data.Replace("<=", " น้อยกว่าหรือเท่ากับ ");
                 data = data.Replace("Job_", "");
-                //Replace _
                 data = data.Replace("_", " ");
-                //Replace getpartnerid()
                 data = data.Replace("getpartnerid()", "มีคู่สมรส");
+
+                //Use store temporary variables if found in this value
+                bool isFoundTempVariable = false;
+                List<string> tempVarName = new List<string>();
+                List<string> valueFromTempVar = new List<string>();
+                for (int j = 0; j < tempVariables.Count; j++)
+                {
+                    if (data.Contains(tempVariables[j].variableName))
+                    {
+                        isFoundTempVariable = true;
+
+                        tempVarName.Add(tempVariables[j].variableName);
+                        Log("GetValue >> Found variableName: " + tempVariables[j].variableName);
+
+                        valueFromTempVar.Add(tempVariables[j].value);
+                        Log("GetValue >> Found value: " + tempVariables[j].value);
+                    }
+                }
+
+                //Replace temporary variables
+                if (isFoundTempVariable)
+                {
+                    for (int j = 0; j < tempVarName.Count; j++)
+                        data = data.Replace(tempVarName[j], valueFromTempVar[j]);
+
+                }
+
+                //Replace special variables
+                data = ReplaceAllSpecialValue(data);
 
                 sum += AddDescription(sum, "[ถ้า " + data + "]");
             }
             #endregion
-            #region TXT_ELSE
-            functionName = "TXT_ELSE";
+            #region [TXT_ELSE]
+            functionName = "[TXT_ELSE]";
             if (data.Contains(functionName))
             {
                 sum += AddDescription(sum, "[หากไม่ตรงเงื่อนไข]");
-                allCut.Insert(i + 2, "TXT_ENDELSE");
+                allCut.Insert(i + 2, "[TXT_END_ELSE]");
             }
             #endregion
-            #region TXT_ENDELSE
-            functionName = "TXT_ENDELSE";
+            #region [TXT_END_ELSE]
+            functionName = "[TXT_END_ELSE]";
             if (data.Contains(functionName))
                 sum += AddDescription(sum, "[สิ้นสุดหากไม่ตรงเงื่อนไข]");
             #endregion
-            #region TXT_ENDIF
-            functionName = "TXT_ENDIF";
+            #region [TXT_END_IF]
+            functionName = "[TXT_END_IF]";
             if (data.Contains(functionName))
                 sum += AddDescription(sum, "[สิ้นสุดหากตรงเงื่อนไข]");
             #endregion
@@ -3540,7 +3666,7 @@ public class ItemDbScriptData
                 if (isHadParam1)
                     sum += AddDescription(sum, "กดใช้เพื่อรับ " + param1 + " Zeny");
             }
-            #endregion 
+            #endregion
             #region Zeny+=
             functionName = "Zeny+=";
             if (data.Contains(functionName))
@@ -3582,7 +3708,7 @@ public class ItemDbScriptData
                 if (isHadParam1)
                     sum += AddDescription(sum, "กดใช้เพื่อรับ " + param1 + " Roulette Bronze");
             }
-            #endregion 
+            #endregion
             #region RouletteSilver
             functionName = "RouletteSilver";
             if (data.Contains(functionName))
@@ -4491,7 +4617,7 @@ public class ItemDbScriptData
                         sum += AddDescription(sum, "แบกของได้มากขึ้น +" + param1);
                 }
             }
-            #endregion   
+            #endregion
             #region bonus bHPrecovRate
             functionName = "bonus bHPrecovRate";
             if (data.Contains(functionName))
@@ -8030,6 +8156,9 @@ public class ItemDbScriptData
                     allValue[i] = CheckMath(allValue[i]);
                 Log("min >>  finish CheckMath");
 
+                for (int i = 0; i < allValue.Count; i++)
+                    allValue[i] = allValue[i].Replace(",", "");
+
                 bool isHadNonInteger = false;
                 string nonIntegerText = null;
 
@@ -8102,6 +8231,9 @@ public class ItemDbScriptData
                     allValue[i] = CheckMath(allValue[i]);
                 Log("max >>  finish CheckMath");
 
+                for (int i = 0; i < allValue.Count; i++)
+                    allValue[i] = allValue[i].Replace(",", "");
+
                 bool isHadNonInteger = false;
                 string nonIntegerText = null;
 
@@ -8140,7 +8272,7 @@ public class ItemDbScriptData
                 SetParamCheck(paramCount, true, false);
 
                 if (isHadNonInteger)
-                    return "(" + nonIntegerText + " มากสุด " + max + ")";
+                    return "(" + max + " มากสุด " + nonIntegerText + ")";
                 else
                     return "(มากสุด " + max + ")";
             }
@@ -9432,21 +9564,10 @@ public class ItemDbScriptData
     /// <returns></returns>
     string AddDescription(string data, string toAdd)
     {
-        string endIf = null;
-        if (isHadEndIf)
-        {
-            if (toAddEndIfCount >= 1)
-            {
-                isHadEndIf = false;
-                endIf = "\n\"[สิ้นสุดหากตรงเงื่อนไข]\",";
-            }
-            else
-                toAddEndIfCount++;
-        }
         if (string.IsNullOrEmpty(data))
-            return "\"" + toAdd + "\"," + endIf;
+            return "\"" + toAdd + "\",";
         else
-            return "\n\"" + toAdd + "\"," + endIf;
+            return "\n\"" + toAdd + "\",";
     }
 
     void Log(object obj)
