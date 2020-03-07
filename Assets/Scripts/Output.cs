@@ -3013,6 +3013,8 @@ public class ItemDbScriptData
         }
         #endregion
 
+        Log("<color=yellow>Start convert item bonus</color>");
+
         for (int i = 0; i < allCut.Count; i++)
         {
             Log("allCut[" + i + "]: " + allCut[i]);
@@ -7869,11 +7871,8 @@ public class ItemDbScriptData
             }
         }
 
-        if (!Application.isPlaying)
-        {
-            for (int i = 0; i < allParam.Count; i++)
-                Debug.Log("allParam[" + i + "]: " + allParam[i]);
-        }
+        //for (int i = 0; i < allParam.Count; i++)
+        //    Log("GetAllParamerters >> allParam[" + i + "]: " + allParam[i]);
 
         return allParam;
     }
@@ -7959,8 +7958,7 @@ public class ItemDbScriptData
 
                 SetParamCheck(paramCount, true, false);
 
-                Log(allValue[0] + " ยกกำลัง " + allValue[1]);
-                return allValue[0] + " ยกกำลัง " + allValue[1];
+                return "(" + allValue[0] + " ยกกำลัง " + allValue[1] + ")";
             }
             else if (data.Contains("rand"))
             {
@@ -7968,34 +7966,39 @@ public class ItemDbScriptData
 
                 int paramStartAt = data.IndexOf("(");
 
-                string sumCut = data.Substring(paramStartAt);
+                data = data.Substring(paramStartAt + 1);
+                Log("rand >> GetValue: " + data);
+                data = data.Substring(0, data.Length - 1);
+                Log("rand >> GetValue: " + data);
 
-                Log("GetValue: " + sumCut);
+                var allValue = StringSplit.GetStringSplit(data, ',');
 
-                int paramEndAt = sumCut.IndexOf(")");
+                for (int i = 0; i < allValue.Count; i++)
+                {
+                    Log("rand >>  allValue[" + i + "]: " + allValue[i]);
+                    if (i > 0)
+                        allValue[i] = "," + allValue[i];
+                    Log("rand >>  allValue[" + i + "]: " + allValue[i]);
+                }
 
-                sumCut = sumCut.Substring(1, paramEndAt - 1);
+                Log("rand >>  start CheckSpecialValue");
+                allValue = CheckSpecialValue(allValue);
+                Log("rand >>  finish CheckSpecialValue");
 
-                Log("GetValue: " + sumCut);
+                Log("rand >>  start CheckMath");
+                for (int i = 0; i < allValue.Count; i++)
+                    allValue[i] = CheckMath(allValue[i]);
+                Log("rand >>  finish CheckMath");
 
-                List<string> allValue = StringSplit.GetStringSplit(sumCut, ',');
+                for (int i = 0; i < allValue.Count; i++)
+                    Log("rand >>  allValue[" + i + "]: " + allValue[i]);
 
-                if (paramCount == 1)
-                    isHadParam1 = true;
-                else if (paramCount == 2)
-                    isHadParam2 = true;
-                else if (paramCount == 3)
-                    isHadParam3 = true;
-                else if (paramCount == 4)
-                    isHadParam4 = true;
-                else if (paramCount == 5)
-                    isHadParam5 = true;
-                else if (paramCount == 6)
-                    isHadParam6 = true;
-                else if (paramCount == 7)
-                    isHadParam7 = true;
+                for (int i = 0; i < allValue.Count; i++)
+                    allValue[i] = allValue[i].Replace(",", "");
 
-                return allValue[0] + "~" + allValue[1];
+                SetParamCheck(paramCount, true, false);
+
+                return "(" + allValue[0] + "~" + allValue[1] + ")";
             }
             else if (data.Contains("min"))
             {
@@ -8061,6 +8064,8 @@ public class ItemDbScriptData
                         nonIntegerText = allValue[i];
                     }
                 }
+
+                SetParamCheck(paramCount, true, false);
 
                 if (isHadNonInteger)
                     return "(" + nonIntegerText + " มากสุด " + min + ")";
@@ -8132,6 +8137,8 @@ public class ItemDbScriptData
                     }
                 }
 
+                SetParamCheck(paramCount, true, false);
+
                 if (isHadNonInteger)
                     return "(" + nonIntegerText + " มากสุด " + max + ")";
                 else
@@ -8178,6 +8185,8 @@ public class ItemDbScriptData
                 else
                     SetParamCheck(paramCount, true, false);
             }
+            else
+                SetParamCheck(paramCount, true, false);
         }
 
         //Replace temporary variables
