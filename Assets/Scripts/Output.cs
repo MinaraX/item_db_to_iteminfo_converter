@@ -3292,14 +3292,11 @@ public class ItemDbScriptData
                 data = MergeWhiteSpace.RemoveWhiteSpace(data);
                 //Remove else if(
                 if (data.Contains("elseif("))
-                {
                     isElseIf = true;
-                    data = data.Substring(7);
-                }
-                //Remove if(
-                else
-                    data = data.Substring(3);
                 //Remove ( )
+                data = data.Replace("elseif(", "");
+                data = data.Replace("if(", "");
+                data = ReplaceAllSpecialValue(data);
                 data = data.Replace("(", "");
                 data = data.Replace(")", "");
                 data = data.Replace(";", "");
@@ -8910,14 +8907,20 @@ public class ItemDbScriptData
         {
             while (value.Contains("getskilllv"))
             {
-                value = value.Replace("getskilllv", "ตามจำนวนที่เรียนรู้ Skill ");
                 int circleStartAt = value.IndexOf("(");
                 int circleEndAt = value.IndexOf(")");
+
                 string sumToCut = value.Substring(circleStartAt + 1);
+                int sumCircleStartAt = sumToCut.IndexOf("(");
+                sumToCut = sumToCut.Substring(sumCircleStartAt + 1);
                 int sumCircleEndAt = sumToCut.IndexOf(")");
                 sumToCut = sumToCut.Substring(0, sumCircleEndAt);
                 sumToCut = GetSkillName(sumToCut);
-                value = value.Substring(0, circleStartAt) + value.Substring(circleEndAt + 1) + sumToCut;
+
+                string removeText = value.Substring(0, circleStartAt);
+                removeText = removeText.Replace("getskilllv", "");
+
+                value = removeText + "(ตามจำนวนที่เรียนรู้ Skill " + sumToCut + ")" + value.Substring(circleEndAt + 1);
             }
         }
 
@@ -9360,32 +9363,6 @@ public class ItemDbScriptData
     }
 
     /// <summary>
-    /// Get wording for skill name levels
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    string GetSkillLv(string data)
-    {
-        Log("GetSkillLv");
-
-        int paramStartAt = data.IndexOf("(");
-        Log("paramStartAt: " + paramStartAt);
-
-        string sum = data.Substring(paramStartAt + 1);
-
-        Log("GetSkillLv: " + sum);
-
-        int paramEndAt = sum.IndexOf(")");
-        Log("paramEndAt: " + paramEndAt);
-
-        sum = sum.Substring(1, paramEndAt - 2);
-
-        Log("GetSkillLv: " + sum);
-
-        return " (" + GetSkillName(sum) + " ที่เรียนรู้ ";
-    }
-
-    /// <summary>
     /// Get skill name by skill id or skill name
     /// </summary>
     /// <param name="data"></param>
@@ -9399,6 +9376,7 @@ public class ItemDbScriptData
 
         if (isInteger)
         {
+            //Log("GetSkillName >> Integer " + paramInt);
             for (int i = 0; i < m_output.m_currentSkillNames.Count; i++)
             {
                 var sumData = m_output.m_currentSkillNames[i];
@@ -9408,6 +9386,7 @@ public class ItemDbScriptData
         }
         else
         {
+            //Log("GetSkillName >> Not Integer " + data);
             for (int i = 0; i < m_output.m_currentSkillNames.Count; i++)
             {
                 var sumData = m_output.m_currentSkillNames[i];

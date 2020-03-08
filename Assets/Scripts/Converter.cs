@@ -145,6 +145,9 @@ public class Converter : MonoBehaviour
     {
         objConvertInProgress.SetActive(true);
 
+        bool isSlowConvert = false;
+        if (Input.GetKey(KeyCode.LeftShift))
+            isSlowConvert = true;
         yield return null;
 
         //Start process
@@ -156,7 +159,9 @@ public class Converter : MonoBehaviour
         for (int i = 0; i < output.m_lines.Count; i++)
         {
             output.ConvertSpecificArrayToItemInfo(i);
-            txtCurrentProgress.text = "Converted " + (i + 1) + "/" + (output.m_lines.Count + 1);
+            txtCurrentProgress.text = "Converted " + i + "/" + output.m_lines.Count;
+            if (isSlowConvert)
+                yield return null;
         }
 
         //Finished
