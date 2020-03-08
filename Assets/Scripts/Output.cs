@@ -1557,6 +1557,7 @@ public class ItemDbScriptData
     {
         sumScript = null;
 
+        script = "{ .@r = getrefine(); if (.@r>=11) .@val = 35;else if (.@r>=9) .@val = 20;bonus2 bSkillAtk,\"NC_AXEBOOMERANG\",.@val;bonus2 bSkillAtk,\"NC_POWERSWING\",.@val;}";
         script = CorrectScriptToConvert(script);
 
         string sumDesc = GetDescription(script);
@@ -1677,7 +1678,60 @@ public class ItemDbScriptData
 
                 //if not had {}
                 if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}") && !allCut[i].Contains(";"))
-                    allCut[i + 1] += allCut[i + 1] + "[TXT_END_IF]";
+                {
+                    allCut[i] = allCut[i] + ";";
+
+                    int loop = 0;
+                    while (!allCut[i + 1 + loop].Contains(";"))
+                        loop++;
+
+                    allCut.Insert(i + 2 + loop, "[TXT_END_IF];");
+                }
+                else if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}") && allCut[i].Contains(";"))
+                {
+                    string findTempVar = allCut[i + 1];
+                    if (findTempVar.Contains(".@"))
+                    {
+                        if (findTempVar.Contains(".@") && !findTempVar.Contains(";"))
+                        {
+                            MergeItemScripts(allCut, i + 1);
+                            goto L_Redo;
+                        }
+                        else
+                        {
+                            TempVariables newTempVariables = new TempVariables();
+                            string tempVariablesName = findTempVar;
+                            List<string> allTempVariablesName = StringSplit.GetStringSplit(tempVariablesName, '=');
+                            if (allTempVariablesName.Count >= 2)
+                            {
+                                allTempVariablesName[0] = allTempVariablesName[0].Replace("{", "");
+                                int cutStartAt = allTempVariablesName[1].IndexOf(';');
+                                allTempVariablesName[1] = allTempVariablesName[1].Substring(0, cutStartAt + 1);
+                                newTempVariables.variableName = MergeWhiteSpace.RemoveWhiteSpace(allTempVariablesName[0]);
+                                newTempVariables.value = MergeWhiteSpace.RemoveWhiteSpace(allTempVariablesName[1]);
+                                newTempVariables.toCheckMatching = allCut[i];
+
+                                bool isFound = false;
+                                for (int j = 0; j < tempVariables.Count; j++)
+                                {
+                                    if (tempVariables[j].variableName == newTempVariables.variableName
+                                        && tempVariables[j].value == newTempVariables.value)
+                                    {
+                                        isFound = true;
+                                        break;
+                                    }
+                                }
+                                if (!isFound)
+                                {
+                                    //Log("(one line if) newTempVariables.variableName: " + newTempVariables.variableName);
+                                    //Log("(one line if) newTempVariables.value: " + newTempVariables.value);
+                                    //Log("(one line if) newTempVariables.toCheckMatching: " + newTempVariables.toCheckMatching);
+                                    tempVariables.Add(newTempVariables);
+                                }
+                            }
+                        }
+                    }
+                }
                 //'if' need '{}'
                 else if (allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}"))
                 {
@@ -1710,11 +1764,13 @@ public class ItemDbScriptData
                                 allTempVariablesName[1] = allTempVariablesName[1].Substring(0, cutStartAt + 1);
                                 newTempVariables.variableName = MergeWhiteSpace.RemoveWhiteSpace(allTempVariablesName[0]);
                                 newTempVariables.value = MergeWhiteSpace.RemoveWhiteSpace(allTempVariablesName[1]);
+                                newTempVariables.toCheckMatching = allCut[i - 1];
 
                                 bool isFound = false;
                                 for (int j = 0; j < tempVariables.Count; j++)
                                 {
-                                    if (tempVariables[j].variableName == newTempVariables.variableName)
+                                    if (tempVariables[j].variableName == newTempVariables.variableName
+                                        && tempVariables[j].value == newTempVariables.value)
                                     {
                                         isFound = true;
                                         break;
@@ -1722,8 +1778,9 @@ public class ItemDbScriptData
                                 }
                                 if (!isFound)
                                 {
-                                    Log("(if) newTempVariables.variableName: " + newTempVariables.variableName);
-                                    Log("(if) newTempVariables.value: " + newTempVariables.value);
+                                    //Log("(if) newTempVariables.variableName: " + newTempVariables.variableName);
+                                    //Log("(if) newTempVariables.value: " + newTempVariables.value);
+                                    //Log("(if) newTempVariables.toCheckMatching: " + newTempVariables.toCheckMatching);
                                     tempVariables.Add(newTempVariables);
                                 }
                             }
@@ -1756,7 +1813,7 @@ public class ItemDbScriptData
                             if (j == splitBonus.Count - 1)
                             {
                                 allCut.Insert(i + 1, splitBonus[j]);
-                                allCut.Insert(i + 1 + splitBonus.Count, "[TXT_END_IF]");
+                                allCut.Insert(i + 1 + splitBonus.Count, "[TXT_END_IF];");
                             }
                             else
                                 allCut.Insert(i + 1, splitBonus[j]);
@@ -1782,10 +1839,57 @@ public class ItemDbScriptData
                 else if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}") && !allCut[i].Contains(";"))
                 {
                     allCut[i] = "[TXT_ELSE];";
+
                     int loop = 0;
                     while (!allCut[i + 1 + loop].Contains(";"))
                         loop++;
-                    allCut.Insert(i + 2 + loop, "[TXT_END_ELSE]");
+
+                    allCut.Insert(i + 2 + loop, "[TXT_END_ELSE];");
+                }
+                else if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}") && allCut[i].Contains(";"))
+                {
+                    string findTempVar = allCut[i + 1];
+                    if (findTempVar.Contains(".@"))
+                    {
+                        if (findTempVar.Contains(".@") && !findTempVar.Contains(";"))
+                        {
+                            MergeItemScripts(allCut, i + 1);
+                            goto L_Redo;
+                        }
+                        else
+                        {
+                            TempVariables newTempVariables = new TempVariables();
+                            string tempVariablesName = findTempVar;
+                            List<string> allTempVariablesName = StringSplit.GetStringSplit(tempVariablesName, '=');
+                            if (allTempVariablesName.Count >= 2)
+                            {
+                                allTempVariablesName[0] = allTempVariablesName[0].Replace("{", "");
+                                int cutStartAt = allTempVariablesName[1].IndexOf(';');
+                                allTempVariablesName[1] = allTempVariablesName[1].Substring(0, cutStartAt + 1);
+                                newTempVariables.variableName = MergeWhiteSpace.RemoveWhiteSpace(allTempVariablesName[0]);
+                                newTempVariables.value = MergeWhiteSpace.RemoveWhiteSpace(allTempVariablesName[1]);
+                                newTempVariables.toCheckMatching = allCut[i];
+
+                                bool isFound = false;
+                                for (int j = 0; j < tempVariables.Count; j++)
+                                {
+                                    if (tempVariables[j].variableName == newTempVariables.variableName
+                                        && tempVariables[j].value == newTempVariables.value)
+                                    {
+                                        isFound = true;
+                                        break;
+                                    }
+                                }
+                                if (!isFound)
+                                {
+                                    //Log("(one line else) newTempVariables.variableName: " + newTempVariables.variableName);
+                                    //Log("(one line else) newTempVariables.value: " + newTempVariables.value);
+                                    //Log("(one line else) newTempVariables.toCheckMatching: " + newTempVariables.toCheckMatching);
+                                    tempVariables.Add(newTempVariables);
+                                }
+                            }
+                        }
+                    }
                 }
                 //'else' need '{}'
                 else if (allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}"))
@@ -1819,11 +1923,13 @@ public class ItemDbScriptData
                                 allTempVariablesName[1] = allTempVariablesName[1].Substring(0, cutStartAt + 1);
                                 newTempVariables.variableName = MergeWhiteSpace.RemoveWhiteSpace(allTempVariablesName[0]);
                                 newTempVariables.value = MergeWhiteSpace.RemoveWhiteSpace(allTempVariablesName[1]);
+                                newTempVariables.toCheckMatching = allCut[i - 1];
 
                                 bool isFound = false;
                                 for (int j = 0; j < tempVariables.Count; j++)
                                 {
-                                    if (tempVariables[j].variableName == newTempVariables.variableName)
+                                    if (tempVariables[j].variableName == newTempVariables.variableName
+                                        && tempVariables[j].value == newTempVariables.value)
                                     {
                                         isFound = true;
                                         break;
@@ -1831,8 +1937,9 @@ public class ItemDbScriptData
                                 }
                                 if (!isFound)
                                 {
-                                    Log("(else) newTempVariables.variableName: " + newTempVariables.variableName);
-                                    Log("(else) newTempVariables.value: " + newTempVariables.value);
+                                    //Log("(else) newTempVariables.variableName: " + newTempVariables.variableName);
+                                    //Log("(else) newTempVariables.value: " + newTempVariables.value);
+                                    //Log("(else) newTempVariables.toCheckMatching: " + newTempVariables.toCheckMatching);
                                     tempVariables.Add(newTempVariables);
                                 }
                             }
@@ -1868,7 +1975,7 @@ public class ItemDbScriptData
                             if (j == splitBonus.Count - 1)
                             {
                                 allCut.Insert(i + 1, splitBonus[j]);
-                                allCut.Insert(i + 1 + splitBonus.Count, "[TXT_END_ELSE]");
+                                allCut.Insert(i + 1 + splitBonus.Count, "[TXT_END_ELSE];");
                             }
                             else
                                 allCut.Insert(i + 1, splitBonus[j]);
@@ -3193,16 +3300,19 @@ public class ItemDbScriptData
                 //Remove if(
                 else
                     data = data.Substring(3);
-                //Remove )
-                data = data.Substring(0, data.Length - 1);
+                //Remove ( )
+                data = data.Replace("(", "");
+                data = data.Replace(")", "");
+                data = data.Replace(";", "");
+
                 data = data.Replace("==", " คือ ");
                 data = data.Replace("!=", " ไม่เท่ากับ ");
                 data = data.Replace("||", " หรือ ");
                 data = data.Replace("&&", " และ ");
-                data = data.Replace(">", " มากกว่า ");
                 data = data.Replace(">=", " มากกว่าหรือเท่ากับ ");
-                data = data.Replace("<", " น้อยกว่า ");
+                data = data.Replace(">", " มากกว่า ");
                 data = data.Replace("<=", " น้อยกว่าหรือเท่ากับ ");
+                data = data.Replace("<", " น้อยกว่า ");
                 data = data.Replace("Job_", "");
                 data = data.Replace("_", " ");
                 data = data.Replace("getpartnerid()", "มีคู่สมรส");
@@ -3218,10 +3328,10 @@ public class ItemDbScriptData
                         isFoundTempVariable = true;
 
                         tempVarName.Add(tempVariables[j].variableName);
-                        Log("GetValue >> Found variableName: " + tempVariables[j].variableName);
+                        Log("GetDescription >> Found variableName: " + tempVariables[j].variableName);
 
                         valueFromTempVar.Add(tempVariables[j].value);
-                        Log("GetValue >> Found value: " + tempVariables[j].value);
+                        Log("GetDescription >> Found value: " + tempVariables[j].value);
                     }
                 }
 
@@ -4840,7 +4950,7 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
-                string param2 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
                 if (isHadParam1 && isHadParam2)
                 {
@@ -4860,7 +4970,7 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
-                string param2 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
                 if (isHadParam1 && isHadParam2)
                 {
@@ -4880,7 +4990,7 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
-                string param2 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
 
                 if (isHadParam1 && isHadParam2)
                 {
@@ -6110,9 +6220,9 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
-                string param2 = GetValue(allParam[0], 1);
-                string param3 = GetValue(allParam[0], 1);
-                string param4 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
+                string param4 = GetValue(allParam[3], 4);
 
                 if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4)
                     sum += AddDescription(sum, "เมื่อโจมตีกายภาพมีโอกาส " + param2 + "% ทำให้ศัตรูเหลือ DEF " + param4 + " กับเผ่า " + GetRaceName(allParam[0]) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param3)));
@@ -6127,9 +6237,9 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
-                string param2 = GetValue(allParam[0], 1);
-                string param3 = GetValue(allParam[0], 1);
-                string param4 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
+                string param4 = GetValue(allParam[3], 4);
 
                 if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4)
                     sum += AddDescription(sum, "เมื่อโจมตีกายภาพมีโอกาส " + param2 + "% ทำให้ศัตรูเหลือ MDEF " + param4 + " กับเผ่า " + GetRaceName(allParam[0]) + " เป็นเวลา " + TimerToStringTimer(float.Parse(param3)));
@@ -7933,6 +8043,21 @@ public class ItemDbScriptData
             if (data.Contains(functionName))
                 sum += AddDescription(sum, "ไม่มีอาการชะงักเมื่อโดนโจมตี");
             #endregion
+            #region Set Temporary Variables
+            for (int j = 0; j < tempVariables.Count; j++)
+            {
+                functionName = tempVariables[j].variableName;
+                if (data.Contains(functionName))
+                {
+                    if (allCut[i - 1] == tempVariables[j].toCheckMatching)
+                    {
+                        string tempVarValue = tempVariables[j].value;
+                        tempVarValue = tempVarValue.Replace(";", "");
+                        sum += AddDescription(sum, "เปลี่ยนค่าที่ได้รับเป็น " + tempVarValue);
+                    }
+                }
+            }
+            #endregion
         }
 
         return sum;
@@ -8050,7 +8175,7 @@ public class ItemDbScriptData
     {
         data = MergeWhiteSpace.RemoveWhiteSpace(data);
 
-        Log("GetValue: " + data);
+        Log("GetValue[" + (paramCount - 1) + "]: " + data);
 
         //Use store temporary variables if found in this value
         bool isFoundTempVariable = false;
@@ -8372,14 +8497,110 @@ public class ItemDbScriptData
         //Replace temporary variables
         if (isFoundTempVariable)
         {
+            List<string> tempValues = new List<string>();
+            List<int> tempIntegers = new List<int>();
+            string highLowValue = null;
+            string minValue = null;
+            string maxValue = null;
+
             for (int i = 0; i < tempVarName.Count; i++)
-                data = data.Replace(tempVarName[i], valueFromTempVar[i]);
+            {
+                if (data == tempVarName[i])
+                {
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        if (tempVariables[j].variableName == data && !tempValues.Contains(tempVariables[j].value))
+                        {
+                            tempValues.Add(tempVariables[j].value);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < tempValues.Count; i++)
+                tempValues[i] = tempValues[i].Replace(";", "");
+
+            //Normal replace
+            if (tempVarName.Count <= 1)
+            {
+                for (int i = 0; i < tempVarName.Count; i++)
+                    data = data.Replace(tempVarName[i], tempVariables[i].value);
+            }
+            //Range replace (ตามจำนวนตีบวก ~ Min{Max} Val)
+            else
+            {
+                for (int i = 0; i < tempValues.Count; i++)
+                {
+                    //Integer check
+                    int paramInt = 0;
+                    bool isInteger = false;
+
+                    isInteger = int.TryParse(tempValues[i], out paramInt);
+
+                    Log("isInteger: " + isInteger + ", paramInt: " + paramInt);
+
+                    if (isInteger)
+                        tempIntegers.Add(paramInt);
+                    else if (string.IsNullOrEmpty(minValue))
+                        minValue = tempValues[i];
+                    else if (string.IsNullOrEmpty(maxValue))
+                        maxValue = tempValues[i];
+                }
+
+                //Log(">>>>>>>>>>>>>>>>>>>>>>> minValue: " + minValue);
+                //Log(">>>>>>>>>>>>>>>>>>>>>>> maxValue: " + maxValue);
+                //Log(">>>>>>>>>>>>>>>>>>>>>>> tempIntegers.Count: " + tempIntegers.Count);
+
+                int minVal = -9999;
+                int maxVal = -9999;
+                if (tempIntegers.Count > 1)
+                {
+                    for (int j = 0; j < tempIntegers.Count; j++)
+                    {
+                        if (minVal == -9999)
+                            minVal = tempIntegers[j];
+                        else if (maxVal == -9999)
+                            maxVal = tempIntegers[j];
+                        else
+                        {
+                            if (tempIntegers[j] > maxVal)
+                                maxVal = tempIntegers[j];
+                        }
+                        if (minVal > maxVal)
+                        {
+                            var tempMin = minVal;
+                            var tempMax = maxVal;
+                            minVal = tempMax;
+                            maxVal = tempMin;
+                        }
+                    }
+                }
+
+                //Log(">>>>>>>>>>>>>>>>>>>>>>> minValue: " + minValue);
+                //Log(">>>>>>>>>>>>>>>>>>>>>>> maxValue: " + maxValue);
+                //Log(">>>>>>>>>>>>>>>>>>>>>>> tempIntegers.Count: " + tempIntegers.Count);
+                //Log(">>>>>>>>>>>>>>>>>>>>>>> minVal: " + minVal);
+                //Log(">>>>>>>>>>>>>>>>>>>>>>> maxVal: " + maxVal);
+
+                if (minVal != -9999 && maxVal != -9999)
+                    highLowValue = minVal + "~" + maxVal;
+                else if (minVal != -9999 && maxVal == -9999)
+                    highLowValue = minValue + "~" + minVal.ToString("f0");
+                else
+                    highLowValue = minValue + "~" + maxValue;
+
+                for (int i = 0; i < tempValues.Count; i++)
+                    data = data.Replace(tempVarName[i], highLowValue);
+            }
 
             SetParamCheck(paramCount, true, false);
         }
 
         //Replace special variables
         data = ReplaceAllSpecialValue(data);
+
+        data = data.Replace(";", "");
 
         if (isFoundTempVariable)
             return "(" + data + ")";
@@ -9757,6 +9978,7 @@ public class TempVariables
 {
     public string variableName;
     public string value;
+    public string toCheckMatching;
 }
 
 [Serializable]
