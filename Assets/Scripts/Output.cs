@@ -1562,6 +1562,12 @@ public class ItemDbScriptData
         string sumDesc = GetDescription(script);
         sumScript = sumDesc;
 
+        if (!string.IsNullOrEmpty(sumScript))
+        {
+            sumScript = sumScript.Replace("[", "(");
+            sumScript = sumScript.Replace("]", ")");
+        }
+
         return sumScript;
     }
     string sumEquipScript;
@@ -1579,6 +1585,12 @@ public class ItemDbScriptData
         else
             sumEquipScript = sumDesc;
 
+        if (!string.IsNullOrEmpty(sumEquipScript))
+        {
+            sumEquipScript = sumEquipScript.Replace("[", "(");
+            sumEquipScript = sumEquipScript.Replace("]", ")");
+        }
+
         return sumEquipScript;
     }
     string sumUnequipScript;
@@ -1595,6 +1607,12 @@ public class ItemDbScriptData
             sumUnequipScript = "[เมื่อถอด]\n" + sumDesc;
         else
             sumUnequipScript = sumDesc;
+
+        if (!string.IsNullOrEmpty(sumUnequipScript))
+        {
+            sumUnequipScript = sumUnequipScript.Replace("[", "(");
+            sumUnequipScript = sumUnequipScript.Replace("]", ")");
+        }
 
         return sumUnequipScript;
     }
@@ -8243,10 +8261,11 @@ public class ItemDbScriptData
                 {
                     string functionName = "pow";
 
-                    Log(functionName);
+                    Log(functionName + ": " + data);
 
                     int retry = 300;
                     string newValue = data;
+                    newValue = ReplaceAllSpecialValue(newValue);
                     while (newValue.Contains(functionName) && retry > 0)
                     {
                         retry--;
@@ -8263,8 +8282,8 @@ public class ItemDbScriptData
 
                                 if (findFunc == functionName)
                                 {
-                                    circleStartAt = newValue.IndexOf("(", i - 3);
-                                    circleEndAt = newValue.IndexOf(")", i - 3);
+                                    circleStartAt = newValue.IndexOf("(", i - 2);
+                                    circleEndAt = newValue.IndexOf(")", i - 2);
                                     break;
                                 }
                             }
@@ -8273,13 +8292,16 @@ public class ItemDbScriptData
                         }
 
                         string sumToCut = newValue.Substring(circleStartAt + 1);
-                        Log(functionName + " >> sumToCut: " + sumToCut);
-                        int sumCircleStartAt = sumToCut.IndexOf("(");
-                        sumToCut = sumToCut.Substring(sumCircleStartAt + 1);
-                        Log(functionName + " >> sumToCut: " + sumToCut);
+                        Log(functionName + " >> sumToCut#1: " + sumToCut);
+                        sumToCut = CheckSpecialValue(sumToCut);
+                        sumToCut = ReplaceAllSpecialValue(sumToCut);
+                        Log(functionName + " >> sumToCut#2: " + sumToCut);
+                        //int sumCircleStartAt = sumToCut.IndexOf("(");
+                        //sumToCut = sumToCut.Substring(sumCircleStartAt + 1);
+                        Log(functionName + " >> sumToCut#3: " + sumToCut);
                         int sumCircleEndAt = sumToCut.IndexOf(")");
                         sumToCut = sumToCut.Substring(0, sumCircleEndAt);
-                        Log(functionName + " >> sumToCut: " + sumToCut);
+                        Log(functionName + " >> sumToCut#4: " + sumToCut);
 
                         //Calculate here
                         var allValue = StringSplit.GetStringSplit(sumToCut, ',');
@@ -8309,7 +8331,7 @@ public class ItemDbScriptData
                         string removeText = newValue.Substring(0, circleStartAt);
                         removeText = removeText.Replace(functionName, "");
 
-                        newValue = removeText + "(" + allValue[0] + " ยกกำลัง " + allValue[1] + ")" + newValue.Substring(circleEndAt + 1);
+                        newValue = removeText + "[" + allValue[0] + " ยกกำลัง " + allValue[1] + "]" + newValue.Substring(circleEndAt + 1);
 
                         Log(functionName + " >> newValue: " + newValue);
                     }
@@ -8319,10 +8341,11 @@ public class ItemDbScriptData
                 {
                     string functionName = "rand";
 
-                    Log(functionName);
+                    Log(functionName + ": " + data);
 
                     int retry = 300;
                     string newValue = data;
+                    newValue = ReplaceAllSpecialValue(newValue);
                     while (newValue.Contains(functionName) && retry > 0)
                     {
                         retry--;
@@ -8339,8 +8362,8 @@ public class ItemDbScriptData
 
                                 if (findFunc == functionName)
                                 {
-                                    circleStartAt = newValue.IndexOf("(", i - 4);
-                                    circleEndAt = newValue.IndexOf(")", i - 4);
+                                    circleStartAt = newValue.IndexOf("(", i - 3);
+                                    circleEndAt = newValue.IndexOf(")", i - 3);
                                     break;
                                 }
                             }
@@ -8349,13 +8372,16 @@ public class ItemDbScriptData
                         }
 
                         string sumToCut = newValue.Substring(circleStartAt + 1);
-                        Log(functionName + " >> sumToCut: " + sumToCut);
-                        int sumCircleStartAt = sumToCut.IndexOf("(");
-                        sumToCut = sumToCut.Substring(sumCircleStartAt + 1);
-                        Log(functionName + " >> sumToCut: " + sumToCut);
+                        Log(functionName + " >> sumToCut#1: " + sumToCut);
+                        sumToCut = CheckSpecialValue(sumToCut);
+                        sumToCut = ReplaceAllSpecialValue(sumToCut);
+                        Log(functionName + " >> sumToCut#2: " + sumToCut);
+                        //int sumCircleStartAt = sumToCut.IndexOf("(");
+                        //sumToCut = sumToCut.Substring(sumCircleStartAt + 1);
+                        Log(functionName + " >> sumToCut#3: " + sumToCut);
                         int sumCircleEndAt = sumToCut.IndexOf(")");
                         sumToCut = sumToCut.Substring(0, sumCircleEndAt);
-                        Log(functionName + " >> sumToCut: " + sumToCut);
+                        Log(functionName + " >> sumToCut#4: " + sumToCut);
 
                         //Calculate here
                         var allValue = StringSplit.GetStringSplit(sumToCut, ',');
@@ -8385,7 +8411,7 @@ public class ItemDbScriptData
                         string removeText = newValue.Substring(0, circleStartAt);
                         removeText = removeText.Replace(functionName, "");
 
-                        newValue = removeText + "(" + allValue[0] + "~" + allValue[1] + ")" + newValue.Substring(circleEndAt + 1);
+                        newValue = removeText + "[" + allValue[0] + "~" + allValue[1] + "]" + newValue.Substring(circleEndAt + 1);
 
                         Log(functionName + " >> newValue: " + newValue);
                     }
@@ -8395,10 +8421,11 @@ public class ItemDbScriptData
                 {
                     string functionName = "min";
 
-                    Log(functionName);
+                    Log(functionName + ": " + data);
 
                     int retry = 300;
                     string newValue = data;
+                    newValue = ReplaceAllSpecialValue(newValue);
                     while (newValue.Contains(functionName) && retry > 0)
                     {
                         retry--;
@@ -8415,8 +8442,8 @@ public class ItemDbScriptData
 
                                 if (findFunc == functionName)
                                 {
-                                    circleStartAt = newValue.IndexOf("(", i - 3);
-                                    circleEndAt = newValue.IndexOf(")", i - 3);
+                                    circleStartAt = newValue.IndexOf("(", i - 2);
+                                    circleEndAt = newValue.IndexOf(")", i - 2);
                                     break;
                                 }
                             }
@@ -8426,13 +8453,16 @@ public class ItemDbScriptData
 
 
                         string sumToCut = newValue.Substring(circleStartAt + 1);
-                        Log(functionName + " >> sumToCut: " + sumToCut);
-                        int sumCircleStartAt = sumToCut.IndexOf("(");
-                        sumToCut = sumToCut.Substring(sumCircleStartAt + 1);
-                        Log(functionName + " >> sumToCut: " + sumToCut);
+                        Log(functionName + " >> sumToCut#1: " + sumToCut);
+                        sumToCut = CheckSpecialValue(sumToCut);
+                        sumToCut = ReplaceAllSpecialValue(sumToCut);
+                        Log(functionName + " >> sumToCut#2: " + sumToCut);
+                        //int sumCircleStartAt = sumToCut.IndexOf("(");
+                        //sumToCut = sumToCut.Substring(sumCircleStartAt + 1);
+                        Log(functionName + " >> sumToCut#3: " + sumToCut);
                         int sumCircleEndAt = sumToCut.IndexOf(")");
                         sumToCut = sumToCut.Substring(0, sumCircleEndAt);
-                        Log(functionName + " >> sumToCut: " + sumToCut);
+                        Log(functionName + " >> sumToCut#4: " + sumToCut);
 
                         //Calculate here
                         var allValue = StringSplit.GetStringSplit(sumToCut, ',');
@@ -8497,9 +8527,9 @@ public class ItemDbScriptData
                         string removeText = newValue.Substring(0, circleStartAt);
                         removeText = removeText.Replace(functionName, "");
                         if (isHadNonInteger)
-                            newValue = removeText + "(" + nonIntegerText + " มากสุด " + min + ")" + newValue.Substring(circleEndAt + 1);
+                            newValue = removeText + "[" + nonIntegerText + " มากสุด " + min + "]" + newValue.Substring(circleEndAt + 1);
                         else
-                            newValue = removeText + "(มากสุด " + min + ")" + newValue.Substring(circleEndAt + 1);
+                            newValue = removeText + "[มากสุด " + min + "]" + newValue.Substring(circleEndAt + 1);
 
                         Log(functionName + " >> newValue: " + newValue);
                     }
@@ -8509,10 +8539,11 @@ public class ItemDbScriptData
                 {
                     string functionName = "max";
 
-                    Log(functionName);
+                    Log(functionName + ": " + data);
 
                     int retry = 300;
                     string newValue = data;
+                    newValue = ReplaceAllSpecialValue(newValue);
                     while (newValue.Contains(functionName) && retry > 0)
                     {
                         retry--;
@@ -8529,8 +8560,8 @@ public class ItemDbScriptData
 
                                 if (findFunc == functionName)
                                 {
-                                    circleStartAt = newValue.IndexOf("(", i - 3);
-                                    circleEndAt = newValue.IndexOf(")", i - 3);
+                                    circleStartAt = newValue.IndexOf("(", i - 2);
+                                    circleEndAt = newValue.IndexOf(")", i - 2);
                                     break;
                                 }
                             }
@@ -8539,13 +8570,16 @@ public class ItemDbScriptData
                         }
 
                         string sumToCut = newValue.Substring(circleStartAt + 1);
-                        Log(functionName + " >> sumToCut: " + sumToCut);
-                        int sumCircleStartAt = sumToCut.IndexOf("(");
-                        sumToCut = sumToCut.Substring(sumCircleStartAt + 1);
-                        Log(functionName + " >> sumToCut: " + sumToCut);
+                        Log(functionName + " >> sumToCut#1: " + sumToCut);
+                        sumToCut = CheckSpecialValue(sumToCut);
+                        sumToCut = ReplaceAllSpecialValue(sumToCut);
+                        Log(functionName + " >> sumToCut#2: " + sumToCut);
+                        //int sumCircleStartAt = sumToCut.IndexOf("(");
+                        //sumToCut = sumToCut.Substring(sumCircleStartAt + 1);
+                        Log(functionName + " >> sumToCut#3: " + sumToCut);
                         int sumCircleEndAt = sumToCut.IndexOf(")");
                         sumToCut = sumToCut.Substring(0, sumCircleEndAt);
-                        Log(functionName + " >> sumToCut: " + sumToCut);
+                        Log(functionName + " >> sumToCut#4: " + sumToCut);
 
                         //Calculate here
                         var allValue = StringSplit.GetStringSplit(sumToCut, ',');
@@ -8617,9 +8651,9 @@ public class ItemDbScriptData
                         string removeText = newValue.Substring(0, circleStartAt);
                         removeText = removeText.Replace(functionName, "");
                         if (isHadNonInteger)
-                            newValue = removeText + "(" + max + " มากสุด " + nonIntegerText + ")" + newValue.Substring(circleEndAt + 1);
+                            newValue = removeText + "[" + max + " มากสุด " + nonIntegerText + "]" + newValue.Substring(circleEndAt + 1);
                         else
-                            newValue = removeText + "(มากสุด " + max + ")" + newValue.Substring(circleEndAt + 1);
+                            newValue = removeText + "[มากสุด " + max + "]" + newValue.Substring(circleEndAt + 1);
 
                         Log(functionName + " >> newValue: " + newValue);
                     }
@@ -8801,7 +8835,7 @@ public class ItemDbScriptData
         data = data.Replace("()", "");
 
         if (isFoundTempVariable)
-            return "(" + data + ")";
+            return "[" + data + "]";
         else
             return data;
     }
@@ -8877,6 +8911,23 @@ public class ItemDbScriptData
         }
 
         return allValue;
+    }
+    string CheckSpecialValue(string data)
+    {
+        string functionName = "CheckSpecialValue";
+        Log(functionName + " >> data: " + data);
+
+        //Check special function inside value
+        if (data.Contains("min") || data.Contains("max") || data.Contains("rand") || data.Contains("pow"))
+        {
+            Log(functionName + " >> data: " + data);
+            data = GetValue(data);
+            Log(functionName + " >>  data: " + data);
+        }
+        else
+            Log(functionName + " >> Not found special value");
+
+        return data;
     }
 
     /// <summary>
@@ -9154,25 +9205,27 @@ public class ItemDbScriptData
             value = newValue;
         }
 
-        value = value.Replace("getrefine();", "(ตามจำนวนตีบวก)");
+        value = value.Replace("getrefine();", "[ตามจำนวนตีบวก]");
 
-        value = value.Replace("getrefine", "(ตามจำนวนตีบวก)");
+        value = value.Replace("getrefine()", "[ตามจำนวนตีบวก]");
 
-        value = value.Replace("readparambStr", "(ตาม STR ที่ฝึกฝน)");
+        value = value.Replace("getrefine", "[ตามจำนวนตีบวก]");
 
-        value = value.Replace("readparambAgi", "(ตาม AGI ที่ฝึกฝน)");
+        value = value.Replace("readparambStr", "[ตาม STR ที่ฝึกฝน]");
 
-        value = value.Replace("readparambVit", "(ตาม VIT ที่ฝึกฝน)");
+        value = value.Replace("readparambAgi", "[ตาม AGI ที่ฝึกฝน]");
 
-        value = value.Replace("readparambInt", "(ตาม INT ที่ฝึกฝน)");
+        value = value.Replace("readparambVit", "[ตาม VIT ที่ฝึกฝน]");
 
-        value = value.Replace("readparambDex", "(ตาม DEX ที่ฝึกฝน)");
+        value = value.Replace("readparambInt", "[ตาม INT ที่ฝึกฝน]");
 
-        value = value.Replace("readparambLuk", "(ตาม LUK ที่ฝึกฝน)");
+        value = value.Replace("readparambDex", "[ตาม DEX ที่ฝึกฝน]");
 
-        value = value.Replace("BaseLevel", "(Level)");
+        value = value.Replace("readparambLuk", "[ตาม LUK ที่ฝึกฝน]");
 
-        value = value.Replace("JobLevel", "(Job Level)");
+        value = value.Replace("BaseLevel", "[Level]");
+
+        value = value.Replace("JobLevel", "[Job Level]");
 
         return value;
     }
