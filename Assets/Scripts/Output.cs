@@ -1636,16 +1636,16 @@ public class ItemDbScriptData
         //Split all space
         List<string> allCut = StringSplit.GetStringSplit(data, ' ');
 
-        for (int i = 0; i < allCut.Count; i++)
-            Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
+    //for (int i = 0; i < allCut.Count; i++)
+    //    Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
 
-        L_Redo:
+    L_Redo:
         #region Merge it again line by line
         for (int i = 0; i < allCut.Count; i++)
         {
             var sumCut = allCut[i];
 
-            Log("(Merging) allCut[" + i + "]: " + sumCut);
+            //Log("(Merging) allCut[" + i + "]: " + sumCut);
 
             if (sumCut == "if" && allCut[i + 1].Contains("("))
             {
@@ -3166,8 +3166,8 @@ public class ItemDbScriptData
         }
         #endregion
 
-        for (int i = 0; i < allCut.Count; i++)
-            Log("<color=#F3FFAE>allCut[" + i + "]: " + allCut[i] + "</color>");
+        //for (int i = 0; i < allCut.Count; i++)
+        //    Log("<color=#F3FFAE>allCut[" + i + "]: " + allCut[i] + "</color>");
 
         Log("<color=yellow>Start convert item bonus</color>");
 
@@ -9258,29 +9258,29 @@ public class ItemDbScriptData
         if (!Enum.IsDefined(typeof(Race), raceFlag) && !raceFlag.ToString().Contains(","))
             throw new InvalidOperationException($"{data} is not an underlying value of the YourEnum enumeration.");
 
-        if (raceFlag.HasFlag(Race.RC_Angel))
+        if (raceFlag == Race.RC_Angel)
             return "Angel";
-        else if (raceFlag.HasFlag(Race.RC_Brute))
+        else if (raceFlag == Race.RC_Brute)
             return "Brute";
-        else if (raceFlag.HasFlag(Race.RC_DemiHuman))
-            return "DemiHuman";
-        else if (raceFlag.HasFlag(Race.RC_Demon))
+        else if (raceFlag == Race.RC_DemiHuman)
+            return "Demi-Human";
+        else if (raceFlag == Race.RC_Demon)
             return "Demon";
-        else if (raceFlag.HasFlag(Race.RC_Dragon))
+        else if (raceFlag == Race.RC_Dragon)
             return "Dragon";
-        else if (raceFlag.HasFlag(Race.RC_Fish))
+        else if (raceFlag == Race.RC_Fish)
             return "Fish";
-        else if (raceFlag.HasFlag(Race.RC_Formless))
+        else if (raceFlag == Race.RC_Formless)
             return "Formless";
-        else if (raceFlag.HasFlag(Race.RC_Insect))
+        else if (raceFlag == Race.RC_Insect)
             return "Insect";
-        else if (raceFlag.HasFlag(Race.RC_Plant))
+        else if (raceFlag == Race.RC_Plant)
             return "Plant";
-        else if (raceFlag.HasFlag(Race.RC_Player))
+        else if (raceFlag == Race.RC_Player)
             return "Player";
-        else if (raceFlag.HasFlag(Race.RC_Undead))
+        else if (raceFlag == Race.RC_Undead)
             return "Undead";
-        else if (raceFlag.HasFlag(Race.RC_All))
+        else if (raceFlag == Race.RC_All)
             return "ทุกเผ่า";
 
         return null;
@@ -9302,13 +9302,13 @@ public class ItemDbScriptData
         if (!Enum.IsDefined(typeof(Class), classFlag) && !classFlag.ToString().Contains(","))
             throw new InvalidOperationException($"{data} is not an underlying value of the YourEnum enumeration.");
 
-        if (classFlag.HasFlag(Class.Class_Normal))
+        if (classFlag == Class.Class_Normal)
             return "Normal";
-        else if (classFlag.HasFlag(Class.Class_Boss))
+        else if (classFlag == Class.Class_Boss)
             return "Boss";
-        else if (classFlag.HasFlag(Class.Class_Guardian))
+        else if (classFlag == Class.Class_Guardian)
             return "Guardian";
-        else if (classFlag.HasFlag(Class.Class_All))
+        else if (classFlag == Class.Class_All)
             return "ทุก Class";
 
         return null;
@@ -9330,13 +9330,13 @@ public class ItemDbScriptData
         if (!Enum.IsDefined(typeof(Size), sizeFlag) && !sizeFlag.ToString().Contains(","))
             throw new InvalidOperationException($"{data} is not an underlying value of the YourEnum enumeration.");
 
-        if (sizeFlag.HasFlag(Size.Size_Small))
+        if (sizeFlag == Size.Size_Small)
             return "Small";
-        else if (sizeFlag.HasFlag(Size.Size_Medium))
+        else if (sizeFlag == Size.Size_Medium)
             return "Medium";
-        else if (sizeFlag.HasFlag(Size.Size_Large))
+        else if (sizeFlag == Size.Size_Large)
             return "Large";
-        else if (sizeFlag.HasFlag(Size.Size_All))
+        else if (sizeFlag == Size.Size_All)
             return "ทุก Size";
 
         return null;
@@ -9418,33 +9418,33 @@ public class ItemDbScriptData
         if (!Enum.IsDefined(typeof(StatusEffect), statusEffectFlag) && !statusEffectFlag.ToString().Contains(","))
             throw new InvalidOperationException($"{data} is not an underlying value of the YourEnum enumeration.");
 
-        if (statusEffectFlag.HasFlag(StatusEffect.Eff_Bleeding))
+        if (statusEffectFlag == StatusEffect.Eff_Bleeding)
             return "Bleeding";
-        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Blind))
+        else if (statusEffectFlag == StatusEffect.Eff_Blind)
             return "Blind";
-        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Burning))
+        else if (statusEffectFlag == StatusEffect.Eff_Burning)
             return "Burning";
-        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Confusion))
+        else if (statusEffectFlag == StatusEffect.Eff_Confusion)
             return "Confusion";
-        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Crystalize))
+        else if (statusEffectFlag == StatusEffect.Eff_Crystalize)
             return "Crystalize";
-        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Curse))
+        else if (statusEffectFlag == StatusEffect.Eff_Curse)
             return "Curse";
-        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_DPoison))
+        else if (statusEffectFlag == StatusEffect.Eff_DPoison)
             return "Deadly Poison";
-        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Fear))
+        else if (statusEffectFlag == StatusEffect.Eff_Fear)
             return "Fear";
-        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Freeze))
+        else if (statusEffectFlag == StatusEffect.Eff_Freeze)
             return "Freeze";
-        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Poison))
+        else if (statusEffectFlag == StatusEffect.Eff_Poison)
             return "Poison";
-        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Silence))
+        else if (statusEffectFlag == StatusEffect.Eff_Silence)
             return "Silence";
-        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Sleep))
+        else if (statusEffectFlag == StatusEffect.Eff_Sleep)
             return "Sleep";
-        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Stone))
+        else if (statusEffectFlag == StatusEffect.Eff_Stone)
             return "Stone";
-        else if (statusEffectFlag.HasFlag(StatusEffect.Eff_Stun))
+        else if (statusEffectFlag == StatusEffect.Eff_Stun)
             return "Stun";
 
         return null;
@@ -9466,17 +9466,17 @@ public class ItemDbScriptData
         if (!Enum.IsDefined(typeof(MonsterRace), monsterRaceFlag) && !monsterRaceFlag.ToString().Contains(","))
             throw new InvalidOperationException($"{data} is not an underlying value of the YourEnum enumeration.");
 
-        if (monsterRaceFlag.HasFlag(MonsterRace.RC2_Goblin))
+        if (monsterRaceFlag == MonsterRace.RC2_Goblin)
             return "Goblin";
-        else if (monsterRaceFlag.HasFlag(MonsterRace.RC2_Golem))
+        else if (monsterRaceFlag == MonsterRace.RC2_Golem)
             return "Golem";
-        else if (monsterRaceFlag.HasFlag(MonsterRace.RC2_Guardian))
+        else if (monsterRaceFlag == MonsterRace.RC2_Guardian)
             return "Guardian";
-        else if (monsterRaceFlag.HasFlag(MonsterRace.RC2_Kobold))
+        else if (monsterRaceFlag == MonsterRace.RC2_Kobold)
             return "Kobold";
-        else if (monsterRaceFlag.HasFlag(MonsterRace.RC2_Ninja))
+        else if (monsterRaceFlag == MonsterRace.RC2_Ninja)
             return "Ninja";
-        else if (monsterRaceFlag.HasFlag(MonsterRace.RC2_Orc))
+        else if (monsterRaceFlag == MonsterRace.RC2_Orc)
             return "Orc";
 
         return null;
@@ -9504,33 +9504,33 @@ public class ItemDbScriptData
             if (!Enum.IsDefined(typeof(Element), triggerCriteria) && !triggerCriteria.ToString().Contains(","))
                 throw new InvalidOperationException($"{data} is not an underlying value of the YourEnum enumeration.");
 
-            if (triggerCriteria.HasFlag(TriggerCriteria.BF_SHORT))
+            if (triggerCriteria == TriggerCriteria.BF_SHORT)
                 sum += ", โจมตีระยะประชิด";
-            if (triggerCriteria.HasFlag(TriggerCriteria.BF_LONG))
+            if (triggerCriteria == TriggerCriteria.BF_LONG)
                 sum += ", โจมตีระยะไกล";
-            if (triggerCriteria.HasFlag(TriggerCriteria.BF_WEAPON))
+            if (triggerCriteria == TriggerCriteria.BF_WEAPON)
                 sum += ", อาวุธ";
-            if (triggerCriteria.HasFlag(TriggerCriteria.BF_MAGIC))
+            if (triggerCriteria == TriggerCriteria.BF_MAGIC)
                 sum += ", เวทย์มนต์";
-            if (triggerCriteria.HasFlag(TriggerCriteria.BF_MISC))
+            if (triggerCriteria == TriggerCriteria.BF_MISC)
                 sum += ", การโจมตีอื่น ๆ";
-            if (triggerCriteria.HasFlag(TriggerCriteria.BF_NORMAL))
+            if (triggerCriteria == TriggerCriteria.BF_NORMAL)
                 sum += ", โจมตีกายภาพ";
-            if (triggerCriteria.HasFlag(TriggerCriteria.BF_SKILL))
+            if (triggerCriteria == TriggerCriteria.BF_SKILL)
                 sum += ", โจมตีเวทย์";
-            if (triggerCriteria.HasFlag(TriggerCriteria.ATF_SELF))
+            if (triggerCriteria == TriggerCriteria.ATF_SELF)
                 sum += ", เป้าหมาย: ตนเอง";
-            if (triggerCriteria.HasFlag(TriggerCriteria.ATF_TARGET))
+            if (triggerCriteria == TriggerCriteria.ATF_TARGET)
                 sum += ", เป้าหมาย: ศัตรู";
-            if (triggerCriteria.HasFlag(TriggerCriteria.ATF_SHORT))
+            if (triggerCriteria == TriggerCriteria.ATF_SHORT)
                 sum += ", โจมตีระยะประชิด";
-            if (triggerCriteria.HasFlag(TriggerCriteria.ATF_LONG))
+            if (triggerCriteria == TriggerCriteria.ATF_LONG)
                 sum += ", โจมตีระยะไกล";
-            if (triggerCriteria.HasFlag(TriggerCriteria.ATF_WEAPON))
+            if (triggerCriteria == TriggerCriteria.ATF_WEAPON)
                 sum += ", อาวุธ";
-            if (triggerCriteria.HasFlag(TriggerCriteria.ATF_MAGIC))
+            if (triggerCriteria == TriggerCriteria.ATF_MAGIC)
                 sum += ", เวทย์มนต์";
-            if (triggerCriteria.HasFlag(TriggerCriteria.ATF_MISC))
+            if (triggerCriteria == TriggerCriteria.ATF_MISC)
                 sum += ", การโจมตีอื่น ๆ";
         }
 
