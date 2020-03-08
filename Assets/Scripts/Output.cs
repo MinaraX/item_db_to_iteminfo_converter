@@ -8261,11 +8261,12 @@ public class ItemDbScriptData
                 {
                     string functionName = "pow";
 
-                    Log(functionName + ": " + data);
+                    Log(functionName + " start!: " + data);
 
                     int retry = 300;
                     string newValue = data;
                     newValue = ReplaceAllSpecialValue(newValue);
+                    Log(functionName + " >> newValue: " + newValue);
                     while (newValue.Contains(functionName) && retry > 0)
                     {
                         retry--;
@@ -8284,6 +8285,20 @@ public class ItemDbScriptData
                                 {
                                     circleStartAt = newValue.IndexOf("(", i - 2);
                                     circleEndAt = newValue.IndexOf(")", i - 2);
+                                    int countCircle = 0;
+                                    for (int j = 0; j < newValue.Length; j++)
+                                    {
+                                        if (newValue[j] == '(')
+                                            countCircle++;
+                                    }
+                                    if (countCircle > 1)
+                                    {
+                                        while (countCircle > 1)
+                                        {
+                                            circleEndAt = newValue.IndexOf(")", circleEndAt + 2);
+                                            countCircle--;
+                                        }
+                                    }
                                     break;
                                 }
                             }
@@ -8341,11 +8356,12 @@ public class ItemDbScriptData
                 {
                     string functionName = "rand";
 
-                    Log(functionName + ": " + data);
+                    Log(functionName + " start!: " + data);
 
                     int retry = 300;
                     string newValue = data;
                     newValue = ReplaceAllSpecialValue(newValue);
+                    Log(functionName + " >> newValue: " + newValue);
                     while (newValue.Contains(functionName) && retry > 0)
                     {
                         retry--;
@@ -8364,6 +8380,20 @@ public class ItemDbScriptData
                                 {
                                     circleStartAt = newValue.IndexOf("(", i - 3);
                                     circleEndAt = newValue.IndexOf(")", i - 3);
+                                    int countCircle = 0;
+                                    for (int j = 0; j < newValue.Length; j++)
+                                    {
+                                        if (newValue[j] == '(')
+                                            countCircle++;
+                                    }
+                                    if (countCircle > 1)
+                                    {
+                                        while (countCircle > 1)
+                                        {
+                                            circleEndAt = newValue.IndexOf(")", circleEndAt + 3);
+                                            countCircle--;
+                                        }
+                                    }
                                     break;
                                 }
                             }
@@ -8421,11 +8451,12 @@ public class ItemDbScriptData
                 {
                     string functionName = "min";
 
-                    Log(functionName + ": " + data);
+                    Log(functionName + " start!: " + data);
 
                     int retry = 300;
                     string newValue = data;
                     newValue = ReplaceAllSpecialValue(newValue);
+                    Log(functionName + " >> newValue: " + newValue);
                     while (newValue.Contains(functionName) && retry > 0)
                     {
                         retry--;
@@ -8444,6 +8475,20 @@ public class ItemDbScriptData
                                 {
                                     circleStartAt = newValue.IndexOf("(", i - 2);
                                     circleEndAt = newValue.IndexOf(")", i - 2);
+                                    int countCircle = 0;
+                                    for (int j = 0; j < newValue.Length; j++)
+                                    {
+                                        if (newValue[j] == '(')
+                                            countCircle++;
+                                    }
+                                    if (countCircle > 1)
+                                    {
+                                        while (countCircle > 1)
+                                        {
+                                            circleEndAt = newValue.IndexOf(")", circleEndAt + 2);
+                                            countCircle--;
+                                        }
+                                    }
                                     break;
                                 }
                             }
@@ -8539,11 +8584,12 @@ public class ItemDbScriptData
                 {
                     string functionName = "max";
 
-                    Log(functionName + ": " + data);
+                    Log(functionName + " start!: " + data);
 
                     int retry = 300;
                     string newValue = data;
                     newValue = ReplaceAllSpecialValue(newValue);
+                    Log(functionName + " >> newValue: " + newValue);
                     while (newValue.Contains(functionName) && retry > 0)
                     {
                         retry--;
@@ -8562,6 +8608,20 @@ public class ItemDbScriptData
                                 {
                                     circleStartAt = newValue.IndexOf("(", i - 2);
                                     circleEndAt = newValue.IndexOf(")", i - 2);
+                                    int countCircle = 0;
+                                    for (int j = 0; j < newValue.Length; j++)
+                                    {
+                                        if (newValue[j] == '(')
+                                            countCircle++;
+                                    }
+                                    if (countCircle > 1)
+                                    {
+                                        while (countCircle > 1)
+                                        {
+                                            circleEndAt = newValue.IndexOf(")", circleEndAt + 2);
+                                            countCircle--;
+                                        }
+                                    }
                                     break;
                                 }
                             }
@@ -9703,27 +9763,27 @@ public class ItemDbScriptData
         if (!Enum.IsDefined(typeof(Element), elementFlag) && !elementFlag.ToString().Contains(","))
             throw new InvalidOperationException($"{data} is not an underlying value of the YourEnum enumeration.");
 
-        if (elementFlag.HasFlag(Element.Ele_Dark))
+        if (elementFlag == Element.Ele_Dark)
             return "Dark";
-        else if (elementFlag.HasFlag(Element.Ele_Earth))
+        else if (elementFlag == Element.Ele_Earth)
             return "Earth";
-        else if (elementFlag.HasFlag(Element.Ele_Fire))
+        else if (elementFlag == Element.Ele_Fire)
             return "Fire";
-        else if (elementFlag.HasFlag(Element.Ele_Ghost))
+        else if (elementFlag == Element.Ele_Ghost)
             return "Ghost";
-        else if (elementFlag.HasFlag(Element.Ele_Holy))
+        else if (elementFlag == Element.Ele_Holy)
             return "Holy";
-        else if (elementFlag.HasFlag(Element.Ele_Neutral))
+        else if (elementFlag == Element.Ele_Neutral)
             return "Neutral";
-        else if (elementFlag.HasFlag(Element.Ele_Poison))
+        else if (elementFlag == Element.Ele_Poison)
             return "Poison";
-        else if (elementFlag.HasFlag(Element.Ele_Undead))
+        else if (elementFlag == Element.Ele_Undead)
             return "Undead";
-        else if (elementFlag.HasFlag(Element.Ele_Water))
+        else if (elementFlag == Element.Ele_Water)
             return "Water";
-        else if (elementFlag.HasFlag(Element.Ele_Wind))
+        else if (elementFlag == Element.Ele_Wind)
             return "Wind";
-        else if (elementFlag.HasFlag(Element.Ele_All))
+        else if (elementFlag == Element.Ele_All)
             return "ทุกธาตุ";
 
         return null;
@@ -9738,6 +9798,12 @@ public class ItemDbScriptData
     {
         if (string.IsNullOrEmpty(data))
             return null;
+
+        if (!data.Contains("RC_"))
+        {
+            Log("<color=red>Wrong race!</color>");
+            return data;
+        }
 
         Race raceFlag = (Race)Enum.Parse(typeof(Race), data, true);
 
@@ -10021,6 +10087,8 @@ public class ItemDbScriptData
                 sum += ", เวทย์มนต์";
             if (triggerCriteria == TriggerCriteria.ATF_MISC)
                 sum += ", การโจมตีอื่น ๆ";
+            if (triggerCriteria == TriggerCriteria.ATF_SKILL)
+                sum += ", เวทย์มนต์";
         }
 
         Log("GetTriggerCriteria >> sum: " + sum);
@@ -10193,7 +10261,7 @@ public enum Size
 public enum TriggerCriteria
 {
     BF_SHORT, BF_LONG, BF_WEAPON, BF_MAGIC, BF_MISC, BF_NORMAL, BF_SKILL,
-    ATF_SELF, ATF_TARGET, ATF_SHORT, ATF_LONG, ATF_WEAPON, ATF_MAGIC, ATF_MISC
+    ATF_SELF, ATF_TARGET, ATF_SHORT, ATF_LONG, ATF_WEAPON, ATF_MAGIC, ATF_MISC, ATF_SKILL
 }
 
 [Flags]
