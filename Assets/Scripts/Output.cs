@@ -1557,6 +1557,8 @@ public class ItemDbScriptData
     {
         sumScript = null;
 
+        script = CorrectScriptToConvert(script);
+
         string sumDesc = GetDescription(script);
         sumScript = sumDesc;
 
@@ -1566,6 +1568,8 @@ public class ItemDbScriptData
     public string GetOnEquipScriptDescription()
     {
         sumEquipScript = null;
+
+        onEquipScript = CorrectScriptToConvert(onEquipScript);
 
         string sumDesc = GetDescription(onEquipScript);
         if (!string.IsNullOrEmpty(sumScript) && !string.IsNullOrEmpty(sumDesc) && !string.IsNullOrWhiteSpace(sumDesc))
@@ -1582,6 +1586,8 @@ public class ItemDbScriptData
     {
         sumUnequipScript = null;
 
+        onUnequipScript = CorrectScriptToConvert(onUnequipScript);
+
         string sumDesc = GetDescription(onUnequipScript);
         if (!string.IsNullOrEmpty(sumEquipScript) && !string.IsNullOrEmpty(sumDesc) && !string.IsNullOrWhiteSpace(sumDesc))
             sumUnequipScript = "\n[เมื่อถอด]\n" + sumDesc;
@@ -1591,6 +1597,23 @@ public class ItemDbScriptData
             sumUnequipScript = sumDesc;
 
         return sumUnequipScript;
+    }
+
+    /// <summary>
+    /// Fix non-space, etc. to start covnerting
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    string CorrectScriptToConvert(string data)
+    {
+        string sum = data;
+        sum = sum.Replace("{", " { ");
+        sum = sum.Replace("}", " } ");
+        sum = sum.Replace("else", "else ");
+        sum = sum.Replace("   ", " ");
+        sum = sum.Replace("  ", " ");
+        sum = sum.Replace(";", "; ");
+        return sum;
     }
     #endregion
 
@@ -1613,7 +1636,10 @@ public class ItemDbScriptData
         //Split all space
         List<string> allCut = StringSplit.GetStringSplit(data, ' ');
 
-    L_Redo:
+        for (int i = 0; i < allCut.Count; i++)
+            Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
+
+        L_Redo:
         #region Merge it again line by line
         for (int i = 0; i < allCut.Count; i++)
         {
@@ -1650,12 +1676,13 @@ public class ItemDbScriptData
                 }
 
                 //if not had {}
-                if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}"))
-                {
-                }
-                //if had {
+                if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}") && !allCut[i].Contains(";"))
+                    allCut[i + 1] += allCut[i + 1] + "[TXT_END_IF]";
+                //'if' need '{}'
                 else if (allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}"))
                 {
+                    if (!allCut[i].Contains(";"))
+                        allCut[i] = allCut[i] + ";";
                     allCut[i + 1] += " " + allCut[i + 2];
                     allCut.RemoveAt(i + 2);
                     goto L_Redo;
@@ -1705,7 +1732,6 @@ public class ItemDbScriptData
 
                     //Remove first '{' and end '}'
                     allCut[i + 1] = allCut[i + 1].Substring(1, allCut[i + 1].Length - 2);
-                    Log(allCut[i + 1]);
 
                     //Then split by ';'
                     var splitBonus = StringSplit.GetStringSplit(allCut[i + 1], ';');
@@ -1725,11 +1751,13 @@ public class ItemDbScriptData
                     //Add to list
                     for (int j = 0; j < splitBonus.Count; j++)
                     {
-                        //Log("splitBonus: " + splitBonus[j]);
                         if (j > 0)
                         {
                             if (j == splitBonus.Count - 1)
+                            {
                                 allCut.Insert(i + 1, splitBonus[j]);
+                                allCut.Insert(i + 1 + splitBonus.Count, "[TXT_END_IF]");
+                            }
                             else
                                 allCut.Insert(i + 1, splitBonus[j]);
                         }
@@ -1738,13 +1766,32 @@ public class ItemDbScriptData
             }
             else if (sumCut.Contains("else"))
             {
-                //else not had {}
-                if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}"))
+                //Check merge else if
+                if (allCut[i + 1].Contains("if"))
                 {
+                    MergeItemScripts(allCut, i);
+                    goto L_Redo;
                 }
-                //else had {
+                //Check merge else if()
+                else if (sumCut.Contains("if") && allCut[i + 1].Contains("("))
+                {
+                    MergeItemScripts(allCut, i);
+                    goto L_Redo;
+                }
+                //else not had {}
+                else if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}") && !allCut[i].Contains(";"))
+                {
+                    allCut[i] = "[TXT_ELSE];";
+                    int loop = 0;
+                    while (!allCut[i + 1 + loop].Contains(";"))
+                        loop++;
+                    allCut.Insert(i + 2 + loop, "[TXT_END_ELSE]");
+                }
+                //'else' need '{}'
                 else if (allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}"))
                 {
+                    if (!allCut[i].Contains(";"))
+                        allCut[i] = allCut[i] + ";";
                     allCut[i + 1] += " " + allCut[i + 2];
                     allCut.RemoveAt(i + 2);
                     goto L_Redo;
@@ -1793,7 +1840,7 @@ public class ItemDbScriptData
                     }
 
                     //Remove first '{' and end '}'
-                    allCut[i + 1] = allCut[i + 1].Substring(1, allCut[i + 1].Length - 1);
+                    allCut[i + 1] = allCut[i + 1].Substring(1, allCut[i + 1].Length - 2);
 
                     //Then split by ';'
                     var splitBonus = StringSplit.GetStringSplit(allCut[i + 1], ';');
@@ -1807,6 +1854,9 @@ public class ItemDbScriptData
                             splitBonus[j] = splitBonus[j] + ";";
                     }
 
+                    //Set current index to [TXT_ELSE];
+                    allCut[i] = "[TXT_ELSE];";
+
                     //Set next index to splitBonus[0]
                     allCut[i + 1] = splitBonus[0];
 
@@ -1816,7 +1866,10 @@ public class ItemDbScriptData
                         if (j > 0)
                         {
                             if (j == splitBonus.Count - 1)
+                            {
                                 allCut.Insert(i + 1, splitBonus[j]);
+                                allCut.Insert(i + 1 + splitBonus.Count, "[TXT_END_ELSE]");
+                            }
                             else
                                 allCut.Insert(i + 1, splitBonus[j]);
                         }
@@ -3113,6 +3166,9 @@ public class ItemDbScriptData
         }
         #endregion
 
+        for (int i = 0; i < allCut.Count; i++)
+            Log("<color=#F3FFAE>allCut[" + i + "]: " + allCut[i] + "</color>");
+
         Log("<color=yellow>Start convert item bonus</color>");
 
         for (int i = 0; i < allCut.Count; i++)
@@ -3125,10 +3181,18 @@ public class ItemDbScriptData
             #region if
             if (data.Contains("if(") || data.Contains("if (") || data.Contains("else if(") || data.Contains("else if ("))
             {
+                bool isElseIf = false;
                 //Remove spacebar
                 data = MergeWhiteSpace.RemoveWhiteSpace(data);
+                //Remove else if(
+                if (data.Contains("elseif("))
+                {
+                    isElseIf = true;
+                    data = data.Substring(7);
+                }
                 //Remove if(
-                data = data.Substring(3);
+                else
+                    data = data.Substring(3);
                 //Remove )
                 data = data.Substring(0, data.Length - 1);
                 data = data.Replace("==", " คือ ");
@@ -3172,16 +3236,16 @@ public class ItemDbScriptData
                 //Replace special variables
                 data = ReplaceAllSpecialValue(data);
 
-                sum += AddDescription(sum, "[ถ้า " + data + "]");
+                if (isElseIf)
+                    sum += AddDescription(sum, "[หรือถ้า " + data + "]");
+                else
+                    sum += AddDescription(sum, "[ถ้า " + data + "]");
             }
             #endregion
             #region [TXT_ELSE]
             functionName = "[TXT_ELSE]";
             if (data.Contains(functionName))
-            {
                 sum += AddDescription(sum, "[หากไม่ตรงเงื่อนไข]");
-                allCut.Insert(i + 2, "[TXT_END_ELSE]");
-            }
             #endregion
             #region [TXT_END_ELSE]
             functionName = "[TXT_END_ELSE]";
@@ -3269,8 +3333,6 @@ public class ItemDbScriptData
 
                 List<string> allParam = GetAllParamerters(sumCut);
 
-                Log("allParam.Count: " + allParam.Count);
-
                 string param1 = "";
                 string param2 = "";
                 string param3 = "";
@@ -3326,8 +3388,6 @@ public class ItemDbScriptData
 
                 List<string> allParam = GetAllParamerters(sumCut);
 
-                Log("allParam.Count: " + allParam.Count);
-
                 string param1 = "";
                 string param2 = "";
                 string param3 = "";
@@ -3360,8 +3420,6 @@ public class ItemDbScriptData
                 string sumCut = CutFunctionName(data, functionName, 1);
 
                 List<string> allParam = GetAllParamerters(sumCut);
-
-                Log("allParam.Count: " + allParam.Count);
 
                 string param1 = "";
                 string param2 = "";
@@ -3407,7 +3465,8 @@ public class ItemDbScriptData
 
                 Log("allParam.Count: " + allParam.Count);
 
-                string param1 = "";
+                string param1 = GetValue(allParam[0], 1, true);
+
                 string param2 = "";
                 string param3 = "";
                 string param4 = "";
@@ -3424,12 +3483,10 @@ public class ItemDbScriptData
                 param1 = param1.Replace("IG_", "");
                 param1 = param1.Replace("_", " ");
 
-                Log("isHadParam1: " + isHadParam1 + " | param1: " + param1);
-                Log("isHadParam2: " + isHadParam2 + " | param2: " + param2);
-                Log("isHadParam3: " + isHadParam3 + " | param3: " + param3);
-                Log("isHadParam4: " + isHadParam4 + " | param4: " + param4);
-
-                sum += AddDescription(sum, "กดใช้เพื่อรับ Item ในกลุ่ม " + param1);
+                if (isHadParam2)
+                    sum += AddDescription(sum, "กดใช้เพื่อรับ Item ในกลุ่ม " + param1 + " " + param2 + " ชิ้น");
+                else
+                    sum += AddDescription(sum, "กดใช้เพื่อรับ Item ในกลุ่ม " + param1);
             }
             #endregion
             #region monster
@@ -3439,8 +3496,6 @@ public class ItemDbScriptData
                 string sumCut = CutFunctionName(data, functionName);
 
                 List<string> allParam = GetAllParamerters(sumCut);
-
-                Log("allParam.Count: " + allParam.Count);
 
                 string param1 = "";
                 string param2 = "";
@@ -3527,8 +3582,6 @@ public class ItemDbScriptData
 
                 List<string> allParam = GetAllParamerters(sumCut);
 
-                Log("allParam.Count: " + allParam.Count);
-
                 string param1 = "";
 
                 if (allParam.Count > 0)
@@ -3565,8 +3618,6 @@ public class ItemDbScriptData
 
                 List<string> allParam = GetAllParamerters(sumCut);
 
-                Log("allParam.Count: " + allParam.Count);
-
                 string param1 = "";
 
                 if (allParam.Count > 0)
@@ -3595,8 +3646,6 @@ public class ItemDbScriptData
 
                 List<string> allParam = GetAllParamerters(sumCut);
 
-                Log("allParam.Count: " + allParam.Count);
-
                 string param1 = "";
 
                 if (allParam.Count > 0)
@@ -3620,24 +3669,12 @@ public class ItemDbScriptData
             #region bpet
             functionName = "bpet";
             if (data.Contains(functionName))
-            {
-                string sumCut = CutFunctionName(data, functionName, 1);
-
-                string finalize = "กดใช้เพื่อฟักไข่ Pet";
-
-                sum += AddDescription(sum, finalize);
-            }
+                sum += AddDescription(sum, "กดใช้เพื่อฟักไข่ Pet");
             #endregion
             #region birthpet
             functionName = "birthpet";
             if (data.Contains(functionName))
-            {
-                string sumCut = CutFunctionName(data, functionName, 1);
-
-                string finalize = "กดใช้เพื่อฟักไข่ Pet";
-
-                sum += AddDescription(sum, finalize);
-            }
+                sum += AddDescription(sum, "กดใช้เพื่อฟักไข่ Pet");
             #endregion
             #region guildgetexp
             functionName = "guildgetexp";
@@ -7989,7 +8026,7 @@ public class ItemDbScriptData
                     count2++;
             }
 
-            if (count1 != count2)
+            if (count1 != count2 && count1 > 0)
             {
                 allParam[i] += "," + allParam[i + 1];
                 allParam.RemoveAt(i + 1);
@@ -8033,6 +8070,8 @@ public class ItemDbScriptData
             }
         }
 
+        //Log("GetValue >> Finish find temporary variables");
+
         if (data == "INFINITE_TICK")
         {
             SetParamCheck(paramCount, true, false);
@@ -8043,6 +8082,9 @@ public class ItemDbScriptData
 
         if (data.Contains("("))
             isHadFunction = true;
+
+        if (!data.Contains("(") && data.Contains(")"))
+            data = data.Replace(")", "");
 
         if (isHadFunction)
         {
@@ -8299,13 +8341,16 @@ public class ItemDbScriptData
 
             isInteger = int.TryParse(data, out paramInt);
 
-            Log("isInteger: " + isInteger);
+            Log("isInteger: " + isInteger + ", paramInt: " + paramInt);
 
             if (isInteger)
             {
                 //Zero integer
                 if (paramInt == 0 && !isZeroValueOkay)
+                {
+                    data = "0";
                     SetParamCheck(paramCount, false, false);
+                }
                 //Negative integer
                 else if (paramInt < 0)
                 {
@@ -8315,7 +8360,10 @@ public class ItemDbScriptData
                 }
                 //Positive integer
                 else
+                {
+                    data = paramInt.ToString("f0");
                     SetParamCheck(paramCount, true, false);
+                }
             }
             else
                 SetParamCheck(paramCount, true, false);
