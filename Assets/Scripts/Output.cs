@@ -628,7 +628,7 @@ public class Output : ScriptableObject
         if (loc <= 0)
             return false;
 
-        ItemLoc itemLoc = (ItemLoc)Enum.Parse(typeof(ItemLoc), loc.ToString());
+        ItemLoc itemLoc = (ItemLoc)Enum.Parse(typeof(ItemLoc), loc.ToString(), true);
 
         // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
         if (!Enum.IsDefined(typeof(ItemLoc), itemLoc) && !itemLoc.ToString().Contains(","))
@@ -642,7 +642,7 @@ public class Output : ScriptableObject
 
         int loc = currentItemDb.loc;
 
-        ItemLoc itemLoc = (ItemLoc)Enum.Parse(typeof(ItemLoc), loc.ToString());
+        ItemLoc itemLoc = (ItemLoc)Enum.Parse(typeof(ItemLoc), loc.ToString(), true);
 
         // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
         if (!Enum.IsDefined(typeof(ItemLoc), itemLoc) && !itemLoc.ToString().Contains(","))
@@ -924,7 +924,7 @@ public class Output : ScriptableObject
         if (job <= 0)
             return false;
 
-        ItemJob itemJob = (ItemJob)Enum.Parse(typeof(ItemJob), job.ToString());
+        ItemJob itemJob = (ItemJob)Enum.Parse(typeof(ItemJob), job.ToString(), true);
 
         // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
         if (!Enum.IsDefined(typeof(ItemJob), itemJob) && !itemJob.ToString().Contains(","))
@@ -1006,7 +1006,7 @@ public class Output : ScriptableObject
 
         uint job = currentItemDb.job;
 
-        ItemJob itemJob = (ItemJob)Enum.Parse(typeof(ItemJob), job.ToString("f0"));
+        ItemJob itemJob = (ItemJob)Enum.Parse(typeof(ItemJob), job.ToString("f0"), true);
 
         // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
         if (!Enum.IsDefined(typeof(ItemJob), itemJob) && !itemJob.ToString().Contains(","))
@@ -1248,7 +1248,7 @@ public class Output : ScriptableObject
         if (_class <= 0)
             return false;
 
-        ItemClass itemClass = (ItemClass)Enum.Parse(typeof(ItemClass), _class.ToString("f0"));
+        ItemClass itemClass = (ItemClass)Enum.Parse(typeof(ItemClass), _class.ToString("f0"), true);
 
         // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
         if (!Enum.IsDefined(typeof(ItemClass), itemClass) && !itemClass.ToString().Contains(","))
@@ -1278,7 +1278,7 @@ public class Output : ScriptableObject
 
         int _class = currentItemDb._class;
 
-        ItemClass itemClass = (ItemClass)Enum.Parse(typeof(ItemClass), _class.ToString("f0"));
+        ItemClass itemClass = (ItemClass)Enum.Parse(typeof(ItemClass), _class.ToString("f0"), true);
 
         // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
         if (!Enum.IsDefined(typeof(ItemClass), itemClass) && !itemClass.ToString().Contains(","))
@@ -3434,7 +3434,7 @@ public class ItemDbScriptData
                 {
                     param3 = allParam[2];
 
-                    skillFlag = (SkillFlag)Enum.Parse(typeof(SkillFlag), param3);
+                    skillFlag = (SkillFlag)Enum.Parse(typeof(SkillFlag), param3, true);
 
                     // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
                     if (!Enum.IsDefined(typeof(SkillFlag), param3) && !param3.Contains(","))
@@ -8538,7 +8538,7 @@ public class ItemDbScriptData
         if (string.IsNullOrEmpty(data))
             return null;
 
-        WeaponTypeFlag weaponTypeFlag = (WeaponTypeFlag)Enum.Parse(typeof(WeaponTypeFlag), data);
+        WeaponTypeFlag weaponTypeFlag = (WeaponTypeFlag)Enum.Parse(typeof(WeaponTypeFlag), data, true);
 
         // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
         if (!Enum.IsDefined(typeof(WeaponTypeFlag), weaponTypeFlag) && !weaponTypeFlag.ToString().Contains(","))
@@ -8650,7 +8650,7 @@ public class ItemDbScriptData
     /// <returns></returns>
     string Get_sc_start_Flag(int flag)
     {
-        ScStartFlag scStartFlag = (ScStartFlag)Enum.Parse(typeof(ScStartFlag), flag.ToString("f0"));
+        ScStartFlag scStartFlag = (ScStartFlag)Enum.Parse(typeof(ScStartFlag), flag.ToString("f0"), true);
         if (scStartFlag == ScStartFlag.SCSTART_LOADED)
             return "(สถานะจะคงที่)";
         else if (scStartFlag == ScStartFlag.SCSTART_NOAVOID)
@@ -9210,7 +9210,7 @@ public class ItemDbScriptData
         if (string.IsNullOrEmpty(data))
             return null;
 
-        Element elementFlag = (Element)Enum.Parse(typeof(Element), data);
+        Element elementFlag = (Element)Enum.Parse(typeof(Element), data, true);
 
         // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
         if (!Enum.IsDefined(typeof(Element), elementFlag) && !elementFlag.ToString().Contains(","))
@@ -9252,7 +9252,7 @@ public class ItemDbScriptData
         if (string.IsNullOrEmpty(data))
             return null;
 
-        Race raceFlag = (Race)Enum.Parse(typeof(Race), data);
+        Race raceFlag = (Race)Enum.Parse(typeof(Race), data, true);
 
         // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
         if (!Enum.IsDefined(typeof(Race), raceFlag) && !raceFlag.ToString().Contains(","))
@@ -9296,7 +9296,7 @@ public class ItemDbScriptData
         if (string.IsNullOrEmpty(data))
             return null;
 
-        Class classFlag = (Class)Enum.Parse(typeof(Class), data);
+        Class classFlag = (Class)Enum.Parse(typeof(Class), data, true);
 
         // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
         if (!Enum.IsDefined(typeof(Class), classFlag) && !classFlag.ToString().Contains(","))
@@ -9324,7 +9324,7 @@ public class ItemDbScriptData
         if (string.IsNullOrEmpty(data))
             return null;
 
-        Size sizeFlag = (Size)Enum.Parse(typeof(Size), data);
+        Size sizeFlag = (Size)Enum.Parse(typeof(Size), data, true);
 
         // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
         if (!Enum.IsDefined(typeof(Size), sizeFlag) && !sizeFlag.ToString().Contains(","))
@@ -9352,7 +9352,7 @@ public class ItemDbScriptData
         if (string.IsNullOrEmpty(data))
             return null;
 
-        AutoSpellFlag autoSpellFlag = (AutoSpellFlag)Enum.Parse(typeof(AutoSpellFlag), data);
+        AutoSpellFlag autoSpellFlag = (AutoSpellFlag)Enum.Parse(typeof(AutoSpellFlag), data, true);
 
         // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
         if (!Enum.IsDefined(typeof(AutoSpellFlag), autoSpellFlag) && !autoSpellFlag.ToString().Contains(","))
@@ -9384,7 +9384,7 @@ public class ItemDbScriptData
         if (string.IsNullOrEmpty(data))
             return null;
 
-        AutoSpellOnSkillFlag autoSpellOnSkillFlag = (AutoSpellOnSkillFlag)Enum.Parse(typeof(AutoSpellOnSkillFlag), data);
+        AutoSpellOnSkillFlag autoSpellOnSkillFlag = (AutoSpellOnSkillFlag)Enum.Parse(typeof(AutoSpellOnSkillFlag), data, true);
 
         // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
         if (!Enum.IsDefined(typeof(AutoSpellOnSkillFlag), autoSpellOnSkillFlag) && !autoSpellOnSkillFlag.ToString().Contains(","))
@@ -9412,7 +9412,7 @@ public class ItemDbScriptData
         if (string.IsNullOrEmpty(data))
             return null;
 
-        StatusEffect statusEffectFlag = (StatusEffect)Enum.Parse(typeof(StatusEffect), data);
+        StatusEffect statusEffectFlag = (StatusEffect)Enum.Parse(typeof(StatusEffect), data, true);
 
         // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
         if (!Enum.IsDefined(typeof(StatusEffect), statusEffectFlag) && !statusEffectFlag.ToString().Contains(","))
@@ -9460,7 +9460,7 @@ public class ItemDbScriptData
         if (string.IsNullOrEmpty(data))
             return null;
 
-        MonsterRace monsterRaceFlag = (MonsterRace)Enum.Parse(typeof(MonsterRace), data);
+        MonsterRace monsterRaceFlag = (MonsterRace)Enum.Parse(typeof(MonsterRace), data, true);
 
         // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
         if (!Enum.IsDefined(typeof(MonsterRace), monsterRaceFlag) && !monsterRaceFlag.ToString().Contains(","))
@@ -9498,10 +9498,10 @@ public class ItemDbScriptData
 
         for (int i = 0; i < allTriggerCriteria.Count; i++)
         {
-            TriggerCriteria triggerCriteria = (TriggerCriteria)Enum.Parse(typeof(TriggerCriteria), data);
+            TriggerCriteria triggerCriteria = (TriggerCriteria)Enum.Parse(typeof(TriggerCriteria), allTriggerCriteria[i], true);
 
             // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
-            if (!Enum.IsDefined(typeof(Element), triggerCriteria) && !triggerCriteria.ToString().Contains(","))
+            if (!Enum.IsDefined(typeof(TriggerCriteria), triggerCriteria) && !triggerCriteria.ToString().Contains(","))
                 throw new InvalidOperationException($"{data} is not an underlying value of the YourEnum enumeration.");
 
             if (triggerCriteria == TriggerCriteria.BF_SHORT)
