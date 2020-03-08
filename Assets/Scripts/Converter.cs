@@ -145,9 +145,9 @@ public class Converter : MonoBehaviour
     {
         objConvertInProgress.SetActive(true);
 
-        bool isSlowConvert = false;
+        bool isSlowConvert = true;
         if (Input.GetKey(KeyCode.LeftShift))
-            isSlowConvert = true;
+            isSlowConvert = false;
         yield return null;
 
         //Start process

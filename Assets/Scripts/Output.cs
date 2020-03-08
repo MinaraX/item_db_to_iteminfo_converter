@@ -5572,8 +5572,8 @@ public class ItemDbScriptData
             if (data.Contains(functionName))
                 sum += AddDescription(sum, "ร่ายได้โดยไม่ถูกหยุด (ใช้ได้ทุกที่)");
             #endregion
-            #region bonus bDelayrate
-            functionName = "bonus bDelayrate";
+            #region bonus bDelayRate
+            functionName = "bonus bDelayRate";
             if (data.Contains(functionName))
             {
                 string sumCut = CutFunctionName(data, functionName);
@@ -5581,7 +5581,9 @@ public class ItemDbScriptData
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
-
+                Log(functionName + " >> " + param1);
+                Log("isHadParam1 >> " + isHadParam1);
+                Log("isParam1Negative >> " + isParam1Negative);
                 if (isHadParam1)
                 {
                     if (isParam1Negative)
@@ -5927,9 +5929,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "โดนโจมตีแรงขึ้น " + param2 + "% กับ Size " + GetClassName(allParam[0]));
+                        sum += AddDescription(sum, "โดนโจมตีแรงขึ้น " + param2 + "% กับ Size " + GetSizeName(allParam[0]));
                     else
-                        sum += AddDescription(sum, "โดนโจมตีเบาลง " + param2 + "% กับ Size " + GetClassName(allParam[0]));
+                        sum += AddDescription(sum, "โดนโจมตีเบาลง " + param2 + "% กับ Size " + GetSizeName(allParam[0]));
                 }
             }
             #endregion
@@ -8209,235 +8211,430 @@ public class ItemDbScriptData
 
         if (isHadFunction)
         {
-            if (data.Contains("pow"))
+            bool isMessy = false;
+            int count1 = 0;
+            foreach (char c in data)
             {
-                Log("pow");
-
-                int paramStartAt = data.IndexOf("(");
-
-                data = data.Substring(paramStartAt + 1);
-                Log("pow >> GetValue: " + data);
-                data = data.Substring(0, data.Length - 1);
-                Log("pow >> GetValue: " + data);
-
-                var allValue = StringSplit.GetStringSplit(data, ',');
-
-                for (int i = 0; i < allValue.Count; i++)
+                if (c == '(')
                 {
-                    Log("pow >>  allValue[" + i + "]: " + allValue[i]);
-                    if (i > 0)
-                        allValue[i] = "," + allValue[i];
-                    Log("pow >>  allValue[" + i + "]: " + allValue[i]);
-                }
-
-                Log("pow >>  start CheckSpecialValue");
-                allValue = CheckSpecialValue(allValue);
-                Log("pow >>  finish CheckSpecialValue");
-
-                Log("pow >>  start CheckMath");
-                for (int i = 0; i < allValue.Count; i++)
-                    allValue[i] = CheckMath(allValue[i]);
-                Log("pow >>  finish CheckMath");
-
-                for (int i = 0; i < allValue.Count; i++)
-                    Log("pow >>  allValue[" + i + "]: " + allValue[i]);
-
-                for (int i = 0; i < allValue.Count; i++)
-                    allValue[i] = allValue[i].Replace(",", "");
-
-                SetParamCheck(paramCount, true, false);
-
-                return "(" + allValue[0] + " ยกกำลัง " + allValue[1] + ")";
-            }
-            else if (data.Contains("rand"))
-            {
-                Log("rand");
-
-                int paramStartAt = data.IndexOf("(");
-
-                data = data.Substring(paramStartAt + 1);
-                Log("rand >> GetValue: " + data);
-                data = data.Substring(0, data.Length - 1);
-                Log("rand >> GetValue: " + data);
-
-                var allValue = StringSplit.GetStringSplit(data, ',');
-
-                for (int i = 0; i < allValue.Count; i++)
-                {
-                    Log("rand >>  allValue[" + i + "]: " + allValue[i]);
-                    if (i > 0)
-                        allValue[i] = "," + allValue[i];
-                    Log("rand >>  allValue[" + i + "]: " + allValue[i]);
-                }
-
-                Log("rand >>  start CheckSpecialValue");
-                allValue = CheckSpecialValue(allValue);
-                Log("rand >>  finish CheckSpecialValue");
-
-                Log("rand >>  start CheckMath");
-                for (int i = 0; i < allValue.Count; i++)
-                    allValue[i] = CheckMath(allValue[i]);
-                Log("rand >>  finish CheckMath");
-
-                for (int i = 0; i < allValue.Count; i++)
-                    Log("rand >>  allValue[" + i + "]: " + allValue[i]);
-
-                for (int i = 0; i < allValue.Count; i++)
-                    allValue[i] = allValue[i].Replace(",", "");
-
-                SetParamCheck(paramCount, true, false);
-
-                return "(" + allValue[0] + "~" + allValue[1] + ")";
-            }
-            else if (data.Contains("min"))
-            {
-                Log("min");
-
-                int paramStartAt = data.IndexOf("(");
-
-                data = data.Substring(paramStartAt + 1);
-                Log("min >> GetValue: " + data);
-                data = data.Substring(0, data.Length - 1);
-                Log("min >> GetValue: " + data);
-
-                var allValue = StringSplit.GetStringSplit(data, ',');
-
-                for (int i = 0; i < allValue.Count; i++)
-                {
-                    Log("min >>  allValue[" + i + "]: " + allValue[i]);
-                    if (i > 0)
-                        allValue[i] = "," + allValue[i];
-                    Log("min >>  allValue[" + i + "]: " + allValue[i]);
-                }
-
-                Log("min >>  start CheckSpecialValue");
-                allValue = CheckSpecialValue(allValue);
-                Log("min >>  finish CheckSpecialValue");
-
-                Log("min >>  start CheckMath");
-                for (int i = 0; i < allValue.Count; i++)
-                    allValue[i] = CheckMath(allValue[i]);
-                Log("min >>  finish CheckMath");
-
-                for (int i = 0; i < allValue.Count; i++)
-                    allValue[i] = allValue[i].Replace(",", "");
-
-                bool isHadNonInteger = false;
-                string nonIntegerText = null;
-
-                int min = 0;
-                for (int i = 0; i < allValue.Count; i++)
-                {
-                    int paramInt = 0;
-                    bool isInteger = false;
-
-                    isInteger = int.TryParse(allValue[i], out paramInt);
-
-                    if (isInteger)
+                    count1++;
+                    if (count1 >= 4)
                     {
-                        if (min == 0 || min > paramInt)
-                            min = paramInt;
+                        isMessy = true;
+                        break;
                     }
-                    else
+                }
+            }
+
+            //Do messy calculation here
+            if (isMessy)
+            {
+                Log("isMessy >> data #1: " + data);
+                data = ReplaceAllSpecialValue(data);
+                Log("isMessy >> data #2: " + data);
+                data = data.Replace(",", "");
+                Log("isMessy >> data #3: " + data);
+                data = "(" + data + ")";
+                SetParamCheck(paramCount, true, false);
+            }
+            else
+            {
+                if (data.Contains("pow"))
+                {
+                    string functionName = "pow";
+
+                    Log(functionName);
+
+                    int retry = 300;
+                    string newValue = data;
+                    while (newValue.Contains(functionName) && retry > 0)
                     {
-                        isHadNonInteger = true;
-
-                        //Replace temporary variables
-                        if (isFoundTempVariable)
+                        retry--;
+                        int circleStartAt = 0;
+                        int circleEndAt = 0;
+                        string findFunc = null;
+                        for (int i = 0; i < newValue.Length; i++)
                         {
-                            for (int j = 0; j < tempVarName.Count; j++)
-                                allValue[i] = allValue[i].Replace(tempVarName[j], valueFromTempVar[j]);
+                            if (newValue[i] == 'p' || newValue[i] == 'o' || newValue[i] == 'w')
+                            {
+                                findFunc += newValue[i];
 
-                            SetParamCheck(paramCount, true, false);
+                                Log(functionName + " >> findFunc: " + findFunc);
+
+                                if (findFunc == functionName)
+                                {
+                                    circleStartAt = newValue.IndexOf("(", i - 3);
+                                    circleEndAt = newValue.IndexOf(")", i - 3);
+                                    break;
+                                }
+                            }
+                            else
+                                findFunc = null;
                         }
 
-                        allValue[i] = ReplaceAllSpecialValue(allValue[i]);
+                        string sumToCut = newValue.Substring(circleStartAt + 1);
+                        Log(functionName + " >> sumToCut: " + sumToCut);
+                        int sumCircleStartAt = sumToCut.IndexOf("(");
+                        sumToCut = sumToCut.Substring(sumCircleStartAt + 1);
+                        Log(functionName + " >> sumToCut: " + sumToCut);
+                        int sumCircleEndAt = sumToCut.IndexOf(")");
+                        sumToCut = sumToCut.Substring(0, sumCircleEndAt);
+                        Log(functionName + " >> sumToCut: " + sumToCut);
 
-                        nonIntegerText = allValue[i];
-                    }
-                }
-
-                SetParamCheck(paramCount, true, false);
-
-                if (isHadNonInteger)
-                    return "(" + nonIntegerText + " มากสุด " + min + ")";
-                else
-                    return "(มากสุด " + min + ")";
-            }
-            else if (data.Contains("max"))
-            {
-                Log("max");
-
-                int paramStartAt = data.IndexOf("(");
-
-                data = data.Substring(paramStartAt + 1);
-                Log("max >> GetValue: " + data);
-                data = data.Substring(0, data.Length - 1);
-                Log("max >> GetValue: " + data);
-
-                var allValue = StringSplit.GetStringSplit(data, ',');
-
-                for (int i = 0; i < allValue.Count; i++)
-                {
-                    Log("max >>  allValue[" + i + "]: " + allValue[i]);
-                    if (i > 0)
-                        allValue[i] = "," + allValue[i];
-                    Log("max >>  allValue[" + i + "]: " + allValue[i]);
-                }
-
-                Log("max >>  start CheckSpecialValue");
-                allValue = CheckSpecialValue(allValue);
-                Log("max >>  finish CheckSpecialValue");
-
-                Log("max >>  start CheckMath");
-                for (int i = 0; i < allValue.Count; i++)
-                    allValue[i] = CheckMath(allValue[i]);
-                Log("max >>  finish CheckMath");
-
-                for (int i = 0; i < allValue.Count; i++)
-                    allValue[i] = allValue[i].Replace(",", "");
-
-                bool isHadNonInteger = false;
-                string nonIntegerText = null;
-
-                int max = 0;
-                for (int i = 0; i < allValue.Count; i++)
-                {
-                    int paramInt = 0;
-                    bool isInteger = false;
-
-                    isInteger = int.TryParse(allValue[i], out paramInt);
-
-                    if (isInteger)
-                    {
-                        if (max == 0 || max < paramInt)
-                            max = paramInt;
-                    }
-                    else
-                    {
-                        isHadNonInteger = true;
-
-                        //Replace temporary variables
-                        if (isFoundTempVariable)
+                        //Calculate here
+                        var allValue = StringSplit.GetStringSplit(sumToCut, ',');
+                        for (int i = 0; i < allValue.Count; i++)
                         {
-                            for (int j = 0; j < tempVarName.Count; j++)
-                                allValue[i] = allValue[i].Replace(tempVarName[j], valueFromTempVar[j]);
+                            Log(functionName + " >>  allValue[" + i + "]: " + allValue[i]);
+                            if (i > 0)
+                                allValue[i] = "," + allValue[i];
+                            Log(functionName + " >>  allValue[" + i + "]: " + allValue[i]);
+                        }
+                        Log(functionName + " >>  start CheckSpecialValue");
+                        allValue = CheckSpecialValue(allValue);
+                        Log(functionName + " >>  finish CheckSpecialValue");
 
-                            SetParamCheck(paramCount, true, false);
+                        Log(functionName + " >>  start CheckMath");
+                        for (int i = 0; i < allValue.Count; i++)
+                            allValue[i] = CheckMath(allValue[i]);
+                        Log(functionName + " >>  finish CheckMath");
+
+                        for (int i = 0; i < allValue.Count; i++)
+                            allValue[i] = allValue[i].Replace(",", "");
+
+                        SetParamCheck(paramCount, true, false);
+
+                        Log(functionName + " >> sumToCut: " + sumToCut);
+
+                        string removeText = newValue.Substring(0, circleStartAt);
+                        removeText = removeText.Replace(functionName, "");
+
+                        newValue = removeText + "(" + allValue[0] + " ยกกำลัง " + allValue[1] + ")" + newValue.Substring(circleEndAt + 1);
+
+                        Log(functionName + " >> newValue: " + newValue);
+                    }
+                    data = newValue;
+                }
+                else if (data.Contains("rand"))
+                {
+                    string functionName = "rand";
+
+                    Log(functionName);
+
+                    int retry = 300;
+                    string newValue = data;
+                    while (newValue.Contains(functionName) && retry > 0)
+                    {
+                        retry--;
+                        int circleStartAt = 0;
+                        int circleEndAt = 0;
+                        string findFunc = null;
+                        for (int i = 0; i < newValue.Length; i++)
+                        {
+                            if (newValue[i] == 'r' || newValue[i] == 'a' || newValue[i] == 'n' || newValue[i] == 'd')
+                            {
+                                findFunc += newValue[i];
+
+                                Log(functionName + " >> findFunc: " + findFunc);
+
+                                if (findFunc == functionName)
+                                {
+                                    circleStartAt = newValue.IndexOf("(", i - 4);
+                                    circleEndAt = newValue.IndexOf(")", i - 4);
+                                    break;
+                                }
+                            }
+                            else
+                                findFunc = null;
                         }
 
-                        allValue[i] = ReplaceAllSpecialValue(allValue[i]);
+                        string sumToCut = newValue.Substring(circleStartAt + 1);
+                        Log(functionName + " >> sumToCut: " + sumToCut);
+                        int sumCircleStartAt = sumToCut.IndexOf("(");
+                        sumToCut = sumToCut.Substring(sumCircleStartAt + 1);
+                        Log(functionName + " >> sumToCut: " + sumToCut);
+                        int sumCircleEndAt = sumToCut.IndexOf(")");
+                        sumToCut = sumToCut.Substring(0, sumCircleEndAt);
+                        Log(functionName + " >> sumToCut: " + sumToCut);
 
-                        nonIntegerText = allValue[i];
+                        //Calculate here
+                        var allValue = StringSplit.GetStringSplit(sumToCut, ',');
+                        for (int i = 0; i < allValue.Count; i++)
+                        {
+                            Log(functionName + " >>  allValue[" + i + "]: " + allValue[i]);
+                            if (i > 0)
+                                allValue[i] = "," + allValue[i];
+                            Log(functionName + " >>  allValue[" + i + "]: " + allValue[i]);
+                        }
+                        Log(functionName + " >>  start CheckSpecialValue");
+                        allValue = CheckSpecialValue(allValue);
+                        Log(functionName + " >>  finish CheckSpecialValue");
+
+                        Log(functionName + " >>  start CheckMath");
+                        for (int i = 0; i < allValue.Count; i++)
+                            allValue[i] = CheckMath(allValue[i]);
+                        Log(functionName + " >>  finish CheckMath");
+
+                        for (int i = 0; i < allValue.Count; i++)
+                            allValue[i] = allValue[i].Replace(",", "");
+
+                        SetParamCheck(paramCount, true, false);
+
+                        Log(functionName + " >> sumToCut: " + sumToCut);
+
+                        string removeText = newValue.Substring(0, circleStartAt);
+                        removeText = removeText.Replace(functionName, "");
+
+                        newValue = removeText + "(" + allValue[0] + "~" + allValue[1] + ")" + newValue.Substring(circleEndAt + 1);
+
+                        Log(functionName + " >> newValue: " + newValue);
                     }
+                    data = newValue;
                 }
+                else if (data.Contains("min"))
+                {
+                    string functionName = "min";
 
-                SetParamCheck(paramCount, true, false);
+                    Log(functionName);
 
-                if (isHadNonInteger)
-                    return "(" + max + " มากสุด " + nonIntegerText + ")";
+                    int retry = 300;
+                    string newValue = data;
+                    while (newValue.Contains(functionName) && retry > 0)
+                    {
+                        retry--;
+                        int circleStartAt = 0;
+                        int circleEndAt = 0;
+                        string findFunc = null;
+                        for (int i = 0; i < newValue.Length; i++)
+                        {
+                            if (newValue[i] == 'm' || newValue[i] == 'i' || newValue[i] == 'n')
+                            {
+                                findFunc += newValue[i];
+
+                                Log(functionName + " >> findFunc: " + findFunc);
+
+                                if (findFunc == functionName)
+                                {
+                                    circleStartAt = newValue.IndexOf("(", i - 3);
+                                    circleEndAt = newValue.IndexOf(")", i - 3);
+                                    break;
+                                }
+                            }
+                            else
+                                findFunc = null;
+                        }
+
+
+                        string sumToCut = newValue.Substring(circleStartAt + 1);
+                        Log(functionName + " >> sumToCut: " + sumToCut);
+                        int sumCircleStartAt = sumToCut.IndexOf("(");
+                        sumToCut = sumToCut.Substring(sumCircleStartAt + 1);
+                        Log(functionName + " >> sumToCut: " + sumToCut);
+                        int sumCircleEndAt = sumToCut.IndexOf(")");
+                        sumToCut = sumToCut.Substring(0, sumCircleEndAt);
+                        Log(functionName + " >> sumToCut: " + sumToCut);
+
+                        //Calculate here
+                        var allValue = StringSplit.GetStringSplit(sumToCut, ',');
+                        for (int i = 0; i < allValue.Count; i++)
+                        {
+                            Log(functionName + " >>  allValue[" + i + "]: " + allValue[i]);
+                            if (i > 0)
+                                allValue[i] = "," + allValue[i];
+                            Log(functionName + " >>  allValue[" + i + "]: " + allValue[i]);
+                        }
+                        Log(functionName + " >>  start CheckSpecialValue");
+                        allValue = CheckSpecialValue(allValue);
+                        Log(functionName + " >>  finish CheckSpecialValue");
+
+                        Log(functionName + " >>  start CheckMath");
+                        for (int i = 0; i < allValue.Count; i++)
+                            allValue[i] = CheckMath(allValue[i]);
+                        Log(functionName + " >>  finish CheckMath");
+
+                        for (int i = 0; i < allValue.Count; i++)
+                            allValue[i] = allValue[i].Replace(",", "");
+
+                        bool isHadNonInteger = false;
+                        string nonIntegerText = null;
+
+                        int min = 0;
+                        for (int i = 0; i < allValue.Count; i++)
+                        {
+                            int paramInt = 0;
+                            bool isInteger = false;
+
+                            isInteger = int.TryParse(allValue[i], out paramInt);
+
+                            if (isInteger)
+                            {
+                                if (min == 0 || min > paramInt)
+                                    min = paramInt;
+                            }
+                            else
+                            {
+                                isHadNonInteger = true;
+
+                                //Replace temporary variables
+                                if (isFoundTempVariable)
+                                {
+                                    for (int j = 0; j < tempVarName.Count; j++)
+                                        allValue[i] = allValue[i].Replace(tempVarName[j], valueFromTempVar[j]);
+
+                                    SetParamCheck(paramCount, true, false);
+                                }
+
+                                allValue[i] = ReplaceAllSpecialValue(allValue[i]);
+
+                                nonIntegerText = allValue[i];
+                            }
+                        }
+
+                        SetParamCheck(paramCount, true, false);
+
+                        Log(functionName + " >> sumToCut: " + sumToCut);
+
+                        string removeText = newValue.Substring(0, circleStartAt);
+                        removeText = removeText.Replace(functionName, "");
+                        if (isHadNonInteger)
+                            newValue = removeText + "(" + nonIntegerText + " มากสุด " + min + ")" + newValue.Substring(circleEndAt + 1);
+                        else
+                            newValue = removeText + "(มากสุด " + min + ")" + newValue.Substring(circleEndAt + 1);
+
+                        Log(functionName + " >> newValue: " + newValue);
+                    }
+                    data = newValue;
+                }
+                else if (data.Contains("max"))
+                {
+                    string functionName = "max";
+
+                    Log(functionName);
+
+                    int retry = 300;
+                    string newValue = data;
+                    while (newValue.Contains(functionName) && retry > 0)
+                    {
+                        retry--;
+                        int circleStartAt = 0;
+                        int circleEndAt = 0;
+                        string findFunc = null;
+                        for (int i = 0; i < newValue.Length; i++)
+                        {
+                            if (newValue[i] == 'm' || newValue[i] == 'a' || newValue[i] == 'x')
+                            {
+                                findFunc += newValue[i];
+
+                                Log(functionName + " >> findFunc: " + findFunc);
+
+                                if (findFunc == functionName)
+                                {
+                                    circleStartAt = newValue.IndexOf("(", i - 3);
+                                    circleEndAt = newValue.IndexOf(")", i - 3);
+                                    break;
+                                }
+                            }
+                            else
+                                findFunc = null;
+                        }
+
+                        string sumToCut = newValue.Substring(circleStartAt + 1);
+                        Log(functionName + " >> sumToCut: " + sumToCut);
+                        int sumCircleStartAt = sumToCut.IndexOf("(");
+                        sumToCut = sumToCut.Substring(sumCircleStartAt + 1);
+                        Log(functionName + " >> sumToCut: " + sumToCut);
+                        int sumCircleEndAt = sumToCut.IndexOf(")");
+                        sumToCut = sumToCut.Substring(0, sumCircleEndAt);
+                        Log(functionName + " >> sumToCut: " + sumToCut);
+
+                        //Calculate here
+                        var allValue = StringSplit.GetStringSplit(sumToCut, ',');
+                        for (int i = 0; i < allValue.Count; i++)
+                        {
+                            Log(functionName + " >>  allValue[" + i + "]: " + allValue[i]);
+                            if (i > 0)
+                                allValue[i] = "," + allValue[i];
+                            Log(functionName + " >>  allValue[" + i + "]: " + allValue[i]);
+                        }
+                        Log(functionName + " >>  start CheckSpecialValue");
+                        allValue = CheckSpecialValue(allValue);
+                        Log(functionName + " >>  finish CheckSpecialValue");
+
+                        Log(functionName + " >>  start CheckMath");
+                        for (int i = 0; i < allValue.Count; i++)
+                            allValue[i] = CheckMath(allValue[i]);
+                        Log(functionName + " >>  finish CheckMath");
+
+                        for (int i = 0; i < allValue.Count; i++)
+                            allValue[i] = allValue[i].Replace(",", "");
+
+                        bool isHadNonInteger = false;
+                        string nonIntegerText = null;
+
+                        int max = 0;
+                        for (int i = 0; i < allValue.Count; i++)
+                        {
+                            //Log("max >>  allValue[" + i + "]: " + allValue[i]);
+                            int paramInt = 0;
+                            bool isInteger = false;
+
+                            isInteger = int.TryParse(allValue[i], out paramInt);
+
+                            if (isInteger)
+                            {
+                                if (max == 0 || max < paramInt)
+                                    max = paramInt;
+                            }
+                            else
+                            {
+                                Log(functionName + " >>  allValue[" + i + "] is not integer #1");
+
+                                isHadNonInteger = true;
+
+                                //Replace temporary variables
+                                if (isFoundTempVariable)
+                                {
+                                    for (int j = 0; j < tempVarName.Count; j++)
+                                        allValue[i] = allValue[i].Replace(tempVarName[j], valueFromTempVar[j]);
+
+                                    SetParamCheck(paramCount, true, false);
+                                }
+
+                                Log(functionName + " >>  allValue[" + i + "] is not integer #2");
+
+                                allValue[i] = ReplaceAllSpecialValue(allValue[i]);
+
+                                Log(functionName + " >>  allValue[" + i + "] is not integer #3");
+
+                                nonIntegerText = allValue[i];
+                            }
+                        }
+
+                        SetParamCheck(paramCount, true, false);
+
+                        Log(functionName + " >> sumToCut: " + sumToCut);
+
+                        string removeText = newValue.Substring(0, circleStartAt);
+                        removeText = removeText.Replace(functionName, "");
+                        if (isHadNonInteger)
+                            newValue = removeText + "(" + max + " มากสุด " + nonIntegerText + ")" + newValue.Substring(circleEndAt + 1);
+                        else
+                            newValue = removeText + "(มากสุด " + max + ")" + newValue.Substring(circleEndAt + 1);
+
+                        Log(functionName + " >> newValue: " + newValue);
+                    }
+                    data = newValue;
+                }
                 else
-                    return "(มากสุด " + max + ")";
+                {
+                    Log("not had special function >> data #1: " + data);
+                    data = ReplaceAllSpecialValue(data);
+                    Log("not had special function >> data #2: " + data);
+                    data = data.Replace(",", "");
+                    Log("not had special function >> data #3: " + data);
+                    data = "(" + data + ")";
+                    SetParamCheck(paramCount, true, false);
+                }
             }
         }
         //Normal value
@@ -8493,6 +8690,8 @@ public class ItemDbScriptData
         //Replace temporary variables
         if (isFoundTempVariable)
         {
+            Log("GetValue >> isFoundTempVariable");
+
             List<string> tempValues = new List<string>();
             List<int> tempIntegers = new List<int>();
             string highLowValue = null;
@@ -8593,10 +8792,13 @@ public class ItemDbScriptData
             SetParamCheck(paramCount, true, false);
         }
 
+        Log("GetValue >> Replace special variables");
         //Replace special variables
         data = ReplaceAllSpecialValue(data);
 
+        Log("GetValue >> Replace any error text");
         data = data.Replace(";", "");
+        data = data.Replace("()", "");
 
         if (isFoundTempVariable)
             return "(" + data + ")";
@@ -8611,13 +8813,10 @@ public class ItemDbScriptData
     /// <returns></returns>
     List<string> CheckSpecialValue(List<string> allValue)
     {
-        // min(14
-        // ,.@r)-3
-        // ,1
-
         //Check special function inside value
         for (int i = 0; i < allValue.Count; i++)
         {
+            Log("allValue[" + i + "]: " + allValue[i]);
             if (allValue[i].Contains("min") || allValue[i].Contains("max") || allValue[i].Contains("rand") || allValue[i].Contains("pow"))
             {
             L_Redo:
@@ -8643,9 +8842,6 @@ public class ItemDbScriptData
                     allValue.RemoveAt(i + 1);
                     goto L_Redo;
                 }
-
-                // min(14,.@r)-3
-                // ,1
 
                 int endOfFunctionAt = 0;
                 for (int j = 0; j < sumValue.Length; j++)
@@ -8900,28 +9096,62 @@ public class ItemDbScriptData
     {
         string value = data;
 
+        Log("value: " + value);
+
         if (IsOneLineIfElse(value))
             value = ConvertOneLineIfElse(value);
 
-        if (value.Contains("getskilllv"))
+        string functionName = "getskilllv";
+        if (value.Contains(functionName))
         {
-            while (value.Contains("getskilllv"))
+            int retry = 300;
+            string newValue = value;
+            while (newValue.Contains(functionName) && retry > 0)
             {
-                int circleStartAt = value.IndexOf("(");
-                int circleEndAt = value.IndexOf(")");
+                retry--;
+                int circleStartAt = 0;
+                int circleEndAt = 0;
+                string findFunc = null;
+                for (int i = 0; i < newValue.Length; i++)
+                {
+                    if (newValue[i] == 'g' || newValue[i] == 'e' || newValue[i] == 't' ||
+                        newValue[i] == 's' || newValue[i] == 'k' || newValue[i] == 'i' ||
+                        newValue[i] == 'l' || newValue[i] == 'v')
+                    {
+                        findFunc += newValue[i];
 
-                string sumToCut = value.Substring(circleStartAt + 1);
+                        Log("findFunc: " + findFunc);
+
+                        if (findFunc == functionName)
+                        {
+                            circleStartAt = newValue.IndexOf("(", i - 9);
+                            circleEndAt = newValue.IndexOf(")", i - 9);
+                            break;
+                        }
+                    }
+                    else
+                        findFunc = null;
+                }
+
+
+                string sumToCut = newValue.Substring(circleStartAt + 1);
+                Log("sumToCut: " + sumToCut);
                 int sumCircleStartAt = sumToCut.IndexOf("(");
                 sumToCut = sumToCut.Substring(sumCircleStartAt + 1);
+                Log("sumToCut: " + sumToCut);
                 int sumCircleEndAt = sumToCut.IndexOf(")");
                 sumToCut = sumToCut.Substring(0, sumCircleEndAt);
+                Log("sumToCut: " + sumToCut);
                 sumToCut = GetSkillName(sumToCut);
+                Log("sumToCut: " + sumToCut);
 
-                string removeText = value.Substring(0, circleStartAt);
-                removeText = removeText.Replace("getskilllv", "");
+                string removeText = newValue.Substring(0, circleStartAt);
+                removeText = removeText.Replace(functionName, "");
 
-                value = removeText + "(ตามจำนวนที่เรียนรู้ Skill " + sumToCut + ")" + value.Substring(circleEndAt + 1);
+                newValue = removeText + "(ตามจำนวนที่เรียนรู้ Skill " + sumToCut + ")" + newValue.Substring(circleEndAt + 1);
+                Log("newValue: " + newValue);
             }
+            value = newValue;
         }
 
         value = value.Replace("getrefine();", "(ตามจำนวนตีบวก)");
@@ -8967,6 +9197,8 @@ public class ItemDbScriptData
     /// <returns></returns>
     string ConvertOneLineIfElse(string data)
     {
+        //Log("ConvertOneLineIfElse >> data: " + data);
+
         data = data.Replace("getrefine", "หากจำนวนตีบวก");
         data = data.Replace(">=", " มากกว่าหรือเท่ากับ ");
         data = data.Replace("<=", " น้อยกว่าหรือเท่ากับ ");
@@ -8974,6 +9206,9 @@ public class ItemDbScriptData
         data = data.Replace("<", " น้อยกว่า ");
         data = data.Replace("?", " = ");
         data = data.Replace(":", ", หากไม่ตรงเงื่อนไข = ");
+        data = data.Replace("pow", " ยกกำลัง ");
+
+        //Log("ConvertOneLineIfElse >> data: " + data);
 
         return data;
     }
@@ -9677,6 +9912,8 @@ public class ItemDbScriptData
             return "Ninja";
         else if (monsterRaceFlag == MonsterRace.RC2_Orc)
             return "Orc";
+        else if (monsterRaceFlag == MonsterRace.RC2_BioLab)
+            return "Bio Laboratory";
 
         return null;
     }
@@ -9748,6 +9985,34 @@ public class ItemDbScriptData
     /// <returns></returns>
     string GetRateByDivider(string data, float divider)
     {
+        bool isFloat = false;
+        float tryParse = 0;
+        isFloat = float.TryParse(data, out tryParse);
+        if (!isFloat)
+        {
+            //500+(200*(ตามจำนวนตีบวก))
+            string newData = null;
+            string currentNumText = null;
+            for (int i = 0; i < data.Length; i++)
+            {
+                tryParse = 0;
+                isFloat = float.TryParse(data[i].ToString(), out tryParse);
+                Log(data[i] + " isFloat: " + isFloat + ", currentNumText: " + currentNumText);
+                if (isFloat)
+                    currentNumText += data[i];
+                else if (!string.IsNullOrEmpty(currentNumText))
+                {
+                    float sumValue = (float.Parse(currentNumText) / divider);
+                    newData += sumValue;
+                    currentNumText = null;
+                    if (!isFloat)
+                        newData += data[i];
+                }
+                else
+                    newData += data[i];
+            }
+            return newData;
+        }
         float value = (float.Parse(data) / divider);
         if (value < 1)
             return value.ToString("f1");
@@ -9856,7 +10121,7 @@ public enum Race
 [Flags]
 public enum MonsterRace
 {
-    RC2_Goblin, RC2_Kobold, RC2_Orc, RC2_Golem, RC2_Guardian, RC2_Ninja
+    RC2_Goblin, RC2_Kobold, RC2_Orc, RC2_Golem, RC2_Guardian, RC2_Ninja, RC2_BioLab
 }
 
 [Flags]

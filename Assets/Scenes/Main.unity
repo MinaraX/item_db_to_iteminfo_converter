@@ -3986,7 +3986,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'Converting...
 
-    this will take around 1-2 minutes'
+    this may take around 5 minutes'
 --- !u!222 &2041856479
 CanvasRenderer:
   m_ObjectHideFlags: 0
