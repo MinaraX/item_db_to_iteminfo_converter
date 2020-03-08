@@ -1557,7 +1557,6 @@ public class ItemDbScriptData
     {
         sumScript = null;
 
-        script = "{ .@r = getrefine(); if (.@r>=11) .@val = 35;else if (.@r>=9) .@val = 20;bonus2 bSkillAtk,\"NC_AXEBOOMERANG\",.@val;bonus2 bSkillAtk,\"NC_POWERSWING\",.@val;}";
         script = CorrectScriptToConvert(script);
 
         string sumDesc = GetDescription(script);

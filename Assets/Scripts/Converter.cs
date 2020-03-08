@@ -18,6 +18,7 @@ public class Converter : MonoBehaviour
     public Image imgCurrent_resourceNames;
     public Image imgCurrent_skillNames;
     public Image imgCurrent_mob_db;
+    public Text txtCurrentProgress;
     public GameObject objConvertInProgress;
 
     public Button btnSync;
@@ -153,7 +154,10 @@ public class Converter : MonoBehaviour
 
         //Convert here
         for (int i = 0; i < output.m_lines.Count; i++)
+        {
             output.ConvertSpecificArrayToItemInfo(i);
+            txtCurrentProgress.text = "Converted " + (i + 1) + "/" + (output.m_lines.Count + 1);
+        }
 
         //Finished
         Log("Converter: Done");
