@@ -129,6 +129,11 @@ public class Converter : MonoBehaviour
         output.FetchResourceName();
         output.FetchSkillName();
         output.FetchMonsterDatabase();
+
+        //Convert no script here
+        for (int i = 0; i < output.m_lines.Count; i++)
+            output.ConvertSpecificArrayToItemInfo(i, true);
+
         CheckButtonState();
     }
 

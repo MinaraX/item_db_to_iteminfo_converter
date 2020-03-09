@@ -11,12 +11,4 @@ public class StringSplit
         else
             return new List<string>(data.Split(targetToSplit));
     }
-
-    public static List<string> GetStringSplitAll(string data)
-    {
-        if (string.IsNullOrEmpty(data))
-            return new List<string>("".Split());
-        else
-            return new List<string>(data.Split());
-    }
 }

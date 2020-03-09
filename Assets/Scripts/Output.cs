@@ -23,6 +23,7 @@ public class Output : ScriptableObject
         m_lines_SkillName = new List<string>();
         m_lines_MonsterDatabase = new List<string>();
         m_currentItemDbs = new List<ItemDb>();
+        m_currentItemWithoutScriptDbs = new List<ItemDb>();
         m_currentItemScriptDatas = new List<ItemDbScriptData>();
         m_currentResourceNames = new List<ItemResourceName>();
         m_currentSkillNames = new List<SkillName>();
@@ -188,17 +189,17 @@ public class Output : ScriptableObject
     /// Start convert specific lines to item info database
     /// </summary>
     /// <param name="index"></param>
-    public void ConvertSpecificArrayToItemInfo(int index)
+    public void ConvertSpecificArrayToItemInfo(int index, bool isNoScript = false)
     {
         targetArray = index;
-        ConvertCurrentTargetArrayToItemInfo();
+        ConvertCurrentTargetArrayToItemInfo(null, isNoScript);
     }
 
     /// <summary>
     /// Convert string to item info database
     /// </summary>
     /// <param name="input"></param>
-    void ConvertCurrentTargetArrayToItemInfo(string input = null)
+    void ConvertCurrentTargetArrayToItemInfo(string input = null, bool isNoScript = false)
     {
         if (string.IsNullOrEmpty(input))
             Log("ConvertCurrentTargetArrayToItemInfo: Start");
@@ -284,19 +285,25 @@ public class Output : ScriptableObject
             currentItemDb.view = int.Parse(currentItemDbData[18]);
 
         if (Application.isPlaying)
-            m_currentItemDbs.Add(currentItemDb);
+        {
+            if (!isNoScript)
+                m_currentItemDbs.Add(currentItemDb);
+            else
+                m_currentItemWithoutScriptDbs.Add(currentItemDb);
+        }
 
-        m_currentOutput += "[" + currentItemDb.id + "] = {"
-            + "\nunidentifiedDisplayName = \"" + GetName() + "\","
-            + "\nunidentifiedResourceName = \"" + GetResourceName() + "\","
-            + "\nunidentifiedDescriptionName = {" + GetDescription() + ""
-            + "\n},"
-            + "\nidentifiedDisplayName = \"" + GetName() + "\","
-            + "\nidentifiedResourceName = \"" + GetResourceName() + "\","
-            + "\nidentifiedDescriptionName = {" + GetDescription() + ""
-            + "\n},"
-            + "\nslotCount = " + GetSlotCount() + ","
-            + "\nClassNum = " + GetClassNum() + "\n},\n";
+        if (!isNoScript)
+            m_currentOutput += "[" + currentItemDb.id + "] = {"
+                + "\nunidentifiedDisplayName = \"" + GetName() + "\","
+                + "\nunidentifiedResourceName = \"" + GetResourceName() + "\","
+                + "\nunidentifiedDescriptionName = {" + GetDescription() + ""
+                + "\n},"
+                + "\nidentifiedDisplayName = \"" + GetName() + "\","
+                + "\nidentifiedResourceName = \"" + GetResourceName() + "\","
+                + "\nidentifiedDescriptionName = {" + GetDescription() + ""
+                + "\n},"
+                + "\nslotCount = " + GetSlotCount() + ","
+                + "\nClassNum = " + GetClassNum() + "\n},\n";
 
         Log("Success convert item_db id: " + currentItemDbData[0]);
 
@@ -1462,6 +1469,8 @@ public class Output : ScriptableObject
     ItemDb currentItemDb = new ItemDb();
     List<ItemDb> currentItemDbs = new List<ItemDb>();
     public List<ItemDb> m_currentItemDbs { get { return currentItemDbs; } set { currentItemDbs = value; } }
+    List<ItemDb> currentItemWithoutScriptDbs = new List<ItemDb>();
+    public List<ItemDb> m_currentItemWithoutScriptDbs { get { return currentItemWithoutScriptDbs; } set { currentItemWithoutScriptDbs = value; } }
 
     //resourceName
     List<ItemResourceName> currentResourceNames = new List<ItemResourceName>();
@@ -5515,9 +5524,9 @@ public class ItemDbScriptData
                 if (isHadParam1)
                 {
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "ร่าย FIXCAST เร็วขึ้น " + TimerToStringTimer(float.Parse(param1)));
+                        sum += AddDescription(sum, "ร่าย FIXCAST เร็วขึ้น " + UseFunctionWithString(param1, 0));
                     else
-                        sum += AddDescription(sum, "ร่าย FIXCAST ช้าลง" + TimerToStringTimer(float.Parse(param1)));
+                        sum += AddDescription(sum, "ร่าย FIXCAST ช้าลง" + UseFunctionWithString(param1, 0));
                 }
             }
             #endregion
@@ -5554,9 +5563,9 @@ public class ItemDbScriptData
                 if (isHadParam1)
                 {
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "ร่าย VCAST เร็วขึ้น " + TimerToStringTimer(float.Parse(param1)));
+                        sum += AddDescription(sum, "ร่าย VCAST เร็วขึ้น " + UseFunctionWithString(param1, 0));
                     else
-                        sum += AddDescription(sum, "ร่าย VCAST ช้าลง" + TimerToStringTimer(float.Parse(param1)));
+                        sum += AddDescription(sum, "ร่าย VCAST ช้าลง" + UseFunctionWithString(param1, 0));
                 }
             }
             #endregion
@@ -8146,6 +8155,13 @@ public class ItemDbScriptData
         isParam6Negative = false;
         isParam7Negative = false;
 
+        if (!sumCut.Contains(","))
+        {
+            List<string> newList = new List<string>();
+            newList.Add(sumCut);
+            return newList;
+        }
+
         var allParam = StringSplit.GetStringSplit(sumCut, ',');
 
         for (int i = 0; i < allParam.Count; i++)
@@ -8189,9 +8205,11 @@ public class ItemDbScriptData
     /// <returns></returns>
     string GetValue(string data, int paramCount = -1, bool isZeroValueOkay = false)
     {
+        bool isForceNegative = false;
+        string functionname = "GetValue";
         data = MergeWhiteSpace.RemoveWhiteSpace(data);
 
-        Log("GetValue[" + (paramCount - 1) + "]: " + data);
+        Log(functionname + " >> [" + (paramCount - 1) + "]: " + data);
 
         //Use store temporary variables if found in this value
         bool isFoundTempVariable = false;
@@ -8204,10 +8222,10 @@ public class ItemDbScriptData
                 isFoundTempVariable = true;
 
                 tempVarName.Add(tempVariables[i].variableName);
-                Log("GetValue >> Found variableName: " + tempVariables[i].variableName);
+                Log(functionname + " >> Found variableName: " + tempVariables[i].variableName);
 
                 valueFromTempVar.Add(tempVariables[i].value);
-                Log("GetValue >> Found value: " + tempVariables[i].value);
+                Log(functionname + " >> Found value: " + tempVariables[i].value);
             }
         }
 
@@ -8747,6 +8765,12 @@ public class ItemDbScriptData
                 return "1";
             }
 
+            Log(functionname + " >> data: " + data);
+
+            data = CheckMath(data);
+
+            Log(functionname + " >> data: " + data);
+
             //Integer check
             int paramInt = 0;
             bool isInteger = false;
@@ -8778,7 +8802,29 @@ public class ItemDbScriptData
                 }
             }
             else
+            {
                 SetParamCheck(paramCount, true, false);
+                if (data.Contains("0") || data.Contains("1") || data.Contains("2") || data.Contains("3") || data.Contains("4")
+                    || data.Contains("5") || data.Contains("6") || data.Contains("7") || data.Contains("8") || data.Contains("9"))
+                {
+                    for (int i = data.Length - 1; i > 0; i--)
+                    {
+                        if (data[i] == '-' && i - 1 >= 0)
+                        {
+                            var sumChar = data[i - 1];
+                            if (sumChar != '0' || sumChar != '1' || sumChar != '2' || sumChar != '3' || sumChar != '4'
+                                || sumChar != '5' || sumChar != '6' || sumChar != '7' || sumChar != '8' || sumChar != '9' || sumChar == '(')
+                            {
+                                Log(functionname + " >> Found negative: " + data);
+                                data = data.Remove(i, 1);
+                                Log(functionname + " >> Found negative: " + data);
+                                SetParamCheck(paramCount, true, true);
+                                isForceNegative = true;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         //Replace temporary variables
@@ -8883,16 +8929,21 @@ public class ItemDbScriptData
                     data = data.Replace(tempVarName[i], highLowValue);
             }
 
-            SetParamCheck(paramCount, true, false);
+            if (isForceNegative)
+                SetParamCheck(paramCount, true, true);
+            else
+                SetParamCheck(paramCount, true, false);
         }
 
-        Log("GetValue >> Replace special variables");
+        Log(functionname + " >> Replace special variables");
         //Replace special variables
         data = ReplaceAllSpecialValue(data);
 
-        Log("GetValue >> Replace any error text");
+        Log(functionname + " >> Replace any error text");
         data = data.Replace(";", "");
         data = data.Replace("()", "");
+
+        Log(functionname + " >> Final: " + data);
 
         if (isFoundTempVariable)
             return "[" + data + "]";
@@ -8997,41 +9048,165 @@ public class ItemDbScriptData
     /// <returns></returns>
     string CheckMath(string data)
     {
-        List<string> dataSplit = StringSplit.GetStringSplitAll(data);
-        //List<MathCalculation> mathCalculations = new List<MathCalculation>();
-        MathCalculation mathCalculation = new MathCalculation();
-        for (int i = 0; i < dataSplit.Count; i++)
-        {
-            var sum = dataSplit[i];
+        string functionName = "CheckMath";
 
-            sum = sum.Replace(",", "");
+        Log(functionName + " >> start! >> data: " + data);
+
+        string sumData = data;
+        sumData = sumData.Replace(",", "");
+
+        List<MathCalculation> mathCalculations = new List<MathCalculation>();
+        MathCalculation mathCalculation = new MathCalculation();
+
+        bool isLastCharIsOperator = false;
+        for (int i = 0; i < sumData.Length; i++)
+        {
+            if (isLastCharIsOperator)
+            {
+                if (string.IsNullOrEmpty(mathCalculation.a))
+                    mathCalculation.a = mathCalculation.param;
+                else if (string.IsNullOrEmpty(mathCalculation.b))
+                    mathCalculation.b = mathCalculation.param;
+                if (!string.IsNullOrEmpty(mathCalculation.a) && !string.IsNullOrEmpty(mathCalculation.b))
+                {
+                    mathCalculations.Add(mathCalculation);
+                    mathCalculation = new MathCalculation();
+                }
+
+                mathCalculation.param = null;
+            }
+
+            isLastCharIsOperator = false;
+
+            var sum = sumData[i];
 
             bool isOperator = false;
-            if (sum == "+" || sum == "-" || sum == "*" || sum == "/")
+            if (sum == '+' || sum == '-' || sum == '*' || sum == '/')
                 isOperator = true;
 
-            if (mathCalculation.IsAllFilled())
+            Log(functionName + " >> first phase >> sum: " + sum);
+
+            if (isOperator)
             {
-                //mathCalculations.Add(mathCalculation);
-                //mathCalculation = new MathCalculation();
-                break;
+                if (string.IsNullOrEmpty(mathCalculation.param))
+                    mathCalculation.AddParam(sum.ToString());
+                else
+                {
+                    mathCalculation.SetOperator(sum.ToString());
+                    isLastCharIsOperator = true;
+                }
             }
-            else if (isOperator)
-                mathCalculation.SetOperator(sum);
             else
-                mathCalculation.AddParams(sum);
+                mathCalculation.AddParam(sum.ToString());
         }
 
-        if (mathCalculation._operator == "+")
-            return (int.Parse(mathCalculation.a) + int.Parse(mathCalculation.b)).ToString("f0");
-        else if (mathCalculation._operator == "-")
-            return (int.Parse(mathCalculation.a) - int.Parse(mathCalculation.b)).ToString("f0");
-        else if (mathCalculation._operator == "*")
-            return (int.Parse(mathCalculation.a) * int.Parse(mathCalculation.b)).ToString("f0");
-        else if (mathCalculation._operator == "/")
-            return (int.Parse(mathCalculation.a) / int.Parse(mathCalculation.b)).ToString("f0");
+        if (string.IsNullOrEmpty(mathCalculation.a))
+            mathCalculation.a = mathCalculation.param;
+        else if (string.IsNullOrEmpty(mathCalculation.b))
+            mathCalculation.b = mathCalculation.param;
+        if (!string.IsNullOrEmpty(mathCalculation.a) && !string.IsNullOrEmpty(mathCalculation.b))
+        {
+            mathCalculations.Add(mathCalculation);
+            mathCalculation = new MathCalculation();
+        }
 
-        return data;
+        mathCalculation.param = null;
+
+        Log(functionName + " >> second phase >> mathCalculations.Count: " + mathCalculations.Count);
+
+        string toReturn = null;
+        for (int i = 0; i < mathCalculations.Count; i++)
+        {
+            Log(functionName + " >> second phase >> mathCalculations[" + i + "].a: " + mathCalculations[i].a);
+            Log(functionName + " >> second phase >> mathCalculations[" + i + "].b: " + mathCalculations[i].b);
+            Log(functionName + " >> second phase >> mathCalculations[" + i + "].operator: " + mathCalculations[i]._operator);
+
+            mathCalculation = mathCalculations[i];
+
+            if (mathCalculation._operator == "+")
+            {
+                string sumA = mathCalculation.a;
+                int sumIntA = 0;
+                bool isInegerA = IsStringInteger.Check(sumA);
+                if (isInegerA)
+                    sumIntA = int.Parse(sumA);
+
+                string sumB = mathCalculation.b;
+                int sumIntB = 0;
+                bool isInegerB = IsStringInteger.Check(sumB);
+                if (isInegerB)
+                    sumIntB = int.Parse(sumB);
+
+                if (isInegerA && isInegerB)
+                    toReturn += ", " + (sumIntA + sumIntB).ToString("f0");
+                else
+                    toReturn += ", " + sumA + mathCalculation._operator + sumB;
+            }
+            else if (mathCalculation._operator == "-")
+            {
+                string sumA = mathCalculation.a;
+                int sumIntA = 0;
+                bool isInegerA = IsStringInteger.Check(sumA);
+                if (isInegerA)
+                    sumIntA = int.Parse(sumA);
+
+                string sumB = mathCalculation.b;
+                int sumIntB = 0;
+                bool isInegerB = IsStringInteger.Check(sumB);
+                if (isInegerB)
+                    sumIntB = int.Parse(sumB);
+
+                if (isInegerA && isInegerB)
+                    toReturn += ", " + (sumIntA - sumIntB).ToString("f0");
+                else
+                    toReturn += ", " + sumA + mathCalculation._operator + sumB;
+            }
+            else if (mathCalculation._operator == "*")
+            {
+                string sumA = mathCalculation.a;
+                int sumIntA = 0;
+                bool isInegerA = IsStringInteger.Check(sumA);
+                if (isInegerA)
+                    sumIntA = int.Parse(sumA);
+
+                string sumB = mathCalculation.b;
+                int sumIntB = 0;
+                bool isInegerB = IsStringInteger.Check(sumB);
+                if (isInegerB)
+                    sumIntB = int.Parse(sumB);
+
+                if (isInegerA && isInegerB)
+                    toReturn += ", " + (sumIntA * sumIntB).ToString("f0");
+                else
+                    toReturn += ", " + sumA + mathCalculation._operator + sumB;
+            }
+            else if (mathCalculation._operator == "/")
+            {
+                string sumA = mathCalculation.a;
+                int sumIntA = 0;
+                bool isInegerA = IsStringInteger.Check(sumA);
+                if (isInegerA)
+                    sumIntA = int.Parse(sumA);
+
+                string sumB = mathCalculation.b;
+                int sumIntB = 0;
+                bool isInegerB = IsStringInteger.Check(sumB);
+                if (isInegerB)
+                    sumIntB = int.Parse(sumB);
+
+                if (isInegerA && isInegerB)
+                    toReturn += ", " + (sumIntA / sumIntB).ToString("f0");
+                else
+                    toReturn += ", " + sumA + mathCalculation._operator + sumB;
+            }
+        }
+
+        if (mathCalculations.Count > 0)
+            toReturn = toReturn.Substring(1);
+        else
+            toReturn = data;
+
+        return toReturn;
     }
 
     #region Utilities
@@ -9042,9 +9217,9 @@ public class ItemDbScriptData
     /// <returns></returns>
     string GetItemName(string data)
     {
-        for (int i = 0; i < m_output.m_currentItemDbs.Count; i++)
+        for (int i = 0; i < m_output.m_currentItemWithoutScriptDbs.Count; i++)
         {
-            var sum = m_output.m_currentItemDbs[i];
+            var sum = m_output.m_currentItemWithoutScriptDbs[i];
             if (sum.id == int.Parse(data))
                 return sum.name;
         }
@@ -9144,12 +9319,18 @@ public class ItemDbScriptData
     /// <returns></returns>
     string TimerToStringTimer(float timer, float divider = 1000)
     {
+        string functionName = "TimerToStringTimer";
+
         string sumDecimal = "f0";
 
         if (timer % divider != 0)
-            sumDecimal = "f1";
+            sumDecimal = "f2";
+
+        Log(functionName + ">> timer: " + timer);
 
         var sumTimer = (timer / divider);
+
+        Log(functionName + ">> sumTimer: " + sumTimer);
 
         if (sumTimer >= 31536000)
             return (sumTimer / 31536000).ToString(sumDecimal) + " ปี";
@@ -9165,6 +9346,60 @@ public class ItemDbScriptData
             return (sumTimer / 60).ToString(sumDecimal) + " นาที";
         else
             return sumTimer.ToString(sumDecimal) + " วินาที";
+    }
+
+    /// <summary>
+    /// Use function that use int, float with string
+    /// </summary>
+    /// <param name="data"></param>
+    /// <param name="functionType"></param>
+    /// <returns></returns>
+    string UseFunctionWithString(string data, int functionType, string additionalParam = null)
+    {
+        string functionName = "UseFunctionWithString";
+
+        Log(functionName + " >> data: " + data + ", functionType: " + functionType + ", additionalParam: " + additionalParam);
+
+        string sum = null;
+        List<string> toReplace = new List<string>();
+        List<string> toReplaceTo = new List<string>();
+
+        if (functionType == 0)
+        {
+            if (data.Contains("0") || data.Contains("1") || data.Contains("2") || data.Contains("3") || data.Contains("4")
+                    || data.Contains("5") || data.Contains("6") || data.Contains("7") || data.Contains("8") || data.Contains("9"))
+            {
+                for (int i = 0; i < data.Length; i++)
+                {
+                    var sumChar = data[i];
+                    if (sumChar == '0' || sumChar == '1' || sumChar == '2' || sumChar == '3' || sumChar == '4'
+                        || sumChar == '5' || sumChar == '6' || sumChar == '7' || sumChar == '8' || sumChar == '9')
+                    {
+                        sum += sumChar.ToString();
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(sum))
+                        {
+                            float toParse = float.Parse(sum);
+                            toReplace.Add(sum);
+                            toReplaceTo.Add(TimerToStringTimer(toParse));
+                            Log(functionName + " >> Add: " + sum + ", " + TimerToStringTimer(toParse));
+                            sum = null;
+                        }
+                    }
+                }
+            }
+        }
+
+        Log(functionName + " >> data: " + data);
+
+        for (int i = 0; i < toReplace.Count; i++)
+            data = data.Replace(toReplace[i], toReplaceTo[i]);
+
+        Log(functionName + " >> Final: " + data);
+
+        return data;
     }
 
     /// <summary>
@@ -9272,16 +9507,22 @@ public class ItemDbScriptData
         value = value.Replace("getrefine", "[ตามจำนวนตีบวก]");
 
         value = value.Replace("readparambStr", "[ตาม STR ที่ฝึกฝน]");
+        value = value.Replace("readparam(bStr)", "[ตาม STR ที่ฝึกฝน]");
 
         value = value.Replace("readparambAgi", "[ตาม AGI ที่ฝึกฝน]");
+        value = value.Replace("readparam(bAgi)", "[ตาม AGI ที่ฝึกฝน]");
 
         value = value.Replace("readparambVit", "[ตาม VIT ที่ฝึกฝน]");
+        value = value.Replace("readparam(bVit)", "[ตาม VIT ที่ฝึกฝน]");
 
         value = value.Replace("readparambInt", "[ตาม INT ที่ฝึกฝน]");
+        value = value.Replace("readparam(bInt)", "[ตาม INT ที่ฝึกฝน]");
 
         value = value.Replace("readparambDex", "[ตาม DEX ที่ฝึกฝน]");
+        value = value.Replace("readparam(bDex)", "[ตาม DEX ที่ฝึกฝน]");
 
         value = value.Replace("readparambLuk", "[ตาม LUK ที่ฝึกฝน]");
+        value = value.Replace("readparam(bLuk)", "[ตาม LUK ที่ฝึกฝน]");
 
         value = value.Replace("BaseLevel", "[Level]");
 
@@ -10033,6 +10274,8 @@ public class ItemDbScriptData
             return "Orc";
         else if (monsterRaceFlag == MonsterRace.RC2_BioLab)
             return "Bio Laboratory";
+        else if (monsterRaceFlag == MonsterRace.RC2_SCARABA)
+            return "Scaraba";
 
         return null;
     }
@@ -10242,7 +10485,7 @@ public enum Race
 [Flags]
 public enum MonsterRace
 {
-    RC2_Goblin, RC2_Kobold, RC2_Orc, RC2_Golem, RC2_Guardian, RC2_Ninja, RC2_BioLab
+    RC2_Goblin, RC2_Kobold, RC2_Orc, RC2_Golem, RC2_Guardian, RC2_Ninja, RC2_BioLab, RC2_SCARABA
 }
 
 [Flags]
@@ -10378,6 +10621,7 @@ public class IfElse
 [Serializable]
 public class MathCalculation
 {
+    public string param;
     public string a;
     public string b;
     public string _operator;
@@ -10395,11 +10639,8 @@ public class MathCalculation
         this._operator = _operator;
     }
 
-    public void AddParams(string param)
+    public void AddParam(string data)
     {
-        if (string.IsNullOrEmpty(a))
-            a = param;
-        else
-            b = param;
+        param += data;
     }
 }
