@@ -5654,9 +5654,9 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "Cooldown Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + TimerToStringTimer(float.Parse(param2)));
+                        sum += AddDescription(sum, "Cooldown Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + UseFunctionWithString(param2, 0));
                     else
-                        sum += AddDescription(sum, "Cooldown Skill " + GetSkillName(allParam[0]) + " ช้าลง " + TimerToStringTimer(float.Parse(param2)));
+                        sum += AddDescription(sum, "Cooldown Skill " + GetSkillName(allParam[0]) + " ช้าลง " + UseFunctionWithString(param2, 0));
                 }
             }
             #endregion
@@ -5977,6 +5977,8 @@ public class ItemDbScriptData
 
                 string param1 = GetValue(allParam[0], 1);
                 string param2 = GetValue(allParam[1], 2);
+
+                Log(functionName + " >> allParam[0]: " + allParam[0]);
 
                 if (isHadParam1 && isHadParam2)
                 {
@@ -9574,6 +9576,12 @@ public class ItemDbScriptData
     /// <returns></returns>
     string GetMIDName(string data)
     {
+        if (data.ToLower().Contains("class_"))
+        {
+            Log("<color=red>Wrong class mid!</color>");
+            return data;
+        }
+
         if (string.IsNullOrEmpty(data))
             return null;
         int id = int.Parse(data);
@@ -9998,6 +10006,12 @@ public class ItemDbScriptData
         if (string.IsNullOrEmpty(data))
             return null;
 
+        if (!data.ToLower().Contains("ele_"))
+        {
+            Log("<color=red>Wrong element!</color>");
+            return data;
+        }
+
         Element elementFlag = (Element)Enum.Parse(typeof(Element), data, true);
 
         // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
@@ -10040,7 +10054,7 @@ public class ItemDbScriptData
         if (string.IsNullOrEmpty(data))
             return null;
 
-        if (!data.Contains("RC_"))
+        if (!data.ToLower().Contains("RC_"))
         {
             Log("<color=red>Wrong race!</color>");
             return data;
@@ -10090,6 +10104,12 @@ public class ItemDbScriptData
         if (string.IsNullOrEmpty(data))
             return null;
 
+        if (!data.ToLower().Contains("class_"))
+        {
+            Log("<color=red>Wrong class!</color>");
+            return data;
+        }
+
         Class classFlag = (Class)Enum.Parse(typeof(Class), data, true);
 
         // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
@@ -10117,6 +10137,12 @@ public class ItemDbScriptData
     {
         if (string.IsNullOrEmpty(data))
             return null;
+
+        if (!data.ToLower().Contains("size_"))
+        {
+            Log("<color=red>Wrong size!</color>");
+            return data;
+        }
 
         Size sizeFlag = (Size)Enum.Parse(typeof(Size), data, true);
 
