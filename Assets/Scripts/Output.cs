@@ -10302,6 +10302,12 @@ public class ItemDbScriptData
             return "Bio Laboratory";
         else if (monsterRaceFlag == MonsterRace.RC2_SCARABA)
             return "Scaraba";
+        else if (monsterRaceFlag == MonsterRace.RC2_FACEWORM)
+            return "Faceworm";
+        else if (monsterRaceFlag == MonsterRace.RC2_THANATOS)
+            return "Thanatos";
+        else if (monsterRaceFlag == MonsterRace.RC2_CLOCKTOWER)
+            return "Clock Tower";
 
         return null;
     }
@@ -10511,7 +10517,7 @@ public enum Race
 [Flags]
 public enum MonsterRace
 {
-    RC2_Goblin, RC2_Kobold, RC2_Orc, RC2_Golem, RC2_Guardian, RC2_Ninja, RC2_BioLab, RC2_SCARABA
+    RC2_Goblin, RC2_Kobold, RC2_Orc, RC2_Golem, RC2_Guardian, RC2_Ninja, RC2_BioLab, RC2_SCARABA, RC2_FACEWORM, RC2_THANATOS, RC2_CLOCKTOWER
 }
 
 [Flags]
