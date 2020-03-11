@@ -1665,16 +1665,16 @@ public class ItemDbScriptData
         //Split all space
         List<string> allCut = StringSplit.GetStringSplit(data, ' ');
 
-    //for (int i = 0; i < allCut.Count; i++)
-    //    Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
+        for (int i = 0; i < allCut.Count; i++)
+            Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
 
-    L_Redo:
+        L_Redo:
         #region Merge it again line by line
         for (int i = 0; i < allCut.Count; i++)
         {
             var sumCut = allCut[i];
 
-            //Log("(Merging) allCut[" + i + "]: " + sumCut);
+            Log("(Merging) allCut[" + i + "]: " + sumCut);
 
             if (sumCut == "if" && allCut[i + 1].Contains("("))
             {
@@ -1707,6 +1707,7 @@ public class ItemDbScriptData
                 //if not had {}
                 if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}") && !allCut[i].Contains(";"))
                 {
+                    Log("if not had {} >> !allCut[i].Contains(';')");
                     allCut[i] = allCut[i] + ";";
 
                     int loop = 0;
@@ -1717,6 +1718,7 @@ public class ItemDbScriptData
                 }
                 else if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}") && allCut[i].Contains(";"))
                 {
+                    Log("if not had {} >> allCut[i].Contains(';')");
                     string findTempVar = allCut[i + 1];
                     if (findTempVar.Contains(".@"))
                     {
@@ -1726,44 +1728,13 @@ public class ItemDbScriptData
                             goto L_Redo;
                         }
                         else
-                        {
-                            // +=, -=, *=, /=
-                            if (findTempVar.Contains("+=") || findTempVar.Contains("-=") || findTempVar.Contains("*=") || findTempVar.Contains("/="))
-                            {
-                                for (int j = 0; j < tempVariables.Count; j++)
-                                {
-                                    if (findTempVar.Contains(tempVariables[j].variableName))
-                                    {
-                                        findTempVar = findTempVar.Replace(tempVariables[j].variableName, tempVariables[j].aka);
-                                        isUseAkaTempVar = true;
-                                    }
-                                }
-                                allCut[i + 1] = "[TEMP_VAR]" + findTempVar;
-                            }
-                            // ++, --
-                            else if (findTempVar.Contains("++") || findTempVar.Contains("--"))
-                            {
-                                for (int j = 0; j < tempVariables.Count; j++)
-                                {
-                                    if (findTempVar.Contains(tempVariables[j].variableName))
-                                    {
-                                        findTempVar = findTempVar.Replace(tempVariables[j].variableName, tempVariables[j].aka);
-                                        isUseAkaTempVar = true;
-                                    }
-                                }
-                                findTempVar = findTempVar.Replace("++", "+1");
-                                findTempVar = findTempVar.Replace("--", "-1");
-                                allCut[i + 1] = "[TEMP_VAR]" + findTempVar;
-                            }
-                            // =
-                            else
-                                AddTemporaryVariableFromIfelse(findTempVar, allCut[i]);
-                        }
+                            AddTemporaryVariableFromIfelse(findTempVar, allCut[i]);
                     }
                 }
                 //'if' need '{}'
                 else if (allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}"))
                 {
+                    Log("'if' need '{}'");
                     if (!allCut[i].Contains(";"))
                         allCut[i] = allCut[i] + ";";
                     allCut[i + 1] += " " + allCut[i + 2];
@@ -1773,6 +1744,7 @@ public class ItemDbScriptData
                 //if had {}
                 else if (allCut[i + 1].Contains("{") && allCut[i + 1].Contains("}"))
                 {
+                    Log("if had {}");
                     string findTempVar = allCut[i + 1];
                     if (findTempVar.Contains(".@"))
                     {
@@ -1782,39 +1754,7 @@ public class ItemDbScriptData
                             goto L_Redo;
                         }
                         else
-                        {
-                            // +=, -=, *=, /=
-                            if (findTempVar.Contains("+=") || findTempVar.Contains("-=") || findTempVar.Contains("*=") || findTempVar.Contains("/="))
-                            {
-                                for (int j = 0; j < tempVariables.Count; j++)
-                                {
-                                    if (findTempVar.Contains(tempVariables[j].variableName))
-                                    {
-                                        findTempVar = findTempVar.Replace(tempVariables[j].variableName, tempVariables[j].aka);
-                                        isUseAkaTempVar = true;
-                                    }
-                                }
-                                allCut[i + 1] = "[TEMP_VAR]" + findTempVar;
-                            }
-                            // ++, --
-                            else if (findTempVar.Contains("++") || findTempVar.Contains("--"))
-                            {
-                                for (int j = 0; j < tempVariables.Count; j++)
-                                {
-                                    if (findTempVar.Contains(tempVariables[j].variableName))
-                                    {
-                                        findTempVar = findTempVar.Replace(tempVariables[j].variableName, tempVariables[j].aka);
-                                        isUseAkaTempVar = true;
-                                    }
-                                }
-                                findTempVar = findTempVar.Replace("++", "+1");
-                                findTempVar = findTempVar.Replace("--", "-1");
-                                allCut[i + 1] = "[TEMP_VAR]" + findTempVar;
-                            }
-                            // =
-                            else
-                                AddTemporaryVariableFromIfelse(findTempVar, allCut[i - 1]);
-                        }
+                            AddTemporaryVariableFromIfelse(findTempVar, allCut[i - 1]);
                     }
 
                     //Remove first '{' and end '}'
@@ -1887,39 +1827,7 @@ public class ItemDbScriptData
                             goto L_Redo;
                         }
                         else
-                        {
-                            // +=, -=, *=, /=
-                            if (findTempVar.Contains("+=") || findTempVar.Contains("-=") || findTempVar.Contains("*=") || findTempVar.Contains("/="))
-                            {
-                                for (int j = 0; j < tempVariables.Count; j++)
-                                {
-                                    if (findTempVar.Contains(tempVariables[j].variableName))
-                                    {
-                                        findTempVar = findTempVar.Replace(tempVariables[j].variableName, tempVariables[j].aka);
-                                        isUseAkaTempVar = true;
-                                    }
-                                }
-                                allCut[i + 1] = "[TEMP_VAR]" + findTempVar;
-                            }
-                            // ++, --
-                            else if (findTempVar.Contains("++") || findTempVar.Contains("--"))
-                            {
-                                for (int j = 0; j < tempVariables.Count; j++)
-                                {
-                                    if (findTempVar.Contains(tempVariables[j].variableName))
-                                    {
-                                        findTempVar = findTempVar.Replace(tempVariables[j].variableName, tempVariables[j].aka);
-                                        isUseAkaTempVar = true;
-                                    }
-                                }
-                                findTempVar = findTempVar.Replace("++", "+1");
-                                findTempVar = findTempVar.Replace("--", "-1");
-                                allCut[i + 1] = "[TEMP_VAR]" + findTempVar;
-                            }
-                            // =
-                            else
-                                AddTemporaryVariableFromIfelse(findTempVar, allCut[i]);
-                        }
+                            AddTemporaryVariableFromIfelse(findTempVar, allCut[i]);
                     }
                 }
                 //'else' need '{}'
@@ -1943,39 +1851,7 @@ public class ItemDbScriptData
                             goto L_Redo;
                         }
                         else
-                        {
-                            // +=, -=, *=, /=
-                            if (findTempVar.Contains("+=") || findTempVar.Contains("-=") || findTempVar.Contains("*=") || findTempVar.Contains("/="))
-                            {
-                                for (int j = 0; j < tempVariables.Count; j++)
-                                {
-                                    if (findTempVar.Contains(tempVariables[j].variableName))
-                                    {
-                                        findTempVar = findTempVar.Replace(tempVariables[j].variableName, tempVariables[j].aka);
-                                        isUseAkaTempVar = true;
-                                    }
-                                }
-                                allCut[i + 1] = "[TEMP_VAR]" + findTempVar;
-                            }
-                            // ++, --
-                            else if (findTempVar.Contains("++") || findTempVar.Contains("--"))
-                            {
-                                for (int j = 0; j < tempVariables.Count; j++)
-                                {
-                                    if (findTempVar.Contains(tempVariables[j].variableName))
-                                    {
-                                        findTempVar = findTempVar.Replace(tempVariables[j].variableName, tempVariables[j].aka);
-                                        isUseAkaTempVar = true;
-                                    }
-                                }
-                                findTempVar = findTempVar.Replace("++", "+1");
-                                findTempVar = findTempVar.Replace("--", "-1");
-                                allCut[i + 1] = "[TEMP_VAR]" + findTempVar;
-                            }
-                            // =
-                            else
-                                AddTemporaryVariableFromIfelse(findTempVar, allCut[i - 1]);
-                        }
+                            AddTemporaryVariableFromIfelse(findTempVar, allCut[i - 1]);
                     }
 
                     //Remove first '{' and end '}'
@@ -2048,39 +1924,7 @@ public class ItemDbScriptData
                     goto L_Redo;
                 }
                 else
-                {
-                    // +=, -=, *=, /=
-                    if (sumCut.Contains("+=") || sumCut.Contains("-=") || sumCut.Contains("*=") || sumCut.Contains("/="))
-                    {
-                        for (int j = 0; j < tempVariables.Count; j++)
-                        {
-                            if (sumCut.Contains(tempVariables[j].variableName))
-                            {
-                                sumCut = sumCut.Replace(tempVariables[j].variableName, tempVariables[j].aka);
-                                isUseAkaTempVar = true;
-                            }
-                        }
-                        allCut[i + 1] = "[TEMP_VAR]" + sumCut;
-                    }
-                    // ++, --
-                    else if (sumCut.Contains("++") || sumCut.Contains("--"))
-                    {
-                        for (int j = 0; j < tempVariables.Count; j++)
-                        {
-                            if (sumCut.Contains(tempVariables[j].variableName))
-                            {
-                                sumCut = sumCut.Replace(tempVariables[j].variableName, tempVariables[j].aka);
-                                isUseAkaTempVar = true;
-                            }
-                        }
-                        sumCut = sumCut.Replace("++", "+1");
-                        sumCut = sumCut.Replace("--", "-1");
-                        allCut[i + 1] = "[TEMP_VAR]" + sumCut;
-                    }
-                    // =
-                    else
-                        AddTemporaryVariable(sumCut);
-                }
+                    AddTemporaryVariable(sumCut);
             }
             else if (sumCut.Contains("itemheal") && !sumCut.Contains(";"))
             {
@@ -3312,8 +3156,56 @@ public class ItemDbScriptData
         }
         #endregion
 
-        //for (int i = 0; i < allCut.Count; i++)
-        //    Log("<color=#F3FFAE>allCut[" + i + "]: " + allCut[i] + "</color>");
+        for (int i = 0; i < allCut.Count; i++)
+        {
+            Log("<color=#F3FFAE>allCut[" + i + "]: " + allCut[i] + "</color>");
+            string findTempVar = allCut[i];
+            if (findTempVar.Contains(".@"))
+            {
+                // +=, -=, *=, /=
+                if (findTempVar.Contains("+=") || findTempVar.Contains("-=") || findTempVar.Contains("*=") || findTempVar.Contains("/="))
+                {
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        if (findTempVar.Contains(tempVariables[j].variableName))
+                        {
+                            findTempVar = findTempVar.Replace(tempVariables[j].variableName, tempVariables[j].aka);
+                            isUseAkaTempVar = true;
+                        }
+                    }
+                    allCut[i] = "[TEMP_VAR]" + findTempVar;
+                }
+                // ++, --
+                else if (findTempVar.Contains("++") || findTempVar.Contains("--"))
+                {
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        if (findTempVar.Contains(tempVariables[j].variableName))
+                        {
+                            findTempVar = findTempVar.Replace(tempVariables[j].variableName, tempVariables[j].aka);
+                            isUseAkaTempVar = true;
+                        }
+                    }
+                    findTempVar = findTempVar.Replace("++", "+1");
+                    findTempVar = findTempVar.Replace("--", "-1");
+                    allCut[i] = "[TEMP_VAR]" + findTempVar;
+                }
+                else
+                {
+                    Log("findTempVar: " + findTempVar);
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        Log(" tempVariables[j].txtDefault: " + tempVariables[j].txtDefault);
+                        if (findTempVar == tempVariables[j].txtDefault)
+                        {
+                            allCut[i] = "[TEMP_VAR_DECLARE]" + tempVariables[j].aka + ": " + tempVariables[j].value;
+                            break;
+                        }
+                    }
+                }
+            }
+            Log("<color=#F3FFAE>allCut[" + i + "]: " + allCut[i] + "</color>");
+        }
 
         Log("<color=yellow>Start convert item bonus</color>");
 
@@ -8090,11 +7982,26 @@ public class ItemDbScriptData
                 data = data.Replace("[TEMP_VAR]", "");
                 data = GetValue(data, -1, true);
                 data = data.Replace("ค่าที่", "ค่าที่ ");
-                data = data.Replace("+=", " += ");
-                data = data.Replace("-=", " -= ");
-                data = data.Replace("*=", " *= ");
-                data = data.Replace("/=", " /= ");
+                data = data.Replace("+=", " + ");
+                data = data.Replace("-=", " - ");
+                data = data.Replace("*=", " * ");
+                data = data.Replace("/=", " / ");
                 sum += AddDescription(sum, data);
+            }
+            #endregion
+            #region [TEMP_VAR_DECLARE]
+            functionName = "[TEMP_VAR_DECLARE]";
+            if (data.Contains(functionName))
+            {
+                data = data.Replace("[TEMP_VAR_DECLARE]", "");
+                data = GetValue(data, -1, true, true);
+                data = data.Replace("ค่าที่", "ค่าที่ ");
+                data = data.Replace("+=", " + ");
+                data = data.Replace("-=", " - ");
+                data = data.Replace("*=", " * ");
+                data = data.Replace("/=", " / ");
+                data = data.Replace(":", ": ");
+                sum += AddDescription(sum, "● " + data);
             }
             #endregion
             #region Set Temporary Variables
@@ -8140,6 +8047,10 @@ public class ItemDbScriptData
     /// <param name="sumCut"></param>
     void AddTemporaryVariable(string sumCut)
     {
+        //string functionName = "AddTemporaryVariable";
+
+        //Log(functionName + " >> start! sumCut: " + sumCut);
+
         TempVariables newTempVariables = new TempVariables();
         string tempVariablesName = sumCut;
         List<string> allTempVariablesName = StringSplit.GetStringSplit(tempVariablesName, '=');
@@ -8162,6 +8073,7 @@ public class ItemDbScriptData
                 Log("newTempVariables.variableName: " + newTempVariables.variableName);
                 Log("newTempVariables.value: " + newTempVariables.value);
                 newTempVariables.aka = "ค่าที่ " + (tempVariables.Count + 1);
+                newTempVariables.txtDefault = sumCut;
                 tempVariables.Add(newTempVariables);
             }
         }
@@ -8174,6 +8086,10 @@ public class ItemDbScriptData
     /// <param name="toCheckMatching"></param>
     void AddTemporaryVariableFromIfelse(string findTempVar, string toCheckMatching)
     {
+        //string functionName = "AddTemporaryVariableFromIfelse";
+
+        //Log(functionName + " >> start! findTempVar: " + findTempVar);
+
         TempVariables newTempVariables = new TempVariables();
         string tempVariablesName = findTempVar;
         List<string> allTempVariablesName = StringSplit.GetStringSplit(tempVariablesName, '=');
@@ -8305,7 +8221,7 @@ public class ItemDbScriptData
     /// <param name="data"></param>
     /// <param name="paramCount"></param>
     /// <returns></returns>
-    string GetValue(string data, int paramCount = -1, bool isZeroValueOkay = false)
+    string GetValue(string data, int paramCount = -1, bool isZeroValueOkay = false, bool isForceNoCircle = false)
     {
         bool isForceNegative = false;
         string functionName = "GetValue";
@@ -8328,7 +8244,7 @@ public class ItemDbScriptData
                 Log(functionName + " >> Found variableName: " + tempVariables[i].variableName);
 
                 valueFromTempVar.Add(tempVariables[i].value);
-                akaFromTempVar.Add(" รวมกับ [" + tempVariables[i].aka + "]");
+                akaFromTempVar.Add(" ~ [" + tempVariables[i].aka + "]");
                 Log(functionName + " >> Found value: " + tempVariables[i].value);
             }
         }
@@ -9082,7 +8998,15 @@ public class ItemDbScriptData
 
         Log(functionName + " >> Final: " + data);
 
-        if (isFoundTempVariable)
+        if (isForceNoCircle)
+        {
+            data = data.Replace("[", "");
+            data = data.Replace("]", "");
+            data = data.Replace("(", "");
+            data = data.Replace(")", "");
+            return data;
+        }
+        else if (isFoundTempVariable)
             return "[" + data + "]";
         else
             return data;
@@ -10777,6 +10701,7 @@ public class TempVariables
     public string variableName;
     public string value;
     public string toCheckMatching;
+    public string txtDefault;
 }
 
 [Serializable]
