@@ -8209,7 +8209,7 @@ public class ItemDbScriptData
                 string targetVarName = MergeWhiteSpace.RemoveWhiteSpace(tempVariables[i].aka);
                 if (data.Contains(targetVarName))
                 {
-                    tempVariables[i].isOneLineIfElse = true;
+                    tempVariables[i].isOneLineIfElse = IsOneLineIfElse(data);
                     //Log(functionName + " >> Set  tempVariables[" + i + "]: " + tempVariables[i].variableName + " isOneLineIfElse: " + tempVariables[i].isOneLineIfElse);
                 }
             }
