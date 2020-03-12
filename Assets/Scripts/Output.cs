@@ -1728,7 +1728,7 @@ public class ItemDbScriptData
                             goto L_Redo;
                         }
                         else
-                            AddTemporaryVariableFromIfelse(findTempVar, allCut[i]);
+                            AddTemporaryVariable(findTempVar, allCut[i]);
                     }
                 }
                 //'if' need '{}'
@@ -1754,7 +1754,7 @@ public class ItemDbScriptData
                             goto L_Redo;
                         }
                         else
-                            AddTemporaryVariableFromIfelse(findTempVar, allCut[i - 1]);
+                            AddTemporaryVariable(findTempVar, allCut[i - 1]);
                     }
 
                     //Remove first '{' and end '}'
@@ -1827,7 +1827,7 @@ public class ItemDbScriptData
                             goto L_Redo;
                         }
                         else
-                            AddTemporaryVariableFromIfelse(findTempVar, allCut[i]);
+                            AddTemporaryVariable(findTempVar, allCut[i]);
                     }
                 }
                 //'else' need '{}'
@@ -1851,7 +1851,7 @@ public class ItemDbScriptData
                             goto L_Redo;
                         }
                         else
-                            AddTemporaryVariableFromIfelse(findTempVar, allCut[i - 1]);
+                            AddTemporaryVariable(findTempVar, allCut[i - 1]);
                     }
 
                     //Remove first '{' and end '}'
@@ -3198,7 +3198,7 @@ public class ItemDbScriptData
                         Log(" tempVariables[j].txtDefault: " + tempVariables[j].txtDefault);
                         if (findTempVar == tempVariables[j].txtDefault)
                         {
-                            allCut[i] = "[TEMP_VAR_DECLARE]" + tempVariables[j].aka + ": " + tempVariables[j].value;
+                            allCut[i] = "[TEMP_VAR_DECLARE]" + tempVariables[j].aka + "꞉ " + tempVariables[j].value;
                             break;
                         }
                     }
@@ -8001,6 +8001,7 @@ public class ItemDbScriptData
                 data = data.Replace("*=", " * ");
                 data = data.Replace("/=", " / ");
                 data = data.Replace(":", ": ");
+                data = data.Replace("꞉", "꞉ ");
                 sum += AddDescription(sum, "● " + data);
             }
             #endregion
@@ -8045,81 +8046,48 @@ public class ItemDbScriptData
     /// Add temporary variables
     /// </summary>
     /// <param name="sumCut"></param>
-    void AddTemporaryVariable(string sumCut)
+    void AddTemporaryVariable(string sumCut, string toCheckMatching = null)
     {
-        //string functionName = "AddTemporaryVariable";
+        string functionName = "AddTemporaryVariable";
 
-        //Log(functionName + " >> start! sumCut: " + sumCut);
+        Log(functionName + " >> start! sumCut: " + sumCut);
 
         TempVariables newTempVariables = new TempVariables();
-        string tempVariablesName = sumCut;
-        List<string> allTempVariablesName = StringSplit.GetStringSplit(tempVariablesName, '=');
-        if (allTempVariablesName.Count >= 2)
-        {
-            newTempVariables.variableName = MergeWhiteSpace.RemoveWhiteSpace(allTempVariablesName[0]);
-            newTempVariables.value = MergeWhiteSpace.RemoveWhiteSpace(allTempVariablesName[1]);
 
-            bool isFound = false;
-            for (int j = 0; j < tempVariables.Count; j++)
+        string tempVariablesName = sumCut;
+
+        int declareAt = tempVariablesName.IndexOf("=");
+
+        //Log("declareAt: " + declareAt);
+        //Log("sumCut.Length: " + sumCut.Length);
+
+        if (declareAt <= -1 || sumCut.Length < declareAt)
+            return;
+
+        string txtLeftSide = tempVariablesName.Substring(0, declareAt);
+
+        string txtRightSide = tempVariablesName.Substring(declareAt + 1);
+
+        newTempVariables.variableName = MergeWhiteSpace.RemoveWhiteSpace(txtLeftSide);
+        newTempVariables.value = MergeWhiteSpace.RemoveWhiteSpace(txtRightSide);
+        newTempVariables.toCheckMatching = toCheckMatching;
+
+        bool isFound = false;
+        for (int j = 0; j < tempVariables.Count; j++)
+        {
+            if (tempVariables[j].variableName == newTempVariables.variableName)
             {
-                if (tempVariables[j].variableName == newTempVariables.variableName)
-                {
-                    isFound = true;
-                    break;
-                }
-            }
-            if (!isFound)
-            {
-                Log("newTempVariables.variableName: " + newTempVariables.variableName);
-                Log("newTempVariables.value: " + newTempVariables.value);
-                newTempVariables.aka = "ค่าที่ " + (tempVariables.Count + 1);
-                newTempVariables.txtDefault = sumCut;
-                tempVariables.Add(newTempVariables);
+                isFound = true;
+                break;
             }
         }
-    }
-
-    /// <summary>
-    /// Add temporary variables from if {} else {}
-    /// </summary>
-    /// <param name="findTempVar"></param>
-    /// <param name="toCheckMatching"></param>
-    void AddTemporaryVariableFromIfelse(string findTempVar, string toCheckMatching)
-    {
-        //string functionName = "AddTemporaryVariableFromIfelse";
-
-        //Log(functionName + " >> start! findTempVar: " + findTempVar);
-
-        TempVariables newTempVariables = new TempVariables();
-        string tempVariablesName = findTempVar;
-        List<string> allTempVariablesName = StringSplit.GetStringSplit(tempVariablesName, '=');
-        if (allTempVariablesName.Count >= 2)
+        if (!isFound)
         {
-            allTempVariablesName[0] = allTempVariablesName[0].Replace("{", "");
-            int cutStartAt = allTempVariablesName[1].IndexOf(';');
-            allTempVariablesName[1] = allTempVariablesName[1].Substring(0, cutStartAt + 1);
-            newTempVariables.variableName = MergeWhiteSpace.RemoveWhiteSpace(allTempVariablesName[0]);
-            newTempVariables.value = MergeWhiteSpace.RemoveWhiteSpace(allTempVariablesName[1]);
-            newTempVariables.toCheckMatching = toCheckMatching;
-
-            bool isFound = false;
-            for (int j = 0; j < tempVariables.Count; j++)
-            {
-                if (tempVariables[j].variableName == newTempVariables.variableName
-                    && tempVariables[j].value == newTempVariables.value)
-                {
-                    isFound = true;
-                    break;
-                }
-            }
-            if (!isFound)
-            {
-                Log("newTempVariables.variableName: " + newTempVariables.variableName);
-                Log("newTempVariables.value: " + newTempVariables.value);
-                Log("newTempVariables.toCheckMatching: " + newTempVariables.toCheckMatching);
-                newTempVariables.aka = "ค่าที่ " + (tempVariables.Count + 1);
-                tempVariables.Add(newTempVariables);
-            }
+            Log("newTempVariables.variableName: " + newTempVariables.variableName);
+            Log("newTempVariables.value: " + newTempVariables.value);
+            newTempVariables.aka = "ค่าที่ " + (tempVariables.Count + 1);
+            newTempVariables.txtDefault = sumCut;
+            tempVariables.Add(newTempVariables);
         }
     }
 
@@ -8236,16 +8204,32 @@ public class ItemDbScriptData
         List<string> akaFromTempVar = new List<string>();
         for (int i = 0; i < tempVariables.Count; i++)
         {
-            if (data.Contains(tempVariables[i].variableName))
+            if (isForceNoCircle)
             {
-                isFoundTempVariable = true;
+                string targetVarName = MergeWhiteSpace.RemoveWhiteSpace(tempVariables[i].aka);
+                if (data.Contains(targetVarName))
+                {
+                    tempVariables[i].isOneLineIfElse = true;
+                    //Log(functionName + " >> Set  tempVariables[" + i + "]: " + tempVariables[i].variableName + " isOneLineIfElse: " + tempVariables[i].isOneLineIfElse);
+                }
+            }
+            else
+            {
+                if (data.Contains(tempVariables[i].variableName))
+                {
+                    isFoundTempVariable = true;
 
-                tempVarName.Add(tempVariables[i].variableName);
-                Log(functionName + " >> Found variableName: " + tempVariables[i].variableName);
+                    tempVarName.Add(tempVariables[i].variableName);
+                    Log(functionName + " >> Found variableName: " + tempVariables[i].variableName);
 
-                valueFromTempVar.Add(tempVariables[i].value);
-                akaFromTempVar.Add(" ~ [" + tempVariables[i].aka + "]");
-                Log(functionName + " >> Found value: " + tempVariables[i].value);
+                    if (tempVariables[i].isOneLineIfElse)
+                        valueFromTempVar.Add(tempVariables[i].aka);
+                    else
+                        valueFromTempVar.Add(tempVariables[i].value);
+
+                    akaFromTempVar.Add(" ~ [" + tempVariables[i].aka + "]");
+                    Log(functionName + " >> Found value: " + valueFromTempVar[valueFromTempVar.Count - 1]);
+                }
             }
         }
 
@@ -8881,7 +8865,10 @@ public class ItemDbScriptData
                         Log(functionName + " >> tempValues.Contains(tempVariables[j].value): " + tempValues.Contains(tempVariables[j].value));
                         if (!tempValues.Contains(tempVariables[j].value) && tempVariables[j].variableName == tempVarName[i])
                         {
-                            tempValues.Add(tempVariables[j].value);
+                            if (tempVariables[j].isOneLineIfElse)
+                                tempValues.Add(tempVariables[j].aka);
+                            else
+                                tempValues.Add(tempVariables[j].value);
                             break;
                         }
                     }
@@ -9501,9 +9488,9 @@ public class ItemDbScriptData
     /// <returns></returns>
     string ReplaceAllSpecialValue(string data)
     {
-        string value = data;
+        Log("ReplaceAllSpecialValue >> data: " + data);
 
-        Log("value: " + value);
+        string value = data;
 
         if (IsOneLineIfElse(value))
             value = ConvertOneLineIfElse(value);
@@ -9612,18 +9599,53 @@ public class ItemDbScriptData
     /// <returns></returns>
     string ConvertOneLineIfElse(string data)
     {
-        //Log("ConvertOneLineIfElse >> data: " + data);
+        Log("ConvertOneLineIfElse >> data: " + data);
 
         data = data.Replace("getrefine", "หากจำนวนตีบวก");
+        data = data.Replace("getrefine()", "หากจำนวนตีบวก");
+        data = data.Replace("getiteminfo(getequipid(EQI_HAND_R),11)", "หากมือขวาสวมใส่");
+        data = data.Replace("getiteminfo(getequipid(EQI_HAND_L),11)", "หากมือซ้ายสวมใส่");
+        data = data.Replace("==W_FIST", " ไม่มีอาวุธ ");
+        data = data.Replace("==W_DAGGER", " Dagger ");
+        data = data.Replace("==W_1HSWORD", " One-handed swords ");
+        data = data.Replace("==W_2HSWORD", " Two-handed swords ");
+        data = data.Replace("==W_1HSPEAR", " One-handed spears ");
+        data = data.Replace("==W_2HSPEAR", " Two-handed spears ");
+        data = data.Replace("==W_1HAXE", " One-handed axes ");
+        data = data.Replace("==W_2HAXE", " Two-handed axes ");
+        data = data.Replace("==W_MACE", " Maces ");
+        data = data.Replace("==W_2HMACE", " Two-handed Maces ");
+        data = data.Replace("==W_STAFF", " Staff ");
+        data = data.Replace("==W_BOW", " Bows ");
+        data = data.Replace("==W_KNUCKLE", " Knuckles ");
+        data = data.Replace("==W_MUSICAL", " Musical Instruments ");
+        data = data.Replace("==W_WHIP", " Whips ");
+        data = data.Replace("==W_BOOK", " Book ");
+        data = data.Replace("==W_KATAR", " Katars ");
+        data = data.Replace("==W_REVOLVER", " Revolvers ");
+        data = data.Replace("==W_RIFLE", " Rifles ");
+        data = data.Replace("==W_GATLING", " Gatling guns ");
+        data = data.Replace("==W_SHOTGUN", " Shotguns ");
+        data = data.Replace("==W_GRENADE", " Grenade launchers ");
+        data = data.Replace("==W_HUUMA", " Fuuma Shurikens ");
+        data = data.Replace("==W_2HSTAFF", " Two-handed Staff ");
+        data = data.Replace("==MAX_WEAPON_TYPE", "");
+        data = data.Replace("==W_DOUBLE_DD", " Dual-wield Daggers ");
+        data = data.Replace("==W_DOUBLE_SS", " Dual-wield Swords ");
+        data = data.Replace("==W_DOUBLE_AA", " Dual-wield Axes ");
+        data = data.Replace("==W_DOUBLE_DS", " Dagger + Sword ");
+        data = data.Replace("==W_DOUBLE_DA", " Dagger + Axe ");
+        data = data.Replace("==W_DOUBLE_SA", " Sword + Axe ");
+        data = data.Replace("==MAX_WEAPON_TYPE_ALL", "");
         data = data.Replace(">=", " มากกว่าหรือเท่ากับ ");
         data = data.Replace("<=", " น้อยกว่าหรือเท่ากับ ");
         data = data.Replace(">", " มากกว่า ");
         data = data.Replace("<", " น้อยกว่า ");
-        data = data.Replace("?", " = ");
-        data = data.Replace(":", ", หากไม่ตรงเงื่อนไข = ");
+        data = data.Replace("?", " จะได้ ");
+        data = data.Replace(":", ", หรือหากไม่ตรงเงื่อนไขจะได้ ");
         data = data.Replace("pow", " ยกกำลัง ");
 
-        //Log("ConvertOneLineIfElse >> data: " + data);
+        Log("ConvertOneLineIfElse >> data: " + data);
 
         return data;
     }
@@ -10704,6 +10726,7 @@ public class TempVariables
     public string value;
     public string toCheckMatching;
     public string txtDefault;
+    public bool isOneLineIfElse;
 }
 
 [Serializable]
