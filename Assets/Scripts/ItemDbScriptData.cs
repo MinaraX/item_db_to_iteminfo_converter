@@ -135,10 +135,10 @@ public class ItemDbScriptData
         //Split all space
         List<string> allCut = StringSplit.GetStringSplit(data, ' ');
 
-        for (int i = 0; i < allCut.Count; i++)
-            Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
+    //for (int i = 0; i < allCut.Count; i++)
+    //    Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
 
-        L_Redo:
+    L_Redo:
         #region Merge it again line by line
         for (int i = 0; i < allCut.Count; i++)
         {
@@ -177,7 +177,7 @@ public class ItemDbScriptData
                 //if not had {}
                 if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}") && !allCut[i].Contains(";"))
                 {
-                    Log("if not had {} >> !allCut[i].Contains(';')");
+                    Log("if not had {} >> !allCut[" + i + "].Contains(';')");
                     allCut[i] = allCut[i] + ";";
 
                     int loop = 0;
@@ -188,7 +188,7 @@ public class ItemDbScriptData
                 }
                 else if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}") && allCut[i].Contains(";"))
                 {
-                    Log("if not had {} >> allCut[i].Contains(';')");
+                    Log("if not had {} >> allCut[" + i + "].Contains(';')");
                     string findTempVar = allCut[i + 1];
                     if (findTempVar.Contains(".@"))
                     {
@@ -203,6 +203,7 @@ public class ItemDbScriptData
                 }
                 else if (allCut[i + 1].Contains("{"))
                 {
+                    Log("allCut[" + (i + 1) + "]: " + allCut[i + 1]);
                     //Count {{{
                     int roomStartCount = 0;
                     int roomEndCount = 0;
@@ -214,10 +215,11 @@ public class ItemDbScriptData
                     //'if' need '{}'
                     if (!allCut[i + 1].Contains("}"))
                     {
-                        Log("'if' need '{}'");
+                        Log("'if' need '{}' allCut[" + (i + 1) + "]:" + allCut[i + 1]);
                         if (!allCut[i].Contains(";"))
                             allCut[i] = allCut[i] + ";";
                         allCut[i + 1] += " " + allCut[i + 2];
+                        Log("'if' need '{}' allCut[" + (i + 1) + "]:" + allCut[i + 1]);
                         allCut.RemoveAt(i + 2);
                         goto L_Redo;
                     }
@@ -255,6 +257,22 @@ public class ItemDbScriptData
                         //Remove first '{' and end '}'
                         allCut[i + 1] = allCut[i + 1].Substring(1, allCut[i + 1].Length - 2);
 
+                        allCut[i + 1] = MergeWhiteSpace.RemoveWhiteSpace(allCut[i + 1]);
+
+                        bool isNeedRedo = false;
+                        //Find if in if and extract it out from this array to solve conflict
+                        if (allCut[i + 1].Contains("if("))
+                        {
+                            int ifStartAt = allCut[i + 1].IndexOf("if(");
+                            string cutIf = allCut[i + 1].Substring(ifStartAt);
+                            Log("cutIf: " + cutIf);
+                            Log("allCut[" + (i + 1) + "]: " + allCut[i + 1]);
+                            allCut[i + 1] = allCut[i + 1].Substring(0, ifStartAt);
+                            Log("allCut[" + (i + 1) + "]: " + allCut[i + 1]);
+                            allCut.Insert(i + 2, cutIf);
+                            isNeedRedo = true;
+                        }
+
                         //Then split by ';'
                         var splitBonus = StringSplit.GetStringSplit(allCut[i + 1], ';');
 
@@ -284,6 +302,12 @@ public class ItemDbScriptData
                                     allCut.Insert(i + 1, splitBonus[j]);
                             }
                         }
+
+                        if (splitBonus.Count <= 1)
+                            allCut.Insert(i + 2, "[TXT_END_IF];");
+
+                        if (isNeedRedo)
+                            goto L_Redo;
                     }
                 }
             }
@@ -1652,6 +1676,7 @@ public class ItemDbScriptData
         }
         #endregion
 
+        #region Replace temporary variables
         for (int i = 0; i < allCut.Count; i++)
         {
             Log("<color=#F3FFAE>allCut[" + i + "]: " + allCut[i] + "</color>");
@@ -1702,6 +1727,7 @@ public class ItemDbScriptData
             }
             Log("<color=#F3FFAE>allCut[" + i + "]: " + allCut[i] + "</color>");
         }
+        #endregion
 
         Log("<color=yellow>Start convert item bonus</color>");
 
@@ -6547,13 +6573,11 @@ public class ItemDbScriptData
     {
         string functionName = "AddTemporaryVariable";
 
-        Log(functionName + " >> txt: " + txt);
+        Log(functionName + ": " + txt);
 
         TempVariables newTempVariables = new TempVariables();
 
-        string tempVariablesName = txt;
-
-        int declareAt = tempVariablesName.IndexOf("=");
+        int declareAt = txt.IndexOf("=");
 
         //Log("declareAt: " + declareAt);
         //Log("sumCut.Length: " + sumCut.Length);
@@ -6561,13 +6585,18 @@ public class ItemDbScriptData
         if (declareAt <= -1 || txt.Length < declareAt)
             return;
 
-        string txtLeftSide = tempVariablesName.Substring(0, declareAt);
+        string txtLeftSide = txt.Substring(0, declareAt);
 
-        string txtRightSide = tempVariablesName.Substring(declareAt + 1);
+        string txtRightSide = txt.Substring(declareAt + 1);
+        int semiColonAt = txtRightSide.IndexOf(";");
+        txtRightSide = txtRightSide.Substring(0, semiColonAt);
 
         newTempVariables.variableName = MergeWhiteSpace.RemoveWhiteSpace(txtLeftSide);
         newTempVariables.value = MergeWhiteSpace.RemoveWhiteSpace(txtRightSide);
         newTempVariables.toCheckMatching = toCheckMatching;
+
+        if (newTempVariables.variableName.Contains("+"))
+            return;
 
         bool isFound = false;
         for (int j = 0; j < tempVariables.Count; j++)
@@ -6580,10 +6609,12 @@ public class ItemDbScriptData
         }
         if (!isFound)
         {
-            Log("newTempVariables.variableName: " + newTempVariables.variableName);
-            Log("newTempVariables.value: " + newTempVariables.value);
             newTempVariables.aka = "ค่าที่ " + (tempVariables.Count + 1);
             newTempVariables.txtDefault = txt;
+            Log("newTempVariables.variableName: " + newTempVariables.variableName);
+            Log("newTempVariables.value: " + newTempVariables.value);
+            Log("newTempVariables.aka: " + newTempVariables.aka);
+            Log("newTempVariables.txtDefault: " + newTempVariables.txtDefault);
             tempVariables.Add(newTempVariables);
         }
     }
