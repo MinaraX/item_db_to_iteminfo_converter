@@ -3357,10 +3357,11 @@ public class ItemDbScriptData
 
                 List<string> allParam = GetAllParamerters(sumCut);
 
-                string param1 = GetValue(allParam[0], 1);
-
-                if (isHadParam1)
-                    sum += AddDescription(sum, "รักษาสถานะ " + param1);
+                string param1 = allParam[0];
+                param1 = param1.Replace("sc_", "");
+                param1 = param1.Replace("SC_", "");
+                param1 = UpperFirst(param1);
+                sum += AddDescription(sum, "รักษาสถานะ " + param1);
             }
             #endregion
             #region sc_start
