@@ -121,10 +121,12 @@ public class ItemDbScriptData
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    public string GetDescription(string data)
+    public string GetDescription(string data, bool isNotClearTempVar = false)
     {
         isUseAkaTempVar = false;
-        tempVariables = new List<TempVariables>();
+
+        if (!isNotClearTempVar)
+            tempVariables = new List<TempVariables>();
 
         string sum = null;
 
@@ -277,6 +279,7 @@ public class ItemDbScriptData
 
                         allCut[i + 1] = MergeWhiteSpace.RemoveWhiteSpace(allCut[i + 1]);
 
+                        int additionalEndIfIndex = 0;
                         bool isNeedRedo = false;
                         //Find if in if and extract it out from this array to solve conflict
                         if (allCut[i + 1].Contains("if("))
@@ -286,6 +289,7 @@ public class ItemDbScriptData
                             allCut[i + 1] = allCut[i + 1].Substring(0, ifStartAt);
                             allCut.Insert(i + 2, cutIf);
                             isNeedRedo = true;
+                            additionalEndIfIndex = 1;
                         }
 
                         //Then split by ';'
@@ -311,7 +315,7 @@ public class ItemDbScriptData
                                 if (j == splitBonus.Count - 1)
                                 {
                                     allCut.Insert(i + 1, splitBonus[j]);
-                                    allCut.Insert(i + 1 + splitBonus.Count, "[TXT_END_IF];");
+                                    allCut.Insert(i + 1 + splitBonus.Count + additionalEndIfIndex, "[TXT_END_IF];");
                                 }
                                 else
                                     allCut.Insert(i + 1, splitBonus[j]);
@@ -319,7 +323,7 @@ public class ItemDbScriptData
                         }
 
                         if (splitBonus.Count <= 1)
-                            allCut.Insert(i + 2, "[TXT_END_IF];");
+                            allCut.Insert(i + 2 + additionalEndIfIndex, "[TXT_END_IF];");
 
                         if (isNeedRedo)
                             goto L_Redo;
@@ -1750,6 +1754,17 @@ public class ItemDbScriptData
         {
             Log("allCut[" + i + "]: " + allCut[i]);
 
+            allCut[i] = allCut[i].Replace("bonus5", "bonus5 ");
+            allCut[i] = allCut[i].Replace("bonus4", "bonus4 ");
+            allCut[i] = allCut[i].Replace("bonus3", "bonus3 ");
+            allCut[i] = allCut[i].Replace("bonus2", "bonus2 ");
+            allCut[i] = allCut[i].Replace("bonus", "bonus ");
+            allCut[i] = allCut[i].Replace("bonus 5", "bonus5");
+            allCut[i] = allCut[i].Replace("bonus 4", "bonus4");
+            allCut[i] = allCut[i].Replace("bonus 3", "bonus3");
+            allCut[i] = allCut[i].Replace("bonus 2", "bonus2");
+            allCut[i] = allCut[i].Replace("  ", " ");
+
             data = allCut[i];
 
             string functionName = "";
@@ -1759,13 +1774,46 @@ public class ItemDbScriptData
                 data = data.Replace("[TEMP_VAR]", "");
                 data = data.Replace("[TEMP_VAR_DECLARE]", "");
 
-                bool isElseIf = false;
+                string saveData = data;
+
+                List<string> toReplace = new List<string>();
+                List<string> toReplaceValue = new List<string>();
+
+                //Bonus inside room
+                while (data.Contains("bonus"))
+                {
+                    //Loop all char
+                    for (int j = 0; j < data.Length; j++)
+                    {
+                        int declareAt1 = data.IndexOf("bonus");
+                        if (declareAt1 == -1)
+                            break;
+                        string sub = data.Substring(declareAt1);
+                        int declareAt2 = sub.IndexOf(";");
+                        if (declareAt2 == -1)
+                            break;
+                        string toConvert = sub.Substring(0, declareAt2 + 1);
+                        //Log("toConvert: " + toConvert);
+                        string convert = GetDescription(toConvert, true);
+                        convert = convert.Replace("\"", " ");
+                        //Log("convert: " + toConvert);
+                        toReplace.Add(toConvert);
+                        toReplaceValue.Add(convert);
+                        data = data.Replace(toConvert, convert);
+                        //Log("data: " + data);
+                    }
+                }
+
+                //Log("Done replace bonus");
+
+                data = saveData;
+
                 //Remove spacebar
                 data = MergeWhiteSpace.RemoveWhiteSpace(data);
-                //Remove else if(
-                if (data.Contains("elseif("))
-                    isElseIf = true;
-                //Remove ( )
+
+                for (int j = 0; j < toReplace.Count; j++)
+                    data = data.Replace(MergeWhiteSpace.RemoveWhiteSpace(toReplace[j]), toReplaceValue[j]);
+
                 data = data.Replace("elseif(", " หรือถ้า ");
                 data = data.Replace("if(", " ถ้า ");
                 data = ReplaceAllSpecialValue(data);
@@ -1787,6 +1835,7 @@ public class ItemDbScriptData
                 data = data.Replace("{", " รับ ");
                 data = data.Replace("}", " ");
                 data = data.Replace("ค่าที่", " ค่าที่ ");
+                data = data.Replace(" , ", ", ");
 
                 //Use store temporary variables if found in this value
                 bool isFoundTempVariable = false;
@@ -1817,10 +1866,10 @@ public class ItemDbScriptData
                 //Replace special variables
                 data = ReplaceAllSpecialValue(data);
 
-                if (isElseIf)
-                    sum += AddDescription(sum, "[" + data + "]");
-                else
-                    sum += AddDescription(sum, "[" + data + "]");
+                //if (isElseIf)
+                sum += AddDescription(sum, "[" + data + "]");
+                //else
+                //    sum += AddDescription(sum, "[" + data + "]");
             }
             #endregion
             #region [TXT_ELSE]
@@ -9134,8 +9183,7 @@ public class ItemDbScriptData
     {
         while (toAdd.Contains("  "))
             toAdd = toAdd.Replace("  ", " ");
-        toAdd = toAdd.Replace("[ ถ้า", "[ถ้า");
-        toAdd = toAdd.Replace("[ หรือถ้า", "[หรือถ้า");
+        toAdd = toAdd.Replace(", ]", " ]");
 
         if (string.IsNullOrEmpty(data))
             return "\"" + toAdd + "\",";
