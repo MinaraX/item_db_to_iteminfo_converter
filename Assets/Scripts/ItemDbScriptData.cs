@@ -286,7 +286,9 @@ public class ItemDbScriptData
                         {
                             int ifStartAt = allCut[i + 1].IndexOf("if(");
                             string cutIf = allCut[i + 1].Substring(ifStartAt);
+                            //Log("cutIf: " + cutIf);
                             allCut[i + 1] = allCut[i + 1].Substring(0, ifStartAt);
+                            //Log("allCut[i + 1]: " + allCut[i + 1]);
                             allCut.Insert(i + 2, cutIf);
                             isNeedRedo = true;
                             additionalEndIfIndex = 1;
@@ -305,7 +307,8 @@ public class ItemDbScriptData
                         }
 
                         //Set next index to splitBonus[0]
-                        allCut[i + 1] = splitBonus[0];
+                        if (splitBonus.Count > 0)
+                            allCut[i + 1] = splitBonus[0];
 
                         //Add to list
                         for (int j = 0; j < splitBonus.Count; j++)
@@ -1793,18 +1796,18 @@ public class ItemDbScriptData
                         if (declareAt2 == -1)
                             break;
                         string toConvert = sub.Substring(0, declareAt2 + 1);
-                        //Log("toConvert: " + toConvert);
+                        //Log(">>>>>>>>>>>>>>>>>>> toConvert: " + toConvert);
                         string convert = GetDescription(toConvert, true);
                         convert = convert.Replace("\"", " ");
-                        //Log("convert: " + toConvert);
+                        if (convert.Length > 0 && convert[convert.Length - 1] == ',')
+                            convert = convert.Substring(0, convert.Length - 1);
+                        //Log(">>>>>>>>>>>>>>>>>>> convert: " + toConvert);
                         toReplace.Add(toConvert);
                         toReplaceValue.Add(convert);
                         data = data.Replace(toConvert, convert);
-                        //Log("data: " + data);
+                        //Log(">>>>>>>>>>>>>>>>>>> data: " + data);
                     }
                 }
-
-                //Log("Done replace bonus");
 
                 data = saveData;
 
@@ -1866,10 +1869,7 @@ public class ItemDbScriptData
                 //Replace special variables
                 data = ReplaceAllSpecialValue(data);
 
-                //if (isElseIf)
                 sum += AddDescription(sum, "[" + data + "]");
-                //else
-                //    sum += AddDescription(sum, "[" + data + "]");
             }
             #endregion
             #region [TXT_ELSE]
@@ -6604,6 +6604,8 @@ public class ItemDbScriptData
                 functionName = tempVariables[j].variableName;
                 if (data.Contains(functionName))
                 {
+                    if ((i - 1) < 0)
+                        break;
                     if (allCut[i - 1] == tempVariables[j].toCheckMatching)
                     {
                         string tempVarValue = tempVariables[j].value;
@@ -7361,7 +7363,7 @@ public class ItemDbScriptData
                     Log("not had special function >> data #2: " + data);
                     data = data.Replace(",", "");
                     Log("not had special function >> data #3: " + data);
-                    data = "(" + data + ")";
+                    data = "[" + data + "]";
                     SetParamCheck(paramCount, true, false);
                 }
             }
@@ -8176,6 +8178,8 @@ public class ItemDbScriptData
         value = value.Replace("readparam(bLuk)", "[ตาม LUK ที่ฝึกฝน]");
 
         value = value.Replace("BaseLevel", "[Level]");
+
+        value = value.Replace("BaseJob", "ฐานอาชีพ");
 
         value = value.Replace("JobLevel", "[Job Level]");
 

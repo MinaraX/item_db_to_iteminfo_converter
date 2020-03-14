@@ -13,10 +13,8 @@ MonoBehaviour:
   m_Name: Output
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 11400000, guid: 630cf34160fdbb5459afe2ad44e0a776, type: 2}
-  targetArray: 0
-  _string: '19387,Experimental_Goat_Cap,Experimental Goat Cap,4,20,,500,,2,,1,0xFFFFFFFF,63,2,256,,40,1,1768,{
-    .@r = getrefine(); .@sub = 10; .@dmg = 15; if (.@r >= 7) { .@dmg += 15; if (.@r
-    >= 8) { .@sub += 15; if (.@r >= 9) { .@dmg += 20; } } } bonus2 bSubEle,Ele_Earth,.@val;
-    /*bonus2 bAddRace2,RC2_WERNER_LAB,.@dmg; bonus2 bMagicAddRace2,RC2_WERNER_LAB,.@dmg;
-    bonus2 bSubRace2,RC2_WERNER_LAB,.@dmg; Werner''s Central lab is not implemented
-    yet */ },{},{} '
+  targetArray: 13141
+  _string: '28038,Meuchler-OS,Meuchler-OS,5,20,,1300,190,,1,2,0x00001000,63,2,34,4,130,1,16,{
+    .@r = getrefine(); bonus2 bAddClass,Class_All,3; if (.@r >= 7) { bonus bAspdRate,7;
+    if (.@r >= 9) { bonus2 bSkillAtk,"GC_CROSSRIPPERSLASHER",15; if (.@r >= 11) {
+    bonus2 bAddSize,Size_Small,20; bonus2 bAddSize,Size_Medium,20; } } } },{},{} '
