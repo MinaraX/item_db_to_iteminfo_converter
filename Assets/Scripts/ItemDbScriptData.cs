@@ -144,7 +144,7 @@ public class ItemDbScriptData
         {
             var sumCut = allCut[i];
 
-            Log("<color=#DEC9FF>(Merging) allCut[" + i + "]: " + sumCut + "</color>");
+            //Log("<color=#DEC9FF>(Merging) allCut[" + i + "]: " + sumCut + "</color>");
 
             if (sumCut == "if" && allCut[i + 1].Contains("("))
             {
@@ -174,8 +174,24 @@ public class ItemDbScriptData
                     goto L_Redo;
                 }
 
+                //One line if else had {} and ;
+                if (allCut[i].Contains("{") && allCut[i].Contains("}") && allCut[i].Contains(";"))
+                {
+                    Log("One line if else had {} and ;");
+                    string findTempVar = allCut[i];
+                    if (findTempVar.Contains(".@"))
+                    {
+                        if (findTempVar.Contains(".@") && !findTempVar.Contains(";"))
+                        {
+                            MergeItemScripts(allCut, i + 1);
+                            goto L_Redo;
+                        }
+                        else
+                            AddTemporaryVariable(findTempVar, allCut[i]);
+                    }
+                }
                 //if not had {}
-                if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}") && !allCut[i].Contains(";"))
+                else if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}") && !allCut[i].Contains(";"))
                 {
                     Log("if not had {} >> !allCut[" + i + "].Contains(';')");
                     allCut[i] = allCut[i] + ";";
@@ -203,23 +219,23 @@ public class ItemDbScriptData
                 }
                 else if (allCut[i + 1].Contains("{"))
                 {
-                    Log("allCut[" + (i + 1) + "]: " + allCut[i + 1]);
-                    //Count {{{
+                    //Count {
                     int roomStartCount = 0;
-                    int roomEndCount = 0;
+
                     foreach (var c in allCut[i + 1])
                     {
                         if (c == '{')
                             roomStartCount++;
                     }
+
                     //'if' need '{}'
                     if (!allCut[i + 1].Contains("}"))
                     {
-                        Log("'if' need '{}' allCut[" + (i + 1) + "]:" + allCut[i + 1]);
+                        //Log("'if' need '{}' allCut[" + (i + 1) + "]:" + allCut[i + 1]);
                         if (!allCut[i].Contains(";"))
                             allCut[i] = allCut[i] + ";";
                         allCut[i + 1] += " " + allCut[i + 2];
-                        Log("'if' need '{}' allCut[" + (i + 1) + "]:" + allCut[i + 1]);
+                        //Log("'if' need '{}' allCut[" + (i + 1) + "]:" + allCut[i + 1]);
                         allCut.RemoveAt(i + 2);
                         goto L_Redo;
                     }
@@ -227,6 +243,8 @@ public class ItemDbScriptData
                     else if (allCut[i + 1].Contains("}"))
                     {
                         Log("if had {}");
+
+                        int roomEndCount = 0;
 
                         foreach (var c in allCut[i + 1])
                         {
@@ -265,10 +283,7 @@ public class ItemDbScriptData
                         {
                             int ifStartAt = allCut[i + 1].IndexOf("if(");
                             string cutIf = allCut[i + 1].Substring(ifStartAt);
-                            Log("cutIf: " + cutIf);
-                            Log("allCut[" + (i + 1) + "]: " + allCut[i + 1]);
                             allCut[i + 1] = allCut[i + 1].Substring(0, ifStartAt);
-                            Log("allCut[" + (i + 1) + "]: " + allCut[i + 1]);
                             allCut.Insert(i + 2, cutIf);
                             isNeedRedo = true;
                         }
@@ -1679,7 +1694,7 @@ public class ItemDbScriptData
         #region Replace temporary variables
         for (int i = 0; i < allCut.Count; i++)
         {
-            Log("<color=#F3FFAE>allCut[" + i + "]: " + allCut[i] + "</color>");
+            //Log("<color=#F3FFAE>allCut[" + i + "](a): " + allCut[i] + "</color>");
             string findTempVar = allCut[i];
             if (findTempVar.Contains(".@"))
             {
@@ -1725,7 +1740,7 @@ public class ItemDbScriptData
                     }
                 }
             }
-            Log("<color=#F3FFAE>allCut[" + i + "]: " + allCut[i] + "</color>");
+            //Log("<color=#F3FFAE>allCut[" + i + "](b): " + allCut[i] + "</color>");
         }
         #endregion
 
@@ -1741,6 +1756,9 @@ public class ItemDbScriptData
             #region if
             if (data.Contains("if(") || data.Contains("if (") || data.Contains("else if(") || data.Contains("else if ("))
             {
+                data = data.Replace("[TEMP_VAR]", "");
+                data = data.Replace("[TEMP_VAR_DECLARE]", "");
+
                 bool isElseIf = false;
                 //Remove spacebar
                 data = MergeWhiteSpace.RemoveWhiteSpace(data);
@@ -1748,8 +1766,8 @@ public class ItemDbScriptData
                 if (data.Contains("elseif("))
                     isElseIf = true;
                 //Remove ( )
-                data = data.Replace("elseif(", "");
-                data = data.Replace("if(", "");
+                data = data.Replace("elseif(", " หรือถ้า ");
+                data = data.Replace("if(", " ถ้า ");
                 data = ReplaceAllSpecialValue(data);
                 data = data.Replace("(", "");
                 data = data.Replace(")", "");
@@ -1766,6 +1784,9 @@ public class ItemDbScriptData
                 data = data.Replace("Job_", "");
                 data = data.Replace("_", " ");
                 data = data.Replace("getpartnerid()", "มีคู่สมรส");
+                data = data.Replace("{", " รับ ");
+                data = data.Replace("}", " ");
+                data = data.Replace("ค่าที่", " ค่าที่ ");
 
                 //Use store temporary variables if found in this value
                 bool isFoundTempVariable = false;
@@ -1797,9 +1818,9 @@ public class ItemDbScriptData
                 data = ReplaceAllSpecialValue(data);
 
                 if (isElseIf)
-                    sum += AddDescription(sum, "[หรือถ้า " + data + "]");
+                    sum += AddDescription(sum, "[" + data + "]");
                 else
-                    sum += AddDescription(sum, "[ถ้า " + data + "]");
+                    sum += AddDescription(sum, "[" + data + "]");
             }
             #endregion
             #region [TXT_ELSE]
@@ -6571,9 +6592,9 @@ public class ItemDbScriptData
     /// <param name="txt"></param>
     void AddTemporaryVariable(string txt, string toCheckMatching = null)
     {
-        string functionName = "AddTemporaryVariable";
+        //string functionName = "AddTemporaryVariable";
 
-        Log(functionName + ": " + txt);
+        //Log(functionName + ": " + txt);
 
         TempVariables newTempVariables = new TempVariables();
 
@@ -6595,7 +6616,12 @@ public class ItemDbScriptData
         newTempVariables.value = MergeWhiteSpace.RemoveWhiteSpace(txtRightSide);
         newTempVariables.toCheckMatching = toCheckMatching;
 
-        if (newTempVariables.variableName.Contains("+"))
+        if (newTempVariables.variableName.Contains("+")
+            || newTempVariables.variableName.Contains(">")
+            || newTempVariables.variableName.Contains("<")
+            || newTempVariables.variableName.Contains("-")
+            || newTempVariables.variableName.Contains("*")
+            || newTempVariables.variableName.Contains("/"))
             return;
 
         bool isFound = false;
@@ -6811,7 +6837,7 @@ public class ItemDbScriptData
                 {
                     string subFunctionName = "pow";
 
-                    Log(subFunctionName + " start!: " + data);
+                    Log(subFunctionName + ": " + data);
 
                     int retry = 300;
                     string newValue = data;
@@ -6906,7 +6932,7 @@ public class ItemDbScriptData
                 {
                     string subFunctionName = "rand";
 
-                    Log(subFunctionName + " start!: " + data);
+                    Log(subFunctionName + ": " + data);
 
                     int retry = 300;
                     string newValue = data;
@@ -7001,7 +7027,7 @@ public class ItemDbScriptData
                 {
                     string subFunctionName = "min";
 
-                    Log(subFunctionName + " start!: " + data);
+                    Log(subFunctionName + ": " + data);
 
                     int retry = 300;
                     string newValue = data;
@@ -7139,7 +7165,7 @@ public class ItemDbScriptData
                 {
                     string subFunctionName = "max";
 
-                    Log(subFunctionName + " start!: " + data);
+                    Log(subFunctionName + ": " + data);
 
                     int retry = 300;
                     string newValue = data;
@@ -7626,7 +7652,7 @@ public class ItemDbScriptData
     {
         string functionName = "CheckMath";
 
-        Log(functionName + " >> start! >> data: " + data);
+        Log(functionName + ": " + data);
 
         string sumData = data;
         sumData = sumData.Replace(",", "");
@@ -7660,7 +7686,7 @@ public class ItemDbScriptData
             if (sum == '+' || sum == '-' || sum == '*' || sum == '/')
                 isOperator = true;
 
-            Log(functionName + " >> first phase >> sum: " + sum);
+            //Log(functionName + " >> first phase >> sum: " + sum);
 
             if (isOperator)
             {
@@ -9106,6 +9132,11 @@ public class ItemDbScriptData
     /// <returns></returns>
     string AddDescription(string data, string toAdd)
     {
+        while (toAdd.Contains("  "))
+            toAdd = toAdd.Replace("  ", " ");
+        toAdd = toAdd.Replace("[ ถ้า", "[ถ้า");
+        toAdd = toAdd.Replace("[ หรือถ้า", "[หรือถ้า");
+
         if (string.IsNullOrEmpty(data))
             return "\"" + toAdd + "\",";
         else
