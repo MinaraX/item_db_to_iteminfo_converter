@@ -141,7 +141,7 @@ public class ItemDbScriptData
     L_RedoFirstPhaseMerge:
         for (int i = 0; i < allCut.Count; i++)
         {
-            Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
+            //Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
             //Merge autobonus / bonus_script
             if (allCut[i].Contains("autobonus") || allCut[i].Contains("bonus_script"))
             {
@@ -149,7 +149,6 @@ public class ItemDbScriptData
                 {
                     allCut[i] = allCut[i] + allCut[i + 1];
                     allCut[i] = allCut[i].Replace("\"", "");
-                    Log("allCut[i]: " + allCut[i]);
                     allCut.RemoveAt(i + 1);
                     goto L_RedoFirstPhaseMerge;
                 }
@@ -159,15 +158,19 @@ public class ItemDbScriptData
                     {
                         allCut[i] = allCut[i] + allCut[i + 1];
                         allCut[i] = allCut[i].Replace("\"", "");
-                        Log("allCut1[i]: " + allCut[i]);
                         allCut.RemoveAt(i + 1);
                         goto L_RedoFirstPhaseMerge;
                     }
+                    else
+                    {
+                        allCut[i] = allCut[i].Replace("{", "[");
+                        allCut[i] = allCut[i].Replace("}", "]");
+                    }
                 }
             }
-            Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
+            //Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
         }
-        return null;
+
     L_Redo:
         #region Merge it again line by line
         for (int i = 0; i < allCut.Count; i++)
@@ -268,6 +271,7 @@ public class ItemDbScriptData
                     //'if' need '{}'
                     if (!allCut[i + 1].Contains("}"))
                     {
+                        Log("'if' need '{}'");
                         //Log("'if' need '{}' allCut[" + (i + 1) + "]:" + allCut[i + 1]);
                         if (!allCut[i].Contains(";"))
                             allCut[i] = allCut[i] + ";";
