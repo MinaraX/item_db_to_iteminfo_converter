@@ -92,6 +92,23 @@ public enum ItemJob : uint
     Summoner = 0x80000000,
 }
 
+[Flags]
+public enum BonusScriptFlag
+{
+    RemoveWhenDead = 1,
+    RemovableByDispell = 2,
+    RemovableByClearance = 4,
+    RemoveWhenPlayerLogsOut = 8,
+    RemoveableByBanishingBuster = 16,
+    RemovableByRefresh = 32,
+    RemovableByLuxAnima = 64,
+    RemoveWhenMadogearIsActivatedOrDeactivated = 128,
+    RemoveWhenReceiveDamage = 256,
+    ScriptIsPermanentCannotBeClearedByBonusScriptClear = 512,
+    ForceToReplaceDuplicatedScriptByExpandingTheDuration = 1024,
+    ForceToAddDuplicatedScript = 2048
+}
+
 /// <summary>
 /// Credit: https://stackoverflow.com/questions/29482/how-to-cast-int-to-enum
 /// </summary>
