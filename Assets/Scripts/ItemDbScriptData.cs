@@ -1803,12 +1803,17 @@ public class ItemDbScriptData
                             convert = convert.Substring(0, convert.Length - 1);
                         //Log(">>>>>>>>>>>>>>>>>>> convert: " + toConvert);
                         toReplace.Add(toConvert);
-                        toReplaceValue.Add(convert);
+                        toReplaceValue.Add(convert + "\",\n\"");
                         data = data.Replace(toConvert, convert);
                         //Log(">>>>>>>>>>>>>>>>>>> data: " + data);
                     }
                 }
-
+                if (toReplaceValue.Count > 0)
+                {
+                    Log("toReplaceValue[toReplaceValue.Count-1]: " + toReplaceValue[toReplaceValue.Count - 1]);
+                    toReplaceValue[toReplaceValue.Count - 1] = toReplaceValue[toReplaceValue.Count - 1].Replace("\n\"", "");
+                    Log("toReplaceValue[toReplaceValue.Count-1]: " + toReplaceValue[toReplaceValue.Count - 1]);
+                }
                 data = saveData;
 
                 //Remove spacebar
