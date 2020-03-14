@@ -112,6 +112,7 @@ public class ItemDbScriptData
         sum = sum.Replace("   ", " ");
         sum = sum.Replace("  ", " ");
         sum = sum.Replace(";", "; ");
+        sum = sum.Replace("bonus bDelayrate", "bonus bDelayRate");
         return sum;
     }
     #endregion
@@ -137,16 +138,16 @@ public class ItemDbScriptData
         //Split all space
         List<string> allCut = StringSplit.GetStringSplit(data, ' ');
 
-    //for (int i = 0; i < allCut.Count; i++)
-    //    Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
+        for (int i = 0; i < allCut.Count; i++)
+            Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
 
-    L_Redo:
+        L_Redo:
         #region Merge it again line by line
         for (int i = 0; i < allCut.Count; i++)
         {
             var sumCut = allCut[i];
 
-            //Log("<color=#DEC9FF>(Merging) allCut[" + i + "]: " + sumCut + "</color>");
+            Log("<color=#DEC9FF>(Merging) allCut[" + i + "]: " + sumCut + "</color>");
 
             if (sumCut == "if" && allCut[i + 1].Contains("("))
             {
@@ -1701,7 +1702,7 @@ public class ItemDbScriptData
         #region Replace temporary variables
         for (int i = 0; i < allCut.Count; i++)
         {
-            //Log("<color=#F3FFAE>allCut[" + i + "](a): " + allCut[i] + "</color>");
+            Log("<color=#F3FFAE>allCut[" + i + "](a): " + allCut[i] + "</color>");
             string findTempVar = allCut[i];
             if (findTempVar.Contains(".@"))
             {
@@ -1747,7 +1748,7 @@ public class ItemDbScriptData
                     }
                 }
             }
-            //Log("<color=#F3FFAE>allCut[" + i + "](b): " + allCut[i] + "</color>");
+            Log("<color=#F3FFAE>allCut[" + i + "](b): " + allCut[i] + "</color>");
         }
         #endregion
 
@@ -1809,11 +1810,12 @@ public class ItemDbScriptData
                     }
                 }
                 if (toReplaceValue.Count > 0)
-                {
-                    Log("toReplaceValue[toReplaceValue.Count-1]: " + toReplaceValue[toReplaceValue.Count - 1]);
                     toReplaceValue[toReplaceValue.Count - 1] = toReplaceValue[toReplaceValue.Count - 1].Replace("\n\"", "");
-                    Log("toReplaceValue[toReplaceValue.Count-1]: " + toReplaceValue[toReplaceValue.Count - 1]);
-                }
+                //{
+                //    Log("toReplaceValue[toReplaceValue.Count-1]: " + toReplaceValue[toReplaceValue.Count - 1]);
+                //    toReplaceValue[toReplaceValue.Count - 1] = toReplaceValue[toReplaceValue.Count - 1].Replace("\n\"", "");
+                //    Log("toReplaceValue[toReplaceValue.Count-1]: " + toReplaceValue[toReplaceValue.Count - 1]);
+                //}
                 data = saveData;
 
                 //Remove spacebar
@@ -4106,14 +4108,14 @@ public class ItemDbScriptData
             functionName = "bonus bDelayRate";
             if (data.Contains(functionName))
             {
+                Log(functionName);
+
                 string sumCut = CutFunctionName(data, functionName);
 
                 List<string> allParam = GetAllParamerters(sumCut);
 
                 string param1 = GetValue(allParam[0], 1);
-                Log(functionName + " >> " + param1);
-                Log("isHadParam1 >> " + isHadParam1);
-                Log("isParam1Negative >> " + isParam1Negative);
+
                 if (isHadParam1)
                 {
                     if (isParam1Negative)
@@ -9190,9 +9192,15 @@ public class ItemDbScriptData
     /// <returns></returns>
     string AddDescription(string data, string toAdd)
     {
-        while (toAdd.Contains("  "))
-            toAdd = toAdd.Replace("  ", " ");
-        toAdd = toAdd.Replace(", ]", " ]");
+        if (!string.IsNullOrEmpty(toAdd))
+        {
+            while (toAdd.Contains("  "))
+                toAdd = toAdd.Replace("  ", " ");
+
+            toAdd = toAdd.Replace(", ]", " ]");
+        }
+        else
+            return null;
 
         if (string.IsNullOrEmpty(data))
             return "\"" + toAdd + "\",";
