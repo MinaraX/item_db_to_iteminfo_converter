@@ -280,7 +280,7 @@ public class ItemDbScriptData
                         allCut[i] = allCut[i].Replace("\"", "");
                         allCut[i] = allCut[i].Replace("{", "[");
                         allCut[i] = allCut[i].Replace("}", "]");
-                        allCut[i] = "[END_MERGE]" + allCut[i];
+                        allCut[i] = "[END_MERGE]" + allCut[i] + "[/END_MERGE]";
                     }
                 }
             }
@@ -294,7 +294,7 @@ public class ItemDbScriptData
         {
             var sumCut = allCut[i];
 
-            //Log("<color=#DEC9FF>(Merging) allCut[" + i + "]: " + sumCut + "</color>");
+            Log("<color=#DEC9FF>(Merging) allCut[" + i + "]: " + sumCut + "</color>");
 
             if (sumCut == "if" && allCut[i + 1].Contains("("))
             {
@@ -454,35 +454,55 @@ public class ItemDbScriptData
                             additionalEndIfIndex = 1;
                         }
 
-                        bool isNotSplit = false;
                         var splitBonus = new List<string>();
 
-                        if (allCut[i + 1].Contains("autobonus") || allCut[i + 1].Contains("bonus_script"))
+                        int index = 1;
+                        while (allCut[i + index].Contains("autobonus") || allCut[i + index].Contains("bonus_script"))
                         {
-                            splitBonus.Add(allCut[i + 1]);
-                            isNotSplit = true;
-                        }
-                        else
-                        {
-                            //Then split by ';'
-                            splitBonus = StringSplit.GetStringSplit(allCut[i + 1], ';');
+                            string cutAutoBonus = null;
+
+                            allCut[i + index] = allCut[i + index].Replace("[/END_MERGE]", "[/END_MERGE] ");
+
+                            int s = allCut[i + index].IndexOf("[END_MERGE]");
+                            int e2 = allCut[i + index].IndexOf("[/END_MERGE]");
+
+                            cutAutoBonus = allCut[i + index].Substring(s + 11);
+
+                            int e = cutAutoBonus.IndexOf("[/END_MERGE]");
+
+                            //Log("cutAutoBonus: " + cutAutoBonus);
+
+                            cutAutoBonus = cutAutoBonus.Substring(0, e);
+
+                            //Log("cutAutoBonus: " + cutAutoBonus);
+
+                            allCut.Insert(i + index + additionalEndIfIndex, cutAutoBonus);
+
+                            //Log("allCut[" + (i + index + 1) + "]: " + allCut[i + index + 1]);
+
+                            allCut[i + index + 1] = allCut[i + index + 1].Substring(0, s) + allCut[i + index + 1].Substring(e2 + 12);
+
+                            //Log("allCut[" + (i + index + 1) + "]: " + allCut[i + index + 1]);
+
+                            index++;
                         }
 
+                        //Then split by ';'
+                        splitBonus = StringSplit.GetStringSplit(allCut[i + index + 1], ';');
+
+
                         //Then re-add ';'
-                        if (!isNotSplit)
+                        for (int j = 0; j < splitBonus.Count; j++)
                         {
-                            for (int j = 0; j < splitBonus.Count; j++)
-                            {
-                                if (splitBonus[j] == "" || splitBonus[j] == " " || string.IsNullOrEmpty(splitBonus[j]) || string.IsNullOrWhiteSpace(splitBonus[j]))
-                                    splitBonus.RemoveAt(j);
-                                else
-                                    splitBonus[j] = splitBonus[j] + ";";
-                            }
+                            if (splitBonus[j] == "" || splitBonus[j] == " " || string.IsNullOrEmpty(splitBonus[j]) || string.IsNullOrWhiteSpace(splitBonus[j]))
+                                splitBonus.RemoveAt(j);
+                            else
+                                splitBonus[j] = splitBonus[j] + ";";
                         }
 
                         //Set next index to splitBonus[0]
                         if (splitBonus.Count > 0)
-                            allCut[i + 1] = splitBonus[0];
+                            allCut[i + index + 1] = splitBonus[0];
 
                         //Add to list
                         for (int j = 0; j < splitBonus.Count; j++)
@@ -491,16 +511,16 @@ public class ItemDbScriptData
                             {
                                 if (j == splitBonus.Count - 1)
                                 {
-                                    allCut.Insert(i + 1, splitBonus[j]);
-                                    allCut.Insert(i + 1 + splitBonus.Count + additionalEndIfIndex, "[TXT_END_IF];");
+                                    allCut.Insert(i + index + 1, splitBonus[j]);
+                                    allCut.Insert(i + index + 1 + splitBonus.Count + additionalEndIfIndex, "[TXT_END_IF];");
                                 }
                                 else
-                                    allCut.Insert(i + 1, splitBonus[j]);
+                                    allCut.Insert(i + index + 1, splitBonus[j]);
                             }
                         }
 
                         if (splitBonus.Count <= 1)
-                            allCut.Insert(i + 2 + additionalEndIfIndex, "[TXT_END_IF];");
+                            allCut.Insert(i + index + 2 + additionalEndIfIndex, "[TXT_END_IF];");
 
                         if (isNeedRedo)
                             goto L_Redo;
@@ -573,30 +593,49 @@ public class ItemDbScriptData
                     //Remove first '{' and end '}'
                     allCut[i + 1] = allCut[i + 1].Substring(1, allCut[i + 1].Length - 2);
 
-                    bool isNotSplit = false;
                     var splitBonus = new List<string>();
 
-                    if (allCut[i + 1].Contains("autobonus") || allCut[i + 1].Contains("bonus_script"))
+                    int index = 1;
+                    while (allCut[i + index].Contains("autobonus") || allCut[i + index].Contains("bonus_script"))
                     {
-                        splitBonus.Add(allCut[i + 1]);
-                        isNotSplit = true;
-                    }
-                    else
-                    {
-                        //Then split by ';'
-                        splitBonus = StringSplit.GetStringSplit(allCut[i + 1], ';');
+                        string cutAutoBonus = null;
+
+                        allCut[i + index] = allCut[i + index].Replace("[/END_MERGE]", "[/END_MERGE] ");
+
+                        int s = allCut[i + index].IndexOf("[END_MERGE]");
+                        int e2 = allCut[i + index].IndexOf("[/END_MERGE]");
+
+                        cutAutoBonus = allCut[i + index].Substring(s + 11);
+
+                        int e = cutAutoBonus.IndexOf("[/END_MERGE]");
+
+                        //Log("cutAutoBonus: " + cutAutoBonus);
+
+                        cutAutoBonus = cutAutoBonus.Substring(0, e);
+
+                        //Log("cutAutoBonus: " + cutAutoBonus);
+
+                        allCut.Insert(i + index, cutAutoBonus);
+
+                        //Log("allCut[" + (i + index + 1) + "]: " + allCut[i + index + 1]);
+
+                        allCut[i + index + 1] = allCut[i + index + 1].Substring(0, s) + allCut[i + index + 1].Substring(e2 + 12);
+
+                        //Log("allCut[" + (i + index + 1) + "]: " + allCut[i + index + 1]);
+
+                        index++;
                     }
 
+                    //Then split by ';'
+                    splitBonus = StringSplit.GetStringSplit(allCut[i + index + 1], ';');
+
                     //Then re-add ';'
-                    if (!isNotSplit)
+                    for (int j = 0; j < splitBonus.Count; j++)
                     {
-                        for (int j = 0; j < splitBonus.Count; j++)
-                        {
-                            if (splitBonus[j] == "" || splitBonus[j] == " " || string.IsNullOrEmpty(splitBonus[j]) || string.IsNullOrWhiteSpace(splitBonus[j]))
-                                splitBonus.RemoveAt(j);
-                            else
-                                splitBonus[j] = splitBonus[j] + ";";
-                        }
+                        if (splitBonus[j] == "" || splitBonus[j] == " " || string.IsNullOrEmpty(splitBonus[j]) || string.IsNullOrWhiteSpace(splitBonus[j]))
+                            splitBonus.RemoveAt(j);
+                        else
+                            splitBonus[j] = splitBonus[j] + ";";
                     }
 
                     //Set current index to [TXT_ELSE];
@@ -604,7 +643,7 @@ public class ItemDbScriptData
 
                     //Set next index to splitBonus[0]
                     if (splitBonus.Count > 0)
-                        allCut[i + 1] = splitBonus[0];
+                        allCut[i + index + 1] = splitBonus[0];
 
                     //Add to list
                     for (int j = 0; j < splitBonus.Count; j++)
@@ -613,16 +652,16 @@ public class ItemDbScriptData
                         {
                             if (j == splitBonus.Count - 1)
                             {
-                                allCut.Insert(i + 1, splitBonus[j]);
-                                allCut.Insert(i + 1 + splitBonus.Count, "[TXT_END_ELSE];");
+                                allCut.Insert(i + index + 1, splitBonus[j]);
+                                allCut.Insert(i + index + 1 + splitBonus.Count, "[TXT_END_ELSE];");
                             }
                             else
-                                allCut.Insert(i + 1, splitBonus[j]);
+                                allCut.Insert(i + index + 1, splitBonus[j]);
                         }
                     }
 
                     if (splitBonus.Count <= 1)
-                        allCut.Insert(i + 2, "[TXT_END_ELSE];");
+                        allCut.Insert(i + index + 2, "[TXT_END_ELSE];");
                 }
             }
             else if (sumCut == "bonus" || sumCut == "bonus " || sumCut == " bonus")
@@ -666,6 +705,11 @@ public class ItemDbScriptData
                 goto L_Redo;
             }
             else if (sumCut.Contains("percentheal") && !sumCut.Contains(";"))
+            {
+                MergeItemScripts(allCut, i);
+                goto L_Redo;
+            }
+            else if (sumCut.Contains("heal") && !sumCut.Contains(";"))
             {
                 MergeItemScripts(allCut, i);
                 goto L_Redo;
@@ -1981,8 +2025,8 @@ public class ItemDbScriptData
             allCut[i] = allCut[i].Replace("bonus 4", "bonus4");
             allCut[i] = allCut[i].Replace("bonus 3", "bonus3");
             allCut[i] = allCut[i].Replace("bonus 2", "bonus2");
+            allCut[i] = allCut[i].Replace("heal", "heal ");
             allCut[i] = allCut[i].Replace("  ", " ");
-
             data = allCut[i];
 
             string functionName = "";
@@ -2050,6 +2094,115 @@ public class ItemDbScriptData
                         Log("autobonus >> data: " + data);
                     }
                 }
+
+                //itemheal inside room
+                while (data.Contains("itemheal"))
+                {
+                    //Loop all char
+                    for (int j = 0; j < data.Length; j++)
+                    {
+                        int declareAt1 = data.IndexOf("itemheal");
+                        if (declareAt1 == -1)
+                            break;
+                        string sub = data.Substring(declareAt1);
+                        int declareAt2 = sub.IndexOf(";");
+                        if (declareAt2 == -1)
+                            break;
+                        string toConvert = sub.Substring(0, declareAt2 + 1);
+                        Log("autobonus >> itemheal#1: " + toConvert);
+                        string convert = GetDescription(toConvert, true);
+                        convert = convert.Replace("\"", " ");
+                        if (convert.Length > 0 && convert[convert.Length - 1] == ',')
+                            convert = convert.Substring(0, convert.Length - 1);
+                        Log("autobonus >> itemheal#2: " + toConvert);
+                        toReplace.Add(toConvert);
+                        toReplaceValue.Add(convert + "\",\n\"");
+                        data = data.Replace(toConvert, convert);
+                        Log("autobonus >> itemheal#3: " + data);
+                    }
+                }
+
+                //percentheal inside room
+                while (data.Contains("percentheal"))
+                {
+                    //Loop all char
+                    for (int j = 0; j < data.Length; j++)
+                    {
+                        int declareAt1 = data.IndexOf("percentheal");
+                        if (declareAt1 == -1)
+                            break;
+                        string sub = data.Substring(declareAt1);
+                        int declareAt2 = sub.IndexOf(";");
+                        if (declareAt2 == -1)
+                            break;
+                        string toConvert = sub.Substring(0, declareAt2 + 1);
+                        Log("autobonus >> percentheal#1: " + toConvert);
+                        string convert = GetDescription(toConvert, true);
+                        convert = convert.Replace("\"", " ");
+                        if (convert.Length > 0 && convert[convert.Length - 1] == ',')
+                            convert = convert.Substring(0, convert.Length - 1);
+                        Log("autobonus >> percentheal#2: " + toConvert);
+                        toReplace.Add(toConvert);
+                        toReplaceValue.Add(convert + "\",\n\"");
+                        data = data.Replace(toConvert, convert);
+                        Log("autobonus >> percentheal#3: " + data);
+                    }
+                }
+
+                //heal inside room
+                while (data.Contains("heal"))
+                {
+                    //Loop all char
+                    for (int j = 0; j < data.Length; j++)
+                    {
+                        int declareAt1 = data.IndexOf("heal");
+                        if (declareAt1 == -1)
+                            break;
+                        string sub = data.Substring(declareAt1);
+                        int declareAt2 = sub.IndexOf(";");
+                        if (declareAt2 == -1)
+                            break;
+                        string toConvert = sub.Substring(0, declareAt2 + 1);
+                        Log("autobonus >> heal#1: " + toConvert);
+                        string convert = GetDescription(toConvert, true);
+                        convert = convert.Replace("\"", " ");
+                        if (convert.Length > 0 && convert[convert.Length - 1] == ',')
+                            convert = convert.Substring(0, convert.Length - 1);
+                        Log("autobonus >> heal#2: " + toConvert);
+                        toReplace.Add(toConvert);
+                        toReplaceValue.Add(convert + "\",\n\"");
+                        data = data.Replace(toConvert, convert);
+                        Log("autobonus >> heal#3: " + data);
+                    }
+                }
+
+                //sc_start inside room
+                while (data.Contains("sc_start"))
+                {
+                    //Loop all char
+                    for (int j = 0; j < data.Length; j++)
+                    {
+                        int declareAt1 = data.IndexOf("sc_start");
+                        if (declareAt1 == -1)
+                            break;
+                        string sub = data.Substring(declareAt1);
+                        int declareAt2 = sub.IndexOf(";");
+                        if (declareAt2 == -1)
+                            break;
+                        string toConvert = sub.Substring(0, declareAt2 + 1);
+                        Log("autobonus >> sc_start#1: " + toConvert);
+                        string convert = GetDescription(toConvert, true);
+                        convert = convert.Replace("\"", " ");
+                        if (convert.Length > 0 && convert[convert.Length - 1] == ',')
+                            convert = convert.Substring(0, convert.Length - 1);
+                        Log("autobonus >> sc_start#2: " + toConvert);
+                        toReplace.Add(toConvert);
+                        toReplaceValue.Add(convert + "\",\n\"");
+                        data = data.Replace(toConvert, convert);
+                        Log("autobonus >> sc_start#3: " + data);
+                    }
+                }
+
                 //sc_end inside room
                 while (data.Contains("sc_end"))
                 {
@@ -2064,16 +2217,16 @@ public class ItemDbScriptData
                         if (declareAt2 == -1)
                             break;
                         string toConvert = sub.Substring(0, declareAt2 + 1);
-                        Log("autobonus >> #4: " + toConvert);
+                        Log("autobonus >> sc_end#1: " + toConvert);
                         string convert = GetDescription(toConvert, true);
                         convert = convert.Replace("\"", " ");
                         if (convert.Length > 0 && convert[convert.Length - 1] == ',')
                             convert = convert.Substring(0, convert.Length - 1);
-                        Log("autobonus >> #5: " + toConvert);
+                        Log("autobonus >> sc_end#2: " + toConvert);
                         toReplace.Add(toConvert);
                         toReplaceValue.Add(convert + "\",\n\"");
                         data = data.Replace(toConvert, convert);
-                        Log("autobonus >> #6: " + data);
+                        Log("autobonus >> sc_end#3: " + data);
                     }
                 }
                 //Bonus inside room
@@ -2090,25 +2243,22 @@ public class ItemDbScriptData
                         if (declareAt2 == -1)
                             break;
                         string toConvert = sub.Substring(0, declareAt2 + 1);
-                        //Log("bonus >> toConvert: " + toConvert);
+                        Log("autobonus >> bonus#1: " + toConvert);
                         string convert = GetDescription(toConvert, true);
                         convert = convert.Replace("\"", " ");
                         if (convert.Length > 0 && convert[convert.Length - 1] == ',')
                             convert = convert.Substring(0, convert.Length - 1);
-                        //Log("bonus >> convert: " + toConvert);
+                        Log("autobonus >> bonus#2: " + toConvert);
                         toReplace.Add(toConvert);
                         toReplaceValue.Add(convert + "\",\n\"");
                         data = data.Replace(toConvert, convert);
-                        //Log("bonus >> data: " + data);
+                        Log("autobonus >> bonus#3: " + data);
                     }
                 }
+
                 if (toReplaceValue.Count > 0)
-                    toReplaceValue[toReplaceValue.Count - 1] = toReplaceValue[toReplaceValue.Count - 1].Replace("\n\"", "");
-                //{
-                //    Log("toReplaceValue[toReplaceValue.Count-1]: " + toReplaceValue[toReplaceValue.Count - 1]);
-                //    toReplaceValue[toReplaceValue.Count - 1] = toReplaceValue[toReplaceValue.Count - 1].Replace("\n\"", "");
-                //    Log("toReplaceValue[toReplaceValue.Count-1]: " + toReplaceValue[toReplaceValue.Count - 1]);
-                //}
+                    toReplaceValue[toReplaceValue.Count - 1] = toReplaceValue[toReplaceValue.Count - 1].Replace("\",\n\"", "");
+
                 data = saveData;
 
                 //Remove spacebar
@@ -2187,6 +2337,271 @@ public class ItemDbScriptData
             if (data.Contains(functionName))
                 sum += AddDescription(sum, "[สิ้นสุดหากตรงเงื่อนไข]");
             #endregion
+
+            #region autobonus3
+            functionName = "autobonus3";
+            if (data.Contains(functionName))
+            {
+                string sumCut = data;
+
+                sumCut = sumCut.Replace("[END_MERGE]", "");
+                sumCut = sumCut.Replace(functionName, "");
+                sumCut = sumCut.Replace("[", "{");
+                sumCut = sumCut.Replace("]", "}");
+
+                List<string> allParam = GetAllParamerters(sumCut, true);
+
+            L_ReMerge:
+                for (int j = 0; j < allParam.Count; j++)
+                {
+                    if ((j + 1) < allParam.Count && allParam[j].Contains("{") && !allParam[j].Contains("}"))
+                    {
+                        allParam[j] = allParam[j] + allParam[j + 1];
+                        allParam.RemoveAt(j + 1);
+                        goto L_ReMerge;
+                    }
+                    else
+                    {
+                        if (allParam[j][0] == ',')
+                            allParam[j] = allParam[j].Substring(1, allParam[j].Length - 1);
+                    }
+                }
+
+                if (allParam.Count > 3)
+                {
+                    allParam[2] = allParam[2].Replace("{", "");
+                    allParam[2] = allParam[2].Replace("}", "");
+                }
+                if (allParam.Count > 4)
+                {
+                    allParam[3] = allParam[3].Replace(";", "");
+                    allParam[3] = allParam[3].Replace("}", "");
+                }
+
+                string param1 = GetBonusScript(allParam[0]);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
+                string param4 = GetValue(allParam[3], 4);
+
+                if (allParam.Count > 3)
+                    param4 = allParam[3];
+
+                if (!string.IsNullOrEmpty(param3) || !string.IsNullOrWhiteSpace(param3))
+                {
+                    param3 = param3.Replace("{", "");
+                    param3 = param3.Replace("}", "");
+                }
+                if (!string.IsNullOrEmpty(param4) || !string.IsNullOrWhiteSpace(param4))
+                {
+                    param4 = param4.Replace(";", "");
+                    param4 = param4.Replace("}", "");
+                }
+
+                sum += AddDescription(sum, "เมื่อร่าย Skill " + GetSkillName(param4) + " มีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + UseFunctionWithString(param3, 0));
+
+                data = "";
+            }
+            #endregion
+            #region autobonus2
+            functionName = "autobonus2";
+            if (data.Contains(functionName))
+            {
+                string sumCut = data;
+
+                sumCut = sumCut.Replace("[END_MERGE]", "");
+                sumCut = sumCut.Replace(functionName, "");
+                sumCut = sumCut.Replace("[", "{");
+                sumCut = sumCut.Replace("]", "}");
+
+                List<string> allParam = GetAllParamerters(sumCut, true);
+
+            L_ReMerge:
+                for (int j = 0; j < allParam.Count; j++)
+                {
+                    if ((j + 1) < allParam.Count && allParam[j].Contains("{") && !allParam[j].Contains("}"))
+                    {
+                        allParam[j] = allParam[j] + allParam[j + 1];
+                        allParam.RemoveAt(j + 1);
+                        goto L_ReMerge;
+                    }
+                    else
+                    {
+                        if (allParam[j][0] == ',')
+                            allParam[j] = allParam[j].Substring(1, allParam[j].Length - 1);
+                    }
+                }
+
+                if (allParam.Count > 3)
+                {
+                    allParam[2] = allParam[2].Replace("{", "");
+                    allParam[2] = allParam[2].Replace("}", "");
+                }
+                if (allParam.Count > 4)
+                {
+                    allParam[3] = allParam[3].Replace(";", "");
+                    allParam[3] = allParam[3].Replace("}", "");
+                }
+
+                string param1 = GetBonusScript(allParam[0]);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
+                string param4 = null;
+
+                if (allParam.Count > 3)
+                    param4 = allParam[3];
+
+                if (!string.IsNullOrEmpty(param3) || !string.IsNullOrWhiteSpace(param3))
+                {
+                    param3 = param3.Replace("{", "");
+                    param3 = param3.Replace("}", "");
+                }
+                if (!string.IsNullOrEmpty(param4) || !string.IsNullOrWhiteSpace(param4))
+                {
+                    param4 = param4.Replace(";", "");
+                    param4 = param4.Replace("}", "");
+                }
+
+                if (!string.IsNullOrEmpty(param4) || !string.IsNullOrWhiteSpace(param4))
+                    sum += AddDescription(sum, "เมื่อโดนโจมตีกายภาพมีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + UseFunctionWithString(param3, 0) + GetTriggerCriteria(param4));
+                else
+                    sum += AddDescription(sum, "เมื่อโดนโจมตีกายภาพมีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + UseFunctionWithString(param3, 0));
+
+                data = "";
+            }
+            #endregion
+            #region autobonus
+            functionName = "autobonus";
+            if (data.Contains(functionName))
+            {
+                string sumCut = data;
+
+                sumCut = sumCut.Replace("[END_MERGE]", "");
+                sumCut = sumCut.Replace(functionName, "");
+                sumCut = sumCut.Replace("[", "{");
+                sumCut = sumCut.Replace("]", "}");
+
+                List<string> allParam = GetAllParamerters(sumCut, true);
+
+            L_ReMerge:
+                for (int j = 0; j < allParam.Count; j++)
+                {
+                    if ((j + 1) < allParam.Count && allParam[j].Contains("{") && !allParam[j].Contains("}"))
+                    {
+                        allParam[j] = allParam[j] + allParam[j + 1];
+                        allParam.RemoveAt(j + 1);
+                        goto L_ReMerge;
+                    }
+                    else
+                    {
+                        if (allParam[j][0] == ',')
+                            allParam[j] = allParam[j].Substring(1, allParam[j].Length - 1);
+                    }
+                }
+
+                if (allParam.Count > 3)
+                {
+                    allParam[2] = allParam[2].Replace("{", "");
+                    allParam[2] = allParam[2].Replace("}", "");
+                }
+                if (allParam.Count > 4)
+                {
+                    allParam[3] = allParam[3].Replace(";", "");
+                    allParam[3] = allParam[3].Replace("}", "");
+                }
+
+                string param1 = GetBonusScript(allParam[0]);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
+                string param4 = null;
+
+                if (allParam.Count > 3)
+                    param4 = allParam[3];
+
+                if (!string.IsNullOrEmpty(param3) || !string.IsNullOrWhiteSpace(param3))
+                {
+                    param3 = param3.Replace("{", "");
+                    param3 = param3.Replace("}", "");
+                }
+                if (!string.IsNullOrEmpty(param4) || !string.IsNullOrWhiteSpace(param4))
+                {
+                    param4 = param4.Replace(";", "");
+                    param4 = param4.Replace("}", "");
+                }
+
+                if (!string.IsNullOrEmpty(param4) || !string.IsNullOrWhiteSpace(param4))
+                    sum += AddDescription(sum, "เมื่อโจมตีกายภาพมีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + UseFunctionWithString(param3, 0) + GetTriggerCriteria(param4));
+                else
+                    sum += AddDescription(sum, "เมื่อโจมตีกายภาพมีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + UseFunctionWithString(param3, 0));
+
+                data = "";
+            }
+            #endregion
+            #region bonus_script
+            functionName = "bonus_script";
+            if (data.Contains(functionName))
+            {
+                string sumCut = data;
+
+                sumCut = sumCut.Replace("[END_MERGE]", "");
+                sumCut = sumCut.Replace(functionName, "");
+                sumCut = sumCut.Replace("[", "{");
+                sumCut = sumCut.Replace("]", "}");
+                Log("sumCut: " + sumCut);
+                List<string> allParam = GetAllParamerters(sumCut, true);
+
+            L_ReMerge:
+                for (int j = 0; j < allParam.Count; j++)
+                {
+                    //Log("allParam[j]: " + allParam[j]);
+                    if ((j + 1) < allParam.Count && allParam[j].Contains("{") && !allParam[j].Contains("}"))
+                    {
+                        allParam[j] = allParam[j] + allParam[j + 1];
+                        allParam.RemoveAt(j + 1);
+                        //Log("allParam[j]: " + allParam[j]);
+                        goto L_ReMerge;
+                    }
+                    else
+                    {
+                        if (allParam[j][0] == ',')
+                            allParam[j] = allParam[j].Substring(1, allParam[j].Length - 1);
+                    }
+                }
+
+                string param1 = GetBonusScript(allParam[0]);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
+                string param4 = GetValue(allParam[3], 4);
+
+                if (allParam.Count > 3)
+                    param4 = allParam[3];
+
+                Log("param1: " + param1);
+                Log("param2: " + param2);
+                Log("param3: " + param3);
+                Log("param4: " + param4);
+
+                if (isHadParam1 && isHadParam2)
+                {
+                    string sumFlag = null;
+                    string sumType = null;
+                    if (isHadParam3)
+                        sumFlag = param3;
+                    if (isHadParam4)
+                    {
+                        sumType = param4;
+                        if (sumType == "1")
+                            sumType = "(เป็น Buff)";
+                        else if (sumType == "1")
+                            sumType = "(เป็น Debuff)";
+                    }
+
+                    sum += AddDescription(sum, "เมื่อสวมใส่จะ " + param1 + " เป็นเวลา " + TimerToStringTimer(float.Parse(param2)) + GetBonusScriptFlag(sumFlag) + sumType);
+                }
+
+                data = "";
+            }
+            #endregion
+
             #region itemheal
             functionName = "itemheal";
             if (data.Contains(functionName))
@@ -2212,6 +2627,8 @@ public class ItemDbScriptData
                     else
                         sum += AddDescription(sum, "ฟื้นฟู " + param2 + " SP");
                 }
+
+                data = "";
             }
             #endregion
             #region percentheal
@@ -2239,6 +2656,37 @@ public class ItemDbScriptData
                     else
                         sum += AddDescription(sum, "ฟื้นฟู SP " + param2 + "%");
                 }
+
+                data = "";
+            }
+            #endregion
+            #region heal
+            functionName = "heal";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "เสีย " + param1 + " HP");
+                    else
+                        sum += AddDescription(sum, "ฟื้นฟู " + param1 + " HP");
+                }
+                if (isHadParam2)
+                {
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "เสีย " + param2 + " SP");
+                    else
+                        sum += AddDescription(sum, "ฟื้นฟู " + param2 + " SP");
+                }
+
+                data = "";
             }
             #endregion
             #region sc_end
@@ -2702,270 +3150,6 @@ public class ItemDbScriptData
 
                 if (isHadParam1)
                     sum += AddDescription(sum, "กดใช้เพื่อรับ " + param1 + " Roulette Silver");
-            }
-            #endregion
-
-            #region autobonus3
-            functionName = "autobonus3";
-            if (data.Contains(functionName))
-            {
-                string sumCut = data;
-
-                sumCut = sumCut.Replace("[END_MERGE]", "");
-                sumCut = sumCut.Replace(functionName, "");
-                sumCut = sumCut.Replace("[", "{");
-                sumCut = sumCut.Replace("]", "}");
-
-                List<string> allParam = GetAllParamerters(sumCut, true);
-
-            L_ReMerge:
-                for (int j = 0; j < allParam.Count; j++)
-                {
-                    if (allParam[j].Contains("{") && !allParam[j].Contains("}"))
-                    {
-                        allParam[j] = allParam[j] + allParam[j + 1];
-                        allParam.RemoveAt(j + 1);
-                        goto L_ReMerge;
-                    }
-                    else
-                    {
-                        if (allParam[j][0] == ',')
-                            allParam[j] = allParam[j].Substring(1, allParam[j].Length - 1);
-                    }
-                }
-
-                if (allParam.Count > 3)
-                {
-                    allParam[2] = allParam[2].Replace("{", "");
-                    allParam[2] = allParam[2].Replace("}", "");
-                }
-                if (allParam.Count > 4)
-                {
-                    allParam[3] = allParam[3].Replace(";", "");
-                    allParam[3] = allParam[3].Replace("}", "");
-                }
-
-                string param1 = GetBonusScript(allParam[0]);
-                string param2 = GetValue(allParam[1], 2);
-                string param3 = GetValue(allParam[2], 3);
-                string param4 = GetValue(allParam[3], 4);
-
-                if (allParam.Count > 3)
-                    param4 = allParam[3];
-
-                if (!string.IsNullOrEmpty(param3) || !string.IsNullOrWhiteSpace(param3))
-                {
-                    param3 = param3.Replace("{", "");
-                    param3 = param3.Replace("}", "");
-                }
-                if (!string.IsNullOrEmpty(param4) || !string.IsNullOrWhiteSpace(param4))
-                {
-                    param4 = param4.Replace(";", "");
-                    param4 = param4.Replace("}", "");
-                }
-
-                sum += AddDescription(sum, "เมื่อร่าย Skill " + GetSkillName(param4) + " มีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + UseFunctionWithString(param3, 0));
-
-                data = "";
-            }
-            #endregion
-            #region autobonus2
-            functionName = "autobonus2";
-            if (data.Contains(functionName))
-            {
-                string sumCut = data;
-
-                sumCut = sumCut.Replace("[END_MERGE]", "");
-                sumCut = sumCut.Replace(functionName, "");
-                sumCut = sumCut.Replace("[", "{");
-                sumCut = sumCut.Replace("]", "}");
-
-                List<string> allParam = GetAllParamerters(sumCut, true);
-
-            L_ReMerge:
-                for (int j = 0; j < allParam.Count; j++)
-                {
-                    if (allParam[j].Contains("{") && !allParam[j].Contains("}"))
-                    {
-                        allParam[j] = allParam[j] + allParam[j + 1];
-                        allParam.RemoveAt(j + 1);
-                        goto L_ReMerge;
-                    }
-                    else
-                    {
-                        if (allParam[j][0] == ',')
-                            allParam[j] = allParam[j].Substring(1, allParam[j].Length - 1);
-                    }
-                }
-
-                if (allParam.Count > 3)
-                {
-                    allParam[2] = allParam[2].Replace("{", "");
-                    allParam[2] = allParam[2].Replace("}", "");
-                }
-                if (allParam.Count > 4)
-                {
-                    allParam[3] = allParam[3].Replace(";", "");
-                    allParam[3] = allParam[3].Replace("}", "");
-                }
-
-                string param1 = GetBonusScript(allParam[0]);
-                string param2 = GetValue(allParam[1], 2);
-                string param3 = GetValue(allParam[2], 3);
-                string param4 = null;
-
-                if (allParam.Count > 3)
-                    param4 = allParam[3];
-
-                if (!string.IsNullOrEmpty(param3) || !string.IsNullOrWhiteSpace(param3))
-                {
-                    param3 = param3.Replace("{", "");
-                    param3 = param3.Replace("}", "");
-                }
-                if (!string.IsNullOrEmpty(param4) || !string.IsNullOrWhiteSpace(param4))
-                {
-                    param4 = param4.Replace(";", "");
-                    param4 = param4.Replace("}", "");
-                }
-
-                if (!string.IsNullOrEmpty(param4) || !string.IsNullOrWhiteSpace(param4))
-                    sum += AddDescription(sum, "เมื่อโดนโจมตีกายภาพมีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + UseFunctionWithString(param3, 0) + GetTriggerCriteria(param4));
-                else
-                    sum += AddDescription(sum, "เมื่อโดนโจมตีกายภาพมีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + UseFunctionWithString(param3, 0));
-
-                data = "";
-            }
-            #endregion
-            #region autobonus
-            functionName = "autobonus";
-            if (data.Contains(functionName))
-            {
-                string sumCut = data;
-
-                sumCut = sumCut.Replace("[END_MERGE]", "");
-                sumCut = sumCut.Replace(functionName, "");
-                sumCut = sumCut.Replace("[", "{");
-                sumCut = sumCut.Replace("]", "}");
-
-                List<string> allParam = GetAllParamerters(sumCut, true);
-
-            L_ReMerge:
-                for (int j = 0; j < allParam.Count; j++)
-                {
-                    if (allParam[j].Contains("{") && !allParam[j].Contains("}"))
-                    {
-                        allParam[j] = allParam[j] + allParam[j + 1];
-                        allParam.RemoveAt(j + 1);
-                        goto L_ReMerge;
-                    }
-                    else
-                    {
-                        if (allParam[j][0] == ',')
-                            allParam[j] = allParam[j].Substring(1, allParam[j].Length - 1);
-                    }
-                }
-
-                if (allParam.Count > 3)
-                {
-                    allParam[2] = allParam[2].Replace("{", "");
-                    allParam[2] = allParam[2].Replace("}", "");
-                }
-                if (allParam.Count > 4)
-                {
-                    allParam[3] = allParam[3].Replace(";", "");
-                    allParam[3] = allParam[3].Replace("}", "");
-                }
-
-                string param1 = GetBonusScript(allParam[0]);
-                string param2 = GetValue(allParam[1], 2);
-                string param3 = GetValue(allParam[2], 3);
-                string param4 = null;
-
-                if (allParam.Count > 3)
-                    param4 = allParam[3];
-
-                if (!string.IsNullOrEmpty(param3) || !string.IsNullOrWhiteSpace(param3))
-                {
-                    param3 = param3.Replace("{", "");
-                    param3 = param3.Replace("}", "");
-                }
-                if (!string.IsNullOrEmpty(param4) || !string.IsNullOrWhiteSpace(param4))
-                {
-                    param4 = param4.Replace(";", "");
-                    param4 = param4.Replace("}", "");
-                }
-
-                if (!string.IsNullOrEmpty(param4) || !string.IsNullOrWhiteSpace(param4))
-                    sum += AddDescription(sum, "เมื่อโจมตีกายภาพมีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + UseFunctionWithString(param3, 0) + GetTriggerCriteria(param4));
-                else
-                    sum += AddDescription(sum, "เมื่อโจมตีกายภาพมีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + UseFunctionWithString(param3, 0));
-
-                data = "";
-            }
-            #endregion
-            #region bonus_script
-            functionName = "bonus_script";
-            if (data.Contains(functionName))
-            {
-                string sumCut = data;
-
-                sumCut = sumCut.Replace("[END_MERGE]", "");
-                sumCut = sumCut.Replace(functionName, "");
-                sumCut = sumCut.Replace("[", "{");
-                sumCut = sumCut.Replace("]", "}");
-                Log("sumCut: " + sumCut);
-                List<string> allParam = GetAllParamerters(sumCut, true);
-
-            L_ReMerge:
-                for (int j = 0; j < allParam.Count; j++)
-                {
-                    //Log("allParam[j]: " + allParam[j]);
-                    if (allParam[j].Contains("{") && !allParam[j].Contains("}"))
-                    {
-                        allParam[j] = allParam[j] + allParam[j + 1];
-                        allParam.RemoveAt(j + 1);
-                        //Log("allParam[j]: " + allParam[j]);
-                        goto L_ReMerge;
-                    }
-                    else
-                    {
-                        if (allParam[j][0] == ',')
-                            allParam[j] = allParam[j].Substring(1, allParam[j].Length - 1);
-                    }
-                }
-
-                string param1 = GetBonusScript(allParam[0]);
-                string param2 = GetValue(allParam[1], 2);
-                string param3 = GetValue(allParam[2], 3);
-                string param4 = GetValue(allParam[3], 4);
-
-                if (allParam.Count > 3)
-                    param4 = allParam[3];
-
-                Log("param1: " + param1);
-                Log("param2: " + param2);
-                Log("param3: " + param3);
-                Log("param4: " + param4);
-
-                if (isHadParam1 && isHadParam2)
-                {
-                    string sumFlag = null;
-                    string sumType = null;
-                    if (isHadParam3)
-                        sumFlag = param3;
-                    if (isHadParam4)
-                    {
-                        sumType = param4;
-                        if (sumType == "1")
-                            sumType = "(เป็น Buff)";
-                        else if (sumType == "1")
-                            sumType = "(เป็น Debuff)";
-                    }
-
-                    sum += AddDescription(sum, "เมื่อสวมใส่จะ " + param1 + " เป็นเวลา " + TimerToStringTimer(float.Parse(param2)) + GetBonusScriptFlag(sumFlag) + sumType);
-                }
-
-                data = "";
             }
             #endregion
 
@@ -7209,6 +7393,114 @@ public class ItemDbScriptData
         List<string> toReplace = new List<string>();
         List<string> toReplaceValue = new List<string>();
 
+        //itemheal inside room
+        while (data.Contains("itemheal"))
+        {
+            //Loop all char
+            for (int j = 0; j < data.Length; j++)
+            {
+                int declareAt1 = data.IndexOf("itemheal");
+                if (declareAt1 == -1)
+                    break;
+                string sub = data.Substring(declareAt1);
+                int declareAt2 = sub.IndexOf(";");
+                if (declareAt2 == -1)
+                    break;
+                string toConvert = sub.Substring(0, declareAt2 + 1);
+                Log("GetBonusScript >> itemheal#1: " + toConvert);
+                string convert = GetDescription(toConvert, true);
+                convert = convert.Replace("\"", " ");
+                if (convert.Length > 0 && convert[convert.Length - 1] == ',')
+                    convert = convert.Substring(0, convert.Length - 1);
+                Log("GetBonusScript >> itemheal#2: " + toConvert);
+                toReplace.Add(toConvert);
+                toReplaceValue.Add(convert + "\",\n\"");
+                data = data.Replace(toConvert, convert);
+                Log("GetBonusScript >> itemheal#3: " + data);
+            }
+        }
+
+        //percentheal inside room
+        while (data.Contains("percentheal"))
+        {
+            //Loop all char
+            for (int j = 0; j < data.Length; j++)
+            {
+                int declareAt1 = data.IndexOf("percentheal");
+                if (declareAt1 == -1)
+                    break;
+                string sub = data.Substring(declareAt1);
+                int declareAt2 = sub.IndexOf(";");
+                if (declareAt2 == -1)
+                    break;
+                string toConvert = sub.Substring(0, declareAt2 + 1);
+                Log("GetBonusScript >> percentheal#1: " + toConvert);
+                string convert = GetDescription(toConvert, true);
+                convert = convert.Replace("\"", " ");
+                if (convert.Length > 0 && convert[convert.Length - 1] == ',')
+                    convert = convert.Substring(0, convert.Length - 1);
+                Log("GetBonusScript >> percentheal#2: " + toConvert);
+                toReplace.Add(toConvert);
+                toReplaceValue.Add(convert + "\",\n\"");
+                data = data.Replace(toConvert, convert);
+                Log("GetBonusScript >> percentheal#3: " + data);
+            }
+        }
+
+        //heal inside room
+        while (data.Contains("heal"))
+        {
+            //Loop all char
+            for (int j = 0; j < data.Length; j++)
+            {
+                int declareAt1 = data.IndexOf("heal");
+                if (declareAt1 == -1)
+                    break;
+                string sub = data.Substring(declareAt1);
+                int declareAt2 = sub.IndexOf(";");
+                if (declareAt2 == -1)
+                    break;
+                string toConvert = sub.Substring(0, declareAt2 + 1);
+                Log("GetBonusScript >> heal#1: " + toConvert);
+                string convert = GetDescription(toConvert, true);
+                convert = convert.Replace("\"", " ");
+                if (convert.Length > 0 && convert[convert.Length - 1] == ',')
+                    convert = convert.Substring(0, convert.Length - 1);
+                Log("GetBonusScript >> heal#2: " + toConvert);
+                toReplace.Add(toConvert);
+                toReplaceValue.Add(convert + "\",\n\"");
+                data = data.Replace(toConvert, convert);
+                Log("GetBonusScript >> heal#3: " + data);
+            }
+        }
+
+        //sc_start inside room
+        while (data.Contains("sc_start"))
+        {
+            //Loop all char
+            for (int j = 0; j < data.Length; j++)
+            {
+                int declareAt1 = data.IndexOf("sc_start");
+                if (declareAt1 == -1)
+                    break;
+                string sub = data.Substring(declareAt1);
+                int declareAt2 = sub.IndexOf(";");
+                if (declareAt2 == -1)
+                    break;
+                string toConvert = sub.Substring(0, declareAt2 + 1);
+                Log("GetBonusScript >> sc_start#1: " + toConvert);
+                string convert = GetDescription(toConvert, true);
+                convert = convert.Replace("\"", " ");
+                if (convert.Length > 0 && convert[convert.Length - 1] == ',')
+                    convert = convert.Substring(0, convert.Length - 1);
+                Log("GetBonusScript >> sc_start#2: " + toConvert);
+                toReplace.Add(toConvert);
+                toReplaceValue.Add(convert + "\",\n\"");
+                data = data.Replace(toConvert, convert);
+                Log("GetBonusScript >> sc_start#3: " + data);
+            }
+        }
+
         //sc_end inside room
         while (data.Contains("sc_end"))
         {
@@ -7223,22 +7515,24 @@ public class ItemDbScriptData
                 if (declareAt2 == -1)
                     break;
                 string toConvert = sub.Substring(0, declareAt2 + 1);
-                Log("GetBonusScript >> #4: " + toConvert);
+                Log("GetBonusScript >> sc_end#1: " + toConvert);
                 string convert = GetDescription(toConvert, true);
                 convert = convert.Replace("\"", " ");
                 if (convert.Length > 0 && convert[convert.Length - 1] == ',')
                     convert = convert.Substring(0, convert.Length - 1);
-                Log("GetBonusScript >> #5: " + toConvert);
+                Log("GetBonusScript >> sc_end#2: " + toConvert);
                 toReplace.Add(toConvert);
                 toReplaceValue.Add(convert + "\",\n\"");
                 data = data.Replace(toConvert, convert);
-                Log("GetBonusScript >> #6: " + data);
+                Log("GetBonusScript >> sc_end#3: " + data);
             }
         }
 
         //Bonus inside room
-        while (data.Contains("bonus"))
+        int retry = 30;
+        while (retry > 0 && data.Contains("bonus"))
         {
+            retry--;
             //Loop all char
             for (int j = 0; j < data.Length; j++)
             {
@@ -7250,16 +7544,16 @@ public class ItemDbScriptData
                 if (declareAt2 == -1)
                     break;
                 string toConvert = sub.Substring(0, declareAt2 + 1);
-                Log("GetBonusScript >> #1: " + toConvert);
+                Log("GetBonusScript >> bonus#1: " + toConvert);
                 string convert = GetDescription(toConvert, true);
                 convert = convert.Replace("\"", " ");
                 if (convert.Length > 0 && convert[convert.Length - 1] == ',')
                     convert = convert.Substring(0, convert.Length - 1);
-                Log("GetBonusScript >> #2: " + toConvert);
+                Log("GetBonusScript >> bonus#2: " + toConvert);
                 toReplace.Add(toConvert);
                 toReplaceValue.Add(convert + "\",\n\"");
                 data = data.Replace(toConvert, convert);
-                Log("GetBonusScript >> #3: " + data);
+                Log("GetBonusScript >> bonus#3: " + data);
             }
         }
 
@@ -7474,12 +7768,12 @@ public class ItemDbScriptData
         for (int i = 0; i < allParam.Count; i++)
         {
         L_Redo:
-            Log("GetAllParamerters >>  allParam[i]: " + allParam[i]);
+            //Log("GetAllParamerters >>  allParam[i]: " + allParam[i]);
 
             if (isBonusScriptCall && !allParam[i].Contains(","))
                 allParam[i] = "," + allParam[i];
 
-            Log("GetAllParamerters >>  allParam[i]: " + allParam[i]);
+            //Log("GetAllParamerters >>  allParam[i]: " + allParam[i]);
 
             //Check ()
             int count1 = 0;

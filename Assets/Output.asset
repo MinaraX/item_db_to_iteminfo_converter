@@ -13,8 +13,5 @@ MonoBehaviour:
   m_Name: Output
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 11400000, guid: 630cf34160fdbb5459afe2ad44e0a776, type: 2}
-  targetArray: 0
-  _string: '1181,Tae_Goo_Lyeon,Tae Goo Lyeon,5,20,,2000,250,,1,2,0x00004082,18,2,34,4,90,1,3,{
-    bonus bFlee2,10; if(JobLevel>=70) autobonus "{ bonus bBaseAtk,50; }",10,10000,BF_WEAPON,"{
-    specialeffect2 EF_POTION_BERSERK; }"; if(getrefine()>8) { bonus bVariableCastrate,-20;
-    bonus bDelayRate,-20; } },{},{} '
+  targetArray: 3678
+  _string: 
