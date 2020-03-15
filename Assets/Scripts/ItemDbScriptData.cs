@@ -294,7 +294,7 @@ public class ItemDbScriptData
         {
             var sumCut = allCut[i];
 
-            Log("<color=#DEC9FF>(Merging) allCut[" + i + "]: " + sumCut + "</color>");
+            //Log("<color=#DEC9FF>(Merging) allCut[" + i + "]: " + sumCut + "</color>");
 
             if (sumCut == "if" && allCut[i + 1].Contains("("))
             {
@@ -348,6 +348,21 @@ public class ItemDbScriptData
                     Log("if not had {} >> !allCut[" + i + "].Contains(';')");
 
                     allCut[i] = allCut[i] + ";";
+
+                    if (i + 1 < allCut.Count)
+                    {
+                        if (string.IsNullOrEmpty(allCut[i + 1]) || string.IsNullOrWhiteSpace(allCut[i + 1]))
+                        {
+                            if (i + 2 < allCut.Count)
+                            {
+                                if (string.IsNullOrEmpty(allCut[i + 2]) || string.IsNullOrWhiteSpace(allCut[i + 2]))
+                                {
+                                    allCut[i] = "";
+                                    goto L_Redo;
+                                }
+                            }
+                        }
+                    }
 
                     int loop = 0;
                     while (!allCut[i + 1 + loop].Contains(";"))
@@ -545,6 +560,21 @@ public class ItemDbScriptData
                 else if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}") && !allCut[i].Contains(";"))
                 {
                     allCut[i] = "[TXT_ELSE];";
+
+                    if (i + 1 < allCut.Count)
+                    {
+                        if (string.IsNullOrEmpty(allCut[i + 1]) || string.IsNullOrWhiteSpace(allCut[i + 1]))
+                        {
+                            if (i + 2 < allCut.Count)
+                            {
+                                if (string.IsNullOrEmpty(allCut[i + 2]) || string.IsNullOrWhiteSpace(allCut[i + 2]))
+                                {
+                                    allCut[i] = "";
+                                    goto L_Redo;
+                                }
+                            }
+                        }
+                    }
 
                     int loop = 0;
                     while (!allCut[i + 1 + loop].Contains(";"))
@@ -2231,6 +2261,7 @@ public class ItemDbScriptData
                         Log("autobonus >> sc_end#3: " + data);
                     }
                 }
+
                 //Bonus inside room
                 while (data.Contains("bonus"))
                 {
@@ -2315,7 +2346,6 @@ public class ItemDbScriptData
                 {
                     for (int j = 0; j < tempVarName.Count; j++)
                         data = data.Replace(tempVarName[j], valueFromTempVar[j]);
-
                 }
 
                 //Replace special variables
