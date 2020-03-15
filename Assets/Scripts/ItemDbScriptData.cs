@@ -114,6 +114,14 @@ public class ItemDbScriptData
         sum = sum.Replace(";", "; ");
         sum = sum.Replace("bonus bDelayrate", "bonus bDelayRate");
         sum = sum.Replace("bonus buseSPRate", "bonus bUseSPrate");
+
+        //Replace temporary variables in autobonus or bonus_script
+        while (sum.Contains("\"+.@") && (sum.Contains("autobonus") || sum.Contains("bonus_script")))
+        {
+            //Replace format "+.@r+" >> .@r
+            sum = sum.Replace("\"+", "");
+            sum = sum.Replace("+\"", "");
+        }
         return sum;
     }
     #endregion
@@ -134,7 +142,7 @@ public class ItemDbScriptData
 
         string sumData = data;
 
-        Log("GetDescription:" + data);
+        //Log("GetDescription:" + data);
 
         //Remove specialeffect & specialeffect2
         while (data.Contains("specialeffect"))
@@ -148,11 +156,11 @@ public class ItemDbScriptData
                     if (specialEffectEndAt != -1)
                     {
                         string leftSideString = data.Substring(0, specialEffectStartAt);
-                        Log("Remove specialeffect >> leftSideString: " + leftSideString);
+                        //Log("Remove specialeffect >> leftSideString: " + leftSideString);
                         string rightSideString = data.Substring(specialEffectEndAt + 1);
-                        Log("Remove specialeffect >> rightSideString: " + rightSideString);
+                        //Log("Remove specialeffect >> rightSideString: " + rightSideString);
                         data = leftSideString + rightSideString;
-                        Log("Remove specialeffect >> data: " + data);
+                        //Log("Remove specialeffect >> data: " + data);
                     }
                 }
             }
@@ -165,11 +173,11 @@ public class ItemDbScriptData
                     if (specialEffectEndAt != -1)
                     {
                         string leftSideString = data.Substring(0, specialEffectStartAt);
-                        Log("Remove specialeffect >> leftSideString: " + leftSideString);
+                        //Log("Remove specialeffect >> leftSideString: " + leftSideString);
                         string rightSideString = data.Substring(specialEffectEndAt + 1);
-                        Log("Remove specialeffect >> rightSideString: " + rightSideString);
+                        //Log("Remove specialeffect >> rightSideString: " + rightSideString);
                         data = leftSideString + rightSideString;
-                        Log("Remove specialeffect >> data: " + data);
+                        //Log("Remove specialeffect >> data: " + data);
                     }
                 }
             }
@@ -184,7 +192,7 @@ public class ItemDbScriptData
     L_RedoFirstPhaseMerge:
         for (int i = 0; i < allCut.Count; i++)
         {
-            Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
+            //Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
             //Merge autobonus / bonus_script
             if ((allCut[i].Contains("autobonus") || allCut[i].Contains("bonus_script")) && !allCut[i].Contains("[END_MERGE]"))
             {
@@ -197,35 +205,58 @@ public class ItemDbScriptData
                 }
                 else
                 {
+                    bool isContainBonus3 = allCut[i].Contains("autobonus3");
+                    bool isAutoBonus3Checked = false;
                     bool isNeedToRemerge = true;
                     int count = 0;
+                    int toCount = 2;
+                    if (isContainBonus3)
+                        toCount = 3;
                     var targetToCount = '"';
+
+                    //autobonus3 " { } ",20,1000,"AL_HEAL"," {   heal 0,200;  } ";
                     foreach (var c in allCut[i])
                     {
-                        //#1 of all find " at 2 count
+                        //#1 of all find "
                         if (c == targetToCount)
                         {
                             count++;
-                            if (count >= 2 && targetToCount == '"' && !isNeedToRemerge)
+                            if (count >= toCount && targetToCount == '"' && !isNeedToRemerge && !isAutoBonus3Checked)
                             {
-                                //#2 Count , at least 2
+                                //#2 Count ,
                                 count = 0;
                                 targetToCount = ',';
                             }
-                            else if (count >= 2 && targetToCount == '"' && isNeedToRemerge)
+                            else if (count >= toCount && targetToCount == '"' && isNeedToRemerge)
                             {
-                                //This is finish
-                                isNeedToRemerge = false;
-                                break;
+                                if (isContainBonus3 && !isAutoBonus3Checked)
+                                {
+                                    isAutoBonus3Checked = true;
+                                    isNeedToRemerge = true;
+                                    //#4 Count "
+                                    count = 0;
+                                    targetToCount = '"';
+                                }
+                                else if (isContainBonus3 && isAutoBonus3Checked)
+                                {
+                                    //This is finish
+                                    isNeedToRemerge = false;
+                                    break;
+                                }
+                                else if (!isContainBonus3)
+                                {
+                                    //This is finish
+                                    isNeedToRemerge = false;
+                                }
                             }
-                            else if (count >= 2 && targetToCount == ',')
+                            else if (count >= toCount && targetToCount == ',')
                             {
                                 //This is finish
                                 isNeedToRemerge = false;
 
                                 //But if it's had more "
 
-                                //#3 Count " at least 2
+                                //#3 Count "
                                 count = 0;
                                 targetToCount = '"';
                             }
@@ -249,11 +280,11 @@ public class ItemDbScriptData
                         allCut[i] = allCut[i].Replace("\"", "");
                         allCut[i] = allCut[i].Replace("{", "[");
                         allCut[i] = allCut[i].Replace("}", "]");
-                        allCut[i] = allCut[i] + "[END_MERGE]";
+                        allCut[i] = "[END_MERGE]" + allCut[i];
                     }
                 }
             }
-            Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
+            //Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
         }
     #endregion
 
@@ -263,7 +294,7 @@ public class ItemDbScriptData
         {
             var sumCut = allCut[i];
 
-            Log("<color=#DEC9FF>(Merging) allCut[" + i + "]: " + sumCut + "</color>");
+            //Log("<color=#DEC9FF>(Merging) allCut[" + i + "]: " + sumCut + "</color>");
 
             if (sumCut == "if" && allCut[i + 1].Contains("("))
             {
@@ -542,23 +573,38 @@ public class ItemDbScriptData
                     //Remove first '{' and end '}'
                     allCut[i + 1] = allCut[i + 1].Substring(1, allCut[i + 1].Length - 2);
 
-                    //Then split by ';'
-                    var splitBonus = StringSplit.GetStringSplit(allCut[i + 1], ';');
+                    bool isNotSplit = false;
+                    var splitBonus = new List<string>();
+
+                    if (allCut[i + 1].Contains("autobonus") || allCut[i + 1].Contains("bonus_script"))
+                    {
+                        splitBonus.Add(allCut[i + 1]);
+                        isNotSplit = true;
+                    }
+                    else
+                    {
+                        //Then split by ';'
+                        splitBonus = StringSplit.GetStringSplit(allCut[i + 1], ';');
+                    }
 
                     //Then re-add ';'
-                    for (int j = 0; j < splitBonus.Count; j++)
+                    if (!isNotSplit)
                     {
-                        if (splitBonus[j] == "" || splitBonus[j] == " " || string.IsNullOrEmpty(splitBonus[j]) || string.IsNullOrWhiteSpace(splitBonus[j]))
-                            splitBonus.RemoveAt(j);
-                        else
-                            splitBonus[j] = splitBonus[j] + ";";
+                        for (int j = 0; j < splitBonus.Count; j++)
+                        {
+                            if (splitBonus[j] == "" || splitBonus[j] == " " || string.IsNullOrEmpty(splitBonus[j]) || string.IsNullOrWhiteSpace(splitBonus[j]))
+                                splitBonus.RemoveAt(j);
+                            else
+                                splitBonus[j] = splitBonus[j] + ";";
+                        }
                     }
 
                     //Set current index to [TXT_ELSE];
                     allCut[i] = "[TXT_ELSE];";
 
                     //Set next index to splitBonus[0]
-                    allCut[i + 1] = splitBonus[0];
+                    if (splitBonus.Count > 0)
+                        allCut[i + 1] = splitBonus[0];
 
                     //Add to list
                     for (int j = 0; j < splitBonus.Count; j++)
@@ -574,6 +620,9 @@ public class ItemDbScriptData
                                 allCut.Insert(i + 1, splitBonus[j]);
                         }
                     }
+
+                    if (splitBonus.Count <= 1)
+                        allCut.Insert(i + 2, "[TXT_END_ELSE];");
                 }
             }
             else if (sumCut == "bonus" || sumCut == "bonus " || sumCut == " bonus")
@@ -2666,18 +2715,16 @@ public class ItemDbScriptData
                 sumCut = sumCut.Replace(functionName, "");
                 sumCut = sumCut.Replace("[", "{");
                 sumCut = sumCut.Replace("]", "}");
-                Log("sumCut: " + sumCut);
+
                 List<string> allParam = GetAllParamerters(sumCut, true);
 
             L_ReMerge:
                 for (int j = 0; j < allParam.Count; j++)
                 {
-                    //Log("allParam[j]: " + allParam[j]);
                     if (allParam[j].Contains("{") && !allParam[j].Contains("}"))
                     {
                         allParam[j] = allParam[j] + allParam[j + 1];
                         allParam.RemoveAt(j + 1);
-                        //Log("allParam[j]: " + allParam[j]);
                         goto L_ReMerge;
                     }
                     else
@@ -2717,12 +2764,9 @@ public class ItemDbScriptData
                     param4 = param4.Replace("}", "");
                 }
 
-                Log("param1: " + param1);
-                Log("param2: " + param2);
-                Log("param3: " + param3);
-                Log("param4: " + param4);
+                sum += AddDescription(sum, "เมื่อร่าย Skill " + GetSkillName(param4) + " มีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + UseFunctionWithString(param3, 0));
 
-                sum += AddDescription(sum, "เมื่อร่าย Skill " + GetSkillName(param4) + " มีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + TimerToStringTimer(float.Parse(param3)));
+                data = "";
             }
             #endregion
             #region autobonus2
@@ -2735,18 +2779,16 @@ public class ItemDbScriptData
                 sumCut = sumCut.Replace(functionName, "");
                 sumCut = sumCut.Replace("[", "{");
                 sumCut = sumCut.Replace("]", "}");
-                Log("sumCut: " + sumCut);
+
                 List<string> allParam = GetAllParamerters(sumCut, true);
 
             L_ReMerge:
                 for (int j = 0; j < allParam.Count; j++)
                 {
-                    //Log("allParam[j]: " + allParam[j]);
                     if (allParam[j].Contains("{") && !allParam[j].Contains("}"))
                     {
                         allParam[j] = allParam[j] + allParam[j + 1];
                         allParam.RemoveAt(j + 1);
-                        //Log("allParam[j]: " + allParam[j]);
                         goto L_ReMerge;
                     }
                     else
@@ -2786,15 +2828,10 @@ public class ItemDbScriptData
                     param4 = param4.Replace("}", "");
                 }
 
-                Log("param1: " + param1);
-                Log("param2: " + param2);
-                Log("param3: " + param3);
-                Log("param4: " + param4);
-
                 if (!string.IsNullOrEmpty(param4) || !string.IsNullOrWhiteSpace(param4))
-                    sum += AddDescription(sum, "เมื่อโดนโจมตีกายภาพมีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + TimerToStringTimer(float.Parse(param3)) + GetTriggerCriteria(param4));
+                    sum += AddDescription(sum, "เมื่อโดนโจมตีกายภาพมีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + UseFunctionWithString(param3, 0) + GetTriggerCriteria(param4));
                 else
-                    sum += AddDescription(sum, "เมื่อโดนโจมตีกายภาพมีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + TimerToStringTimer(float.Parse(param3)));
+                    sum += AddDescription(sum, "เมื่อโดนโจมตีกายภาพมีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + UseFunctionWithString(param3, 0));
 
                 data = "";
             }
@@ -2809,18 +2846,16 @@ public class ItemDbScriptData
                 sumCut = sumCut.Replace(functionName, "");
                 sumCut = sumCut.Replace("[", "{");
                 sumCut = sumCut.Replace("]", "}");
-                Log("sumCut: " + sumCut);
+
                 List<string> allParam = GetAllParamerters(sumCut, true);
 
             L_ReMerge:
                 for (int j = 0; j < allParam.Count; j++)
                 {
-                    //Log("allParam[j]: " + allParam[j]);
                     if (allParam[j].Contains("{") && !allParam[j].Contains("}"))
                     {
                         allParam[j] = allParam[j] + allParam[j + 1];
                         allParam.RemoveAt(j + 1);
-                        //Log("allParam[j]: " + allParam[j]);
                         goto L_ReMerge;
                     }
                     else
@@ -2860,14 +2895,10 @@ public class ItemDbScriptData
                     param4 = param4.Replace("}", "");
                 }
 
-                Log("param1: " + param1);
-                Log("param2: " + param2);
-                Log("param3: " + param3);
-                Log("param4: " + param4);
                 if (!string.IsNullOrEmpty(param4) || !string.IsNullOrWhiteSpace(param4))
-                    sum += AddDescription(sum, "เมื่อโจมตีกายภาพมีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + TimerToStringTimer(float.Parse(param3)) + GetTriggerCriteria(param4));
+                    sum += AddDescription(sum, "เมื่อโจมตีกายภาพมีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + UseFunctionWithString(param3, 0) + GetTriggerCriteria(param4));
                 else
-                    sum += AddDescription(sum, "เมื่อโจมตีกายภาพมีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + TimerToStringTimer(float.Parse(param3)));
+                    sum += AddDescription(sum, "เมื่อโจมตีกายภาพมีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + UseFunctionWithString(param3, 0));
 
                 data = "";
             }
@@ -2933,6 +2964,8 @@ public class ItemDbScriptData
 
                     sum += AddDescription(sum, "เมื่อสวมใส่จะ " + param1 + " เป็นเวลา " + TimerToStringTimer(float.Parse(param2)) + GetBonusScriptFlag(sumFlag) + sumType);
                 }
+
+                data = "";
             }
             #endregion
 
@@ -8277,7 +8310,7 @@ public class ItemDbScriptData
         data = data.Replace("()", "");
         data = data.Replace("[ ", "");
 
-        Log("<color=yellow>" + functionName + " >>> Final: " + data + "</color>");
+        Log("<color=yellow>" + functionName + " >> Final: " + data + "</color>");
 
         if (isForceNoCircle)
         {
@@ -8666,7 +8699,7 @@ public class ItemDbScriptData
         string sumDecimal = "f0";
 
         if (timer % divider != 0)
-            sumDecimal = "f2";
+            sumDecimal = "f3";
 
         Log(functionName + ">> timer: " + timer);
 
@@ -8700,7 +8733,7 @@ public class ItemDbScriptData
     {
         string functionName = "UseFunctionWithString";
 
-        Log(functionName + " >> data: " + data + ", functionType: " + functionType + ", additionalParam: " + additionalParam);
+        Log("<color=#7CFFC1>" + functionName + " >> data: " + data + ", functionType: " + functionType + ", additionalParam: " + additionalParam + "</color>");
 
         string sum = null;
         List<string> toReplace = new List<string>();
@@ -8718,6 +8751,7 @@ public class ItemDbScriptData
                         || sumChar == '5' || sumChar == '6' || sumChar == '7' || sumChar == '8' || sumChar == '9')
                     {
                         sum += sumChar.ToString();
+                        Log("sum: " + sum);
                     }
                     else
                     {
@@ -8730,6 +8764,15 @@ public class ItemDbScriptData
                             sum = null;
                         }
                     }
+                }
+                //Recheck again
+                if (!string.IsNullOrEmpty(sum))
+                {
+                    float toParse = float.Parse(sum);
+                    toReplace.Add(sum);
+                    toReplaceTo.Add(TimerToStringTimer(toParse));
+                    Log(functionName + " >> Add: " + sum + ", " + TimerToStringTimer(toParse));
+                    sum = null;
                 }
             }
         }
