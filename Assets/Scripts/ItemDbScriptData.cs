@@ -144,7 +144,7 @@ public class ItemDbScriptData
 
         //Log("GetDescription:" + data);
 
-        //Remove specialeffect & specialeffect2
+        #region Remove specialeffect & specialeffect2
         while (data.Contains("specialeffect"))
         {
             if (data.Contains("specialeffect2"))
@@ -182,6 +182,7 @@ public class ItemDbScriptData
                 }
             }
         }
+        #endregion
 
         Log("GetDescription:" + data);
 
@@ -199,7 +200,6 @@ public class ItemDbScriptData
                 if (!allCut[i].Contains("}"))
                 {
                     allCut[i] = allCut[i] + allCut[i + 1];
-                    //allCut[i] = allCut[i].Replace("\"", "/");
                     allCut.RemoveAt(i + 1);
                     goto L_RedoFirstPhaseMerge;
                 }
@@ -214,57 +214,44 @@ public class ItemDbScriptData
                         toCount = 3;
                     var targetToCount = '"';
 
-                    //autobonus3 " { } ",20,1000,"AL_HEAL"," {   heal 0,200;  } ";
-                    foreach (var c in allCut[i])
+                    foreach (var c in allCut[i])//allCut[48]: autobonus3"{bonus2bResEff,Eff_Stun,10000;bonus2bResEff,Eff_Sleep,10000;bonus2bResEff,EFF_Stone,10000;}",1000,30000,"SU_GROOMING";
                     {
-                        //#1 of all find "
                         if (c == targetToCount)
                         {
                             count++;
-                            if (count >= toCount && targetToCount == '"' && !isNeedToRemerge && !isAutoBonus3Checked)
+                            if (count >= 2 && targetToCount == '"' && !isNeedToRemerge && !isAutoBonus3Checked)
                             {
-                                //#2 Count ,
                                 count = 0;
                                 targetToCount = ',';
                             }
-                            else if (count >= toCount && targetToCount == '"' && isNeedToRemerge)
+                            else if (count >= 2 && targetToCount == '"' && isNeedToRemerge)//#1
                             {
                                 if (isContainBonus3 && !isAutoBonus3Checked)
                                 {
                                     isAutoBonus3Checked = true;
                                     isNeedToRemerge = true;
-                                    //#4 Count "
                                     count = 0;
                                     targetToCount = '"';
                                 }
                                 else if (isContainBonus3 && isAutoBonus3Checked)
                                 {
-                                    //This is finish
                                     isNeedToRemerge = false;
                                     break;
                                 }
-                                else if (!isContainBonus3)
-                                {
-                                    //This is finish
+                                else if (!isContainBonus3)//#2
                                     isNeedToRemerge = false;
-                                }
                             }
                             else if (count >= toCount && targetToCount == ',')
                             {
-                                //This is finish
                                 isNeedToRemerge = false;
-
-                                //But if it's had more "
-
-                                //#3 Count "
                                 count = 0;
                                 targetToCount = '"';
                             }
                         }
                     }
 
-                    Log("isNeedToRemerge: " + isNeedToRemerge);
-                    Log("allCut[i][allCut[i].Length - 1]: " + allCut[i][allCut[i].Length - 1]);
+                    //Log("isNeedToRemerge: " + isNeedToRemerge);
+                    //Log("allCut[i][allCut[i].Length - 1]: " + allCut[i][allCut[i].Length - 1]);
 
                     if (isNeedToRemerge || allCut[i][allCut[i].Length - 1] != ';')
                     {
@@ -294,7 +281,7 @@ public class ItemDbScriptData
         {
             var sumCut = allCut[i];
 
-            //Log("<color=#DEC9FF>(Merging) allCut[" + i + "]: " + sumCut + "</color>");
+            Log("<color=#DEC9FF>(Merging) allCut[" + i + "]: " + sumCut + "</color>");
 
             if (sumCut == "if" && allCut[i + 1].Contains("("))
             {
@@ -389,7 +376,7 @@ public class ItemDbScriptData
                 }
                 else if (allCut[i + 1].Contains("{"))
                 {
-                    Log("if Contains {");
+                    Log("if Contains { >> allCut[" + (i + 1) + "]: " + allCut[i + 1]);
 
                     //Count {
                     int roomStartCount = 0;
@@ -428,7 +415,9 @@ public class ItemDbScriptData
                         if (roomStartCount != roomEndCount)
                         {
                             Log("'if' need more '{}'");
+                            //Log("'if' need '{}' allCut[" + (i + 1) + "]:" + allCut[i + 1]);
                             allCut[i + 1] += " " + allCut[i + 2];
+                            //Log("'if' need '{}' allCut[" + (i + 1) + "]:" + allCut[i + 1]);
                             allCut.RemoveAt(i + 2);
                             goto L_Redo;
                         }
@@ -445,12 +434,12 @@ public class ItemDbScriptData
                                 AddTemporaryVariable(findTempVar, allCut[i - 1]);
                         }
 
-                        //Log("Remove first '{' and end '}' allCut[i + 1]: " + allCut[i + 1]);
+                        Log("Remove first '{' and end '}' allCut[i + 1]: " + allCut[i + 1]);
 
                         //Remove first '{' and end '}'
                         allCut[i + 1] = allCut[i + 1].Substring(1, allCut[i + 1].Length - 2);
 
-                        //Log("Remove first '{' and end '}' allCut[i + 1]: " + allCut[i + 1]);
+                        Log("Remove first '{' and end '}' allCut[i + 1]: " + allCut[i + 1]);
 
                         allCut[i + 1] = MergeWhiteSpace.RemoveWhiteSpace(allCut[i + 1]);
 
@@ -461,17 +450,45 @@ public class ItemDbScriptData
                         {
                             int ifStartAt = allCut[i + 1].IndexOf("if(");
                             string cutIf = allCut[i + 1].Substring(ifStartAt);
-                            //Log("cutIf: " + cutIf);
+                            Log("cutIf: " + cutIf);
                             allCut[i + 1] = allCut[i + 1].Substring(0, ifStartAt);
-                            //Log("allCut[i + 1]: " + allCut[i + 1]);
-                            allCut.Insert(i + 2, cutIf);
+                            Log("allCut[i + 1]: " + allCut[i + 1]);
+
+                            //Check is contain {
+                            if (cutIf.Contains("{"))
+                            {
+                                int roomStartAt = cutIf.IndexOf("{");
+                                int roomEndAt = cutIf.IndexOf("}");
+                                string cutRoomLeft = cutIf.Substring(0, roomStartAt);
+                                string room = cutIf.Substring(roomStartAt);
+                                int roomCutAt = room.IndexOf("}");
+                                room = room.Substring(0, roomCutAt + 1);
+                                string cutRoomRight = cutIf.Substring(roomEndAt + 1);
+                                Log("cutRoomLeft: " + cutRoomLeft);
+                                Log("room: " + room);
+                                Log("cutRoomRight: " + cutRoomRight);
+                                //Split it out and insert it
+                                allCut.Insert(i + 2, room);
+                                allCut.Insert(i + 2, cutRoomLeft + ";");
+                                //Merge right left to next array
+                                allCut[i + 1] = allCut[i + 1] + cutRoomRight;
+                                additionalEndIfIndex = 2;
+                            }
+                            //Otherwise use old code
+                            else
+                            {
+                                allCut.Insert(i + 2, cutIf);
+                                additionalEndIfIndex = 1;
+                            }
                             isNeedRedo = true;
-                            additionalEndIfIndex = 1;
                         }
 
                         var splitBonus = new List<string>();
 
-                        int index = 1;
+                        int index = 0;
+                        if (allCut[i + index].Contains("autobonus") || allCut[i + index].Contains("bonus_script"))
+                            index = 1;
+
                         while (allCut[i + index].Contains("autobonus") || allCut[i + index].Contains("bonus_script"))
                         {
                             string cutAutoBonus = null;
@@ -502,9 +519,38 @@ public class ItemDbScriptData
                             index++;
                         }
 
-                        //Then split by ';'
-                        splitBonus = StringSplit.GetStringSplit(allCut[i + index + 1], ';');
+                        //Do not spilt if first word is [Remove first '{' and end '}' allCut[i + 1]:  [END_MERGE] and last word is [/END_MERGE]  
+                        bool isFoundEndMergeStart = false;
+                        bool isFoundEndMergeEnd = false;
+                        if (allCut[i + index + 1].Contains("[END_MERGE]"))
+                        {
+                            string findWord = null;
+                            foreach (var c in allCut[i + index + 1])
+                            {
+                                findWord += c;
+                                if (findWord == "[END_MERGE]")
+                                {
+                                    isFoundEndMergeStart = true;
+                                    break;
+                                }
+                            }
+                            findWord = null;
+                            for (int j = allCut[i + index + 1].Length - 1; j > 0; j--)
+                            {
+                                findWord = allCut[i + index + 1][j] + findWord;
+                                if (findWord == "[/END_MERGE]")
+                                {
+                                    isFoundEndMergeEnd = true;
+                                    break;
+                                }
+                            }
+                        }
 
+                        if (isFoundEndMergeStart && isFoundEndMergeEnd)
+                            splitBonus.Add(allCut[i + index + 1]);
+                        //Then split by ';'
+                        else
+                            splitBonus = StringSplit.GetStringSplit(allCut[i + index + 1], ';');
 
                         //Then re-add ';'
                         for (int j = 0; j < splitBonus.Count; j++)
@@ -526,11 +572,11 @@ public class ItemDbScriptData
                             {
                                 if (j == splitBonus.Count - 1)
                                 {
-                                    allCut.Insert(i + index + 1, splitBonus[j]);
-                                    allCut.Insert(i + index + 1 + splitBonus.Count + additionalEndIfIndex, "[TXT_END_IF];");
+                                    allCut.Insert(i + index + 2, splitBonus[j]);
+                                    allCut.Insert(i + index + 2 + splitBonus.Count + additionalEndIfIndex, "[TXT_END_IF];");
                                 }
                                 else
-                                    allCut.Insert(i + index + 1, splitBonus[j]);
+                                    allCut.Insert(i + index + 2, splitBonus[j]);
                             }
                         }
 
@@ -623,9 +669,49 @@ public class ItemDbScriptData
                     //Remove first '{' and end '}'
                     allCut[i + 1] = allCut[i + 1].Substring(1, allCut[i + 1].Length - 2);
 
+                    allCut[i + 1] = MergeWhiteSpace.RemoveWhiteSpace(allCut[i + 1]);
+
+                    //Find if in if and extract it out from this array to solve conflict
+                    if (allCut[i + 1].Contains("if("))
+                    {
+                        int ifStartAt = allCut[i + 1].IndexOf("if(");
+                        string cutIf = allCut[i + 1].Substring(ifStartAt);
+                        Log("cutIf: " + cutIf);
+                        allCut[i + 1] = allCut[i + 1].Substring(0, ifStartAt);
+                        Log("allCut[i + 1]: " + allCut[i + 1]);
+
+                        //Check is contain {
+                        if (cutIf.Contains("{"))
+                        {
+                            int roomStartAt = cutIf.IndexOf("{");
+                            int roomEndAt = cutIf.IndexOf("}");
+                            string cutRoomLeft = cutIf.Substring(0, roomStartAt);
+                            string room = cutIf.Substring(roomStartAt);
+                            int roomCutAt = room.IndexOf("}");
+                            room = room.Substring(0, roomCutAt + 1);
+                            string cutRoomRight = cutIf.Substring(roomEndAt + 1);
+                            Log("cutRoomLeft: " + cutRoomLeft);
+                            Log("room: " + room);
+                            Log("cutRoomRight: " + cutRoomRight);
+                            //Split it out and insert it
+                            allCut.Insert(i + 2, room);
+                            allCut.Insert(i + 2, cutRoomLeft + ";");
+                            //Merge right left to next array
+                            allCut[i + 1] = allCut[i + 1] + cutRoomRight;
+                        }
+                        //Otherwise use old code
+                        else
+                        {
+                            allCut.Insert(i + 2, cutIf);
+                        }
+                    }
+
                     var splitBonus = new List<string>();
 
-                    int index = 1;
+                    int index = 0;
+                    if (allCut[i + index].Contains("autobonus") || allCut[i + index].Contains("bonus_script"))
+                        index = 1;
+
                     while (allCut[i + index].Contains("autobonus") || allCut[i + index].Contains("bonus_script"))
                     {
                         string cutAutoBonus = null;
@@ -656,8 +742,38 @@ public class ItemDbScriptData
                         index++;
                     }
 
+                    //Do not spilt if first word is [Remove first '{' and end '}' allCut[i + 1]:  [END_MERGE] and last word is [/END_MERGE]  
+                    bool isFoundEndMergeStart = false;
+                    bool isFoundEndMergeEnd = false;
+                    if (allCut[i + index + 1].Contains("[END_MERGE]"))
+                    {
+                        string findWord = null;
+                        foreach (var c in allCut[i + index + 1])
+                        {
+                            findWord += c;
+                            if (findWord == "[END_MERGE]")
+                            {
+                                isFoundEndMergeStart = true;
+                                break;
+                            }
+                        }
+                        findWord = null;
+                        for (int j = allCut[i + index + 1].Length - 1; j > 0; j--)
+                        {
+                            findWord = allCut[i + index + 1][j] + findWord;
+                            if (findWord == "[/END_MERGE]")
+                            {
+                                isFoundEndMergeEnd = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (isFoundEndMergeStart && isFoundEndMergeEnd)
+                        splitBonus.Add(allCut[i + index + 1]);
                     //Then split by ';'
-                    splitBonus = StringSplit.GetStringSplit(allCut[i + index + 1], ';');
+                    else
+                        splitBonus = StringSplit.GetStringSplit(allCut[i + index + 1], ';');
 
                     //Then re-add ';'
                     for (int j = 0; j < splitBonus.Count; j++)
@@ -682,11 +798,11 @@ public class ItemDbScriptData
                         {
                             if (j == splitBonus.Count - 1)
                             {
-                                allCut.Insert(i + index + 1, splitBonus[j]);
-                                allCut.Insert(i + index + 1 + splitBonus.Count, "[TXT_END_ELSE];");
+                                allCut.Insert(i + index + 2, splitBonus[j]);
+                                allCut.Insert(i + index + 2 + splitBonus.Count, "[TXT_END_ELSE];");
                             }
                             else
-                                allCut.Insert(i + index + 1, splitBonus[j]);
+                                allCut.Insert(i + index + 2, splitBonus[j]);
                         }
                     }
 
@@ -1991,6 +2107,7 @@ public class ItemDbScriptData
         for (int i = 0; i < allCut.Count; i++)
         {
             Log("<color=#F3FFAE>allCut[" + i + "](a): " + allCut[i] + "</color>");
+            #region Scripts
             string findTempVar = allCut[i];
             if (findTempVar.Contains(".@"))
             {
@@ -2036,6 +2153,7 @@ public class ItemDbScriptData
                     }
                 }
             }
+            #endregion
             Log("<color=#F3FFAE>allCut[" + i + "](b): " + allCut[i] + "</color>");
         }
         #endregion
@@ -4705,6 +4823,14 @@ public class ItemDbScriptData
 
                 if (isHadParam1)
                 {
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        if (param1.Contains(tempVariables[j].aka) && param1.Contains("-"))
+                        {
+                            isParam1Negative = true;
+                            param1 = param1.Replace("-", "");
+                        }
+                    }
                     if (isParam1Negative)
                         sum += AddDescription(sum, "ร่าย VCAST เร็วขึ้น " + param1 + "%");
                     else
@@ -4725,6 +4851,14 @@ public class ItemDbScriptData
 
                 if (isHadParam1 && isHadParam2)
                 {
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        if (param2.Contains(tempVariables[j].aka) && param2.Contains("-"))
+                        {
+                            isParam2Negative = true;
+                            param2 = param2.Replace("-", "");
+                        }
+                    }
                     if (isParam2Negative)
                         sum += AddDescription(sum, "ร่าย VCAST กับ Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + param2 + "%");
                     else
@@ -4744,6 +4878,14 @@ public class ItemDbScriptData
 
                 if (isHadParam1)
                 {
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        if (param1.Contains(tempVariables[j].aka) && param1.Contains("-"))
+                        {
+                            isParam1Negative = true;
+                            param1 = param1.Replace("-", "");
+                        }
+                    }
                     if (isParam1Negative)
                         sum += AddDescription(sum, "ร่าย FIXCAST เร็วขึ้น " + param1 + "%");
                     else
@@ -4764,6 +4906,14 @@ public class ItemDbScriptData
 
                 if (isHadParam1 && isHadParam2)
                 {
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        if (param2.Contains(tempVariables[j].aka) && param2.Contains("-"))
+                        {
+                            isParam2Negative = true;
+                            param2 = param2.Replace("-", "");
+                        }
+                    }
                     if (isParam2Negative)
                         sum += AddDescription(sum, "ร่าย FIXCAST กับ Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + param2 + "%");
                     else
@@ -4783,6 +4933,14 @@ public class ItemDbScriptData
 
                 if (isHadParam1)
                 {
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        if (param1.Contains(tempVariables[j].aka) && param1.Contains("-"))
+                        {
+                            isParam1Negative = true;
+                            param1 = param1.Replace("-", "");
+                        }
+                    }
                     if (isParam1Negative)
                         sum += AddDescription(sum, "ร่าย VCAST เร็วขึ้น " + param1 + "%");
                     else
@@ -4803,6 +4961,14 @@ public class ItemDbScriptData
 
                 if (isHadParam1 && isHadParam2)
                 {
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        if (param2.Contains(tempVariables[j].aka) && param2.Contains("-"))
+                        {
+                            isParam2Negative = true;
+                            param2 = param2.Replace("-", "");
+                        }
+                    }
                     if (isParam2Negative)
                         sum += AddDescription(sum, "ร่าย VCAST กับ Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + param2 + "%");
                     else
@@ -4822,6 +4988,14 @@ public class ItemDbScriptData
 
                 if (isHadParam1)
                 {
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        if (param1.Contains(tempVariables[j].aka) && param1.Contains("-"))
+                        {
+                            isParam1Negative = true;
+                            param1 = param1.Replace("-", "");
+                        }
+                    }
                     if (isParam1Negative)
                         sum += AddDescription(sum, "ร่าย FIXCAST เร็วขึ้น " + UseFunctionWithString(param1, 0));
                     else
@@ -4842,6 +5016,14 @@ public class ItemDbScriptData
 
                 if (isHadParam1 && isHadParam2)
                 {
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        if (param2.Contains(tempVariables[j].aka) && param2.Contains("-"))
+                        {
+                            isParam2Negative = true;
+                            param2 = param2.Replace("-", "");
+                        }
+                    }
                     if (isParam2Negative)
                         sum += AddDescription(sum, "ร่าย FIXCAST กับ Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + TimerToStringTimer(float.Parse(param2)));
                     else
@@ -4861,6 +5043,14 @@ public class ItemDbScriptData
 
                 if (isHadParam1)
                 {
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        if (param1.Contains(tempVariables[j].aka) && param1.Contains("-"))
+                        {
+                            isParam1Negative = true;
+                            param1 = param1.Replace("-", "");
+                        }
+                    }
                     if (isParam1Negative)
                         sum += AddDescription(sum, "ร่าย VCAST เร็วขึ้น " + UseFunctionWithString(param1, 0));
                     else
@@ -4881,6 +5071,14 @@ public class ItemDbScriptData
 
                 if (isHadParam1 && isHadParam2)
                 {
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        if (param2.Contains(tempVariables[j].aka) && param2.Contains("-"))
+                        {
+                            isParam2Negative = true;
+                            param2 = param2.Replace("-", "");
+                        }
+                    }
                     if (isParam2Negative)
                         sum += AddDescription(sum, "ร่าย VCAST กับ Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + TimerToStringTimer(float.Parse(param2)));
                     else
@@ -4912,6 +5110,14 @@ public class ItemDbScriptData
 
                 if (isHadParam1)
                 {
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        if (param1.Contains(tempVariables[j].aka) && param1.Contains("-"))
+                        {
+                            isParam1Negative = true;
+                            param1 = param1.Replace("-", "");
+                        }
+                    }
                     if (isParam1Negative)
                         sum += AddDescription(sum, "Delay หลังร่ายเร็วขึ้น " + param1 + "%");
                     else
@@ -4932,6 +5138,14 @@ public class ItemDbScriptData
 
                 if (isHadParam1 && isHadParam2)
                 {
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        if (param2.Contains(tempVariables[j].aka) && param2.Contains("-"))
+                        {
+                            isParam2Negative = true;
+                            param2 = param2.Replace("-", "");
+                        }
+                    }
                     if (isParam2Negative)
                         sum += AddDescription(sum, "Delay หลังร่ายกับ Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + TimerToStringTimer(float.Parse(param2)));
                     else
@@ -4952,6 +5166,14 @@ public class ItemDbScriptData
 
                 if (isHadParam1 && isHadParam2)
                 {
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        if (param2.Contains(tempVariables[j].aka) && param2.Contains("-"))
+                        {
+                            isParam2Negative = true;
+                            param2 = param2.Replace("-", "");
+                        }
+                    }
                     if (isParam2Negative)
                         sum += AddDescription(sum, "Cooldown Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + UseFunctionWithString(param2, 0));
                     else
@@ -7744,7 +7966,7 @@ public class ItemDbScriptData
     /// <returns></returns>
     string CutFunctionName(string toCut, string functionName, int lengthDecrease = 0)
     {
-        Log("CutFunctionName >> #1: " + toCut + " | functionName: " + functionName);
+        Log("<color=orange>CutFunctionName >> #1: " + toCut + " | functionName: " + functionName + "</color>");
 
         int cutStartAt = toCut.IndexOf(functionName);
 
@@ -7874,7 +8096,9 @@ public class ItemDbScriptData
             }
             else
             {
-                if (data.Contains(tempVariables[i].variableName))
+                if (data.Contains(tempVariables[i].variableName)
+                    && !string.IsNullOrEmpty(tempVariables[i].variableName)
+                    && !string.IsNullOrWhiteSpace(tempVariables[i].variableName))
                 {
                     isFoundTempVariable = true;
 
@@ -8469,22 +8693,34 @@ public class ItemDbScriptData
             else
             {
                 SetParamCheck(paramCount, true, false);
-                if (data.Contains("0") || data.Contains("1") || data.Contains("2") || data.Contains("3") || data.Contains("4")
-                    || data.Contains("5") || data.Contains("6") || data.Contains("7") || data.Contains("8") || data.Contains("9"))
+                bool isNotRunNegativeCheck = false;
+                for (int i = 0; i < tempVariables.Count; i++)
                 {
-                    for (int i = data.Length - 1; i > 0; i--)
+                    if (data.Contains(MergeWhiteSpace.RemoveWhiteSpace(tempVariables[i].aka)))
                     {
-                        if (data[i] == '-' && i - 1 >= 0)
+                        isNotRunNegativeCheck = true;
+                        break;
+                    }
+                }
+                if (!isNotRunNegativeCheck)
+                {
+                    if (data.Contains("0") || data.Contains("1") || data.Contains("2") || data.Contains("3") || data.Contains("4")
+                    || data.Contains("5") || data.Contains("6") || data.Contains("7") || data.Contains("8") || data.Contains("9"))
+                    {
+                        for (int i = data.Length - 1; i > 0; i--)
                         {
-                            var sumChar = data[i - 1];
-                            if (sumChar != '0' || sumChar != '1' || sumChar != '2' || sumChar != '3' || sumChar != '4'
-                                || sumChar != '5' || sumChar != '6' || sumChar != '7' || sumChar != '8' || sumChar != '9' || sumChar == '(')
+                            if (data[i] == '-' && i - 1 >= 0)
                             {
-                                Log(functionName + " >> Found negative: " + data);
-                                data = data.Remove(i, 1);
-                                Log(functionName + " >> Found negative: " + data);
-                                SetParamCheck(paramCount, true, true);
-                                isForceNegative = true;
+                                var sumChar = data[i - 1];
+                                if (sumChar != '0' || sumChar != '1' || sumChar != '2' || sumChar != '3' || sumChar != '4'
+                                    || sumChar != '5' || sumChar != '6' || sumChar != '7' || sumChar != '8' || sumChar != '9' || sumChar == '(')
+                                {
+                                    Log(functionName + " >> Found negative: " + data);
+                                    data = data.Remove(i, 1);
+                                    Log(functionName + " >> Found negative: " + data);
+                                    SetParamCheck(paramCount, true, true);
+                                    isForceNegative = true;
+                                }
                             }
                         }
                     }
@@ -8509,11 +8745,11 @@ public class ItemDbScriptData
                 {
                     for (int j = 0; j < tempVariables.Count; j++)
                     {
-                        Log(functionName + " >> tempVarName[i]: " + tempVarName[i]);
-                        Log(functionName + " >> tempVariables[j].variableName: " + tempVariables[j].variableName);
-                        Log(functionName + " >> tempVariables[j].value: " + tempVariables[j].value);
-                        Log(functionName + " >> data: " + data);
-                        Log(functionName + " >> tempValues.Contains(tempVariables[j].value): " + tempValues.Contains(tempVariables[j].value));
+                        //Log(functionName + " >> tempVarName[i]: " + tempVarName[i]);
+                        //Log(functionName + " >> tempVariables[j].variableName: " + tempVariables[j].variableName);
+                        //Log(functionName + " >> tempVariables[j].value: " + tempVariables[j].value);
+                        //Log(functionName + " >> data: " + data);
+                        //Log(functionName + " >> tempValues.Contains(tempVariables[j].value): " + tempValues.Contains(tempVariables[j].value));
                         if (!tempValues.Contains(tempVariables[j].value) && tempVariables[j].variableName == tempVarName[i])
                         {
                             if (tempVariables[j].isOneLineIfElse)
@@ -8529,22 +8765,23 @@ public class ItemDbScriptData
             for (int i = 0; i < tempValues.Count; i++)
             {
                 tempValues[i] = tempValues[i].Replace(";", "");
-                Log(functionName + " >>  tempValues[i]: " + tempValues[i]);
+                //Log(functionName + " >>  tempValues[i]: " + tempValues[i]);
             }
 
-            Log(functionName + " >> tempVarName.Count: " + tempVarName.Count);
+            //Log(functionName + " >> tempVarName.Count: " + tempVarName.Count);
 
             //Normal replace
             if (tempVarName.Count <= 1)
             {
-                Log(functionName + " >> tempVarName.Count: " + tempVarName.Count);
-                Log(functionName + " >> tempValues.Count: " + tempValues.Count);
-                Log(functionName + " >> akaFromTempVar.Count: " + akaFromTempVar.Count);
+                //Log(functionName + " >> tempVarName.Count: " + tempVarName.Count);
+                //Log(functionName + " >> tempValues.Count: " + tempValues.Count);
+                //Log(functionName + " >> akaFromTempVar.Count: " + akaFromTempVar.Count);
 
                 for (int i = 0; i < tempVarName.Count; i++)
                 {
                     if (tempValues.Count > 0)
                     {
+                        Log(akaFromTempVar[i]);
                         if (isUseAkaTempVar)
                             data = data.Replace(tempVarName[i], tempValues[i] + akaFromTempVar[i]);
                         else
@@ -8625,11 +8862,12 @@ public class ItemDbScriptData
                 SetParamCheck(paramCount, true, false);
         }
 
-        Log(functionName + " >> Replace special variables");
-        //Replace special variables
+        Log(functionName + " >> data: " + data + " >> Replace special variables");
+
         data = ReplaceAllSpecialValue(data);
 
         Log(functionName + " >> Replace any error text");
+
         data = data.Replace(";", "");
         data = data.Replace("()", "");
         data = data.Replace("[ ", "");
