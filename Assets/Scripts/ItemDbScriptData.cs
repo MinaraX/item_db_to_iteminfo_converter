@@ -1962,6 +1962,32 @@ public class ItemDbScriptData
                         Log("autobonus >> data: " + data);
                     }
                 }
+                //sc_end inside room
+                while (data.Contains("sc_end"))
+                {
+                    //Loop all char
+                    for (int j = 0; j < data.Length; j++)
+                    {
+                        int declareAt1 = data.IndexOf("sc_end");
+                        if (declareAt1 == -1)
+                            break;
+                        string sub = data.Substring(declareAt1);
+                        int declareAt2 = sub.IndexOf(";");
+                        if (declareAt2 == -1)
+                            break;
+                        string toConvert = sub.Substring(0, declareAt2 + 1);
+                        Log("autobonus >> #4: " + toConvert);
+                        string convert = GetDescription(toConvert, true);
+                        convert = convert.Replace("\"", " ");
+                        if (convert.Length > 0 && convert[convert.Length - 1] == ',')
+                            convert = convert.Substring(0, convert.Length - 1);
+                        Log("autobonus >> #5: " + toConvert);
+                        toReplace.Add(toConvert);
+                        toReplaceValue.Add(convert + "\",\n\"");
+                        data = data.Replace(toConvert, convert);
+                        Log("autobonus >> #6: " + data);
+                    }
+                }
                 //Bonus inside room
                 while (data.Contains("bonus"))
                 {
@@ -2125,6 +2151,19 @@ public class ItemDbScriptData
                     else
                         sum += AddDescription(sum, "ฟื้นฟู SP " + param2 + "%");
                 }
+            }
+            #endregion
+            #region sc_end
+            functionName = "sc_end";
+            if (data.Contains(functionName) && isNotClearTempVar)
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                string param1 = sumCut;
+                param1 = param1.Replace("sc_", "");
+                param1 = param1.Replace("SC_", "");
+                param1 = UpperFirst(param1);
+                sum += AddDescription(sum, "รักษาสถานะ " + param1);
             }
             #endregion
             #region sc_end
@@ -2618,6 +2657,8 @@ public class ItemDbScriptData
 
                 param3 = param3.Replace("{", "");
                 param3 = param3.Replace("}", "");
+                param4 = param4.Replace(";", "");
+                param4 = param4.Replace("}", "");
 
                 Log("param1: " + param1);
                 Log("param2: " + param2);
@@ -2667,6 +2708,8 @@ public class ItemDbScriptData
 
                 param3 = param3.Replace("{", "");
                 param3 = param3.Replace("}", "");
+                param4 = param4.Replace(";", "");
+                param4 = param4.Replace("}", "");
 
                 Log("param1: " + param1);
                 Log("param2: " + param2);
@@ -2721,6 +2764,8 @@ public class ItemDbScriptData
 
                 param3 = param3.Replace("{", "");
                 param3 = param3.Replace("}", "");
+                param4 = param4.Replace(";", "");
+                param4 = param4.Replace("}", "");
 
                 Log("param1: " + param1);
                 Log("param2: " + param2);
@@ -7036,6 +7081,33 @@ public class ItemDbScriptData
 
         List<string> toReplace = new List<string>();
         List<string> toReplaceValue = new List<string>();
+
+        //sc_end inside room
+        while (data.Contains("sc_end"))
+        {
+            //Loop all char
+            for (int j = 0; j < data.Length; j++)
+            {
+                int declareAt1 = data.IndexOf("sc_end");
+                if (declareAt1 == -1)
+                    break;
+                string sub = data.Substring(declareAt1);
+                int declareAt2 = sub.IndexOf(";");
+                if (declareAt2 == -1)
+                    break;
+                string toConvert = sub.Substring(0, declareAt2 + 1);
+                Log("GetBonusScript >> #4: " + toConvert);
+                string convert = GetDescription(toConvert, true);
+                convert = convert.Replace("\"", " ");
+                if (convert.Length > 0 && convert[convert.Length - 1] == ',')
+                    convert = convert.Substring(0, convert.Length - 1);
+                Log("GetBonusScript >> #5: " + toConvert);
+                toReplace.Add(toConvert);
+                toReplaceValue.Add(convert + "\",\n\"");
+                data = data.Replace(toConvert, convert);
+                Log("GetBonusScript >> #6: " + data);
+            }
+        }
 
         //Bonus inside room
         while (data.Contains("bonus"))
