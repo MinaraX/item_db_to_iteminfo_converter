@@ -2016,6 +2016,8 @@ public class ItemDbScriptData
         {
             Log("allCut[" + i + "]: " + allCut[i]);
 
+            allCut[i] = allCut[i].Replace("[END_MERGE]", "");
+            allCut[i] = allCut[i].Replace("[/END_MERGE]", "");
             allCut[i] = allCut[i].Replace("bonus5", "bonus5 ");
             allCut[i] = allCut[i].Replace("bonus4", "bonus4 ");
             allCut[i] = allCut[i].Replace("bonus3", "bonus3 ");
@@ -7529,10 +7531,8 @@ public class ItemDbScriptData
         }
 
         //Bonus inside room
-        int retry = 30;
-        while (retry > 0 && data.Contains("bonus"))
+        while (data.Contains("bonus"))
         {
-            retry--;
             //Loop all char
             for (int j = 0; j < data.Length; j++)
             {
@@ -7906,13 +7906,11 @@ public class ItemDbScriptData
 
                     Log(subFunctionName + ": " + data);
 
-                    int retry = 300;
                     string newValue = data;
                     newValue = ReplaceAllSpecialValue(newValue);
                     Log(subFunctionName + " >> newValue: " + newValue);
-                    while (newValue.Contains(subFunctionName) && retry > 0)
+                    while (newValue.Contains(subFunctionName))
                     {
-                        retry--;
                         int circleStartAt = 0;
                         int circleEndAt = 0;
                         string findFunc = null;
@@ -8001,13 +7999,11 @@ public class ItemDbScriptData
 
                     Log(subFunctionName + ": " + data);
 
-                    int retry = 300;
                     string newValue = data;
                     newValue = ReplaceAllSpecialValue(newValue);
                     Log(subFunctionName + " >> newValue: " + newValue);
-                    while (newValue.Contains(subFunctionName) && retry > 0)
+                    while (newValue.Contains(subFunctionName))
                     {
-                        retry--;
                         int circleStartAt = 0;
                         int circleEndAt = 0;
                         string findFunc = null;
@@ -8096,13 +8092,11 @@ public class ItemDbScriptData
 
                     Log(subFunctionName + ": " + data);
 
-                    int retry = 300;
                     string newValue = data;
                     newValue = ReplaceAllSpecialValue(newValue);
                     Log(subFunctionName + " >> newValue: " + newValue);
-                    while (newValue.Contains(subFunctionName) && retry > 0)
+                    while (newValue.Contains(subFunctionName))
                     {
-                        retry--;
                         int circleStartAt = 0;
                         int circleEndAt = 0;
                         string findFunc = null;
@@ -8234,13 +8228,11 @@ public class ItemDbScriptData
 
                     Log(subFunctionName + ": " + data);
 
-                    int retry = 300;
                     string newValue = data;
                     newValue = ReplaceAllSpecialValue(newValue);
                     Log(subFunctionName + " >> newValue: " + newValue);
-                    while (newValue.Contains(subFunctionName) && retry > 0)
+                    while (newValue.Contains(subFunctionName))
                     {
-                        retry--;
                         int circleStartAt = 0;
                         int circleEndAt = 0;
                         string findFunc = null;
@@ -9129,11 +9121,9 @@ public class ItemDbScriptData
         string functionName = "getskilllv";
         if (value.Contains(functionName))
         {
-            int retry = 300;
             string newValue = value;
-            while (newValue.Contains(functionName) && retry > 0)
+            while (newValue.Contains(functionName))
             {
-                retry--;
                 int circleStartAt = 0;
                 int circleEndAt = 0;
                 string findFunc = null;
