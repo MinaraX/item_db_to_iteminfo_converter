@@ -2336,7 +2336,15 @@ public class ItemDbScriptData
                         tempVarName.Add(tempVariables[j].variableName);
                         Log("GetDescription >> Found variableName: " + tempVariables[j].variableName);
 
-                        valueFromTempVar.Add(tempVariables[j].value);
+                        string value = tempVariables[j].value;
+                        bool isContainRand = value.Contains("rand");
+                        if (isContainRand)
+                        {
+                            value = GetValue(value);
+                            valueFromTempVar.Add("สุ่ม " + value);
+                        }
+                        else
+                            valueFromTempVar.Add(value);
                         Log("GetDescription >> Found value: " + tempVariables[j].value);
                     }
                 }
