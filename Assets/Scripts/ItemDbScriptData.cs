@@ -134,7 +134,7 @@ public class ItemDbScriptData
 
         string sumData = data;
 
-        //Log("GetDescription:" + data);
+        Log("GetDescription:" + data);
 
         //Remove specialeffect & specialeffect2
         while (data.Contains("specialeffect"))
@@ -148,11 +148,11 @@ public class ItemDbScriptData
                     if (specialEffectEndAt != -1)
                     {
                         string leftSideString = data.Substring(0, specialEffectStartAt);
-                        //Log("Remove specialeffect >> leftSideString: " + leftSideString);
+                        Log("Remove specialeffect >> leftSideString: " + leftSideString);
                         string rightSideString = data.Substring(specialEffectEndAt + 1);
-                        //Log("Remove specialeffect >> rightSideString: " + rightSideString);
+                        Log("Remove specialeffect >> rightSideString: " + rightSideString);
                         data = leftSideString + rightSideString;
-                        //Log("Remove specialeffect >> data: " + data);
+                        Log("Remove specialeffect >> data: " + data);
                     }
                 }
             }
@@ -165,11 +165,11 @@ public class ItemDbScriptData
                     if (specialEffectEndAt != -1)
                     {
                         string leftSideString = data.Substring(0, specialEffectStartAt);
-                        //Log("Remove specialeffect >> leftSideString: " + leftSideString);
+                        Log("Remove specialeffect >> leftSideString: " + leftSideString);
                         string rightSideString = data.Substring(specialEffectEndAt + 1);
-                        //Log("Remove specialeffect >> rightSideString: " + rightSideString);
+                        Log("Remove specialeffect >> rightSideString: " + rightSideString);
                         data = leftSideString + rightSideString;
-                        //Log("Remove specialeffect >> data: " + data);
+                        Log("Remove specialeffect >> data: " + data);
                     }
                 }
             }
@@ -184,37 +184,76 @@ public class ItemDbScriptData
     L_RedoFirstPhaseMerge:
         for (int i = 0; i < allCut.Count; i++)
         {
-            //Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
+            Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
             //Merge autobonus / bonus_script
-            if (allCut[i].Contains("autobonus") || allCut[i].Contains("bonus_script"))
+            if ((allCut[i].Contains("autobonus") || allCut[i].Contains("bonus_script")) && !allCut[i].Contains("[END_MERGE]"))
             {
                 if (!allCut[i].Contains("}"))
                 {
                     allCut[i] = allCut[i] + allCut[i + 1];
-                    allCut[i] = allCut[i].Replace("\"", "");
+                    //allCut[i] = allCut[i].Replace("\"", "/");
                     allCut.RemoveAt(i + 1);
                     goto L_RedoFirstPhaseMerge;
                 }
                 else
                 {
-                    if (allCut[i][allCut[i].Length - 2] != '}' || allCut[i][allCut[i].Length - 1] != ';')
+                    bool isNeedToRemerge = true;
+                    int count = 0;
+                    var targetToCount = '"';
+                    foreach (var c in allCut[i])
+                    {
+                        //#1 of all find " at 2 count
+                        if (c == targetToCount)
+                        {
+                            count++;
+                            if (count >= 2 && targetToCount == '"' && !isNeedToRemerge)
+                            {
+                                //#2 Count , at least 2
+                                count = 0;
+                                targetToCount = ',';
+                            }
+                            else if (count >= 2 && targetToCount == '"' && isNeedToRemerge)
+                            {
+                                //This is finish
+                                isNeedToRemerge = false;
+                                break;
+                            }
+                            else if (count >= 2 && targetToCount == ',')
+                            {
+                                //This is finish
+                                isNeedToRemerge = false;
+
+                                //But if it's had more "
+
+                                //#3 Count " at least 2
+                                count = 0;
+                                targetToCount = '"';
+                            }
+                        }
+                    }
+
+                    Log("isNeedToRemerge: " + isNeedToRemerge);
+                    Log("allCut[i][allCut[i].Length - 1]: " + allCut[i][allCut[i].Length - 1]);
+
+                    if (isNeedToRemerge || allCut[i][allCut[i].Length - 1] != ';')
                     {
                         if (i + 1 < allCut.Count)
                         {
                             allCut[i] = allCut[i] + allCut[i + 1];
-                            allCut[i] = allCut[i].Replace("\"", "");
                             allCut.RemoveAt(i + 1);
                             goto L_RedoFirstPhaseMerge;
                         }
                     }
                     else
                     {
+                        allCut[i] = allCut[i].Replace("\"", "");
                         allCut[i] = allCut[i].Replace("{", "[");
                         allCut[i] = allCut[i].Replace("}", "]");
+                        allCut[i] = allCut[i] + "[END_MERGE]";
                     }
                 }
             }
-            //Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
+            Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
         }
     #endregion
 
@@ -224,7 +263,7 @@ public class ItemDbScriptData
         {
             var sumCut = allCut[i];
 
-            //Log("<color=#DEC9FF>(Merging) allCut[" + i + "]: " + sumCut + "</color>");
+            Log("<color=#DEC9FF>(Merging) allCut[" + i + "]: " + sumCut + "</color>");
 
             if (sumCut == "if" && allCut[i + 1].Contains("("))
             {
@@ -2623,6 +2662,7 @@ public class ItemDbScriptData
             {
                 string sumCut = data;
 
+                sumCut = sumCut.Replace("[END_MERGE]", "");
                 sumCut = sumCut.Replace(functionName, "");
                 sumCut = sumCut.Replace("[", "{");
                 sumCut = sumCut.Replace("]", "}");
@@ -2647,6 +2687,17 @@ public class ItemDbScriptData
                     }
                 }
 
+                if (allParam.Count > 3)
+                {
+                    allParam[2] = allParam[2].Replace("{", "");
+                    allParam[2] = allParam[2].Replace("}", "");
+                }
+                if (allParam.Count > 4)
+                {
+                    allParam[3] = allParam[3].Replace(";", "");
+                    allParam[3] = allParam[3].Replace("}", "");
+                }
+
                 string param1 = GetBonusScript(allParam[0]);
                 string param2 = GetValue(allParam[1], 2);
                 string param3 = GetValue(allParam[2], 3);
@@ -2655,10 +2706,16 @@ public class ItemDbScriptData
                 if (allParam.Count > 3)
                     param4 = allParam[3];
 
-                param3 = param3.Replace("{", "");
-                param3 = param3.Replace("}", "");
-                param4 = param4.Replace(";", "");
-                param4 = param4.Replace("}", "");
+                if (!string.IsNullOrEmpty(param3) || !string.IsNullOrWhiteSpace(param3))
+                {
+                    param3 = param3.Replace("{", "");
+                    param3 = param3.Replace("}", "");
+                }
+                if (!string.IsNullOrEmpty(param4) || !string.IsNullOrWhiteSpace(param4))
+                {
+                    param4 = param4.Replace(";", "");
+                    param4 = param4.Replace("}", "");
+                }
 
                 Log("param1: " + param1);
                 Log("param2: " + param2);
@@ -2674,6 +2731,7 @@ public class ItemDbScriptData
             {
                 string sumCut = data;
 
+                sumCut = sumCut.Replace("[END_MERGE]", "");
                 sumCut = sumCut.Replace(functionName, "");
                 sumCut = sumCut.Replace("[", "{");
                 sumCut = sumCut.Replace("]", "}");
@@ -2698,6 +2756,17 @@ public class ItemDbScriptData
                     }
                 }
 
+                if (allParam.Count > 3)
+                {
+                    allParam[2] = allParam[2].Replace("{", "");
+                    allParam[2] = allParam[2].Replace("}", "");
+                }
+                if (allParam.Count > 4)
+                {
+                    allParam[3] = allParam[3].Replace(";", "");
+                    allParam[3] = allParam[3].Replace("}", "");
+                }
+
                 string param1 = GetBonusScript(allParam[0]);
                 string param2 = GetValue(allParam[1], 2);
                 string param3 = GetValue(allParam[2], 3);
@@ -2706,10 +2775,16 @@ public class ItemDbScriptData
                 if (allParam.Count > 3)
                     param4 = allParam[3];
 
-                param3 = param3.Replace("{", "");
-                param3 = param3.Replace("}", "");
-                param4 = param4.Replace(";", "");
-                param4 = param4.Replace("}", "");
+                if (!string.IsNullOrEmpty(param3) || !string.IsNullOrWhiteSpace(param3))
+                {
+                    param3 = param3.Replace("{", "");
+                    param3 = param3.Replace("}", "");
+                }
+                if (!string.IsNullOrEmpty(param4) || !string.IsNullOrWhiteSpace(param4))
+                {
+                    param4 = param4.Replace(";", "");
+                    param4 = param4.Replace("}", "");
+                }
 
                 Log("param1: " + param1);
                 Log("param2: " + param2);
@@ -2730,6 +2805,7 @@ public class ItemDbScriptData
             {
                 string sumCut = data;
 
+                sumCut = sumCut.Replace("[END_MERGE]", "");
                 sumCut = sumCut.Replace(functionName, "");
                 sumCut = sumCut.Replace("[", "{");
                 sumCut = sumCut.Replace("]", "}");
@@ -2754,6 +2830,17 @@ public class ItemDbScriptData
                     }
                 }
 
+                if (allParam.Count > 3)
+                {
+                    allParam[2] = allParam[2].Replace("{", "");
+                    allParam[2] = allParam[2].Replace("}", "");
+                }
+                if (allParam.Count > 4)
+                {
+                    allParam[3] = allParam[3].Replace(";", "");
+                    allParam[3] = allParam[3].Replace("}", "");
+                }
+
                 string param1 = GetBonusScript(allParam[0]);
                 string param2 = GetValue(allParam[1], 2);
                 string param3 = GetValue(allParam[2], 3);
@@ -2762,10 +2849,16 @@ public class ItemDbScriptData
                 if (allParam.Count > 3)
                     param4 = allParam[3];
 
-                param3 = param3.Replace("{", "");
-                param3 = param3.Replace("}", "");
-                param4 = param4.Replace(";", "");
-                param4 = param4.Replace("}", "");
+                if (!string.IsNullOrEmpty(param3) || !string.IsNullOrWhiteSpace(param3))
+                {
+                    param3 = param3.Replace("{", "");
+                    param3 = param3.Replace("}", "");
+                }
+                if (!string.IsNullOrEmpty(param4) || !string.IsNullOrWhiteSpace(param4))
+                {
+                    param4 = param4.Replace(";", "");
+                    param4 = param4.Replace("}", "");
+                }
 
                 Log("param1: " + param1);
                 Log("param2: " + param2);
@@ -2785,6 +2878,7 @@ public class ItemDbScriptData
             {
                 string sumCut = data;
 
+                sumCut = sumCut.Replace("[END_MERGE]", "");
                 sumCut = sumCut.Replace(functionName, "");
                 sumCut = sumCut.Replace("[", "{");
                 sumCut = sumCut.Replace("]", "}");
