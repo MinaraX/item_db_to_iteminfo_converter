@@ -133,7 +133,7 @@ public class ItemDbScriptData
 
         string sumData = data;
 
-        Log("GetDescription:" + data);
+        //Log("GetDescription:" + data);
 
         //Remove specialeffect & specialeffect2
         while (data.Contains("specialeffect"))
@@ -147,11 +147,11 @@ public class ItemDbScriptData
                     if (specialEffectEndAt != -1)
                     {
                         string leftSideString = data.Substring(0, specialEffectStartAt);
-                        Log("Remove specialeffect >> leftSideString: " + leftSideString);
+                        //Log("Remove specialeffect >> leftSideString: " + leftSideString);
                         string rightSideString = data.Substring(specialEffectEndAt + 1);
-                        Log("Remove specialeffect >> rightSideString: " + rightSideString);
+                        //Log("Remove specialeffect >> rightSideString: " + rightSideString);
                         data = leftSideString + rightSideString;
-                        Log("Remove specialeffect >> data: " + data);
+                        //Log("Remove specialeffect >> data: " + data);
                     }
                 }
             }
@@ -164,11 +164,11 @@ public class ItemDbScriptData
                     if (specialEffectEndAt != -1)
                     {
                         string leftSideString = data.Substring(0, specialEffectStartAt);
-                        Log("Remove specialeffect >> leftSideString: " + leftSideString);
+                        //Log("Remove specialeffect >> leftSideString: " + leftSideString);
                         string rightSideString = data.Substring(specialEffectEndAt + 1);
-                        Log("Remove specialeffect >> rightSideString: " + rightSideString);
+                        //Log("Remove specialeffect >> rightSideString: " + rightSideString);
                         data = leftSideString + rightSideString;
-                        Log("Remove specialeffect >> data: " + data);
+                        //Log("Remove specialeffect >> data: " + data);
                     }
                 }
             }
@@ -183,7 +183,7 @@ public class ItemDbScriptData
     L_RedoFirstPhaseMerge:
         for (int i = 0; i < allCut.Count; i++)
         {
-            Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
+            //Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
             //Merge autobonus / bonus_script
             if (allCut[i].Contains("autobonus") || allCut[i].Contains("bonus_script"))
             {
@@ -213,7 +213,7 @@ public class ItemDbScriptData
                     }
                 }
             }
-            Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
+            //Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
         }
     #endregion
 
@@ -223,7 +223,7 @@ public class ItemDbScriptData
         {
             var sumCut = allCut[i];
 
-            Log("<color=#DEC9FF>(Merging) allCut[" + i + "]: " + sumCut + "</color>");
+            //Log("<color=#DEC9FF>(Merging) allCut[" + i + "]: " + sumCut + "</color>");
 
             if (sumCut == "if" && allCut[i + 1].Contains("("))
             {
@@ -318,11 +318,11 @@ public class ItemDbScriptData
                     if (!allCut[i + 1].Contains("}"))
                     {
                         Log("'if' need '{}'");
-                        //Log("'if' need '{}' allCut[" + (i + 1) + "]:" + allCut[i + 1]);
+                        Log("'if' need '{}' allCut[" + (i + 1) + "]:" + allCut[i + 1]);
                         if (!allCut[i].Contains(";"))
                             allCut[i] = allCut[i] + ";";
                         allCut[i + 1] += " " + allCut[i + 2];
-                        //Log("'if' need '{}' allCut[" + (i + 1) + "]:" + allCut[i + 1]);
+                        Log("'if' need '{}' allCut[" + (i + 1) + "]:" + allCut[i + 1]);
                         allCut.RemoveAt(i + 2);
                         goto L_Redo;
                     }
@@ -359,8 +359,12 @@ public class ItemDbScriptData
                                 AddTemporaryVariable(findTempVar, allCut[i - 1]);
                         }
 
+                        //Log("Remove first '{' and end '}' allCut[i + 1]: " + allCut[i + 1]);
+
                         //Remove first '{' and end '}'
                         allCut[i + 1] = allCut[i + 1].Substring(1, allCut[i + 1].Length - 2);
+
+                        //Log("Remove first '{' and end '}' allCut[i + 1]: " + allCut[i + 1]);
 
                         allCut[i + 1] = MergeWhiteSpace.RemoveWhiteSpace(allCut[i + 1]);
 
@@ -379,16 +383,30 @@ public class ItemDbScriptData
                             additionalEndIfIndex = 1;
                         }
 
-                        //Then split by ';'
-                        var splitBonus = StringSplit.GetStringSplit(allCut[i + 1], ';');
+                        bool isNotSplit = false;
+                        var splitBonus = new List<string>();
+
+                        if (allCut[i + 1].Contains("autobonus") || allCut[i + 1].Contains("bonus_script"))
+                        {
+                            splitBonus.Add(allCut[i + 1]);
+                            isNotSplit = true;
+                        }
+                        else
+                        {
+                            //Then split by ';'
+                            splitBonus = StringSplit.GetStringSplit(allCut[i + 1], ';');
+                        }
 
                         //Then re-add ';'
-                        for (int j = 0; j < splitBonus.Count; j++)
+                        if (!isNotSplit)
                         {
-                            if (splitBonus[j] == "" || splitBonus[j] == " " || string.IsNullOrEmpty(splitBonus[j]) || string.IsNullOrWhiteSpace(splitBonus[j]))
-                                splitBonus.RemoveAt(j);
-                            else
-                                splitBonus[j] = splitBonus[j] + ";";
+                            for (int j = 0; j < splitBonus.Count; j++)
+                            {
+                                if (splitBonus[j] == "" || splitBonus[j] == " " || string.IsNullOrEmpty(splitBonus[j]) || string.IsNullOrWhiteSpace(splitBonus[j]))
+                                    splitBonus.RemoveAt(j);
+                                else
+                                    splitBonus[j] = splitBonus[j] + ";";
+                            }
                         }
 
                         //Set next index to splitBonus[0]
@@ -1802,6 +1820,9 @@ public class ItemDbScriptData
             }
         }
         #endregion
+
+        //for (int i = 0; i < allCut.Count; i++)
+        //    Log("<color=white>allCut[" + i + "]: " + allCut[i] + "</color>");
 
         #region Replace temporary variables
         for (int i = 0; i < allCut.Count; i++)
