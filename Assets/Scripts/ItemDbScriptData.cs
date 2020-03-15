@@ -113,6 +113,7 @@ public class ItemDbScriptData
         sum = sum.Replace("  ", " ");
         sum = sum.Replace(";", "; ");
         sum = sum.Replace("bonus bDelayrate", "bonus bDelayRate");
+        sum = sum.Replace("bonus buseSPRate", "bonus bUseSPrate");
         return sum;
     }
     #endregion
@@ -318,11 +319,11 @@ public class ItemDbScriptData
                     if (!allCut[i + 1].Contains("}"))
                     {
                         Log("'if' need '{}'");
-                        Log("'if' need '{}' allCut[" + (i + 1) + "]:" + allCut[i + 1]);
+                        //Log("'if' need '{}' allCut[" + (i + 1) + "]:" + allCut[i + 1]);
                         if (!allCut[i].Contains(";"))
                             allCut[i] = allCut[i] + ";";
                         allCut[i + 1] += " " + allCut[i + 2];
-                        Log("'if' need '{}' allCut[" + (i + 1) + "]:" + allCut[i + 1]);
+                        //Log("'if' need '{}' allCut[" + (i + 1) + "]:" + allCut[i + 1]);
                         allCut.RemoveAt(i + 2);
                         goto L_Redo;
                     }
@@ -2600,6 +2601,11 @@ public class ItemDbScriptData
                         //Log("allParam[j]: " + allParam[j]);
                         goto L_ReMerge;
                     }
+                    else
+                    {
+                        if (allParam[j][0] == ',')
+                            allParam[j] = allParam[j].Substring(1, allParam[j].Length - 1);
+                    }
                 }
 
                 string param1 = GetBonusScript(allParam[0]);
@@ -2643,6 +2649,11 @@ public class ItemDbScriptData
                         allParam.RemoveAt(j + 1);
                         //Log("allParam[j]: " + allParam[j]);
                         goto L_ReMerge;
+                    }
+                    else
+                    {
+                        if (allParam[j][0] == ',')
+                            allParam[j] = allParam[j].Substring(1, allParam[j].Length - 1);
                     }
                 }
 
@@ -2693,6 +2704,11 @@ public class ItemDbScriptData
                         //Log("allParam[j]: " + allParam[j]);
                         goto L_ReMerge;
                     }
+                    else
+                    {
+                        if (allParam[j][0] == ',')
+                            allParam[j] = allParam[j].Substring(1, allParam[j].Length - 1);
+                    }
                 }
 
                 string param1 = GetBonusScript(allParam[0]);
@@ -2740,6 +2756,11 @@ public class ItemDbScriptData
                         allParam.RemoveAt(j + 1);
                         //Log("allParam[j]: " + allParam[j]);
                         goto L_ReMerge;
+                    }
+                    else
+                    {
+                        if (allParam[j][0] == ',')
+                            allParam[j] = allParam[j].Substring(1, allParam[j].Length - 1);
                     }
                 }
 
@@ -7042,9 +7063,8 @@ public class ItemDbScriptData
                 Log("GetBonusScript >> #3: " + data);
             }
         }
-        if (toReplaceValue.Count > 1)
-            toReplaceValue[toReplaceValue.Count - 1] = toReplaceValue[toReplaceValue.Count - 1].Replace("\n\"", "");
-        else if (toReplaceValue.Count > 0)
+
+        if (toReplaceValue.Count > 0)
             toReplaceValue[toReplaceValue.Count - 1] = toReplaceValue[toReplaceValue.Count - 1].Replace("\",\n\"", "");
 
         data = saveData;
@@ -7255,12 +7275,12 @@ public class ItemDbScriptData
         for (int i = 0; i < allParam.Count; i++)
         {
         L_Redo:
-            //Log("GetAllParamerters >>  allParam[i]: " + allParam[i]);
+            Log("GetAllParamerters >>  allParam[i]: " + allParam[i]);
 
-            if (isBonusScriptCall && allParam[i].Contains("bonus") && !allParam[i].Contains(","))
-                allParam[i] = allParam[i] + ",";
+            if (isBonusScriptCall && !allParam[i].Contains(","))
+                allParam[i] = "," + allParam[i];
 
-            //Log("GetAllParamerters >>  allParam[i]: " + allParam[i]);
+            Log("GetAllParamerters >>  allParam[i]: " + allParam[i]);
 
             //Check ()
             int count1 = 0;
@@ -8091,7 +8111,7 @@ public class ItemDbScriptData
         data = data.Replace("()", "");
         data = data.Replace("[ ", "");
 
-        Log(functionName + " >> Final: " + data);
+        Log("<color=yellow>" + functionName + " >>> Final: " + data + "</color>");
 
         if (isForceNoCircle)
         {
