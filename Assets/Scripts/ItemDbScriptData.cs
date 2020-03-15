@@ -117,7 +117,6 @@ public class ItemDbScriptData
     }
     #endregion
 
-    bool isNotClearTempVar;
     /// <summary>
     /// Get description by each item scripts function
     /// </summary>
@@ -126,8 +125,6 @@ public class ItemDbScriptData
     public string GetDescription(string data, bool isNotClearTempVar = false)
     {
         isUseAkaTempVar = false;
-
-        this.isNotClearTempVar = isNotClearTempVar;
 
         if (!isNotClearTempVar)
             tempVariables = new List<TempVariables>();
@@ -2525,15 +2522,18 @@ public class ItemDbScriptData
                 sumCut = sumCut.Replace("[", "{");
                 sumCut = sumCut.Replace("]", "}");
                 Log("sumCut: " + sumCut);
-                List<string> allParam = GetAllParamerters(sumCut);
+                List<string> allParam = GetAllParamerters(sumCut, true);
 
+            L_ReMerge:
                 for (int j = 0; j < allParam.Count; j++)
                 {
+                    //Log("allParam[j]: " + allParam[j]);
                     if (allParam[j].Contains("{") && !allParam[j].Contains("}"))
                     {
                         allParam[j] = allParam[j] + allParam[j + 1];
                         allParam.RemoveAt(j + 1);
-                        Log("allParam[j]: " + allParam[j]);
+                        //Log("allParam[j]: " + allParam[j]);
+                        goto L_ReMerge;
                     }
                 }
 
@@ -2563,15 +2563,18 @@ public class ItemDbScriptData
                 sumCut = sumCut.Replace("[", "{");
                 sumCut = sumCut.Replace("]", "}");
                 Log("sumCut: " + sumCut);
-                List<string> allParam = GetAllParamerters(sumCut);
+                List<string> allParam = GetAllParamerters(sumCut, true);
 
+            L_ReMerge:
                 for (int j = 0; j < allParam.Count; j++)
                 {
+                    //Log("allParam[j]: " + allParam[j]);
                     if (allParam[j].Contains("{") && !allParam[j].Contains("}"))
                     {
                         allParam[j] = allParam[j] + allParam[j + 1];
                         allParam.RemoveAt(j + 1);
-                        Log("allParam[j]: " + allParam[j]);
+                        //Log("allParam[j]: " + allParam[j]);
+                        goto L_ReMerge;
                     }
                 }
 
@@ -2605,15 +2608,18 @@ public class ItemDbScriptData
                 sumCut = sumCut.Replace("[", "{");
                 sumCut = sumCut.Replace("]", "}");
                 Log("sumCut: " + sumCut);
-                List<string> allParam = GetAllParamerters(sumCut);
+                List<string> allParam = GetAllParamerters(sumCut, true);
 
+            L_ReMerge:
                 for (int j = 0; j < allParam.Count; j++)
                 {
+                    //Log("allParam[j]: " + allParam[j]);
                     if (allParam[j].Contains("{") && !allParam[j].Contains("}"))
                     {
                         allParam[j] = allParam[j] + allParam[j + 1];
                         allParam.RemoveAt(j + 1);
-                        Log("allParam[j]: " + allParam[j]);
+                        //Log("allParam[j]: " + allParam[j]);
+                        goto L_ReMerge;
                     }
                 }
 
@@ -2647,15 +2653,18 @@ public class ItemDbScriptData
                 sumCut = sumCut.Replace("[", "{");
                 sumCut = sumCut.Replace("]", "}");
                 Log("sumCut: " + sumCut);
-                List<string> allParam = GetAllParamerters(sumCut);
+                List<string> allParam = GetAllParamerters(sumCut, true);
 
+            L_ReMerge:
                 for (int j = 0; j < allParam.Count; j++)
                 {
+                    //Log("allParam[j]: " + allParam[j]);
                     if (allParam[j].Contains("{") && !allParam[j].Contains("}"))
                     {
                         allParam[j] = allParam[j] + allParam[j + 1];
                         allParam.RemoveAt(j + 1);
-                        Log("allParam[j]: " + allParam[j]);
+                        //Log("allParam[j]: " + allParam[j]);
+                        goto L_ReMerge;
                     }
                 }
 
@@ -2685,7 +2694,6 @@ public class ItemDbScriptData
                             sumType = "(เป็น Buff)";
                         else if (sumType == "1")
                             sumType = "(เป็น Debuff)";
-
                     }
 
                     sum += AddDescription(sum, "เมื่อสวมใส่จะ " + param1 + " เป็นเวลา " + TimerToStringTimer(float.Parse(param2)) + GetBonusScriptFlag(sumFlag) + sumType);
@@ -3286,7 +3294,7 @@ public class ItemDbScriptData
             functionName = "bonus bCritical,";
             if (data.Contains(functionName))
             {
-                string sumCut = CutFunctionName(data, functionName);
+                string sumCut = CutFunctionName(data, functionName, 1);
 
                 List<string> allParam = GetAllParamerters(sumCut);
 
@@ -6916,8 +6924,6 @@ public class ItemDbScriptData
                 }
             }
             #endregion
-
-            this.isNotClearTempVar = false;
         }
 
         return sum;
@@ -6927,6 +6933,8 @@ public class ItemDbScriptData
     {
         data = data.Replace("[TEMP_VAR]", "");
         data = data.Replace("[TEMP_VAR_DECLARE]", "");
+
+        Log("GetBonusScript >> data: " + data);
 
         string saveData = data;
 
@@ -6947,16 +6955,16 @@ public class ItemDbScriptData
                 if (declareAt2 == -1)
                     break;
                 string toConvert = sub.Substring(0, declareAt2 + 1);
-                //Log("bonus >> toConvert: " + toConvert);
+                Log("GetBonusScript >> #1: " + toConvert);
                 string convert = GetDescription(toConvert, true);
                 convert = convert.Replace("\"", " ");
                 if (convert.Length > 0 && convert[convert.Length - 1] == ',')
                     convert = convert.Substring(0, convert.Length - 1);
-                //Log("bonus >> convert: " + toConvert);
+                Log("GetBonusScript >> #2: " + toConvert);
                 toReplace.Add(toConvert);
                 toReplaceValue.Add(convert + "\",\n\"");
                 data = data.Replace(toConvert, convert);
-                //Log("bonus >> data: " + data);
+                Log("GetBonusScript >> #3: " + data);
             }
         }
         if (toReplaceValue.Count > 1)
@@ -7006,10 +7014,10 @@ public class ItemDbScriptData
                 isFoundTempVariable = true;
 
                 tempVarName.Add(tempVariables[j].variableName);
-                Log("GetDescription >> Found variableName: " + tempVariables[j].variableName);
+                Log("GetBonusScript >> Found variableName: " + tempVariables[j].variableName);
 
                 valueFromTempVar.Add(tempVariables[j].value);
-                Log("GetDescription >> Found value: " + tempVariables[j].value);
+                Log("GetBonusScript >> Found value: " + tempVariables[j].value);
             }
         }
 
@@ -7110,15 +7118,13 @@ public class ItemDbScriptData
     /// <returns></returns>
     string CutFunctionName(string toCut, string functionName, int lengthDecrease = 0)
     {
-        Log("CutFunctionName >> toCut: " + toCut + " | functionName: " + functionName);
+        Log("CutFunctionName >> #1: " + toCut + " | functionName: " + functionName);
 
         int cutStartAt = toCut.IndexOf(functionName);
-        if (isNotClearTempVar)
-            cutStartAt--;
 
         string cut = toCut.Substring(cutStartAt + functionName.Length - lengthDecrease);
 
-        Log("cut: " + cut);
+        Log("CutFunctionName >> #2: " + cut);
 
         if (cut.Contains(";"))
         {
@@ -7127,7 +7133,7 @@ public class ItemDbScriptData
             cut = cut.Substring(1, cutEndAt - 1);
         }
 
-        Log("cut: " + cut);
+        Log("CutFunctionName >> #3: " + cut);
 
         return cut;
     }
@@ -7154,29 +7160,43 @@ public class ItemDbScriptData
         isParam6Negative = false;
         isParam7Negative = false;
 
-        if (!sumCut.Contains(","))
+        List<string> allParam = new List<string>();
+
+        /*if (!sumCut.Contains(","))
         {
             List<string> newList = new List<string>();
             newList.Add(sumCut);
             return newList;
-        }
+        }*/
 
-        var allParam = StringSplit.GetStringSplit(sumCut, ',');
+        if (string.IsNullOrEmpty(sumCut))
+        {
+            allParam.Add(sumCut);
+            return allParam;
+        }
+        else
+            allParam = StringSplit.GetStringSplit(sumCut, ',');
 
         for (int i = 0; i < allParam.Count; i++)
         {
         L_Redo:
-            var sumParam = allParam[i];
+            //Log("GetAllParamerters >>  allParam[i]: " + allParam[i]);
+
+            if (isBonusScriptCall && allParam[i].Contains("bonus") && !allParam[i].Contains(","))
+                allParam[i] = allParam[i] + ",";
+
+            //Log("GetAllParamerters >>  allParam[i]: " + allParam[i]);
+
             //Check ()
             int count1 = 0;
-            foreach (char c in sumParam)
+            foreach (char c in allParam[i])
             {
                 if (c == '(')
                     count1++;
             }
 
             int count2 = 0;
-            foreach (char c in sumParam)
+            foreach (char c in allParam[i])
             {
                 if (c == ')')
                     count2++;
@@ -9440,7 +9460,7 @@ public class ItemDbScriptData
         else
         {
             Log("<color=red>Wrong trigger criteria!</color>");
-            return data;
+            return null;
         }
 
         string sum = null;
