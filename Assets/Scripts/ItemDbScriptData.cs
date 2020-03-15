@@ -135,6 +135,47 @@ public class ItemDbScriptData
 
         Log("GetDescription:" + data);
 
+        //Remove specialeffect & specialeffect2
+        while (data.Contains("specialeffect"))
+        {
+            if (data.Contains("specialeffect2"))
+            {
+                int specialEffectStartAt = data.IndexOf("specialeffect2");
+                if (specialEffectStartAt != -1)
+                {
+                    int specialEffectEndAt = data.IndexOf(";", specialEffectStartAt);
+                    if (specialEffectEndAt != -1)
+                    {
+                        string leftSideString = data.Substring(0, specialEffectStartAt);
+                        Log("Remove specialeffect >> leftSideString: " + leftSideString);
+                        string rightSideString = data.Substring(specialEffectEndAt + 1);
+                        Log("Remove specialeffect >> rightSideString: " + rightSideString);
+                        data = leftSideString + rightSideString;
+                        Log("Remove specialeffect >> data: " + data);
+                    }
+                }
+            }
+            else if (data.Contains("specialeffect"))
+            {
+                int specialEffectStartAt = data.IndexOf("specialeffect");
+                if (specialEffectStartAt != -1)
+                {
+                    int specialEffectEndAt = data.IndexOf(";", specialEffectStartAt);
+                    if (specialEffectEndAt != -1)
+                    {
+                        string leftSideString = data.Substring(0, specialEffectStartAt);
+                        Log("Remove specialeffect >> leftSideString: " + leftSideString);
+                        string rightSideString = data.Substring(specialEffectEndAt + 1);
+                        Log("Remove specialeffect >> rightSideString: " + rightSideString);
+                        data = leftSideString + rightSideString;
+                        Log("Remove specialeffect >> data: " + data);
+                    }
+                }
+            }
+        }
+
+        Log("GetDescription:" + data);
+
         //Split all space
         List<string> allCut = StringSplit.GetStringSplit(data, ' ');
 
@@ -142,7 +183,7 @@ public class ItemDbScriptData
     L_RedoFirstPhaseMerge:
         for (int i = 0; i < allCut.Count; i++)
         {
-            //Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
+            Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
             //Merge autobonus / bonus_script
             if (allCut[i].Contains("autobonus") || allCut[i].Contains("bonus_script"))
             {
@@ -157,10 +198,13 @@ public class ItemDbScriptData
                 {
                     if (allCut[i][allCut[i].Length - 2] != '}' || allCut[i][allCut[i].Length - 1] != ';')
                     {
-                        allCut[i] = allCut[i] + allCut[i + 1];
-                        allCut[i] = allCut[i].Replace("\"", "");
-                        allCut.RemoveAt(i + 1);
-                        goto L_RedoFirstPhaseMerge;
+                        if (i + 1 < allCut.Count)
+                        {
+                            allCut[i] = allCut[i] + allCut[i + 1];
+                            allCut[i] = allCut[i].Replace("\"", "");
+                            allCut.RemoveAt(i + 1);
+                            goto L_RedoFirstPhaseMerge;
+                        }
                     }
                     else
                     {
@@ -169,7 +213,7 @@ public class ItemDbScriptData
                     }
                 }
             }
-            //Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
+            Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
         }
     #endregion
 
@@ -2545,6 +2589,9 @@ public class ItemDbScriptData
                 if (allParam.Count > 3)
                     param4 = allParam[3];
 
+                param3 = param3.Replace("{", "");
+                param3 = param3.Replace("}", "");
+
                 Log("param1: " + param1);
                 Log("param2: " + param2);
                 Log("param3: " + param3);
@@ -2586,11 +2633,15 @@ public class ItemDbScriptData
                 if (allParam.Count > 3)
                     param4 = allParam[3];
 
+                param3 = param3.Replace("{", "");
+                param3 = param3.Replace("}", "");
+
                 Log("param1: " + param1);
                 Log("param2: " + param2);
                 Log("param3: " + param3);
                 Log("param4: " + param4);
-                if (!string.IsNullOrEmpty(param4))
+
+                if (!string.IsNullOrEmpty(param4) || !string.IsNullOrWhiteSpace(param4))
                     sum += AddDescription(sum, "เมื่อโดนโจมตีกายภาพมีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + TimerToStringTimer(float.Parse(param3)) + GetTriggerCriteria(param4));
                 else
                     sum += AddDescription(sum, "เมื่อโดนโจมตีกายภาพมีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + TimerToStringTimer(float.Parse(param3)));
@@ -2631,11 +2682,14 @@ public class ItemDbScriptData
                 if (allParam.Count > 3)
                     param4 = allParam[3];
 
+                param3 = param3.Replace("{", "");
+                param3 = param3.Replace("}", "");
+
                 Log("param1: " + param1);
                 Log("param2: " + param2);
                 Log("param3: " + param3);
                 Log("param4: " + param4);
-                if (!string.IsNullOrEmpty(param4))
+                if (!string.IsNullOrEmpty(param4) || !string.IsNullOrWhiteSpace(param4))
                     sum += AddDescription(sum, "เมื่อโจมตีกายภาพมีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + TimerToStringTimer(float.Parse(param3)) + GetTriggerCriteria(param4));
                 else
                     sum += AddDescription(sum, "เมื่อโจมตีกายภาพมีโอกาส " + GetRateByDivider(param2, 10) + "% ที่จะ " + param1 + " เป็นเวลา " + TimerToStringTimer(float.Parse(param3)));
