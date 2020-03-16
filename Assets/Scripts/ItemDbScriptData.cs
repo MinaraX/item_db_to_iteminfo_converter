@@ -352,19 +352,10 @@ public class ItemDbScriptData
                 {
                     Log("if Contains { >> allCut[" + (i + 1) + "]: " + allCut[i + 1]);
 
-                    //Count {
-                    int roomStartCount = 0;
-
-                    foreach (var c in allCut[i + 1])
-                    {
-                        if (c == '{')
-                            roomStartCount++;
-                    }
-
-                    //'if' need '{}'
+                    //'if' need '}'
                     if (!allCut[i + 1].Contains("}"))
                     {
-                        Log("'if' need '{}'");
+                        Log("'if' need '}'");
                         if (!allCut[i].Contains(";"))
                             allCut[i] = allCut[i] + ";";
                         allCut[i + 1] += " " + allCut[i + 2];
@@ -376,8 +367,14 @@ public class ItemDbScriptData
                     {
                         Log("if had {}");
 
-                        int roomEndCount = 0;
+                        int roomStartCount = 0;
+                        foreach (var c in allCut[i + 1])
+                        {
+                            if (c == '{')
+                                roomStartCount++;
+                        }
 
+                        int roomEndCount = 0;
                         foreach (var c in allCut[i + 1])
                         {
                             if (c == '}')
@@ -400,13 +397,14 @@ public class ItemDbScriptData
 
                         allCut[i + 1] = MergeWhiteSpace.RemoveWhiteSpace(allCut[i + 1]);
 
+                        Log("if summary >> allCut[" + (i + 1) + "]: " + allCut[i + 1]);
+
                         int additionalEndIfIndex = 0;
                         bool isNeedRedo = false;
-                        int retry = 300;
+
                         //Find if in if and extract it out from this array to solve conflict
-                        while (retry > 0 && allCut[i + 1].Contains("if("))
+                        while (allCut[i + 1].Contains("if("))
                         {
-                            retry--;
                             int ifStartAt = allCut[i + 1].IndexOf("if(");
                             string cutIf = allCut[i + 1].Substring(ifStartAt);
                             Log("cutIf: " + cutIf);
@@ -448,7 +446,7 @@ public class ItemDbScriptData
                         var splitBonus = new List<string>();
 
                         int index = 0;
-                        if (allCut[i + index].Contains("autobonus") || allCut[i + index].Contains("bonus_script"))
+                        if (allCut[i + 1].Contains("autobonus") || allCut[i + 1].Contains("bonus_script"))
                             index = 1;
 
                         while (allCut[i + index].Contains("autobonus") || allCut[i + index].Contains("bonus_script"))
@@ -464,19 +462,19 @@ public class ItemDbScriptData
 
                             int e = cutAutoBonus.IndexOf("[/END_MERGE]");
 
-                            //Log("cutAutoBonus: " + cutAutoBonus);
+                            Log("cutAutoBonus: " + cutAutoBonus);
 
                             cutAutoBonus = cutAutoBonus.Substring(0, e);
 
-                            //Log("cutAutoBonus: " + cutAutoBonus);
+                            Log("cutAutoBonus: " + cutAutoBonus);
 
                             allCut.Insert(i + index + additionalEndIfIndex, cutAutoBonus);
 
-                            //Log("allCut[" + (i + index + 1) + "]: " + allCut[i + index + 1]);
+                            Log("allCut[" + (i + index + 1) + "]: " + allCut[i + index + 1]);
 
                             allCut[i + index + 1] = allCut[i + index + 1].Substring(0, s) + allCut[i + index + 1].Substring(e2 + 12);
 
-                            //Log("allCut[" + (i + index + 1) + "]: " + allCut[i + index + 1]);
+                            Log("allCut[" + (i + index + 1) + "]: " + allCut[i + index + 1]);
 
                             index++;
                         }

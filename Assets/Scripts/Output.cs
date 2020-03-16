@@ -385,7 +385,7 @@ public class Output : ScriptableObject
             sum = sum.Substring(0, commentStartAt) + sum.Substring(commentEndAt + 2);
         }
 
-        Log("RemoveComment >> sum: " + sum);
+        Log("RemoveComment: " + sum);
 
         return sum;
     }
