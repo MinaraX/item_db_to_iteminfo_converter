@@ -14,4 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 11400000, guid: 630cf34160fdbb5459afe2ad44e0a776, type: 2}
   targetArray: 1711
-  _string: 
+  _string: 24278,Sage_Shadow_Armor,Sage Shadow Armor,12,10,,0,,,,,0xFFFFFFFF,63,2,65536,,1,1,,{
+    autobonus3 "{ .@r = getrefine(); if (.@r>=9) { bonus bAspd,2; } else if (.@r>=7)
+    { bonus bAspd,1; } bonus bAspdRate,.@r; }",1000,50000,"SA_AUTOSPELL"; /* Unknow
+    Specialeffect */ },{},{}
