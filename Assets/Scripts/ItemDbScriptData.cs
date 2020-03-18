@@ -272,6 +272,11 @@ public class ItemDbScriptData
             }
             //Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
         }
+        for (int i = 0; i < allCut.Count; i++)
+        {
+            if ((allCut[i].Contains("autobonus") || allCut[i].Contains("bonus_script")) && allCut[i].Contains("[END_MERGE]"))
+                CheckContainTemporaryVariables(allCut[i]);
+        }
     #endregion
 
     #region Merge it again line by line
@@ -397,6 +402,7 @@ public class ItemDbScriptData
 
                         allCut[i + 1] = MergeWhiteSpace.RemoveWhiteSpace(allCut[i + 1]);
 
+                        Log("<color=yellow>if summary >> allCut[" + (i) + "]: " + allCut[i] + "</color>");
                         Log("<color=yellow>if summary >> allCut[" + (i + 1) + "]: " + allCut[i + 1] + "</color>");
 
                         int additionalEndIfIndex = 0;
@@ -526,25 +532,26 @@ public class ItemDbScriptData
                         if (splitBonus.Count > 0)
                             allCut[i + index + 1] = splitBonus[0];
 
+                        Log("index: " + index);
+                        Log("additionalEndIfIndex: " + additionalEndIfIndex);
+
                         //Add to list
                         for (int j = 0; j < splitBonus.Count; j++)
                         {
                             if (j > 0)
                             {
+                                allCut.Insert(i + index + 2, splitBonus[j]);
                                 if (j == splitBonus.Count - 1)
-                                {
-                                    allCut.Insert(i + index + 2, splitBonus[j]);
-                                    allCut.Insert(i + index + 2 + splitBonus.Count + additionalEndIfIndex, "[TXT_END_IF];");
-                                }
-                                else
-                                    allCut.Insert(i + index + 2, splitBonus[j]);
+                                    allCut.Insert(i + index + 2 + j + additionalEndIfIndex, "[TXT_END_IF];");
                             }
                         }
 
-                        Log("index: " + index);
-                        Log("additionalEndIfIndex: " + additionalEndIfIndex);
                         if (splitBonus.Count <= 1)
                             allCut.Insert(i + index + 2 + additionalEndIfIndex, "[TXT_END_IF];");
+
+                        foreach (var item in allCut)
+                            Log("<color=orange>" + item + "</color>");
+
 
                         if (isNeedRedo)
                             goto L_Redo;
@@ -2028,8 +2035,8 @@ public class ItemDbScriptData
         }
         #endregion
 
-        //for (int i = 0; i < allCut.Count; i++)
-        //    Log("<color=white>allCut[" + i + "]: " + allCut[i] + "</color>");
+        for (int i = 0; i < allCut.Count; i++)
+            Log("<color=white>allCut[" + i + "]: " + allCut[i] + "</color>");
 
         #region Replace temporary variables
         for (int i = 0; i < allCut.Count; i++)
@@ -2073,11 +2080,13 @@ public class ItemDbScriptData
                     for (int j = 0; j < tempVariables.Count; j++)
                     {
                         Log(" tempVariables[" + j + "].txtDefault: " + tempVariables[j].txtDefault);
-                        if (findTempVar == tempVariables[j].txtDefault)
+                        if (findTempVar == tempVariables[j].txtDefault && !findTempVar.Contains("[DONT_DECLARE]"))
                         {
                             allCut[i] = "[TEMP_VAR_DECLARE]" + tempVariables[j].aka + "꞉ " + tempVariables[j].value;
                             break;
                         }
+                        else if (findTempVar.Contains("[DONT_DECLARE]"))
+                            allCut[i] = allCut[i].Replace("[DONT_DECLARE]", "");
                     }
                 }
             }
@@ -2440,23 +2449,33 @@ public class ItemDbScriptData
                 sumCut = sumCut.Replace(functionName, "");
                 sumCut = sumCut.Replace("[", "{");
                 sumCut = sumCut.Replace("]", "}");
+
                 List<string> allParam = GetAllParamerters(sumCut, true);
-                for (int j = 0; j < allParam.Count; j++)
-                    Log("allParam[" + j + "]: " + allParam[j]);
-                L_ReMerge:
+
+            L_ReMerge:
                 for (int j = 0; j < allParam.Count; j++)
                 {
-                    if ((j + 1) < allParam.Count && allParam[j].Contains("{") && !allParam[j].Contains("}"))
+                    //Count { and }
+                    if (allParam[j].Contains("{"))
                     {
-                        allParam[j] = allParam[j] + allParam[j + 1];
-                        allParam.RemoveAt(j + 1);
-                        goto L_ReMerge;
+                        int count1 = 0;
+                        int count2 = 0;
+                        foreach (var c in allParam[j])
+                        {
+                            if (c == '{')
+                                count1++;
+                            else if (c == '}')
+                                count2++;
+                        }
+                        if (count1 != count2 && (j + 1) < allParam.Count)
+                        {
+                            allParam[j] = allParam[j] + allParam[j + 1];
+                            allParam.RemoveAt(j + 1);
+                            goto L_ReMerge;
+                        }
                     }
-                    else
-                    {
-                        if (allParam[j][0] == ',')
-                            allParam[j] = allParam[j].Substring(1, allParam[j].Length - 1);
-                    }
+                    if (allParam[j][0] == ',')
+                        allParam[j] = allParam[j].Substring(1, allParam[j].Length - 1);
                 }
 
                 if (allParam.Count > 3)
@@ -2470,9 +2489,9 @@ public class ItemDbScriptData
                     allParam[3] = allParam[3].Replace("}", "");
                 }
 
-                for (int j = 0; j < allParam.Count; j++)
-                    Log("allParam[" + j + "]: " + allParam[j]);
-                return null;
+                //for (int j = 0; j < allParam.Count; j++)
+                //    Log("allParam[" + j + "]: " + allParam[j]);
+
                 string param1 = GetBonusScript(allParam[0]);
                 string param2 = GetValue(allParam[1], 2);
                 string param3 = GetValue(allParam[2], 3);
@@ -7852,12 +7871,17 @@ public class ItemDbScriptData
         }
         return false;
     }
+    void CheckContainTemporaryVariables(string txt)
+    {
+        if (txt.Contains(".@") && txt.Contains(";"))
+            AddTemporaryVariable(txt + "[DONT_DECLARE]", null, true);
+    }
 
     /// <summary>
     /// Add temporary variables
     /// </summary>
     /// <param name="txt"></param>
-    void AddTemporaryVariable(string txt, string toCheckMatching = null)
+    void AddTemporaryVariable(string txt, string toCheckMatching = null, bool isFromAutoBonusOneLine = false)
     {
         //string functionName = "AddTemporaryVariable";
 
@@ -7873,8 +7897,23 @@ public class ItemDbScriptData
         if (declareAt <= -1 || txt.Length < declareAt)
             return;
 
-        string txtLeftSide = txt.Substring(0, declareAt);
-
+        int startCut = 0;
+        int foundTempVarCount = 0;
+        if (isFromAutoBonusOneLine)
+        {
+            for (int i = declareAt; i > 0; i--)
+            {
+                if (txt[i] == '@' || txt[i] == '.')
+                    foundTempVarCount++;
+                if (foundTempVarCount == 2)
+                {
+                    startCut = i;
+                    break;
+                }
+            }
+        }
+        string txtLeftSide = txt.Substring(startCut, declareAt - startCut);
+        //Log("txtLeftSide: " + txtLeftSide);
         string txtRightSide = txt.Substring(declareAt + 1);
         int semiColonAt = txtRightSide.IndexOf(";");
         txtRightSide = txtRightSide.Substring(0, semiColonAt);
@@ -10534,6 +10573,7 @@ public class ItemDbScriptData
                 toAdd = toAdd.Replace("  ", " ");
 
             toAdd = toAdd.Replace(", ]", " ]");
+            toAdd = toAdd.Replace("[ตามจำนวนตีบวก]=[ตามจำนวนตีบวก]", "");
         }
         else
             return null;

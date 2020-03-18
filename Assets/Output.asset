@@ -13,8 +13,15 @@ MonoBehaviour:
   m_Name: Output
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 11400000, guid: 630cf34160fdbb5459afe2ad44e0a776, type: 2}
-  targetArray: 1711
-  _string: 24278,Sage_Shadow_Armor,Sage Shadow Armor,12,10,,0,,,,,0xFFFFFFFF,63,2,65536,,1,1,,{
-    autobonus3 "{ .@r = getrefine(); if (.@r>=9) { bonus bAspd,2; } else if (.@r>=7)
-    { bonus bAspd,1; } bonus bAspdRate,.@r; }",1000,50000,"SA_AUTOSPELL"; /* Unknow
-    Specialeffect */ },{},{}
+  targetArray: 11911
+  _string: '22210,Fluffy_Fish_Shoes,Fluffy Fish Shoes,4,20,,100,,12,,0,0xFFFFFFFF,63,2,64,,100,1,0,{
+    .@r = getrefine(); .@hpsp = 3; .@val = -10 * getskilllv("SU_SHRIMPARTY"); if
+    (.@r>=5) { .@hpsp += 7; .@delay = -10; if (.@r>=7) { .@hpsp += 10; .@delay -=
+    10; } bonus bDelayrate,.@delay; } if (getskilllv("SU_SPIRITOFSEA") == 1) { autobonus3
+    "{ bonus2 bResEff,Eff_Stun,10000; bonus2 bResEff,Eff_Sleep,10000; bonus2 bResEff,EFF_Stone,10000;
+    }",1000,30000,"SU_GROOMING"; } if (getskilllv("SU_GROOMING") == 5) { bonus bFixedCastrate,-50;
+    bonus bNoKnockback; } bonus bMaxHPrate,.@hpsp; bonus bMaxSPrate,.@hpsp; bonus
+    bMdef,10; bonus2 bVariableCastrate,"SU_FRESHSHRIMP",.@val; bonus2 bVariableCastrate,"SU_BUNCHOFSHRIMP",.@val;
+    bonus2 bVariableCastrate,"SU_TUNABELLY",.@val; bonus2 bVariableCastrate,"SU_TUNAPARTY",.@val;
+    bonus2 bVariableCastrate,"SU_SHRIMPARTY",.@val; bonus bHealPower,10*getskilllv("SU_PURRING");
+    },{},{} '
