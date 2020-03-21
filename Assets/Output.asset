@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Output
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 11400000, guid: 630cf34160fdbb5459afe2ad44e0a776, type: 2}
-  targetArray: 11911
+  targetArray: 1711
   _string: '22210,Fluffy_Fish_Shoes,Fluffy Fish Shoes,4,20,,100,,12,,0,0xFFFFFFFF,63,2,64,,100,1,0,{
     .@r = getrefine(); .@hpsp = 3; .@val = -10 * getskilllv("SU_SHRIMPARTY"); if
     (.@r>=5) { .@hpsp += 7; .@delay = -10; if (.@r>=7) { .@hpsp += 10; .@delay -=

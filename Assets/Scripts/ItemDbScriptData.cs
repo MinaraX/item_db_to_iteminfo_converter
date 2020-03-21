@@ -40,7 +40,7 @@ public class ItemDbScriptData
 
         script = CorrectScriptToConvert(script);
 
-        string sumDesc = GetDescription(script);
+        string sumDesc = GetScriptsDescription(script);
         sumScript = sumDesc;
 
         if (!string.IsNullOrEmpty(sumScript))
@@ -58,7 +58,7 @@ public class ItemDbScriptData
 
         onEquipScript = CorrectScriptToConvert(onEquipScript);
 
-        string sumDesc = GetDescription(onEquipScript);
+        string sumDesc = GetScriptsDescription(onEquipScript);
         if (!string.IsNullOrEmpty(sumScript) && !string.IsNullOrEmpty(sumDesc) && !string.IsNullOrWhiteSpace(sumDesc))
             sumEquipScript = "\n[เมื่อสวมใส่]\n" + sumDesc;
         else if (!string.IsNullOrEmpty(sumDesc) && !string.IsNullOrWhiteSpace(sumDesc))
@@ -81,7 +81,7 @@ public class ItemDbScriptData
 
         onUnequipScript = CorrectScriptToConvert(onUnequipScript);
 
-        string sumDesc = GetDescription(onUnequipScript);
+        string sumDesc = GetScriptsDescription(onUnequipScript);
         if (!string.IsNullOrEmpty(sumEquipScript) && !string.IsNullOrEmpty(sumDesc) && !string.IsNullOrWhiteSpace(sumDesc))
             sumUnequipScript = "\n[เมื่อถอด]\n" + sumDesc;
         else if (!string.IsNullOrEmpty(sumDesc) && !string.IsNullOrWhiteSpace(sumDesc))
@@ -109,8 +109,8 @@ public class ItemDbScriptData
         sum = sum.Replace("{", " { ");
         sum = sum.Replace("}", " } ");
         sum = sum.Replace("else", "else ");
-        sum = sum.Replace("   ", " ");
-        sum = sum.Replace("  ", " ");
+        while (sum.Contains("  "))
+            sum = sum.Replace("  ", " ");
         sum = sum.Replace(";", "; ");
         sum = sum.Replace("bonus bDelayrate", "bonus bDelayRate");
         sum = sum.Replace("bonus buseSPRate", "bonus bUseSPrate");
@@ -130,7 +130,7 @@ public class ItemDbScriptData
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    public string GetDescription(string data, bool isNotClearTempVar = false)
+    public string GetScriptsDescription(string data, bool isNotClearTempVar = false)
     {
         isUseAkaTempVar = false;
 
@@ -139,43 +139,43 @@ public class ItemDbScriptData
 
         string sum = null;
 
-        string sumData = data;
+        string scripts = data;
 
-        Log("GetDescription:" + sumData);
+        Log("scripts:\n" + scripts);
 
         #region Remove specialeffect & specialeffect2
-        while (sumData.Contains("specialeffect"))
+        while (scripts.Contains("specialeffect"))
         {
-            if (sumData.Contains("specialeffect2"))
+            if (scripts.Contains("specialeffect2"))
             {
-                int specialEffectStartAt = sumData.IndexOf("specialeffect2");
+                int specialEffectStartAt = scripts.IndexOf("specialeffect2");
                 if (specialEffectStartAt != -1)
                 {
-                    int specialEffectEndAt = sumData.IndexOf(";", specialEffectStartAt);
+                    int specialEffectEndAt = scripts.IndexOf(";", specialEffectStartAt);
                     if (specialEffectEndAt != -1)
                     {
-                        string leftSideString = sumData.Substring(0, specialEffectStartAt);
+                        string leftSideString = scripts.Substring(0, specialEffectStartAt);
                         //Log("Remove specialeffect >> leftSideString: " + leftSideString);
-                        string rightSideString = sumData.Substring(specialEffectEndAt + 1);
+                        string rightSideString = scripts.Substring(specialEffectEndAt + 1);
                         //Log("Remove specialeffect >> rightSideString: " + rightSideString);
-                        sumData = leftSideString + rightSideString;
+                        scripts = leftSideString + rightSideString;
                         //Log("Remove specialeffect >> data: " + data);
                     }
                 }
             }
-            else if (sumData.Contains("specialeffect"))
+            else if (scripts.Contains("specialeffect"))
             {
-                int specialEffectStartAt = sumData.IndexOf("specialeffect");
+                int specialEffectStartAt = scripts.IndexOf("specialeffect");
                 if (specialEffectStartAt != -1)
                 {
-                    int specialEffectEndAt = sumData.IndexOf(";", specialEffectStartAt);
+                    int specialEffectEndAt = scripts.IndexOf(";", specialEffectStartAt);
                     if (specialEffectEndAt != -1)
                     {
-                        string leftSideString = sumData.Substring(0, specialEffectStartAt);
+                        string leftSideString = scripts.Substring(0, specialEffectStartAt);
                         //Log("Remove specialeffect >> leftSideString: " + leftSideString);
-                        string rightSideString = sumData.Substring(specialEffectEndAt + 1);
+                        string rightSideString = scripts.Substring(specialEffectEndAt + 1);
                         //Log("Remove specialeffect >> rightSideString: " + rightSideString);
-                        sumData = leftSideString + rightSideString;
+                        scripts = leftSideString + rightSideString;
                         //Log("Remove specialeffect >> data: " + data);
                     }
                 }
@@ -183,315 +183,415 @@ public class ItemDbScriptData
         }
         #endregion
 
-        Log("GetDescription:" + sumData);
+        Log("scripts:\n" + scripts);
 
+        #region First phase merge
         //Split all space
-        List<string> allCut = StringSplit.GetStringSplit(sumData, ' ');
+        List<string> lines = StringSplit.GetStringSplit(scripts, ' ');
 
-    #region First phase merge
-    L_RedoFirstPhaseMerge:
-        for (int i = 0; i < allCut.Count; i++)
+    L_MergeAutoBonusLines:
+        for (int i = 0; i < lines.Count; i++)
         {
-            //Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
+            Log("Lines #" + i + ":\n" + lines[i], true, "#D0EADE");
+
+            string currentLine = lines[i];
+
             //Merge autobonus / bonus_script
-            if ((allCut[i].Contains("autobonus") || allCut[i].Contains("bonus_script")) && !allCut[i].Contains("[END_MERGE]"))
+            if ((currentLine.Contains("autobonus") || currentLine.Contains("bonus_script")) && !currentLine.Contains("[END_MERGE]"))
             {
-                if (!allCut[i].Contains("}"))
+                Log("Found autobonus or bonus_script", true, "yellow");
+
+                if (!currentLine.Contains("}"))
                 {
-                    allCut[i] = allCut[i] + allCut[i + 1];
-                    allCut.RemoveAt(i + 1);
-                    goto L_RedoFirstPhaseMerge;
+                    lines[i] = lines[i] + lines[i + 1];
+                    lines.RemoveAt(i + 1);
+                    goto L_MergeAutoBonusLines;
                 }
                 else
                 {
-                    bool isContainBonus3 = allCut[i].Contains("autobonus3");
-                    bool isAutoBonus3Checked = false;
-                    bool isNeedToRemerge = true;
+                    bool isRemerge = true;
+
+                    bool isAutoBonus3Check = false;
+                    bool isContainAutoBonus3 = currentLine.Contains("autobonus3");
+
                     int count = 0;
+
                     int toCount = 2;
-                    if (isContainBonus3)
+                    if (isContainAutoBonus3)
                         toCount = 3;
+
                     var targetToCount = '"';
 
-                    foreach (var c in allCut[i])//allCut[48]: autobonus3"{bonus2bResEff,Eff_Stun,10000;bonus2bResEff,Eff_Sleep,10000;bonus2bResEff,EFF_Stone,10000;}",1000,30000,"SU_GROOMING";
+                    foreach (var c in currentLine)
                     {
                         if (c == targetToCount)
                         {
                             count++;
-                            if (count >= 2 && targetToCount == '"' && !isNeedToRemerge && !isAutoBonus3Checked)
+                            if (count >= 2 && targetToCount == '"' && !isRemerge && !isAutoBonus3Check)
                             {
                                 count = 0;
                                 targetToCount = ',';
                             }
-                            else if (count >= 2 && targetToCount == '"' && isNeedToRemerge)//#1
+                            else if (count >= 2 && targetToCount == '"' && isRemerge)
                             {
-                                if (isContainBonus3 && !isAutoBonus3Checked)
+                                if (isContainAutoBonus3 && !isAutoBonus3Check)
                                 {
-                                    isAutoBonus3Checked = true;
-                                    isNeedToRemerge = true;
+                                    isAutoBonus3Check = true;
+                                    isRemerge = true;
                                     count = 0;
                                     targetToCount = '"';
                                 }
-                                else if (isContainBonus3 && isAutoBonus3Checked)
+                                else if (isContainAutoBonus3 && isAutoBonus3Check)
                                 {
-                                    isNeedToRemerge = false;
+                                    isRemerge = false;
                                     break;
                                 }
-                                else if (!isContainBonus3)//#2
-                                    isNeedToRemerge = false;
+                                else if (!isContainAutoBonus3)
+                                    isRemerge = false;
                             }
                             else if (count >= toCount && targetToCount == ',')
                             {
-                                isNeedToRemerge = false;
+                                isRemerge = false;
                                 count = 0;
                                 targetToCount = '"';
                             }
                         }
                     }
 
-                    //Log("isNeedToRemerge: " + isNeedToRemerge);
-                    //Log("allCut[i][allCut[i].Length - 1]: " + allCut[i][allCut[i].Length - 1]);
+                    Log("isRemerge: " + isRemerge, true);
 
-                    if (isNeedToRemerge || allCut[i][allCut[i].Length - 1] != ';')
+                    if (isRemerge || currentLine[currentLine.Length - 1] != ';')
                     {
-                        if (i + 1 < allCut.Count)
+                        Log("currentLine last char != ;", true);
+
+                        if (i + 1 < lines.Count)
                         {
-                            allCut[i] = allCut[i] + allCut[i + 1];
-                            allCut.RemoveAt(i + 1);
-                            goto L_RedoFirstPhaseMerge;
+                            lines[i] = lines[i] + lines[i + 1];
+                            lines.RemoveAt(i + 1);
+                            goto L_MergeAutoBonusLines;
                         }
                     }
                     else
                     {
-                        allCut[i] = allCut[i].Replace("\"", "");
-                        allCut[i] = allCut[i].Replace("{", "[");
-                        allCut[i] = allCut[i].Replace("}", "]");
-                        allCut[i] = "[END_MERGE]" + allCut[i] + "[/END_MERGE]";
+                        lines[i] = lines[i].Replace("\"", "");
+                        lines[i] = lines[i].Replace("{", "[");
+                        lines[i] = lines[i].Replace("}", "]");
+                        lines[i] = "[END_MERGE]" + lines[i] + "[/END_MERGE]";
                     }
                 }
             }
-            //Log("<color=#CDFFA2>allCut[" + i + "]: " + allCut[i] + "</color>");
+
+            Log("Lines #" + i + ":\n" + lines[i], true, "#4FEDA2");
         }
-        for (int i = 0; i < allCut.Count; i++)
+        #endregion
+
+        //Check temporary variables in merged autobonus
+        for (int i = 0; i < lines.Count; i++)
         {
-            if ((allCut[i].Contains("autobonus") || allCut[i].Contains("bonus_script")) && allCut[i].Contains("[END_MERGE]"))
-                CheckContainTemporaryVariables(allCut[i]);
+            if ((lines[i].Contains("autobonus") || lines[i].Contains("bonus_script")) && lines[i].Contains("[END_MERGE]"))
+                SearchForTemporaryVariables(lines[i]);
         }
-    #endregion
 
     #region Merge it again line by line
-    L_Redo:
-        for (int i = 0; i < allCut.Count; i++)
+    L_MergeLines:
+        for (int i = 0; i < lines.Count; i++)
         {
-            var sumCut = allCut[i];
+            var currentLine = lines[i];
+            string nextLine = null;
+            if (i + 1 < lines.Count)
+                nextLine = lines[i + 1];
 
-            //Log("<color=#DEC9FF>allCut[" + i + "]: " + sumCut + "</color>");
-
-            if (sumCut == "if" && allCut[i + 1].Contains("("))
+            //Remove null array
+            if (string.IsNullOrEmpty(currentLine) || string.IsNullOrWhiteSpace(currentLine))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                lines.RemoveAt(i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("if(") || sumCut.Contains("if (") || sumCut.Contains("else if(") || sumCut.Contains("else if ("))
+
+            if (i == 0)
+                Log("_________________", false, "red");
+
+            Log("Lines #" + i + ":\n" + currentLine, false, "#DEC9FF");
+
+            if (currentLine == "if" && !currentLine.Contains("(") && nextLine.Contains("("))
             {
-                int count1 = 0;
-                foreach (char c in sumCut)
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
+            }
+            else if (currentLine.Contains("if(") || currentLine.Contains("if (") || currentLine.Contains("else if(") || currentLine.Contains("else if ("))
+            {
+                if (!IsEven.IsCircleEven(currentLine))
                 {
-                    if (c == '(')
-                        count1++;
+                    MergeItemScripts(lines, i);
+                    goto L_MergeLines;
                 }
 
-                int count2 = 0;
-                foreach (char c in sumCut)
+                if (currentLine.Contains("{") && currentLine.Contains("}") && currentLine.Contains(";"))
                 {
-                    if (c == ')')
-                        count2++;
+                    Log("currentLine contains {} and ;", true);
+
+                    if (IsContainsTemporaryVariables(lines[i], lines, i + 1))
+                        goto L_MergeLines;
                 }
-
-                //Check ()
-                if (count1 != count2)
+                else if (!nextLine.Contains("{") && !nextLine.Contains("}") && !currentLine.Contains(";"))
                 {
-                    MergeItemScripts(allCut, i);
-                    goto L_Redo;
-                }
+                    Log("nextLine not contains {} and currentLine not contains ;", true);
 
-                //One line if else had {} and ;
-                if (allCut[i].Contains("{") && allCut[i].Contains("}") && allCut[i].Contains(";"))
-                {
-                    //Log("One line if else had {} and ;");
+                    lines[i] = lines[i] + ";";
 
-                    if (CheckContainTemporaryVariables(allCut[i], allCut, i + 1))
-                        goto L_Redo;
-                }
-                //if not had {}
-                else if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}") && !allCut[i].Contains(";"))
-                {
-                    //Log("if not had {} >> !allCut[" + i + "].Contains(';')");
-
-                    allCut[i] = allCut[i] + ";";
-
-                    //Remove if when next 2 arrays is empty
-                    if (i + 1 < allCut.Count && (string.IsNullOrEmpty(allCut[i + 1]) || string.IsNullOrWhiteSpace(allCut[i + 1])))
+                    //Remove this line when next 2 arrays is empty
+                    if (i + 1 < lines.Count && (string.IsNullOrEmpty(nextLine) || string.IsNullOrWhiteSpace(nextLine)))
                     {
-                        if (i + 2 < allCut.Count && (string.IsNullOrEmpty(allCut[i + 2]) || string.IsNullOrWhiteSpace(allCut[i + 2])))
+                        if (i + 2 < lines.Count && (string.IsNullOrEmpty(lines[i + 2]) || string.IsNullOrWhiteSpace(lines[i + 2])))
                         {
-                            allCut[i] = "";
-                            goto L_Redo;
+                            lines[i] = "";
+                            goto L_MergeLines;
                         }
                     }
 
-                    int loop = 0;
-                    while (!allCut[i + 1 + loop].Contains(";"))
+                    int loop = 1;
+                    while (!lines[i + loop].Contains(";"))
                         loop++;
 
-                    allCut.Insert(i + 2 + loop, "[TXT_END_IF];");
+                    lines.Insert(i + 2 + loop, "[TXT_END_IF];");
                 }
-                else if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}") && allCut[i].Contains(";"))
+                else if (!nextLine.Contains("{") && !nextLine.Contains("}") && currentLine.Contains(";"))
                 {
-                    //Log("if not had {} >> allCut[" + i + "].Contains(';')");
+                    Log("nextLine not contains {} and currentLine contains ;", true);
 
-                    if (CheckContainTemporaryVariables(allCut[i + 1], allCut, i + 1))
-                        goto L_Redo;
+                    if (IsContainsTemporaryVariables(nextLine, lines, i + 1))
+                        goto L_MergeLines;
                 }
-                else if (allCut[i + 1].Contains("{"))
+                else if (nextLine.Contains("{") && !nextLine.Contains("}"))
                 {
-                    //Log("if Contains { >> allCut[" + (i + 1) + "]: " + allCut[i + 1]);
+                    if (!currentLine.Contains(";"))
+                        lines[i] = lines[i] + ";";
+                    lines[i + 1] += " " + lines[i + 2];
+                    lines.RemoveAt(i + 2);
+                    goto L_MergeLines;
+                }
+                else if (nextLine.Contains("{") && nextLine.Contains("}"))
+                {
+                    Log("nextLine Contains {:\n" + nextLine, true);
 
-                    //'if' need '}'
-                    if (!allCut[i + 1].Contains("}"))
+                    if (!IsEven.IsCurlyEven(nextLine))
                     {
-                        //Log("'if' need '}'");
-                        if (!allCut[i].Contains(";"))
-                            allCut[i] = allCut[i] + ";";
-                        allCut[i + 1] += " " + allCut[i + 2];
-                        allCut.RemoveAt(i + 2);
-                        goto L_Redo;
+                        lines[i + 1] += " " + lines[i + 2];
+                        lines.RemoveAt(i + 2);
+                        goto L_MergeLines;
                     }
-                    //if had {}
-                    else if (allCut[i + 1].Contains("}"))
+                    else
                     {
-                        //Log("if had {}");
+                        if (IsContainsTemporaryVariables(nextLine, lines, i))
+                            goto L_MergeLines;
 
-                        int roomStartCount = 0;
-                        foreach (var c in allCut[i + 1])
-                        {
-                            if (c == '{')
-                                roomStartCount++;
-                        }
+                        //Remove start { and end }
+                        lines[i + 1] = lines[i + 1].Substring(1, lines[i + 1].Length - 2);
 
-                        int roomEndCount = 0;
-                        foreach (var c in allCut[i + 1])
-                        {
-                            if (c == '}')
-                                roomEndCount++;
-                        }
+                        lines[i + 1] = MergeWhiteSpace.RemoveWhiteSpace(lines[i + 1]);
 
-                        if (roomStartCount != roomEndCount)
-                        {
-                            //Log("'if' need more '}'");
-                            allCut[i + 1] += " " + allCut[i + 2];
-                            allCut.RemoveAt(i + 2);
-                            goto L_Redo;
-                        }
-
-                        if (CheckContainTemporaryVariables(allCut[i + 1], allCut, i))
-                            goto L_Redo;
-
-                        //Remove first '{' and end '}'
-                        allCut[i + 1] = allCut[i + 1].Substring(1, allCut[i + 1].Length - 2);
-
-                        allCut[i + 1] = MergeWhiteSpace.RemoveWhiteSpace(allCut[i + 1]);
-
-                        Log("<color=yellow>if summary >> allCut[" + (i) + "]: " + allCut[i] + "</color>");
-                        Log("<color=yellow>if summary >> allCut[" + (i + 1) + "]: " + allCut[i + 1] + "</color>");
-
-                        int additionalEndIfIndex = 0;
                         bool isNeedRedo = false;
+                        int additionalEndIfIndex = 0;
+                        string cutRemains = null;
 
                         //Find if in if and extract it out from this array to solve conflict
-                        while (allCut[i + 1].Contains("if("))
+                        if (lines[i + 1].Contains("if("))
                         {
-                            int ifStartAt = allCut[i + 1].IndexOf("if(");
-                            string cutIf = allCut[i + 1].Substring(ifStartAt);
-                            //Log("cutIf: " + cutIf);
-                            allCut[i + 1] = allCut[i + 1].Substring(0, ifStartAt);
-                            //Log("allCut[i + 1]: " + allCut[i + 1]);
+                            int ifStartAt = lines[i + 1].IndexOf("if(");
 
-                            //if (string.IsNullOrEmpty(allCut[i + 1]) || string.IsNullOrWhiteSpace(allCut[i + 1]))
-                            //    additionalEndIfIndex--;
+                            string cut = lines[i + 1].Substring(ifStartAt);
+                            Log("cut:\n" + cut, true);
 
-                            //Check is contain {
-                            if (cutIf.Contains("{"))
+                            lines[i + 1] = lines[i + 1].Substring(0, ifStartAt);
+                            Log("Lines #" + (i + 1) + ":\n" + lines[i + 1], true, "yellow");
+
+                            //Contains {
+                            if (cut.Contains("{"))
                             {
-                                int roomStartAt = cutIf.IndexOf("{");
-                                int roomEndAt = cutIf.IndexOf("}");
-                                string cutRoomLeft = cutIf.Substring(0, roomStartAt);
-                                string room = cutIf.Substring(roomStartAt);
-                                int roomCutAt = room.IndexOf("}");
-                                room = room.Substring(0, roomCutAt + 1);
-                                string cutRoomRight = cutIf.Substring(roomEndAt + 1);
-                                //Log("cutRoomLeft: " + cutRoomLeft);
-                                //Log("room: " + room);
-                                //Log("cutRoomRight: " + cutRoomRight);
+                                //Count { and save first { index
+                                int countCutLeftCurly = 0;
+                                int cutleftCurlyIndex = cut.IndexOf("{");
+                                for (int j = 0; j < cut.Length; j++)
+                                {
+                                    if (cut[j] == '{')
+                                        countCutLeftCurly++;
+                                    else if (cut[j] == '}')
+                                        break;
+                                }
+
+                                //Find } by { count and save last } index
+                                int countCutRightCurly = 0;
+                                int cutRightCurlyIndex = 0;
+                                for (int j = 0; j < cut.Length; j++)
+                                {
+                                    if (cut[j] == '}')
+                                        countCutRightCurly++;
+                                    if (countCutRightCurly == countCutLeftCurly)
+                                    {
+                                        cutRightCurlyIndex = j;
+                                        break;
+                                    }
+                                }
+
+                                string cutConditions = cut.Substring(0, cutleftCurlyIndex);
+
+                                string cutScripts = cut.Substring(cutleftCurlyIndex);
+
+                                //Find } by { count
+                                int countRoomRightCurly = 0;
+                                int roomRightCurlyIndex = 0;
+                                for (int j = 0; j < cutScripts.Length; j++)
+                                {
+                                    if (cutScripts[j] == '}')
+                                        countRoomRightCurly++;
+                                    if (countRoomRightCurly == countCutLeftCurly)
+                                    {
+                                        roomRightCurlyIndex = j;
+                                        break;
+                                    }
+                                }
+
+                                cutScripts = cutScripts.Substring(0, roomRightCurlyIndex + 1);
+
+                                cutRemains = cut.Substring(cutRightCurlyIndex + 1);
+
+                                Log("cutConditions:\n" + cutConditions, true);
+                                Log("cutScripts:\n" + cutScripts, true);
+                                Log("cutRemains:\n" + cutRemains, true);
+
+                                lines.Insert(i + 2, "[TXT_END_IF];");
+
                                 //Split it out and insert it
-                                allCut.Insert(i + 2, room);
-                                allCut.Insert(i + 2, cutRoomLeft + ";");
-                                //Merge right left to next array
-                                allCut[i + 1] = allCut[i + 1] + cutRoomRight;
+                                if (cutRemains.Contains("if("))
+                                {
+                                    var cutRemainLines = StringSplit.GetStringSplitMoreThanOneChar(cutRemains, new string[] { "if(" });
+                                L_RemergeRemainLines1:
+                                    for (int j = 0; j < cutRemainLines.Count; j++)
+                                    {
+                                        if (!string.IsNullOrEmpty(cutRemainLines[j]) && !string.IsNullOrWhiteSpace(cutRemainLines[j]))
+                                            cutRemainLines[j] = "if(" + cutRemainLines[j];
+                                        else
+                                        {
+                                            cutRemainLines.RemoveAt(j);
+                                            goto L_RemergeRemainLines1;
+                                        }
+                                    }
+
+                                L_RemergeRemainLines2:
+                                    for (int j = 0; j < cutRemainLines.Count; j++)
+                                    {
+                                        //Log(cutRemainLines[j],false,"yellow");
+                                        if (!string.IsNullOrEmpty(cutRemainLines[j]) && !string.IsNullOrWhiteSpace(cutRemainLines[j]))
+                                        {
+                                            //Example: if(readparam(bInt)>=90){bonusbMatk,(.@r>=9)?50:30;}
+
+                                            //Split if and {}
+                                            if (cutRemainLines[j].Contains("if(") && cutRemainLines[j].Contains("{"))
+                                            {
+                                                //Count {}
+                                                if (!IsEven.IsCurlyEven(cutRemainLines[j]))
+                                                {
+                                                    cutRemainLines[j] += cutRemainLines[j + 1];
+                                                    cutRemainLines.RemoveAt(j + 1);
+                                                    goto L_RemergeRemainLines2;
+                                                }
+                                                else
+                                                {
+                                                    //Split now
+                                                    //Log("Before:\n" + cutRemainLines[j]);
+                                                    int firstCurlyIndex = cutRemainLines[j].IndexOf('{');
+                                                    string saveTxt = cutRemainLines[j];
+                                                    cutRemainLines[j] = cutRemainLines[j].Substring(0, firstCurlyIndex);
+
+                                                    //Find and split if inside if?
+                                                    string toInsert = saveTxt.Substring(firstCurlyIndex);
+                                                    if (toInsert.Contains("if("))
+                                                    {
+                                                        int startIfIndex = 0;
+                                                        for (int k = 0; k < toInsert.Length; k++)
+                                                        {
+                                                            if (toInsert[k] == 'i' && toInsert[k + 1] == 'f' && toInsert[k + 2] == '(')
+                                                            {
+                                                                startIfIndex = k;
+                                                                break;
+                                                            }
+                                                        }
+                                                        string foundIf = toInsert.Substring(startIfIndex);
+                                                        foundIf = foundIf.Substring(0, foundIf.IndexOf('}') + 1);
+                                                        cutRemainLines.Insert(j + 1, "[TXT_END_IF];");
+                                                        cutRemainLines.Insert(j + 1, foundIf);
+                                                        toInsert = toInsert.Replace(foundIf, "");
+                                                        cutRemainLines.Insert(j + 1, toInsert + "[TXT_NO_END_IF_BELOW]");
+                                                    }
+                                                    else
+                                                        cutRemainLines.Insert(j + 1, toInsert);
+
+                                                    //Log("After:\n" + cutRemainLines[j]);
+                                                    //Log("Insert:\n" + cutRemainLines[j + 1]);
+
+                                                    goto L_RemergeRemainLines2;
+                                                }
+                                            }
+                                            //Example: if(readparam(bInt)>=90)bonusbMatk,(.@r>=9)?50:30;
+
+                                            //Split if and last ) +1
+                                            else if (cutRemainLines[j].Contains("if(") && cutRemainLines[j][cutRemainLines[j].Length - 1] != ')')
+                                            {
+                                                //Split now
+                                                Log("(Before):\n" + cutRemainLines[j]);
+                                                int firstCircleIndex = cutRemainLines[j].IndexOf('(');
+                                                string saveTxt = cutRemainLines[j];
+                                                cutRemainLines[j] = cutRemainLines[j].Substring(0, firstCircleIndex);
+                                                cutRemainLines.Insert(j + 1, saveTxt.Substring(firstCircleIndex));
+                                                Log("(After):\n" + cutRemainLines[j]);
+                                                Log("(Insert):\n" + cutRemainLines[j + 1]);
+                                                goto L_RemergeRemainLines2;
+                                            }
+                                            //Split if and last ) +1
+                                            else if (cutRemainLines[j].Contains("if(") && !cutRemainLines[j].Contains(";"))
+                                                cutRemainLines[j] = cutRemainLines[j] + ";";
+                                        }
+                                        else
+                                        {
+                                            cutRemainLines.RemoveAt(j);
+                                            goto L_RemergeRemainLines2;
+                                        }
+                                    }
+
+                                    cutRemainLines.Reverse();
+
+                                    for (int j = 0; j < cutRemainLines.Count; j++)
+                                        lines.Insert(i + 2, cutRemainLines[j]);
+                                }
+                                else
+                                    lines.Insert(i + 2, cutRemains);
+                                lines.Insert(i + 2, cutScripts);
+                                lines.Insert(i + 2, cutConditions + ";");
                                 additionalEndIfIndex += 2;
                             }
                             //Otherwise use old code
                             else
                             {
-                                allCut.Insert(i + 2, cutIf);
+                                lines.Insert(i + 2, "[TXT_END_IF];");
+                                lines.Insert(i + 2, cut);
                                 additionalEndIfIndex++;
                             }
                             isNeedRedo = true;
                         }
+                        else
+                            lines.Insert(i + 2, "[TXT_END_IF];");
 
                         var splitBonus = new List<string>();
 
-                        int index = 0;
-                        if (allCut[i + 1].Contains("autobonus") || allCut[i + 1].Contains("bonus_script"))
-                            index++;
-
-                        while (allCut[i + index].Contains("autobonus") || allCut[i + index].Contains("bonus_script"))
-                        {
-                            string cutAutoBonus = null;
-
-                            allCut[i + index] = allCut[i + index].Replace("[/END_MERGE]", "[/END_MERGE] ");
-
-                            int s = allCut[i + index].IndexOf("[END_MERGE]");
-                            int e2 = allCut[i + index].IndexOf("[/END_MERGE]");
-
-                            cutAutoBonus = allCut[i + index].Substring(s + 11);
-
-                            int e = cutAutoBonus.IndexOf("[/END_MERGE]");
-
-                            //Log("cutAutoBonus: " + cutAutoBonus);
-
-                            cutAutoBonus = cutAutoBonus.Substring(0, e);
-
-                            //Log("cutAutoBonus: " + cutAutoBonus);
-
-                            allCut.Insert(i + index + additionalEndIfIndex, cutAutoBonus);
-
-                            //Log("allCut[" + (i + index + 1) + "]: " + allCut[i + index + 1]);
-
-                            allCut[i + index + 1] = allCut[i + index + 1].Substring(0, s) + allCut[i + index + 1].Substring(e2 + 12);
-
-                            //Log("allCut[" + (i + index + 1) + "]: " + allCut[i + index + 1]);
-
-                            index++;
-                        }
+                        int index = 1;
 
                         //Do not spilt if first word is [END_MERGE] and last word is [/END_MERGE]  
                         bool isFoundEndMergeStart = false;
                         bool isFoundEndMergeEnd = false;
-                        if (allCut[i + index + 1].Contains("[END_MERGE]"))
+                        if (lines[i + index].Contains("[END_MERGE]"))
                         {
                             string findWord = null;
-                            foreach (var c in allCut[i + index + 1])
+                            foreach (var c in lines[i + index])
                             {
                                 findWord += c;
                                 if (findWord == "[END_MERGE]")
@@ -501,9 +601,9 @@ public class ItemDbScriptData
                                 }
                             }
                             findWord = null;
-                            for (int j = allCut[i + index + 1].Length - 1; j > 0; j--)
+                            for (int j = lines[i + index].Length - 1; j > 0; j--)
                             {
-                                findWord = allCut[i + index + 1][j] + findWord;
+                                findWord = lines[i + index][j] + findWord;
                                 if (findWord == "[/END_MERGE]")
                                 {
                                     isFoundEndMergeEnd = true;
@@ -512,11 +612,40 @@ public class ItemDbScriptData
                             }
                         }
 
+                        if (!isFoundEndMergeStart && !isFoundEndMergeEnd)
+                        {
+                            while (lines[i + index].Contains("autobonus") || lines[i + index].Contains("bonus_script"))
+                            {
+                                string cutAutoBonus = null;
+
+                                lines[i + index] = lines[i + index].Replace("[/END_MERGE]", "[/END_MERGE] ");
+
+                                int startAutoBonusIndex = lines[i + index].IndexOf("[END_MERGE]");
+                                int endAutoBonusIndex = lines[i + index].IndexOf("[/END_MERGE]");
+
+                                cutAutoBonus = lines[i + index].Substring(startAutoBonusIndex + 11);
+                                Log("cutAutoBonus:\n" + cutAutoBonus, true);
+
+                                cutAutoBonus = cutAutoBonus.Substring(0, cutAutoBonus.IndexOf("[/END_MERGE]"));
+                                Log("cutAutoBonus:\n" + cutAutoBonus, true);
+
+                                lines.Insert(i + index + additionalEndIfIndex, cutAutoBonus);//TODO >> Change index to index -1?
+
+                                Log("Lines #" + (i + index) + ":\n" + lines[i + index], true);
+
+                                lines[i + index] = lines[i + index].Substring(0, startAutoBonusIndex) + lines[i + index].Substring(endAutoBonusIndex + 12);
+
+                                Log("Lines #" + (i + index) + ":\n" + lines[i + index], true);
+
+                                index++;
+                            }
+                        }
+
                         if (isFoundEndMergeStart && isFoundEndMergeEnd)
-                            splitBonus.Add(allCut[i + index + 1]);
+                            splitBonus.Add(lines[i + index]);
                         else
                         {
-                            splitBonus = StringSplit.GetStringSplit(allCut[i + index + 1], ';');
+                            splitBonus = StringSplit.GetStringSplit(lines[i + index], ';');
 
                             //Then re-add ';'
                             for (int j = 0; j < splitBonus.Count; j++)
@@ -528,1522 +657,1667 @@ public class ItemDbScriptData
                             }
                         }
 
+                        foreach (var bonus in splitBonus)
+                            Log("splitBonus: " + bonus, false, "yellow");
+
                         //Set next index to splitBonus[0]
                         if (splitBonus.Count > 0)
-                            allCut[i + index + 1] = splitBonus[0];
+                            lines[i + index] = splitBonus[0];
 
-                        Log("index: " + index);
-                        Log("additionalEndIfIndex: " + additionalEndIfIndex);
-
-                        //Add to list
-                        for (int j = 0; j < splitBonus.Count; j++)
+                        if (splitBonus.Count > 1)
                         {
-                            if (j > 0)
-                            {
-                                allCut.Insert(i + index + 2, splitBonus[j]);
-                                if (j == splitBonus.Count - 1)
-                                    allCut.Insert(i + index + 2 + j + additionalEndIfIndex, "[TXT_END_IF];");
-                            }
+                            for (int j = 1; j < splitBonus.Count; j++)
+                                lines.Insert(i + index + j, splitBonus[j]);
                         }
 
-                        if (splitBonus.Count <= 1)
-                            allCut.Insert(i + index + 2 + additionalEndIfIndex, "[TXT_END_IF];");
-
-                        foreach (var item in allCut)
-                            Log("<color=orange>" + item + "</color>");
-
+                        //foreach (var item in lines)
+                        //   Log(item, false, "orange");
 
                         if (isNeedRedo)
-                            goto L_Redo;
+                            goto L_MergeLines;
                     }
                 }
             }
-            else if (sumCut.Contains("else"))
+            else if (currentLine.Contains("else"))
             {
-                //Check merge else if
-                if (allCut[i + 1].Contains("if"))
+                if (nextLine.Contains("if"))
                 {
-                    MergeItemScripts(allCut, i);
-                    goto L_Redo;
+                    MergeItemScripts(lines, i);
+                    goto L_MergeLines;
                 }
-                //Check merge else if()
-                else if (sumCut.Contains("if") && allCut[i + 1].Contains("("))
+                else if (currentLine.Contains("if") && nextLine.Contains("("))
                 {
-                    MergeItemScripts(allCut, i);
-                    goto L_Redo;
+                    MergeItemScripts(lines, i);
+                    goto L_MergeLines;
                 }
-                //else not had {}
-                else if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}") && !allCut[i].Contains(";"))
+                else if (!nextLine.Contains("{") && !nextLine.Contains("}") && !currentLine.Contains(";"))
                 {
-                    allCut[i] = "[TXT_ELSE];";
+                    Log("[ELSE] nextLine not contains {} and currentLine not contains ;", true);
 
-                    if (i + 1 < allCut.Count && (string.IsNullOrEmpty(allCut[i + 1]) || string.IsNullOrWhiteSpace(allCut[i + 1])))
+                    lines[i] = "[TXT_ELSE];";
+
+                    //Remove this line when next 2 arrays is empty
+                    if (i + 1 < lines.Count && (string.IsNullOrEmpty(nextLine) || string.IsNullOrWhiteSpace(nextLine)))
                     {
-                        if (i + 2 < allCut.Count && (string.IsNullOrEmpty(allCut[i + 2]) || string.IsNullOrWhiteSpace(allCut[i + 2])))
+                        if (i + 2 < lines.Count && (string.IsNullOrEmpty(lines[i + 2]) || string.IsNullOrWhiteSpace(lines[i + 2])))
                         {
-                            allCut[i] = "";
-                            goto L_Redo;
+                            lines[i] = "";
+                            goto L_MergeLines;
                         }
                     }
 
-                    int loop = 0;
-                    while (!allCut[i + 1 + loop].Contains(";"))
+                    int loop = 1;
+                    while (!lines[i + loop].Contains(";"))
                         loop++;
 
-                    allCut.Insert(i + 2 + loop, "[TXT_END_ELSE];");
+                    lines.Insert(i + 2 + loop, "[TXT_END_ELSE];");
                 }
-                else if (!allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}") && allCut[i].Contains(";"))
+                else if (!nextLine.Contains("{") && !nextLine.Contains("}") && currentLine.Contains(";"))
                 {
-                    if (CheckContainTemporaryVariables(allCut[i + 1], allCut, i + 1))
-                        goto L_Redo;
+                    Log("[ELSE] nextLine not contains {} and currentLine contains ;", true);
+
+                    if (IsContainsTemporaryVariables(nextLine, lines, i + 1))
+                        goto L_MergeLines;
                 }
-                //'else' need '{}'
-                else if (allCut[i + 1].Contains("{") && !allCut[i + 1].Contains("}"))
+                else if (nextLine.Contains("{") && !nextLine.Contains("}"))
                 {
-                    if (!allCut[i].Contains(";"))
-                        allCut[i] = allCut[i] + ";";
-                    allCut[i + 1] += " " + allCut[i + 2];
-                    allCut.RemoveAt(i + 2);
-                    goto L_Redo;
+                    if (!currentLine.Contains(";"))
+                        lines[i] = lines[i] + ";";
+                    lines[i + 1] += " " + lines[i + 2];
+                    lines.RemoveAt(i + 2);
+                    goto L_MergeLines;
                 }
-                //else had {}
-                else if (allCut[i + 1].Contains("{") && allCut[i + 1].Contains("}"))
+                else if (nextLine.Contains("{") && nextLine.Contains("}"))
                 {
-                    if (CheckContainTemporaryVariables(allCut[i + 1], allCut, i))
-                        goto L_Redo;
+                    Log("[ELSE] nextLine Contains {:\n" + nextLine, true);
 
-                    //Remove first '{' and end '}'
-                    allCut[i + 1] = allCut[i + 1].Substring(1, allCut[i + 1].Length - 2);
-
-                    allCut[i + 1] = MergeWhiteSpace.RemoveWhiteSpace(allCut[i + 1]);
-
-                    //Find if in if and extract it out from this array to solve conflict
-                    if (allCut[i + 1].Contains("if("))
+                    if (!IsEven.IsCurlyEven(nextLine))
                     {
-                        int ifStartAt = allCut[i + 1].IndexOf("if(");
-                        string cutIf = allCut[i + 1].Substring(ifStartAt);
-                        Log("cutIf: " + cutIf);
-                        allCut[i + 1] = allCut[i + 1].Substring(0, ifStartAt);
-                        Log("allCut[i + 1]: " + allCut[i + 1]);
-
-                        //Check is contain {
-                        if (cutIf.Contains("{"))
-                        {
-                            int roomStartAt = cutIf.IndexOf("{");
-                            int roomEndAt = cutIf.IndexOf("}");
-                            string cutRoomLeft = cutIf.Substring(0, roomStartAt);
-                            string room = cutIf.Substring(roomStartAt);
-                            int roomCutAt = room.IndexOf("}");
-                            room = room.Substring(0, roomCutAt + 1);
-                            string cutRoomRight = cutIf.Substring(roomEndAt + 1);
-                            Log("cutRoomLeft: " + cutRoomLeft);
-                            Log("room: " + room);
-                            Log("cutRoomRight: " + cutRoomRight);
-                            //Split it out and insert it
-                            allCut.Insert(i + 2, room);
-                            allCut.Insert(i + 2, cutRoomLeft + ";");
-                            //Merge right left to next array
-                            allCut[i + 1] = allCut[i + 1] + cutRoomRight;
-                        }
-                        //Otherwise use old code
-                        else
-                            allCut.Insert(i + 2, cutIf);
+                        lines[i + 1] += " " + lines[i + 2];
+                        lines.RemoveAt(i + 2);
+                        goto L_MergeLines;
                     }
-
-                    var splitBonus = new List<string>();
-
-                    int index = 0;
-                    if (allCut[i + index].Contains("autobonus") || allCut[i + index].Contains("bonus_script"))
-                        index = 1;
-
-                    while (allCut[i + index].Contains("autobonus") || allCut[i + index].Contains("bonus_script"))
-                    {
-                        string cutAutoBonus = null;
-
-                        allCut[i + index] = allCut[i + index].Replace("[/END_MERGE]", "[/END_MERGE] ");
-
-                        int s = allCut[i + index].IndexOf("[END_MERGE]");
-                        int e2 = allCut[i + index].IndexOf("[/END_MERGE]");
-
-                        cutAutoBonus = allCut[i + index].Substring(s + 11);
-
-                        int e = cutAutoBonus.IndexOf("[/END_MERGE]");
-
-                        //Log("cutAutoBonus: " + cutAutoBonus);
-
-                        cutAutoBonus = cutAutoBonus.Substring(0, e);
-
-                        //Log("cutAutoBonus: " + cutAutoBonus);
-
-                        allCut.Insert(i + index, cutAutoBonus);
-
-                        //Log("allCut[" + (i + index + 1) + "]: " + allCut[i + index + 1]);
-
-                        allCut[i + index + 1] = allCut[i + index + 1].Substring(0, s) + allCut[i + index + 1].Substring(e2 + 12);
-
-                        //Log("allCut[" + (i + index + 1) + "]: " + allCut[i + index + 1]);
-
-                        index++;
-                    }
-
-                    //Do not spilt if first word is [Remove first '{' and end '}' allCut[i + 1]:  [END_MERGE] and last word is [/END_MERGE]  
-                    bool isFoundEndMergeStart = false;
-                    bool isFoundEndMergeEnd = false;
-                    if (allCut[i + index + 1].Contains("[END_MERGE]"))
-                    {
-                        string findWord = null;
-                        foreach (var c in allCut[i + index + 1])
-                        {
-                            findWord += c;
-                            if (findWord == "[END_MERGE]")
-                            {
-                                isFoundEndMergeStart = true;
-                                break;
-                            }
-                        }
-                        findWord = null;
-                        for (int j = allCut[i + index + 1].Length - 1; j > 0; j--)
-                        {
-                            findWord = allCut[i + index + 1][j] + findWord;
-                            if (findWord == "[/END_MERGE]")
-                            {
-                                isFoundEndMergeEnd = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (isFoundEndMergeStart && isFoundEndMergeEnd)
-                        splitBonus.Add(allCut[i + index + 1]);
                     else
-                        splitBonus = StringSplit.GetStringSplit(allCut[i + index + 1], ';');
-
-                    //Then re-add ';'
-                    for (int j = 0; j < splitBonus.Count; j++)
                     {
-                        if (splitBonus[j] == "" || splitBonus[j] == " " || string.IsNullOrEmpty(splitBonus[j]) || string.IsNullOrWhiteSpace(splitBonus[j]))
-                            splitBonus.RemoveAt(j);
-                        else
-                            splitBonus[j] = splitBonus[j] + ";";
-                    }
+                        if (IsContainsTemporaryVariables(nextLine, lines, i))
+                            goto L_MergeLines;
 
-                    //Set current index to [TXT_ELSE];
-                    allCut[i] = "[TXT_ELSE];";
+                        //Remove first '{' and end '}'
+                        lines[i + 1] = lines[i + 1].Substring(1, lines[i + 1].Length - 2);
 
-                    //Set next index to splitBonus[0]
-                    if (splitBonus.Count > 0)
-                        allCut[i + index + 1] = splitBonus[0];
+                        lines[i + 1] = MergeWhiteSpace.RemoveWhiteSpace(lines[i + 1]);
 
-                    //Add to list
-                    for (int j = 0; j < splitBonus.Count; j++)
-                    {
-                        if (j > 0)
+                        string cutRemains = null;
+                        //Find if in if and extract it out from this array to solve conflict
+                        if (lines[i + 1].Contains("if("))
                         {
-                            if (j == splitBonus.Count - 1)
-                            {
-                                allCut.Insert(i + index + 2, splitBonus[j]);
-                                allCut.Insert(i + index + 2 + splitBonus.Count, "[TXT_END_ELSE];");
-                            }
-                            else
-                                allCut.Insert(i + index + 2, splitBonus[j]);
-                        }
-                    }
+                            int ifStartAt = lines[i + 1].IndexOf("if(");
 
-                    if (splitBonus.Count <= 1)
-                        allCut.Insert(i + index + 2, "[TXT_END_ELSE];");
+                            string cut = lines[i + 1].Substring(ifStartAt);
+                            Log("cut:\n" + cut, true);
+
+                            lines[i + 1] = lines[i + 1].Substring(0, ifStartAt);
+                            Log("Lines #" + (i + 1) + ":\n" + lines[i + 1], true, "yellow");
+
+                            //Contains {
+                            if (cut.Contains("{"))
+                            {
+                                //Count { and save first { index
+                                int countCutLeftCurly = 0;
+                                int cutleftCurlyIndex = cut.IndexOf("{");
+                                for (int j = 0; j < cut.Length; j++)
+                                {
+                                    if (cut[j] == '{')
+                                        countCutLeftCurly++;
+                                    else if (cut[j] == '}')
+                                        break;
+                                }
+
+                                //Find } by { count and save last } index
+                                int countCutRightCurly = 0;
+                                int cutRightCurlyIndex = 0;
+                                for (int j = 0; j < cut.Length; j++)
+                                {
+                                    if (cut[j] == '}')
+                                        countCutRightCurly++;
+                                    if (countCutRightCurly == countCutLeftCurly)
+                                    {
+                                        cutRightCurlyIndex = j;
+                                        break;
+                                    }
+                                }
+
+                                string cutConditions = cut.Substring(0, cutleftCurlyIndex);
+
+                                string cutScripts = cut.Substring(cutleftCurlyIndex);
+
+                                //Find } by { count
+                                int countRoomRightCurly = 0;
+                                int roomRightCurlyIndex = 0;
+                                for (int j = 0; j < cutScripts.Length; j++)
+                                {
+                                    if (cutScripts[j] == '}')
+                                        countRoomRightCurly++;
+                                    if (countRoomRightCurly == countCutLeftCurly)
+                                    {
+                                        roomRightCurlyIndex = j;
+                                        break;
+                                    }
+                                }
+
+                                cutScripts = cutScripts.Substring(0, roomRightCurlyIndex + 1);
+
+                                cutRemains = cut.Substring(cutRightCurlyIndex + 1);
+
+                                Log("cutConditions:\n" + cutConditions, true);
+                                Log("cutScripts:\n" + cutScripts, true);
+                                Log("cutRemains:\n" + cutRemains, true);
+
+                                lines.Insert(i + 2, "[TXT_END_ELSE];");
+
+                                //Split it out and insert it
+                                if (cutRemains.Contains("if("))
+                                {
+                                    var cutRemainLines = StringSplit.GetStringSplitMoreThanOneChar(cutRemains, new string[] { "if(" });
+                                L_RemergeRemainLines1:
+                                    for (int j = 0; j < cutRemainLines.Count; j++)
+                                    {
+                                        if (!string.IsNullOrEmpty(cutRemainLines[j]) && !string.IsNullOrWhiteSpace(cutRemainLines[j]))
+                                            cutRemainLines[j] = "if(" + cutRemainLines[j];
+                                        else
+                                        {
+                                            cutRemainLines.RemoveAt(j);
+                                            goto L_RemergeRemainLines1;
+                                        }
+                                    }
+
+                                L_RemergeRemainLines2:
+                                    for (int j = 0; j < cutRemainLines.Count; j++)
+                                    {
+                                        //Log(cutRemainLines[j],false,"yellow");
+                                        if (!string.IsNullOrEmpty(cutRemainLines[j]) && !string.IsNullOrWhiteSpace(cutRemainLines[j]))
+                                        {
+                                            //Example: if(readparam(bInt)>=90){bonusbMatk,(.@r>=9)?50:30;}
+
+                                            //Split if and {}
+                                            if (cutRemainLines[j].Contains("if(") && cutRemainLines[j].Contains("{"))
+                                            {
+                                                //Count {}
+                                                if (!IsEven.IsCurlyEven(cutRemainLines[j]))
+                                                {
+                                                    cutRemainLines[j] += cutRemainLines[j + 1];
+                                                    cutRemainLines.RemoveAt(j + 1);
+                                                    goto L_RemergeRemainLines2;
+                                                }
+                                                else
+                                                {
+                                                    //Split now
+                                                    //Log("Before:\n" + cutRemainLines[j]);
+                                                    int firstCurlyIndex = cutRemainLines[j].IndexOf('{');
+                                                    string saveTxt = cutRemainLines[j];
+                                                    cutRemainLines[j] = cutRemainLines[j].Substring(0, firstCurlyIndex);
+
+                                                    //Find and split if inside if?
+                                                    string toInsert = saveTxt.Substring(firstCurlyIndex);
+                                                    if (toInsert.Contains("if("))
+                                                    {
+                                                        int startIfIndex = 0;
+                                                        for (int k = 0; k < toInsert.Length; k++)
+                                                        {
+                                                            if (toInsert[k] == 'i' && toInsert[k + 1] == 'f' && toInsert[k + 2] == '(')
+                                                            {
+                                                                startIfIndex = k;
+                                                                break;
+                                                            }
+                                                        }
+                                                        string foundIf = toInsert.Substring(startIfIndex);
+                                                        foundIf = foundIf.Substring(0, foundIf.IndexOf('}') + 1);
+                                                        cutRemainLines.Insert(j + 1, "[TXT_END_IF];");
+                                                        cutRemainLines.Insert(j + 1, foundIf);
+                                                        toInsert = toInsert.Replace(foundIf, "");
+                                                        cutRemainLines.Insert(j + 1, toInsert + "[TXT_NO_END_IF_BELOW]");
+                                                    }
+                                                    else
+                                                        cutRemainLines.Insert(j + 1, toInsert);
+
+                                                    //Log("After:\n" + cutRemainLines[j]);
+                                                    //Log("Insert:\n" + cutRemainLines[j + 1]);
+
+                                                    goto L_RemergeRemainLines2;
+                                                }
+                                            }
+                                            //Example: if(readparam(bInt)>=90)bonusbMatk,(.@r>=9)?50:30;
+
+                                            //Split if and last ) +1
+                                            else if (cutRemainLines[j].Contains("if(") && cutRemainLines[j][cutRemainLines[j].Length - 1] != ')')
+                                            {
+                                                //Split now
+                                                Log("(Before):\n" + cutRemainLines[j]);
+                                                int firstCircleIndex = cutRemainLines[j].IndexOf('(');
+                                                string saveTxt = cutRemainLines[j];
+                                                cutRemainLines[j] = cutRemainLines[j].Substring(0, firstCircleIndex);
+                                                cutRemainLines.Insert(j + 1, saveTxt.Substring(firstCircleIndex));
+                                                Log("(After):\n" + cutRemainLines[j]);
+                                                Log("(Insert):\n" + cutRemainLines[j + 1]);
+                                                goto L_RemergeRemainLines2;
+                                            }
+                                            //Split if and last ) +1
+                                            else if (cutRemainLines[j].Contains("if(") && !cutRemainLines[j].Contains(";"))
+                                                cutRemainLines[j] = cutRemainLines[j] + ";";
+                                        }
+                                        else
+                                        {
+                                            cutRemainLines.RemoveAt(j);
+                                            goto L_RemergeRemainLines2;
+                                        }
+                                    }
+
+                                    cutRemainLines.Reverse();
+
+                                    for (int j = 0; j < cutRemainLines.Count; j++)
+                                        lines.Insert(i + 2, cutRemainLines[j]);
+                                }
+                                else
+                                    lines.Insert(i + 2, cutRemains);
+                                lines.Insert(i + 2, cutScripts);
+                                lines.Insert(i + 2, cutConditions + ";");
+                            }
+                            //Otherwise use old code
+                            else
+                            {
+                                lines.Insert(i + 2, "[TXT_END_ELSE];");
+                                lines.Insert(i + 2, cut);
+                            }
+                        }
+                        else
+                            lines.Insert(i + 2, "[TXT_END_ELSE];");
+
+                        var splitBonus = new List<string>();
+
+                        int index = 1;
+
+                        //Do not spilt if first word is [END_MERGE] and last word is [/END_MERGE]  
+                        bool isFoundEndMergeStart = false;
+                        bool isFoundEndMergeEnd = false;
+                        if (lines[i + index].Contains("[END_MERGE]"))
+                        {
+                            string findWord = null;
+                            foreach (var c in lines[i + index])
+                            {
+                                findWord += c;
+                                if (findWord == "[END_MERGE]")
+                                {
+                                    isFoundEndMergeStart = true;
+                                    break;
+                                }
+                            }
+                            findWord = null;
+                            for (int j = lines[i + index].Length - 1; j > 0; j--)
+                            {
+                                findWord = lines[i + index][j] + findWord;
+                                if (findWord == "[/END_MERGE]")
+                                {
+                                    isFoundEndMergeEnd = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!isFoundEndMergeStart && !isFoundEndMergeEnd)
+                        {
+                            while (lines[i + index].Contains("autobonus") || lines[i + index].Contains("bonus_script"))
+                            {
+                                string cutAutoBonus = null;
+
+                                lines[i + index] = lines[i + index].Replace("[/END_MERGE]", "[/END_MERGE] ");
+
+                                int startAutoBonusIndex = lines[i + index].IndexOf("[END_MERGE]");
+                                int endAutoBonusIndex = lines[i + index].IndexOf("[/END_MERGE]");
+
+                                cutAutoBonus = lines[i + index].Substring(startAutoBonusIndex + 11);
+                                Log("cutAutoBonus:\n" + cutAutoBonus, true);
+
+                                cutAutoBonus = cutAutoBonus.Substring(0, cutAutoBonus.IndexOf("[/END_MERGE]"));
+                                Log("cutAutoBonus:\n" + cutAutoBonus, true);
+
+                                lines.Insert(i + index, cutAutoBonus);//TODO >> Change index to index -1?
+
+                                Log("Lines #" + (i + index) + ":\n" + lines[i + index], true);
+
+                                lines[i + index] = lines[i + index].Substring(0, startAutoBonusIndex) + lines[i + index].Substring(endAutoBonusIndex + 12);
+
+                                Log("Lines #" + (i + index) + ":\n" + lines[i + index], true);
+
+                                index++;
+                            }
+                        }
+
+                        if (isFoundEndMergeStart && isFoundEndMergeEnd)
+                            splitBonus.Add(lines[i + index]);
+                        else
+                        {
+                            splitBonus = StringSplit.GetStringSplit(lines[i + index], ';');
+
+                            //Then re-add ';'
+                            for (int j = 0; j < splitBonus.Count; j++)
+                            {
+                                if (splitBonus[j] == "" || splitBonus[j] == " " || string.IsNullOrEmpty(splitBonus[j]) || string.IsNullOrWhiteSpace(splitBonus[j]))
+                                    splitBonus.RemoveAt(j);
+                                else
+                                    splitBonus[j] = splitBonus[j] + ";";
+                            }
+                        }
+
+                        foreach (var bonus in splitBonus)
+                            Log("splitBonus: " + bonus, false, "yellow");
+
+                        //Set current index to [TXT_ELSE];
+                        lines[i] = "[TXT_ELSE];";
+
+                        //Set next index to splitBonus[0]
+                        if (splitBonus.Count > 0)
+                            lines[i + index] = splitBonus[0];
+
+                        if (splitBonus.Count > 1)
+                        {
+                            for (int j = 1; j < splitBonus.Count; j++)
+                                lines.Insert(i + index + j, splitBonus[j]);
+                        }
+
+                        //foreach (var item in lines)
+                        //   Log(item, false, "orange");
+                    }
                 }
             }
-            else if (sumCut == "bonus" || sumCut == "bonus " || sumCut == " bonus")
+            else if (currentLine == "bonus" || currentLine == "bonus " || currentLine == " bonus")
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut == "bonus2" || sumCut == "bonus2 " || sumCut == " bonus2")
+            else if (currentLine == "bonus2" || currentLine == "bonus2 " || currentLine == " bonus2")
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut == "bonus3" || sumCut == "bonus3 " || sumCut == " bonus3")
+            else if (currentLine == "bonus3" || currentLine == "bonus3 " || currentLine == " bonus3")
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut == "bonus4" || sumCut == "bonus4 " || sumCut == " bonus4")
+            else if (currentLine == "bonus4" || currentLine == "bonus4 " || currentLine == " bonus4")
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut == "bonus5" || sumCut == "bonus5 " || sumCut == " bonus5")
+            else if (currentLine == "bonus5" || currentLine == "bonus5 " || currentLine == " bonus5")
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (CheckContainTemporaryVariables(sumCut, allCut, i, true))
-                goto L_Redo;
-            else if (sumCut.Contains("itemheal") && !sumCut.Contains(";"))
+            else if (IsContainsTemporaryVariables(currentLine, lines, i, true))
+                goto L_MergeLines;
+            else if (currentLine.Contains("itemheal") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("percentheal") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("percentheal") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("heal") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("heal") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("sc_end") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("sc_end") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("sc_start") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("sc_start") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("itemskill") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("itemskill") && !currentLine.Contains(";"))
             {
-                allCut[i] = allCut[i].Replace("itemskill", "itemskillz");
-                allCut[i] += " " + allCut[i + 1];
-                allCut.RemoveAt(i + 1);
-                goto L_Redo;
+                lines[i] = lines[i].Replace("itemskill", "itemskillz");
+                lines[i] += " " + lines[i + 1];
+                lines.RemoveAt(i + 1);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("skill") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("skill") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("getrandgroupitem") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("getrandgroupitem") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("monster") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("monster") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("produce") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("produce") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("pet") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("pet") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("catchpet") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("catchpet") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bpet") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bpet") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("birthpet") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("birthpet") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("guildgetexp") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("guildgetexp") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("Zeny") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("Zeny") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("RouletteGold") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("RouletteGold") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("RouletteBronze") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("RouletteBronze") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("RouletteSilver") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("RouletteSilver") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("autobonus3") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("autobonus3") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("autobonus2") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("autobonus2") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("autobonus") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("autobonus") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus_script") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus_script") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bStr") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bStr") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bAgi,") || sumCut.Contains("bonus bAgi ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bAgi,") || currentLine.Contains("bonus bAgi ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bVit") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bVit") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bInt,") || sumCut.Contains("bonus bInt ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bInt,") || currentLine.Contains("bonus bInt ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bDex") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bDex") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bLuk") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bLuk") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bAllStats") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bAllStats") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bAgiVit") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bAgiVit") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bAgiDexStr") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bAgiDexStr") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bMaxHP,") || sumCut.Contains("bonus bMaxHP ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bMaxHP,") || currentLine.Contains("bonus bMaxHP ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bMaxHPrate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bMaxHPrate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bMaxSP,") || sumCut.Contains("bonus bMaxSP ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bMaxSP,") || currentLine.Contains("bonus bMaxSP ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bMaxSPrate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bMaxSPrate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bBaseAtk") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bBaseAtk") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bAtk,") || sumCut.Contains("bonus bAtk ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bAtk,") || currentLine.Contains("bonus bAtk ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bAtk2") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bAtk2") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bAtkRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bAtkRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bWeaponAtkRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bWeaponAtkRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bMatk,") || sumCut.Contains("bonus bMatk ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bMatk,") || currentLine.Contains("bonus bMatk ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bMatkRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bMatkRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bWeaponMatkRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bWeaponMatkRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bDef,") || sumCut.Contains("bonus bDef ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bDef,") || currentLine.Contains("bonus bDef ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bDefRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bDefRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bDef2,") || sumCut.Contains("bonus bDef2 ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bDef2,") || currentLine.Contains("bonus bDef2 ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bDef2Rate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bDef2Rate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bMdef,") || sumCut.Contains("bonus bMdef ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bMdef,") || currentLine.Contains("bonus bMdef ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bMdefRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bMdefRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bMdef2,") || sumCut.Contains("bonus bMdef2 ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bMdef2,") || currentLine.Contains("bonus bMdef2 ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bMdef2Rate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bMdef2Rate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bHit,") || sumCut.Contains("bonus bHit ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bHit,") || currentLine.Contains("bonus bHit ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bHitRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bHitRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bCritical,") || sumCut.Contains("bonus bCritical ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bCritical,") || currentLine.Contains("bonus bCritical ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bCriticalLong") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bCriticalLong") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bCriticalAddRace") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bCriticalAddRace") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bCriticalRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bCriticalRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bFlee,") || sumCut.Contains("bonus bFlee ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bFlee,") || currentLine.Contains("bonus bFlee ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bFleeRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bFleeRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bFlee2,") || sumCut.Contains("bonus bFlee2 ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bFlee2,") || currentLine.Contains("bonus bFlee2 ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bFlee2Rate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bFlee2Rate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bPerfectHitRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bPerfectHitRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bPerfectHitAddRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bPerfectHitAddRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bSpeedRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bSpeedRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bSpeedAddRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bSpeedAddRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bAspd,") || sumCut.Contains("bonus bAspd ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bAspd,") || currentLine.Contains("bonus bAspd ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bAspdRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bAspdRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bAtkRange") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bAtkRange") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bAddMaxWeight") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bAddMaxWeight") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bHPrecovRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bHPrecovRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bSPrecovRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bSPrecovRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bHPRegenRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bHPRegenRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bHPLossRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bHPLossRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bSPRegenRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bSPRegenRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bSPLossRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bSPLossRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bRegenPercentHP") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bRegenPercentHP") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bRegenPercentSP") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bRegenPercentSP") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bNoRegen") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bNoRegen") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bUseSPrate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bUseSPrate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus2 bSkillUseSP,") || sumCut.Contains("bonus2 bSkillUseSP ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus2 bSkillUseSP,") || currentLine.Contains("bonus2 bSkillUseSP ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bSkillUseSPrate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bSkillUseSPrate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bSkillAtk") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bSkillAtk") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bLongAtkRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bLongAtkRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bCritAtkRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bCritAtkRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bCriticalDef") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bCriticalDef") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus2 bWeaponAtk,") || sumCut.Contains("bonus2 bWeaponAtk ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus2 bWeaponAtk,") || currentLine.Contains("bonus2 bWeaponAtk ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bWeaponDamageRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bWeaponDamageRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bNearAtkDef") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bNearAtkDef") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bLongAtkDef") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bLongAtkDef") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bMagicAtkDef") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bMagicAtkDef") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bMiscAtkDef") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bMiscAtkDef") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bNoWeaponDamage") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bNoWeaponDamage") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bNoMagicDamage") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bNoMagicDamage") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bNoMiscDamage") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bNoMiscDamage") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bHealPower,") || sumCut.Contains("bonus bHealPower ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bHealPower,") || currentLine.Contains("bonus bHealPower ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bHealPower2") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bHealPower2") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus2 bSkillHeal,") || sumCut.Contains("bonus2 bSkillHeal ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus2 bSkillHeal,") || currentLine.Contains("bonus2 bSkillHeal ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bSkillHeal2") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bSkillHeal2") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bAddItemHealRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bAddItemHealRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bAddItemHealRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bAddItemHealRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bAddItemGroupHealRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bAddItemGroupHealRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bCastrate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bCastrate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bCastrate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bCastrate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bFixedCastrate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bFixedCastrate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bFixedCastrate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bFixedCastrate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bVariableCastrate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bVariableCastrate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bVariableCastrate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bVariableCastrate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bFixedCast,") || sumCut.Contains("bonus bFixedCast ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bFixedCast,") || currentLine.Contains("bonus bFixedCast ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bSkillFixedCast") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bSkillFixedCast") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bVariableCast,") || sumCut.Contains("bonus bVariableCast ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bVariableCast,") || currentLine.Contains("bonus bVariableCast ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bSkillVariableCast") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bSkillVariableCast") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bNoCastCancel;") || sumCut.Contains("bonus bNoCastCancel ;")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bNoCastCancel;") || currentLine.Contains("bonus bNoCastCancel ;")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bNoCastCancel2") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bNoCastCancel2") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bDelayrate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bDelayrate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bSkillDelay") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bSkillDelay") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bSkillCooldown") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bSkillCooldown") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bAddEle") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bAddEle") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus3 bAddEle") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus3 bAddEle") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bMagicAddEle") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bMagicAddEle") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bSubEle") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bSubEle") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus3 bSubEle") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus3 bSubEle") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bSubDefEle") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bSubDefEle") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus2 bAddRace,") || sumCut.Contains("bonus2 bAddRace ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus2 bAddRace,") || currentLine.Contains("bonus2 bAddRace ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus2 bMagicAddRace,") || sumCut.Contains("bonus2 bMagicAddRace ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus2 bMagicAddRace,") || currentLine.Contains("bonus2 bMagicAddRace ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus2 bSubRace,") || sumCut.Contains("bonus2 bSubRace ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus2 bSubRace,") || currentLine.Contains("bonus2 bSubRace ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus2 bAddClass,") || sumCut.Contains("bonus2 bAddClass ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus2 bAddClass,") || currentLine.Contains("bonus2 bAddClass ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bMagicAddClass") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bMagicAddClass") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bSubClass") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bSubClass") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bAddSize") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bAddSize") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bMagicAddSize") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bMagicAddSize") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bSubSize") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bSubSize") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bNoSizeFix") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bNoSizeFix") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bAddDamageClass") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bAddDamageClass") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bAddMagicDamageClass") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bAddMagicDamageClass") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bAddDefMonster") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bAddDefMonster") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bAddMDefMonster") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bAddMDefMonster") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bAddRace2") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bAddRace2") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bSubRace2") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bSubRace2") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bMagicAddRace2") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bMagicAddRace2") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bSubSkill") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bSubSkill") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bAbsorbDmgMaxHP") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bAbsorbDmgMaxHP") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bAtkEle") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bAtkEle") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bDefEle") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bDefEle") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bMagicAtkEle") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bMagicAtkEle") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bDefRatioAtkRace") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bDefRatioAtkRace") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bDefRatioAtkEle") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bDefRatioAtkEle") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bDefRatioAtkClass") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bDefRatioAtkClass") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus4 bSetDefRace") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus4 bSetDefRace") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus4 bSetMDefRace") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus4 bSetMDefRace") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bIgnoreDefEle") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bIgnoreDefEle") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bIgnoreDefRace,") || sumCut.Contains("bonus bIgnoreDefRace ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bIgnoreDefRace,") || currentLine.Contains("bonus bIgnoreDefRace ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bIgnoreDefClass,") || sumCut.Contains("bonus bIgnoreDefClass ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bIgnoreDefClass,") || currentLine.Contains("bonus bIgnoreDefClass ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bIgnoreMDefRace,") || sumCut.Contains("bonus bIgnoreMDefRace ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bIgnoreMDefRace,") || currentLine.Contains("bonus bIgnoreMDefRace ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bIgnoreDefRaceRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bIgnoreDefRaceRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bIgnoreMdefRaceRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bIgnoreMdefRaceRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bIgnoreMdefRace2Rate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bIgnoreMdefRace2Rate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bIgnoreMDefEle") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bIgnoreMDefEle") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bIgnoreDefClassRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bIgnoreDefClassRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bIgnoreMdefClassRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bIgnoreMdefClassRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bExpAddRace") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bExpAddRace") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bExpAddClass") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bExpAddClass") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus2 bAddEff,") || sumCut.Contains("bonus2 bAddEff ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus2 bAddEff,") || currentLine.Contains("bonus2 bAddEff ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bAddEff2") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bAddEff2") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bAddEffWhenHit") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bAddEffWhenHit") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bResEff") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bResEff") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus3 bAddEff,") || sumCut.Contains("bonus3 bAddEff ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus3 bAddEff,") || currentLine.Contains("bonus3 bAddEff ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus4 bAddEff,") || sumCut.Contains("bonus4 bAddEff ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus4 bAddEff,") || currentLine.Contains("bonus4 bAddEff ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus3 bAddEffWhenHit") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus3 bAddEffWhenHit") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus4 bAddEffWhenHit") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus4 bAddEffWhenHit") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus3 bAddEffOnSkill") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus3 bAddEffOnSkill") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus4 bAddEffOnSkill") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus4 bAddEffOnSkill") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus5 bAddEffOnSkill") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus5 bAddEffOnSkill") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bComaClass") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bComaClass") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bComaRace") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bComaRace") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bWeaponComaEle") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bWeaponComaEle") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bWeaponComaClass") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bWeaponComaClass") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bWeaponComaRace") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bWeaponComaRace") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus3 bAutoSpell,") || sumCut.Contains("bonus3 bAutoSpell ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus3 bAutoSpell,") || currentLine.Contains("bonus3 bAutoSpell ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus3 bAutoSpellWhenHit") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus3 bAutoSpellWhenHit") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus4 bAutoSpell,") || sumCut.Contains("bonus4 bAutoSpell ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus4 bAutoSpell,") || currentLine.Contains("bonus4 bAutoSpell ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus5 bAutoSpell,") || sumCut.Contains("bonus5 bAutoSpell ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus5 bAutoSpell,") || currentLine.Contains("bonus5 bAutoSpell ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus4 bAutoSpellWhenHit") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus4 bAutoSpellWhenHit") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus5 bAutoSpellWhenHit") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus5 bAutoSpellWhenHit") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus4 bAutoSpellOnSkill") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus4 bAutoSpellOnSkill") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus5 bAutoSpellOnSkill") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus5 bAutoSpellOnSkill") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bHPDrainValue") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bHPDrainValue") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bHPDrainValueRace") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bHPDrainValueRace") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bHpDrainValueClass") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bHpDrainValueClass") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bSPDrainValue") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bSPDrainValue") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bSPDrainValueRace") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bSPDrainValueRace") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bSpDrainValueClass") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bSpDrainValueClass") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bHPDrainRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bHPDrainRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bSPDrainRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bSPDrainRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bHPVanishRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bHPVanishRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus3 bHPVanishRaceRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus3 bHPVanishRaceRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus3 bHPVanishRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus3 bHPVanishRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bSPVanishRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bSPVanishRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus3 bSPVanishRaceRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus3 bSPVanishRaceRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus3 bSPVanishRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus3 bSPVanishRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus3 bStateNoRecoverRace") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus3 bStateNoRecoverRace") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bHPGainValue") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bHPGainValue") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bSPGainValue") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bSPGainValue") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bSPGainRace") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bSPGainRace") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bLongHPGainValue") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bLongHPGainValue") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bLongSPGainValue") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bLongSPGainValue") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bMagicHPGainValue") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bMagicHPGainValue") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bMagicSPGainValue") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bMagicSPGainValue") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bShortWeaponDamageReturn") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bShortWeaponDamageReturn") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bLongWeaponDamageReturn") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bLongWeaponDamageReturn") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bMagicDamageReturn") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bMagicDamageReturn") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bUnstripableWeapon") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bUnstripableWeapon") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bUnstripableArmor") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bUnstripableArmor") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bUnstripableHelm") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bUnstripableHelm") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bUnstripableShield") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bUnstripableShield") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bUnstripable;") || sumCut.Contains("bonus bUnstripable ;")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bUnstripable;") || currentLine.Contains("bonus bUnstripable ;")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bUnbreakableGarment") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bUnbreakableGarment") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bUnbreakableWeapon") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bUnbreakableWeapon") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bUnbreakableArmor") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bUnbreakableArmor") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bUnbreakableHelm") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bUnbreakableHelm") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bUnbreakableShield") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bUnbreakableShield") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bUnbreakableShoes") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bUnbreakableShoes") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus bUnbreakable,") || sumCut.Contains("bonus bUnbreakable ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus bUnbreakable,") || currentLine.Contains("bonus bUnbreakable ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bBreakWeaponRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bBreakWeaponRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bBreakArmorRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bBreakArmorRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bDropAddRace") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bDropAddRace") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bDropAddClass") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bDropAddClass") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus3 bAddMonsterIdDropItem") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus3 bAddMonsterIdDropItem") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus2 bAddMonsterDropItem,") || sumCut.Contains("bonus2 bAddMonsterDropItem ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus2 bAddMonsterDropItem,") || currentLine.Contains("bonus2 bAddMonsterDropItem ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus3 bAddMonsterDropItem,") || sumCut.Contains("bonus3 bAddMonsterDropItem ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus3 bAddMonsterDropItem,") || currentLine.Contains("bonus3 bAddMonsterDropItem ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if ((sumCut.Contains("bonus3 bAddClassDropItem,") || sumCut.Contains("bonus3 bAddClassDropItem ,")) && !sumCut.Contains(";"))
+            else if ((currentLine.Contains("bonus3 bAddClassDropItem,") || currentLine.Contains("bonus3 bAddClassDropItem ,")) && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i, true);
-                goto L_Redo;
+                MergeItemScripts(lines, i, true);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bAddMonsterDropItemGroup") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bAddMonsterDropItemGroup") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus3 bAddMonsterDropItemGroup") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus3 bAddMonsterDropItemGroup") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus3 bAddClassDropItemGroup") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus3 bAddClassDropItemGroup") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bGetZenyNum") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bGetZenyNum") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bAddGetZenyNum") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bAddGetZenyNum") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bDoubleRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bDoubleRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bDoubleAddRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bDoubleAddRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bSplashRange") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bSplashRange") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bSplashAddRange") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bSplashAddRange") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus2 bAddSkillBlow") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus2 bAddSkillBlow") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bNoKnockback") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bNoKnockback") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bNoGemStone") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bNoGemStone") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bIntravision") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bIntravision") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bPerfectHide") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bPerfectHide") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bRestartFullRecover") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bRestartFullRecover") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bClassChange") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bClassChange") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bAddStealRate") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bAddStealRate") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bNoMadoFuel") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bNoMadoFuel") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
-            else if (sumCut.Contains("bonus bNoWalkDelay") && !sumCut.Contains(";"))
+            else if (currentLine.Contains("bonus bNoWalkDelay") && !currentLine.Contains(";"))
             {
-                MergeItemScripts(allCut, i);
-                goto L_Redo;
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
         }
         #endregion
 
-        for (int i = 0; i < allCut.Count; i++)
-            Log("<color=white>allCut[" + i + "]: " + allCut[i] + "</color>");
-
         #region Replace temporary variables
-        for (int i = 0; i < allCut.Count; i++)
+        for (int i = 0; i < lines.Count; i++)
         {
-            //Log("<color=#F3FFAE>allCut[" + i + "](a): " + allCut[i] + "</color>");
+            //Log("allCut[" + i + "](a): " + lines[i], true, "#F3FFAE");
+
             #region Scripts
-            string findTempVar = allCut[i];
+            string findTempVar = lines[i];
             if (findTempVar.Contains(".@"))
             {
                 // +=, -=, *=, /=
@@ -2057,7 +2331,7 @@ public class ItemDbScriptData
                             isUseAkaTempVar = true;
                         }
                     }
-                    allCut[i] = "[TEMP_VAR]" + findTempVar;
+                    lines[i] = "[TEMP_VAR]" + findTempVar;
                 }
                 // ++, --
                 else if (findTempVar.Contains("++") || findTempVar.Contains("--"))
@@ -2070,9 +2344,9 @@ public class ItemDbScriptData
                             isUseAkaTempVar = true;
                         }
                     }
-                    findTempVar = findTempVar.Replace("++", "+1");
-                    findTempVar = findTempVar.Replace("--", "-1");
-                    allCut[i] = "[TEMP_VAR]" + findTempVar;
+                    findTempVar = findTempVar.Replace("++", "เพิ่ม 1");
+                    findTempVar = findTempVar.Replace("--", "ลด 1");
+                    lines[i] = "[TEMP_VAR]" + findTempVar;
                 }
                 else
                 {
@@ -2082,45 +2356,52 @@ public class ItemDbScriptData
                         Log(" tempVariables[" + j + "].txtDefault: " + tempVariables[j].txtDefault);
                         if (findTempVar == tempVariables[j].txtDefault && !findTempVar.Contains("[DONT_DECLARE]"))
                         {
-                            allCut[i] = "[TEMP_VAR_DECLARE]" + tempVariables[j].aka + "꞉ " + tempVariables[j].value;
+                            lines[i] = "[TEMP_VAR_DECLARE]" + tempVariables[j].aka + "꞉ " + tempVariables[j].value;
                             break;
                         }
                         else if (findTempVar.Contains("[DONT_DECLARE]"))
-                            allCut[i] = allCut[i].Replace("[DONT_DECLARE]", "");
+                            lines[i] = lines[i].Replace("[DONT_DECLARE]", "");
                     }
                 }
             }
             #endregion
-            //Log("<color=#F3FFAE>allCut[" + i + "](b): " + allCut[i] + "</color>");
+
+            Log("allCut[" + i + "](b): " + lines[i], true, "#F3FFAE");
         }
         #endregion
 
-        Log("<color=yellow>Start convert item bonus</color>");
-
-        for (int i = 0; i < allCut.Count; i++)
+        for (int i = 0; i < lines.Count; i++)
         {
-            Log("allCut[" + i + "]: " + allCut[i]);
+            Log("allCut[" + i + "]: " + lines[i]);
 
             char sumFirstChar = ' ';
-            if (!string.IsNullOrEmpty(allCut[i]))
-                sumFirstChar = allCut[i][0];
+            if (!string.IsNullOrEmpty(lines[i]))
+                sumFirstChar = lines[i][0];
 
+            if (lines[i].Contains("TXT_NO_END_IF_BELOW"))
+            {
+                lines[i] = lines[i].Replace("[TXT_NO_END_IF_BELOW]", "");
+                lines[i] = lines[i].Replace("[TXT_NO_END_IF_BELOW", "");
+                lines[i] = lines[i].Replace("TXT_NO_END_IF_BELOW}", "");
+                lines[i] = lines[i].Replace("TXT_NO_END_IF_BELOW", "");
+                if (i + 1 < lines.Count && lines[i + 1].Contains("[TXT_END_IF]"))
+                    lines[i + 1] = "";
+            }
+            lines[i] = lines[i].Replace("[END_MERGE]", "");
+            lines[i] = lines[i].Replace("[/END_MERGE]", "");
+            lines[i] = lines[i].Replace("bonus5", "bonus5 ");
+            lines[i] = lines[i].Replace("bonus4", "bonus4 ");
+            lines[i] = lines[i].Replace("bonus3", "bonus3 ");
+            lines[i] = lines[i].Replace("bonus2", "bonus2 ");
+            lines[i] = lines[i].Replace("bonus", "bonus ");
+            lines[i] = lines[i].Replace("bonus 5", "bonus5");
+            lines[i] = lines[i].Replace("bonus 4", "bonus4");
+            lines[i] = lines[i].Replace("bonus 3", "bonus3");
+            lines[i] = lines[i].Replace("bonus 2", "bonus2");
+            lines[i] = lines[i].Replace("heal", "heal ");
+            lines[i] = lines[i].Replace("  ", " ");
 
-            allCut[i] = allCut[i].Replace("[END_MERGE]", "");
-            allCut[i] = allCut[i].Replace("[/END_MERGE]", "");
-            allCut[i] = allCut[i].Replace("bonus5", "bonus5 ");
-            allCut[i] = allCut[i].Replace("bonus4", "bonus4 ");
-            allCut[i] = allCut[i].Replace("bonus3", "bonus3 ");
-            allCut[i] = allCut[i].Replace("bonus2", "bonus2 ");
-            allCut[i] = allCut[i].Replace("bonus", "bonus ");
-            allCut[i] = allCut[i].Replace("bonus 5", "bonus5");
-            allCut[i] = allCut[i].Replace("bonus 4", "bonus4");
-            allCut[i] = allCut[i].Replace("bonus 3", "bonus3");
-            allCut[i] = allCut[i].Replace("bonus 2", "bonus2");
-            allCut[i] = allCut[i].Replace("heal", "heal ");
-            allCut[i] = allCut[i].Replace("  ", " ");
-
-            data = allCut[i];
+            data = lines[i];
 
             string functionName = "";
             #region if
@@ -2149,7 +2430,7 @@ public class ItemDbScriptData
                             break;
                         string toConvert = sub.Substring(0, declareAt2 + 1);
                         Log("bonus_script >> toConvert: " + toConvert);
-                        string convert = GetDescription(toConvert, true);
+                        string convert = GetScriptsDescription(toConvert, true);
                         convert = convert.Replace("\"", " ");
                         if (convert.Length > 0 && convert[convert.Length - 1] == ',')
                             convert = convert.Substring(0, convert.Length - 1);
@@ -2176,7 +2457,7 @@ public class ItemDbScriptData
                             break;
                         string toConvert = sub.Substring(0, declareAt2 + 1);
                         Log("autobonus >> toConvert: " + toConvert);
-                        string convert = GetDescription(toConvert, true);
+                        string convert = GetScriptsDescription(toConvert, true);
                         convert = convert.Replace("\"", " ");
                         if (convert.Length > 0 && convert[convert.Length - 1] == ',')
                             convert = convert.Substring(0, convert.Length - 1);
@@ -2203,7 +2484,7 @@ public class ItemDbScriptData
                             break;
                         string toConvert = sub.Substring(0, declareAt2 + 1);
                         Log("autobonus >> itemheal#1: " + toConvert);
-                        string convert = GetDescription(toConvert, true);
+                        string convert = GetScriptsDescription(toConvert, true);
                         convert = convert.Replace("\"", " ");
                         if (convert.Length > 0 && convert[convert.Length - 1] == ',')
                             convert = convert.Substring(0, convert.Length - 1);
@@ -2230,7 +2511,7 @@ public class ItemDbScriptData
                             break;
                         string toConvert = sub.Substring(0, declareAt2 + 1);
                         Log("autobonus >> percentheal#1: " + toConvert);
-                        string convert = GetDescription(toConvert, true);
+                        string convert = GetScriptsDescription(toConvert, true);
                         convert = convert.Replace("\"", " ");
                         if (convert.Length > 0 && convert[convert.Length - 1] == ',')
                             convert = convert.Substring(0, convert.Length - 1);
@@ -2257,7 +2538,7 @@ public class ItemDbScriptData
                             break;
                         string toConvert = sub.Substring(0, declareAt2 + 1);
                         Log("autobonus >> heal#1: " + toConvert);
-                        string convert = GetDescription(toConvert, true);
+                        string convert = GetScriptsDescription(toConvert, true);
                         convert = convert.Replace("\"", " ");
                         if (convert.Length > 0 && convert[convert.Length - 1] == ',')
                             convert = convert.Substring(0, convert.Length - 1);
@@ -2284,7 +2565,7 @@ public class ItemDbScriptData
                             break;
                         string toConvert = sub.Substring(0, declareAt2 + 1);
                         Log("autobonus >> sc_start#1: " + toConvert);
-                        string convert = GetDescription(toConvert, true);
+                        string convert = GetScriptsDescription(toConvert, true);
                         convert = convert.Replace("\"", " ");
                         if (convert.Length > 0 && convert[convert.Length - 1] == ',')
                             convert = convert.Substring(0, convert.Length - 1);
@@ -2311,7 +2592,7 @@ public class ItemDbScriptData
                             break;
                         string toConvert = sub.Substring(0, declareAt2 + 1);
                         Log("autobonus >> sc_end#1: " + toConvert);
-                        string convert = GetDescription(toConvert, true);
+                        string convert = GetScriptsDescription(toConvert, true);
                         convert = convert.Replace("\"", " ");
                         if (convert.Length > 0 && convert[convert.Length - 1] == ',')
                             convert = convert.Substring(0, convert.Length - 1);
@@ -2338,7 +2619,7 @@ public class ItemDbScriptData
                             break;
                         string toConvert = sub.Substring(0, declareAt2 + 1);
                         Log("autobonus >> bonus#1: " + toConvert);
-                        string convert = GetDescription(toConvert, true);
+                        string convert = GetScriptsDescription(toConvert, true);
                         convert = convert.Replace("\"", " ");
                         if (convert.Length > 0 && convert[convert.Length - 1] == ',')
                             convert = convert.Substring(0, convert.Length - 1);
@@ -7554,10 +7835,10 @@ public class ItemDbScriptData
                 data = data.Replace("[TEMP_VAR]", "");
                 data = GetValue(data, -1, true);
                 data = data.Replace("ค่าที่", "ค่าที่ ");
-                data = data.Replace("+=", " + ");
-                data = data.Replace("-=", " - ");
-                data = data.Replace("*=", " * ");
-                data = data.Replace("/=", " / ");
+                data = data.Replace("+=", " เพิ่ม ");
+                data = data.Replace("-=", " ลด ");
+                data = data.Replace("*=", " คูณ ");
+                data = data.Replace("/=", " หาร ");
                 sum += AddDescription(sum, data);
             }
             #endregion
@@ -7568,10 +7849,10 @@ public class ItemDbScriptData
                 data = data.Replace("[TEMP_VAR_DECLARE]", "");
                 data = GetValue(data, -1, true, true);
                 data = data.Replace("ค่าที่", "ค่าที่ ");
-                data = data.Replace("+=", " + ");
-                data = data.Replace("-=", " - ");
-                data = data.Replace("*=", " * ");
-                data = data.Replace("/=", " / ");
+                data = data.Replace("+=", " เพิ่ม ");
+                data = data.Replace("-=", " ลด ");
+                data = data.Replace("*=", " คูณ ");
+                data = data.Replace("/=", " หาร ");
                 data = data.Replace(":", ": ");
                 data = data.Replace("꞉", "꞉ ");
                 sum += AddDescription(sum, "● " + data);
@@ -7585,7 +7866,7 @@ public class ItemDbScriptData
                 {
                     if ((i - 1) < 0)
                         break;
-                    if (allCut[i - 1] == tempVariables[j].toCheckMatching)
+                    if (lines[i - 1] == tempVariables[j].toCheckMatching)
                     {
                         string tempVarValue = tempVariables[j].value;
                         tempVarValue = tempVarValue.Replace(";", "");
@@ -7626,7 +7907,7 @@ public class ItemDbScriptData
                     break;
                 string toConvert = sub.Substring(0, declareAt2 + 1);
                 Log("GetBonusScript >> itemheal#1: " + toConvert);
-                string convert = GetDescription(toConvert, true);
+                string convert = GetScriptsDescription(toConvert, true);
                 convert = convert.Replace("\"", " ");
                 if (convert.Length > 0 && convert[convert.Length - 1] == ',')
                     convert = convert.Substring(0, convert.Length - 1);
@@ -7653,7 +7934,7 @@ public class ItemDbScriptData
                     break;
                 string toConvert = sub.Substring(0, declareAt2 + 1);
                 Log("GetBonusScript >> percentheal#1: " + toConvert);
-                string convert = GetDescription(toConvert, true);
+                string convert = GetScriptsDescription(toConvert, true);
                 convert = convert.Replace("\"", " ");
                 if (convert.Length > 0 && convert[convert.Length - 1] == ',')
                     convert = convert.Substring(0, convert.Length - 1);
@@ -7680,7 +7961,7 @@ public class ItemDbScriptData
                     break;
                 string toConvert = sub.Substring(0, declareAt2 + 1);
                 Log("GetBonusScript >> heal#1: " + toConvert);
-                string convert = GetDescription(toConvert, true);
+                string convert = GetScriptsDescription(toConvert, true);
                 convert = convert.Replace("\"", " ");
                 if (convert.Length > 0 && convert[convert.Length - 1] == ',')
                     convert = convert.Substring(0, convert.Length - 1);
@@ -7707,7 +7988,7 @@ public class ItemDbScriptData
                     break;
                 string toConvert = sub.Substring(0, declareAt2 + 1);
                 Log("GetBonusScript >> sc_start#1: " + toConvert);
-                string convert = GetDescription(toConvert, true);
+                string convert = GetScriptsDescription(toConvert, true);
                 convert = convert.Replace("\"", " ");
                 if (convert.Length > 0 && convert[convert.Length - 1] == ',')
                     convert = convert.Substring(0, convert.Length - 1);
@@ -7734,7 +8015,7 @@ public class ItemDbScriptData
                     break;
                 string toConvert = sub.Substring(0, declareAt2 + 1);
                 Log("GetBonusScript >> sc_end#1: " + toConvert);
-                string convert = GetDescription(toConvert, true);
+                string convert = GetScriptsDescription(toConvert, true);
                 convert = convert.Replace("\"", " ");
                 if (convert.Length > 0 && convert[convert.Length - 1] == ',')
                     convert = convert.Substring(0, convert.Length - 1);
@@ -7761,7 +8042,7 @@ public class ItemDbScriptData
                     break;
                 string toConvert = sub.Substring(0, declareAt2 + 1);
                 Log("GetBonusScript >> bonus#1: " + toConvert);
-                string convert = GetDescription(toConvert, true);
+                string convert = GetScriptsDescription(toConvert, true);
                 convert = convert.Replace("\"", " ");
                 if (convert.Length > 0 && convert[convert.Length - 1] == ',')
                     convert = convert.Substring(0, convert.Length - 1);
@@ -7855,7 +8136,7 @@ public class ItemDbScriptData
         allCut.RemoveAt(i + 1);
     }
 
-    bool CheckContainTemporaryVariables(string txt, List<string> allCut, int mergeIndex, bool isNotAddCheckMatchForTempVar = false)
+    bool IsContainsTemporaryVariables(string txt, List<string> allCut, int mergeIndex, bool isNotAddCheckMatching = false)
     {
         if (txt.Contains(".@"))
         {
@@ -7864,14 +8145,14 @@ public class ItemDbScriptData
                 MergeItemScripts(allCut, mergeIndex);
                 return true;
             }
-            else if (!isNotAddCheckMatchForTempVar)
+            else if (!isNotAddCheckMatching)
                 AddTemporaryVariable(txt, allCut[mergeIndex - 1]);
             else
                 AddTemporaryVariable(txt);
         }
         return false;
     }
-    void CheckContainTemporaryVariables(string txt)
+    void SearchForTemporaryVariables(string txt)
     {
         if (txt.Contains(".@") && txt.Contains(";"))
             AddTemporaryVariable(txt + "[DONT_DECLARE]", null, true);
@@ -7883,16 +8164,9 @@ public class ItemDbScriptData
     /// <param name="txt"></param>
     void AddTemporaryVariable(string txt, string toCheckMatching = null, bool isFromAutoBonusOneLine = false)
     {
-        //string functionName = "AddTemporaryVariable";
-
-        //Log(functionName + ": " + txt);
-
         TempVariables newTempVariables = new TempVariables();
 
         int declareAt = txt.IndexOf("=");
-
-        //Log("declareAt: " + declareAt);
-        //Log("sumCut.Length: " + sumCut.Length);
 
         if (declareAt <= -1 || txt.Length < declareAt)
             return;
@@ -7913,7 +8187,6 @@ public class ItemDbScriptData
             }
         }
         string txtLeftSide = txt.Substring(startCut, declareAt - startCut);
-        //Log("txtLeftSide: " + txtLeftSide);
         string txtRightSide = txt.Substring(declareAt + 1);
         int semiColonAt = txtRightSide.IndexOf(";");
         txtRightSide = txtRightSide.Substring(0, semiColonAt);
@@ -7931,22 +8204,32 @@ public class ItemDbScriptData
             return;
 
         bool isFound = false;
+        string sameAka = null;
         for (int j = 0; j < tempVariables.Count; j++)
         {
             if (tempVariables[j].variableName == newTempVariables.variableName)
             {
-                isFound = true;
+                if (tempVariables[j].txtDefault != txt)
+                {
+                    isFound = false;
+                    sameAka = tempVariables[j].aka;
+                }
+                else
+                    isFound = true;
                 break;
             }
         }
         if (!isFound)
         {
             newTempVariables.aka = "ค่าที่ " + (tempVariables.Count + 1);
+            if (!string.IsNullOrEmpty(sameAka))
+                newTempVariables.aka = sameAka;
             newTempVariables.txtDefault = txt;
-            //Log("newTempVariables.variableName: " + newTempVariables.variableName);
-            //Log("newTempVariables.value: " + newTempVariables.value);
-            //Log("newTempVariables.aka: " + newTempVariables.aka);
-            //Log("newTempVariables.txtDefault: " + newTempVariables.txtDefault);
+            Log("New temporary variables added"
+                + " | variableName: " + newTempVariables.variableName
+                + " | value: " + newTempVariables.value
+                + " | aka: " + newTempVariables.aka
+                + " | txtDefault: " + newTempVariables.txtDefault, false, "#FE93C7");
             tempVariables.Add(newTempVariables);
         }
     }
@@ -10584,9 +10867,19 @@ public class ItemDbScriptData
             return "\n\"" + toAdd + "\",";
     }
 
-    void Log(object obj)
+    void Log(object obj, bool isFullLog = false, string color = null)
     {
+        bool isFullLogOn = true;
+
+        if (isFullLog && !isFullLogOn)
+            return;
+
         if (!Application.isPlaying)
-            Debug.Log(obj);
+        {
+            if (!string.IsNullOrEmpty(color))
+                Debug.Log("<color=" + color + ">" + obj + "</color>");
+            else
+                Debug.Log(obj);
+        }
     }
 }

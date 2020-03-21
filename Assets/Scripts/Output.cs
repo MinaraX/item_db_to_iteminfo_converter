@@ -197,13 +197,8 @@ public class Output : ScriptableObject
     /// Convert string to item info database
     /// </summary>
     /// <param name="input"></param>
-    void ConvertCurrentTargetArrayToItemInfo(string input = null, bool isNoScript = false)
+    void ConvertCurrentTargetArrayToItemInfo(string input = null, bool isExcludeItemScripts = false)
     {
-        if (string.IsNullOrEmpty(input))
-            Log("ConvertCurrentTargetArrayToItemInfo: Start");
-        else
-            Log("DebugConvertStringToItemInfo: Start");
-
         currentItemDbData = new List<string>();
         if (string.IsNullOrEmpty(input))
         {
@@ -284,13 +279,13 @@ public class Output : ScriptableObject
 
         if (Application.isPlaying)
         {
-            if (!isNoScript)
+            if (!isExcludeItemScripts)
                 m_currentItemDbs.Add(currentItemDb);
             else
                 m_currentItemWithoutScriptDbs.Add(currentItemDb);
         }
 
-        if (!isNoScript)
+        if (!isExcludeItemScripts)
             m_currentOutput += "[" + currentItemDb.id + "] = {"
                 + "\nunidentifiedDisplayName = \"" + GetName() + "\","
                 + "\nunidentifiedResourceName = \"" + GetResourceName() + "\","
@@ -304,11 +299,6 @@ public class Output : ScriptableObject
                 + "\nClassNum = " + GetClassNum() + "\n},\n";
 
         Log("Success convert item_db id: " + currentItemDbData[0]);
-
-        if (string.IsNullOrEmpty(input))
-            Log("ConvertCurrentTargetArrayToItemInfo: Done");
-        else
-            Log("DebugConvertStringToItemInfo: Done");
     }
 
     List<string> ConvertItemDbToListWithoutScript(string data)
@@ -322,15 +312,15 @@ public class Output : ScriptableObject
     void FetchItemDbScript(string data)
     {
         string sum = data;
-        string sumScriptPath = data;
+        string itemScript = data;
         int itemId = 0;
 
         int scriptStartAt = sum.IndexOf("{");
         sum = sum.Substring(0, scriptStartAt - 1);
-        sumScriptPath = sumScriptPath.Substring(scriptStartAt);
-        string sumSaveScriptPath = sumScriptPath;
-        string sumSaveScriptPath2 = sumScriptPath;
-        string sumSaveScriptPath3 = sumScriptPath;
+        itemScript = itemScript.Substring(scriptStartAt);
+        string sumSaveScriptPath = itemScript;
+        string sumSaveScriptPath2 = itemScript;
+        string sumSaveScriptPath3 = itemScript;
 
         List<string> temp_item_db = new List<string>(sum.Split(','));
         itemId = int.Parse(temp_item_db[0]);
@@ -338,38 +328,36 @@ public class Output : ScriptableObject
         ItemDbScriptData itemDbScriptData = new ItemDbScriptData();
         itemDbScriptData.id = itemId;
 
-        Log("sumScriptPath: " + sumScriptPath);
+        Log("itemScript:\n" + itemScript);
 
-        int onEquipStartAt = sumScriptPath.IndexOf(",{");
-        string sumScript = sumSaveScriptPath.Substring(0, onEquipStartAt);
-        Log("sumScript: " + sumScript);
+        int onEquipStartAt = itemScript.IndexOf(",{");
+        string script = sumSaveScriptPath.Substring(0, onEquipStartAt);
+        Log("script:\n" + script);
 
-        sumScriptPath = sumScriptPath.Substring(onEquipStartAt + 1);
-        Log("sumScriptPath: " + sumScriptPath);
+        itemScript = itemScript.Substring(onEquipStartAt + 1);
 
-        int onUnequipStartAt = sumScriptPath.IndexOf(",{");
-        string sumOnEquipScript = sumSaveScriptPath2.Substring(onEquipStartAt + 1, onUnequipStartAt);
-        Log("sumOnEquipScript: " + sumOnEquipScript);
+        int onUnequipStartAt = itemScript.IndexOf(",{");
+        string onEquipScript = sumSaveScriptPath2.Substring(onEquipStartAt + 1, onUnequipStartAt);
+        Log("onEquipScript:\n" + onEquipScript);
 
-        int onUnequipEndAt = sumScriptPath.Length;
-        sumScriptPath = sumScriptPath.Substring(onUnequipStartAt + 1);
-        Log("sumScriptPath: " + sumScriptPath);
+        int onUnequipEndAt = itemScript.Length;
+        itemScript = itemScript.Substring(onUnequipStartAt + 1);
 
-        string sumOnUnequipScript = sumScriptPath;
-        Log("sumOnUnequipScript: " + sumOnUnequipScript);
+        string onUnequipScript = itemScript;
+        Log("onUnequipScript:\n" + onUnequipScript);
 
-        sumScript = RemoveComment(sumScript);
-        sumOnEquipScript = RemoveComment(sumOnEquipScript);
-        sumOnUnequipScript = RemoveComment(sumOnUnequipScript);
+        script = RemoveComment(script);
+        onEquipScript = RemoveComment(onEquipScript);
+        onUnequipScript = RemoveComment(onUnequipScript);
 
         //Script
-        itemDbScriptData.script = sumScript;
+        itemDbScriptData.script = script;
 
         //On equip script
-        itemDbScriptData.onEquipScript = sumOnEquipScript;
+        itemDbScriptData.onEquipScript = onEquipScript;
 
         //On unequip script
-        itemDbScriptData.onUnequipScript = sumOnUnequipScript;
+        itemDbScriptData.onUnequipScript = onUnequipScript;
 
         m_currentItemScriptDatas.Add(itemDbScriptData);
     }
@@ -385,7 +373,7 @@ public class Output : ScriptableObject
             sum = sum.Substring(0, commentStartAt) + sum.Substring(commentEndAt + 2);
         }
 
-        Log("RemoveComment: " + sum);
+        Log("Comment removed:\n" + sum);
 
         return sum;
     }
