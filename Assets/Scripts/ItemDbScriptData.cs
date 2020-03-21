@@ -3124,12 +3124,52 @@ public class ItemDbScriptData
             {
                 string sumCut = CutFunctionName(data, functionName, 1);
 
+                //Special function
+                bool isSpecialFunction = false;
+                List<string> allItem = new List<string>();
+                if (sumCut.Contains("callfunc"))
+                {
+                    isSpecialFunction = true;
+
+                    sumCut = sumCut.Replace("callfunc", "");
+
+                    //Split and save it for later (Don't forget to replace item id to 0)
+                    if (sumCut.Contains("\"F_Rand\""))
+                    {
+                        sumCut = sumCut.Replace("\"F_Rand\"", "");
+
+                        //Find first ( and last and extract it out
+                        int firstCircleIndex = sumCut.IndexOf("(");
+                        int firstCircleEndIndex = sumCut.IndexOf(")");
+                        string cut = sumCut.Substring(firstCircleIndex + 1);
+                        int cutCircleEndAt = cut.IndexOf(")");
+                        cut = cut.Substring(0, cutCircleEndAt);
+                        allItem = StringSplit.GetStringSplit(cut, ',');
+                        sumCut = sumCut.Substring(0, firstCircleIndex) + "0" + sumCut.Substring(firstCircleEndIndex + 1);
+                    }
+                }
+
                 List<string> allParam = GetAllParamerters(sumCut);
 
+                string param1 = GetValue(allParam[0], 1, true);
                 string param2 = GetValue(allParam[1], 2);
 
-                if (isHadParam2)
-                    sum += AddDescription(sum, "รับ " + GetItemName(allParam[0]) + " จำนวน " + param2 + " ชิ้น");
+                if (isHadParam1 && isHadParam2)
+                {
+                    if (isSpecialFunction)
+                    {
+                        string allItemName = null;
+                        for (int j = 0; j < allItem.Count; j++)
+                        {
+                            if (!string.IsNullOrEmpty(allItem[j]) && !string.IsNullOrWhiteSpace(allItem[j]))
+                                allItemName = allItemName + ", " + GetItemName(allItem[j]);
+                        }
+                        allItemName = allItemName.Substring(2);
+                        sum += AddDescription(sum, "รับชิ้นใดชิ้นนึงจาก (" + allItemName + ") จำนวน " + param2 + " ชิ้น");
+                    }
+                    else
+                        sum += AddDescription(sum, "รับ " + GetItemName(allParam[0]) + " จำนวน " + param2 + " ชิ้น");
+                }
 
                 data = "";
             }
