@@ -3148,6 +3148,21 @@ public class ItemDbScriptData
                         sumCut = sumCut.Substring(0, firstCircleIndex) + "0" + sumCut.Substring(firstCircleEndIndex + 1);
                     }
                 }
+                else if (sumCut.Contains("rand"))
+                {
+                    isSpecialFunction = true;
+
+                    sumCut = sumCut.Replace("rand", "");
+
+                    //Find first ( and last and extract it out
+                    int firstCircleIndex = sumCut.IndexOf("(");
+                    int firstCircleEndIndex = sumCut.IndexOf(")");
+                    string cut = sumCut.Substring(firstCircleIndex + 1);
+                    int cutCircleEndAt = cut.IndexOf(")");
+                    cut = cut.Substring(0, cutCircleEndAt);
+                    allItem = StringSplit.GetStringSplit(cut, ',');
+                    sumCut = sumCut.Substring(0, firstCircleIndex) + "0" + sumCut.Substring(firstCircleEndIndex + 1);
+                }
 
                 List<string> allParam = GetAllParamerters(sumCut);
 
