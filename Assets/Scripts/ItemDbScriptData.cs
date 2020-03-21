@@ -281,6 +281,8 @@ public class ItemDbScriptData
                 }
             }
 
+            lines[i] = lines[i].Replace("end;", "[TXT_END];");
+
             Log("Lines #" + i + ":\n" + lines[i], true, "#4FEDA2");
         }
         #endregion
@@ -337,8 +339,6 @@ public class ItemDbScriptData
                 {
                     Log("nextLine not contains {} and currentLine not contains ;", true);
 
-                    lines[i] = lines[i] + ";";
-
                     //Remove this line when next 2 arrays is empty
                     if (i + 1 < lines.Count && (string.IsNullOrEmpty(nextLine) || string.IsNullOrWhiteSpace(nextLine)))
                     {
@@ -349,11 +349,34 @@ public class ItemDbScriptData
                         }
                     }
 
+                    //Merge next line first
+                    if (!nextLine.Contains(";") && !string.IsNullOrEmpty(nextLine))
+                    {
+                        MergeItemScripts(lines, i + 1);
+                        goto L_MergeLines;
+                    }
+                    else if (string.IsNullOrEmpty(nextLine))
+                    {
+                        lines[i] = "";
+                        goto L_MergeLines;
+                    }
+
                     int loop = 1;
                     while (!lines[i + loop].Contains(";"))
                         loop++;
 
-                    lines.Insert(i + 2 + loop, "[TXT_END_IF];");
+                    lines[i] = lines[i] + ";";
+
+                    bool isNoAdd = false;
+                    int indexToFindElse = i + loop + 1;
+                    if (indexToFindElse < lines.Count)
+                    {
+                        if (lines[indexToFindElse].Contains("else"))
+                            isNoAdd = true;
+                    }
+
+                    if (!isNoAdd)
+                        lines.Insert(i + 2 + loop, "[TXT_END_IF];");
                 }
                 else if (!nextLine.Contains("{") && !nextLine.Contains("}") && currentLine.Contains(";"))
                 {
@@ -722,11 +745,34 @@ public class ItemDbScriptData
                         }
                     }
 
+                    //Merge next line first
+                    if (!nextLine.Contains(";") && !string.IsNullOrEmpty(nextLine))
+                    {
+                        MergeItemScripts(lines, i + 1);
+                        goto L_MergeLines;
+                    }
+                    else if (string.IsNullOrEmpty(nextLine))
+                    {
+                        lines[i] = "";
+                        goto L_MergeLines;
+                    }
+
                     int loop = 1;
                     while (!lines[i + loop].Contains(";"))
                         loop++;
 
-                    lines.Insert(i + 2 + loop, "[TXT_END_ELSE];");
+                    lines[i] = lines[i] + ";";
+
+                    bool isNoAdd = false;
+                    int indexToFindElse = i + loop + 1;
+                    if (indexToFindElse < lines.Count)
+                    {
+                        if (lines[indexToFindElse].Contains("else"))
+                            isNoAdd = true;
+                    }
+
+                    if (!isNoAdd)
+                        lines.Insert(i + 2 + loop, "[TXT_END_ELSE];");
                 }
                 else if (!nextLine.Contains("{") && !nextLine.Contains("}") && currentLine.Contains(";"))
                 {
@@ -2340,6 +2386,11 @@ public class ItemDbScriptData
                 MergeItemScripts(lines, i);
                 goto L_MergeLines;
             }
+            else if (currentLine.Contains("getitem") && !currentLine.Contains(";"))
+            {
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
+            }
         }
         #endregion
 
@@ -2750,6 +2801,11 @@ public class ItemDbScriptData
             functionName = "[TXT_END_IF]";
             if (data.Contains(functionName))
                 sum += AddDescription(sum, "[สิ้นสุดหากตรงเงื่อนไข]");
+            #endregion 
+            #region [TXT_END]
+            functionName = "[TXT_END]";
+            if (data.Contains(functionName))
+                sum += AddDescription(sum, "[ว่างเปล่า]");
             #endregion
 
             #region autobonus3
@@ -3029,6 +3085,22 @@ public class ItemDbScriptData
             }
             #endregion
 
+            #region getitem
+            functionName = "getitem";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param2 = GetValue(allParam[1], 2);
+
+                if (isHadParam2)
+                    sum += AddDescription(sum, "รับ " + GetItemName(allParam[0]) + " จำนวน " + param2 + " ชิ้น");
+
+                data = "";
+            }
+            #endregion
             #region itemheal
             functionName = "itemheal";
             if (data.Contains(functionName))
