@@ -2732,6 +2732,39 @@ public class ItemDbScriptData
                 data = data.Replace(")", "");
                 data = data.Replace(";", "");
 
+                data = data.Replace("W_FIST", " ไม่มีอาวุธ ");
+                data = data.Replace("W_DAGGER", " Dagger ");
+                data = data.Replace("W_1HSWORD", " One-handed swords ");
+                data = data.Replace("W_2HSWORD", " Two-handed swords ");
+                data = data.Replace("W_1HSPEAR", " One-handed spears ");
+                data = data.Replace("W_2HSPEAR", " Two-handed spears ");
+                data = data.Replace("W_1HAXE", " One-handed axes ");
+                data = data.Replace("W_2HAXE", " Two-handed axes ");
+                data = data.Replace("W_MACE", " Maces ");
+                data = data.Replace("W_2HMACE", " Two-handed Maces ");
+                data = data.Replace("W_STAFF", " Staff ");
+                data = data.Replace("W_BOW", " Bows ");
+                data = data.Replace("W_KNUCKLE", " Knuckles ");
+                data = data.Replace("W_MUSICAL", " Musical Instruments ");
+                data = data.Replace("W_WHIP", " Whips ");
+                data = data.Replace("W_BOOK", " Book ");
+                data = data.Replace("W_KATAR", " Katars ");
+                data = data.Replace("W_REVOLVER", " Revolvers ");
+                data = data.Replace("W_RIFLE", " Rifles ");
+                data = data.Replace("W_GATLING", " Gatling guns ");
+                data = data.Replace("W_SHOTGUN", " Shotguns ");
+                data = data.Replace("W_GRENADE", " Grenade launchers ");
+                data = data.Replace("W_HUUMA", " Fuuma Shurikens ");
+                data = data.Replace("W_2HSTAFF", " Two-handed Staff ");
+                data = data.Replace("MAX_WEAPON_TYPE", "");
+                data = data.Replace("W_DOUBLE_DD", " Dual-wield Daggers ");
+                data = data.Replace("W_DOUBLE_SS", " Dual-wield Swords ");
+                data = data.Replace("W_DOUBLE_AA", " Dual-wield Axes ");
+                data = data.Replace("W_DOUBLE_DS", " Dagger + Sword ");
+                data = data.Replace("W_DOUBLE_DA", " Dagger + Axe ");
+                data = data.Replace("W_DOUBLE_SA", " Sword + Axe ");
+                data = data.Replace("MAX_WEAPON_TYPE_ALL", "");
+
                 data = data.Replace("==", " คือ ");
                 data = data.Replace("!=", " ไม่เท่ากับ ");
                 data = data.Replace("||", " หรือ ");
@@ -3086,10 +3119,10 @@ public class ItemDbScriptData
             #endregion
 
             #region getitem
-            functionName = "getitem";
+            functionName = "getitem ";
             if (data.Contains(functionName))
             {
-                string sumCut = CutFunctionName(data, functionName);
+                string sumCut = CutFunctionName(data, functionName, 1);
 
                 List<string> allParam = GetAllParamerters(sumCut);
 
@@ -8394,6 +8427,8 @@ public class ItemDbScriptData
             if (!string.IsNullOrEmpty(sameAka))
                 newTempVariables.aka = sameAka;
             newTempVariables.txtDefault = txt;
+            if (newTempVariables.value.Contains("getiteminfo(getequipid("))
+                newTempVariables.value = ConvertOneLineIfElse(newTempVariables.value);
             Log("New temporary variables added"
                 + " | variableName: " + newTempVariables.variableName
                 + " | value: " + newTempVariables.value
