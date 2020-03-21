@@ -109,9 +109,9 @@ public class ItemDbScriptData
         sum = sum.Replace("{", " { ");
         sum = sum.Replace("}", " } ");
         sum = sum.Replace("else", "else ");
+        sum = sum.Replace(";", "; ");
         while (sum.Contains("  "))
             sum = sum.Replace("  ", " ");
-        sum = sum.Replace(";", "; ");
         sum = sum.Replace("bonus bDelayrate", "bonus bDelayRate");
         sum = sum.Replace("bonus buseSPRate", "bonus bUseSPrate");
 
@@ -647,18 +647,34 @@ public class ItemDbScriptData
                         {
                             splitBonus = StringSplit.GetStringSplit(lines[i + index], ';');
 
-                            //Then re-add ';'
+                        //Then re-add ';'
+                        L_MergeSplitBonus:
                             for (int j = 0; j < splitBonus.Count; j++)
                             {
                                 if (splitBonus[j] == "" || splitBonus[j] == " " || string.IsNullOrEmpty(splitBonus[j]) || string.IsNullOrWhiteSpace(splitBonus[j]))
+                                {
                                     splitBonus.RemoveAt(j);
+                                    goto L_MergeSplitBonus;
+                                }
                                 else
-                                    splitBonus[j] = splitBonus[j] + ";";
+                                {
+                                    if (splitBonus[j].Contains("[END_MERGE]") && !splitBonus[j].Contains("[/END_MERGE]"))
+                                    {
+                                        if (j + 1 < splitBonus.Count)
+                                        {
+                                            splitBonus[j] = splitBonus[j] + ";" + splitBonus[j + 1];
+                                            splitBonus.RemoveAt(j + 1);
+                                            goto L_MergeSplitBonus;
+                                        }
+                                    }
+                                    if (splitBonus[j][splitBonus[j].Length - 1] != ';')
+                                        splitBonus[j] = splitBonus[j] + ";";
+                                }
                             }
                         }
 
                         foreach (var bonus in splitBonus)
-                            Log("splitBonus: " + bonus, false, "yellow");
+                            Log("splitBonus:\n" + bonus, false, "yellow");
 
                         //Set next index to splitBonus[0]
                         if (splitBonus.Count > 0)
@@ -671,7 +687,7 @@ public class ItemDbScriptData
                         }
 
                         //foreach (var item in lines)
-                        //   Log(item, false, "orange");
+                        //    Log(item, false, "orange");
 
                         if (isNeedRedo)
                             goto L_MergeLines;
@@ -998,13 +1014,29 @@ public class ItemDbScriptData
                         {
                             splitBonus = StringSplit.GetStringSplit(lines[i + index], ';');
 
-                            //Then re-add ';'
+                        //Then re-add ';'
+                        L_MergeSplitBonus:
                             for (int j = 0; j < splitBonus.Count; j++)
                             {
                                 if (splitBonus[j] == "" || splitBonus[j] == " " || string.IsNullOrEmpty(splitBonus[j]) || string.IsNullOrWhiteSpace(splitBonus[j]))
+                                {
                                     splitBonus.RemoveAt(j);
+                                    goto L_MergeSplitBonus;
+                                }
                                 else
-                                    splitBonus[j] = splitBonus[j] + ";";
+                                {
+                                    if (splitBonus[j].Contains("[END_MERGE]") && !splitBonus[j].Contains("[/END_MERGE]"))
+                                    {
+                                        if (j + 1 < splitBonus.Count)
+                                        {
+                                            splitBonus[j] = splitBonus[j] + ";" + splitBonus[j + 1];
+                                            splitBonus.RemoveAt(j + 1);
+                                            goto L_MergeSplitBonus;
+                                        }
+                                    }
+                                    if (splitBonus[j][splitBonus[j].Length - 1] != ';')
+                                        splitBonus[j] = splitBonus[j] + ";";
+                                }
                             }
                         }
 
@@ -2314,7 +2346,7 @@ public class ItemDbScriptData
         #region Replace temporary variables
         for (int i = 0; i < lines.Count; i++)
         {
-            //Log("allCut[" + i + "](a): " + lines[i], true, "#F3FFAE");
+            //Log("Lines #" + i + ":\n" + lines[i], true, "#F3FFAE");
 
             #region Scripts
             string findTempVar = lines[i];
@@ -2366,13 +2398,13 @@ public class ItemDbScriptData
             }
             #endregion
 
-            Log("allCut[" + i + "](b): " + lines[i], true, "#F3FFAE");
+            Log("Lines #" + i + ":\n" + lines[i], true, "#F3FFAE");
         }
         #endregion
 
         for (int i = 0; i < lines.Count; i++)
         {
-            Log("allCut[" + i + "]: " + lines[i]);
+            Log("Lines #" + i + ":\n" + lines[i]);
 
             char sumFirstChar = ' ';
             if (!string.IsNullOrEmpty(lines[i]))
@@ -5067,6 +5099,11 @@ public class ItemDbScriptData
                             isParam1Negative = true;
                             param1 = param1.Replace("-", "");
                         }
+                        else if (allParam[0] == tempVariables[j].variableName && tempVariables[j].value.Contains("-"))
+                        {
+                            isParam1Negative = true;
+                            param1 = param1.Replace("-", "");
+                        }
                     }
                     if (isParam1Negative)
                         sum += AddDescription(sum, "ร่าย VCAST เร็วขึ้น " + param1 + "%");
@@ -5095,6 +5132,11 @@ public class ItemDbScriptData
                             isParam2Negative = true;
                             param2 = param2.Replace("-", "");
                         }
+                        else if (allParam[1] == tempVariables[j].variableName && tempVariables[j].value.Contains("-"))
+                        {
+                            isParam2Negative = true;
+                            param2 = param2.Replace("-", "");
+                        }
                     }
                     if (isParam2Negative)
                         sum += AddDescription(sum, "ร่าย VCAST กับ Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + param2 + "%");
@@ -5118,6 +5160,11 @@ public class ItemDbScriptData
                     for (int j = 0; j < tempVariables.Count; j++)
                     {
                         if (param1.Contains(tempVariables[j].aka) && param1.Contains("-"))
+                        {
+                            isParam1Negative = true;
+                            param1 = param1.Replace("-", "");
+                        }
+                        else if (allParam[0] == tempVariables[j].variableName && tempVariables[j].value.Contains("-"))
                         {
                             isParam1Negative = true;
                             param1 = param1.Replace("-", "");
@@ -5150,6 +5197,11 @@ public class ItemDbScriptData
                             isParam2Negative = true;
                             param2 = param2.Replace("-", "");
                         }
+                        else if (allParam[1] == tempVariables[j].variableName && tempVariables[j].value.Contains("-"))
+                        {
+                            isParam2Negative = true;
+                            param2 = param2.Replace("-", "");
+                        }
                     }
                     if (isParam2Negative)
                         sum += AddDescription(sum, "ร่าย FIXCAST กับ Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + param2 + "%");
@@ -5173,6 +5225,11 @@ public class ItemDbScriptData
                     for (int j = 0; j < tempVariables.Count; j++)
                     {
                         if (param1.Contains(tempVariables[j].aka) && param1.Contains("-"))
+                        {
+                            isParam1Negative = true;
+                            param1 = param1.Replace("-", "");
+                        }
+                        else if (allParam[0] == tempVariables[j].variableName && tempVariables[j].value.Contains("-"))
                         {
                             isParam1Negative = true;
                             param1 = param1.Replace("-", "");
@@ -5205,6 +5262,11 @@ public class ItemDbScriptData
                             isParam2Negative = true;
                             param2 = param2.Replace("-", "");
                         }
+                        else if (allParam[1] == tempVariables[j].variableName && tempVariables[j].value.Contains("-"))
+                        {
+                            isParam2Negative = true;
+                            param2 = param2.Replace("-", "");
+                        }
                     }
                     if (isParam2Negative)
                         sum += AddDescription(sum, "ร่าย VCAST กับ Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + param2 + "%");
@@ -5228,6 +5290,11 @@ public class ItemDbScriptData
                     for (int j = 0; j < tempVariables.Count; j++)
                     {
                         if (param1.Contains(tempVariables[j].aka) && param1.Contains("-"))
+                        {
+                            isParam1Negative = true;
+                            param1 = param1.Replace("-", "");
+                        }
+                        else if (allParam[0] == tempVariables[j].variableName && tempVariables[j].value.Contains("-"))
                         {
                             isParam1Negative = true;
                             param1 = param1.Replace("-", "");
@@ -5260,6 +5327,11 @@ public class ItemDbScriptData
                             isParam2Negative = true;
                             param2 = param2.Replace("-", "");
                         }
+                        else if (allParam[1] == tempVariables[j].variableName && tempVariables[j].value.Contains("-"))
+                        {
+                            isParam2Negative = true;
+                            param2 = param2.Replace("-", "");
+                        }
                     }
                     if (isParam2Negative)
                         sum += AddDescription(sum, "ร่าย FIXCAST กับ Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + TimerToStringTimer(float.Parse(param2)));
@@ -5283,6 +5355,11 @@ public class ItemDbScriptData
                     for (int j = 0; j < tempVariables.Count; j++)
                     {
                         if (param1.Contains(tempVariables[j].aka) && param1.Contains("-"))
+                        {
+                            isParam1Negative = true;
+                            param1 = param1.Replace("-", "");
+                        }
+                        else if (allParam[0] == tempVariables[j].variableName && tempVariables[j].value.Contains("-"))
                         {
                             isParam1Negative = true;
                             param1 = param1.Replace("-", "");
@@ -5311,6 +5388,11 @@ public class ItemDbScriptData
                     for (int j = 0; j < tempVariables.Count; j++)
                     {
                         if (param2.Contains(tempVariables[j].aka) && param2.Contains("-"))
+                        {
+                            isParam2Negative = true;
+                            param2 = param2.Replace("-", "");
+                        }
+                        else if (allParam[1] == tempVariables[j].variableName && tempVariables[j].value.Contains("-"))
                         {
                             isParam2Negative = true;
                             param2 = param2.Replace("-", "");
@@ -5354,6 +5436,11 @@ public class ItemDbScriptData
                             isParam1Negative = true;
                             param1 = param1.Replace("-", "");
                         }
+                        else if (allParam[0] == tempVariables[j].variableName && tempVariables[j].value.Contains("-"))
+                        {
+                            isParam1Negative = true;
+                            param1 = param1.Replace("-", "");
+                        }
                     }
                     if (isParam1Negative)
                         sum += AddDescription(sum, "Delay หลังร่ายเร็วขึ้น " + param1 + "%");
@@ -5382,6 +5469,11 @@ public class ItemDbScriptData
                             isParam2Negative = true;
                             param2 = param2.Replace("-", "");
                         }
+                        else if (allParam[1] == tempVariables[j].variableName && tempVariables[j].value.Contains("-"))
+                        {
+                            isParam2Negative = true;
+                            param2 = param2.Replace("-", "");
+                        }
                     }
                     if (isParam2Negative)
                         sum += AddDescription(sum, "Delay หลังร่ายกับ Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + TimerToStringTimer(float.Parse(param2)));
@@ -5406,6 +5498,11 @@ public class ItemDbScriptData
                     for (int j = 0; j < tempVariables.Count; j++)
                     {
                         if (param2.Contains(tempVariables[j].aka) && param2.Contains("-"))
+                        {
+                            isParam2Negative = true;
+                            param2 = param2.Replace("-", "");
+                        }
+                        else if (allParam[1] == tempVariables[j].variableName && tempVariables[j].value.Contains("-"))
                         {
                             isParam2Negative = true;
                             param2 = param2.Replace("-", "");
@@ -8286,13 +8383,6 @@ public class ItemDbScriptData
 
         List<string> allParam = new List<string>();
 
-        /*if (!sumCut.Contains(","))
-        {
-            List<string> newList = new List<string>();
-            newList.Add(sumCut);
-            return newList;
-        }*/
-
         if (string.IsNullOrEmpty(sumCut))
         {
             allParam.Add(sumCut);
@@ -8304,12 +8394,8 @@ public class ItemDbScriptData
         for (int i = 0; i < allParam.Count; i++)
         {
         L_Redo:
-            //Log("GetAllParamerters >>  allParam[i]: " + allParam[i]);
-
             if (isBonusScriptCall && !allParam[i].Contains(","))
                 allParam[i] = "," + allParam[i];
-
-            //Log("GetAllParamerters >>  allParam[i]: " + allParam[i]);
 
             //Check ()
             int count1 = 0;
@@ -8334,8 +8420,8 @@ public class ItemDbScriptData
             }
         }
 
-        //for (int i = 0; i < allParam.Count; i++)
-        //    Log("GetAllParamerters >> allParam[" + i + "]: " + allParam[i]);
+        for (int i = 0; i < allParam.Count; i++)
+            Log("allParam[" + i + "]:\n" + allParam[i], true, "#93FEE4");
 
         return allParam;
     }
