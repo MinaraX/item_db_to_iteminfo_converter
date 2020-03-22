@@ -138,6 +138,13 @@ public class TempVariables
 }
 
 [Serializable]
+public class TempArrayVariables
+{
+    public string variableName;
+    public List<object> arrays = new List<object>();
+}
+
+[Serializable]
 public class ItemResourceName
 {
     public int id;

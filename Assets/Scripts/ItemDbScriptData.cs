@@ -30,6 +30,7 @@ public class ItemDbScriptData
 
     bool isUseAkaTempVar = false;
     List<TempVariables> tempVariables = new List<TempVariables>();
+    List<TempArrayVariables> tempArrayVariables = new List<TempArrayVariables>();
     #endregion
 
     #region Get Description Functions
@@ -136,7 +137,10 @@ public class ItemDbScriptData
         isUseAkaTempVar = false;
 
         if (!isNotClearTempVar)
+        {
             tempVariables = new List<TempVariables>();
+            tempArrayVariables = new List<TempArrayVariables>();
+        }
 
         string sum = null;
 
@@ -288,9 +292,9 @@ public class ItemDbScriptData
         }
         #endregion
 
-        //Check temporary variables in merged autobonus
         for (int i = 0; i < lines.Count; i++)
         {
+            //Check temporary variables in merged autobonus
             if ((lines[i].Contains("autobonus") || lines[i].Contains("bonus_script")) && lines[i].Contains("[END_MERGE]"))
                 SearchForTemporaryVariables(lines[i]);
         }
@@ -321,13 +325,10 @@ public class ItemDbScriptData
                 MergeItemScripts(lines, i);
                 goto L_MergeLines;
             }
-            else if (currentLine.Contains("for(") && !currentLine.Contains(")"))
+            else if (currentLine.Contains("for(") && !IsEven.IsCircleEven(currentLine))
             {
-                if (!IsEven.IsCircleEven(currentLine))
-                {
-                    MergeItemScripts(lines, i);
-                    goto L_MergeLines;
-                }
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
             }
             else if (currentLine == "if" && !currentLine.Contains("(") && nextLine.Contains("("))
             {
@@ -2408,6 +2409,16 @@ public class ItemDbScriptData
         }
         #endregion
 
+        for (int i = 0; i < lines.Count; i++)
+        {
+            //Check temporary array variables
+            if (lines[i].Contains("setarray"))
+            {
+                if (SearchForTemporaryArrayVariables(lines[i]))
+                    lines[i] = "";
+            }
+        }
+
         #region Replace temporary variables
         for (int i = 0; i < lines.Count; i++)
         {
@@ -2438,6 +2449,7 @@ public class ItemDbScriptData
                 {
                     if (findTempVar.Contains(tempVariables[j].variableName))
                     {
+                        bool isFound = false;
                         //Check is both integer
                         bool isValue1Integer = IsStringInteger.Check(value1);
                         bool isValue2Integer = IsStringInteger.Check(value2);
@@ -2459,16 +2471,27 @@ public class ItemDbScriptData
                                 for (int k = value1Int; k < value2Int; k++)
                                     tempVariables[j].arrays.Add(k);
                             }
+                            isFound = true;
                         }
                         else
                         {
                             //Just loop add from setarray
                             if (findTempVar.Contains("getarraysize"))
                             {
-
+                                for (int k = 0; k < tempArrayVariables.Count; k++)
+                                {
+                                    if (tempArrayVariables[k].variableName == tempVariables[j].variableName)
+                                    {
+                                        for (int l = 0; l < tempArrayVariables[k].arrays.Count; l++)
+                                            tempVariables[j].arrays.Add(tempArrayVariables[k].arrays[l]);
+                                        isFound = true;
+                                        break;
+                                    }
+                                }
                             }
                         }
-                        break;
+                        if (isFound)
+                            break;
                     }
                 }
                 lines[i] = "[FOR_LOOP]";
@@ -3260,7 +3283,6 @@ public class ItemDbScriptData
                         int tempVarIndex = 0;
                         for (int j = 0; j < tempVariables.Count; j++)
                         {
-                            Log("tempVariables[j].arrays.Count: " + tempVariables[j].arrays.Count);
                             if (allParam[0].Contains(tempVariables[j].variableName) && tempVariables[j].arrays.Count > 0)
                             {
                                 tempVarIndex = j;
@@ -3268,10 +3290,6 @@ public class ItemDbScriptData
                                 break;
                             }
                         }
-
-
-                        Log("isFoundTempVar: " + isFoundTempVar);
-                        Log("tempVarIndex: " + tempVarIndex);
 
                         if (!isFoundTempVar)
                             sum += AddDescription(sum, "รับ " + GetItemName(allParam[0]) + " จำนวน " + param2 + " ชิ้น");
@@ -5251,10 +5269,36 @@ public class ItemDbScriptData
 
                 if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam2Negative)
-                        sum += AddDescription(sum, "Skill " + GetSkillName(allParam[0]) + " Heal เบาลง " + param2 + "%");
+                    bool isFoundTempVar = false;
+                    int tempVarIndex = 0;
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        if (allParam[0].Contains(tempVariables[j].variableName) && tempVariables[j].arrays.Count > 0)
+                        {
+                            tempVarIndex = j;
+                            isFoundTempVar = true;
+                            break;
+                        }
+                    }
+
+                    if (!isFoundTempVar)
+                    {
+                        if (isParam2Negative)
+                            sum += AddDescription(sum, "Skill " + GetSkillName(allParam[0]) + " Heal เบาลง " + param2 + "%");
+                        else
+                            sum += AddDescription(sum, "Skill " + GetSkillName(allParam[0]) + " Heal แรงขึ้น " + param2 + "%");
+                    }
                     else
-                        sum += AddDescription(sum, "Skill " + GetSkillName(allParam[0]) + " Heal แรงขึ้น " + param2 + "%");
+                    {
+                        for (int j = 0; j < tempVariables[tempVarIndex].arrays.Count; j++)
+                        {
+                            var array = tempVariables[tempVarIndex].arrays[j];
+                            if (isParam2Negative)
+                                sum += AddDescription(sum, "Skill " + GetSkillName(array.ToString()) + " Heal เบาลง " + param2 + "%");
+                            else
+                                sum += AddDescription(sum, "Skill " + GetSkillName(array.ToString()) + " Heal แรงขึ้น " + param2 + "%");
+                        }
+                    }
                 }
             }
             #endregion
@@ -5271,10 +5315,36 @@ public class ItemDbScriptData
 
                 if (isHadParam1 && isHadParam2)
                 {
-                    if (isParam2Negative)
-                        sum += AddDescription(sum, "โดน Heal จาก Skill " + GetSkillName(allParam[0]) + " เบาลง " + param2 + "%");
+                    bool isFoundTempVar = false;
+                    int tempVarIndex = 0;
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        if (allParam[0].Contains(tempVariables[j].variableName) && tempVariables[j].arrays.Count > 0)
+                        {
+                            tempVarIndex = j;
+                            isFoundTempVar = true;
+                            break;
+                        }
+                    }
+
+                    if (!isFoundTempVar)
+                    {
+                        if (isParam2Negative)
+                            sum += AddDescription(sum, "โดน Heal จาก Skill " + GetSkillName(allParam[0]) + " เบาลง " + param2 + "%");
+                        else
+                            sum += AddDescription(sum, "โดน Heal จาก Skill " + GetSkillName(allParam[0]) + " แรงขึ้น " + param2 + "%");
+                    }
                     else
-                        sum += AddDescription(sum, "โดน Heal จาก Skill " + GetSkillName(allParam[0]) + " แรงขึ้น " + param2 + "%");
+                    {
+                        for (int j = 0; j < tempVariables[tempVarIndex].arrays.Count; j++)
+                        {
+                            var array = tempVariables[tempVarIndex].arrays[j];
+                            if (isParam2Negative)
+                                sum += AddDescription(sum, "โดน Heal จาก Skill " + GetSkillName(array.ToString()) + " เบาลง " + param2 + "%");
+                            else
+                                sum += AddDescription(sum, "โดน Heal จาก Skill " + GetSkillName(array.ToString()) + " แรงขึ้น " + param2 + "%");
+                        }
+                    }
                 }
             }
             #endregion
@@ -8515,6 +8585,57 @@ public class ItemDbScriptData
             AddTemporaryVariable(txt + "[DONT_DECLARE]", null, true);
     }
 
+    bool SearchForTemporaryArrayVariables(string txt)
+    {
+        if (txt.Contains("setarray") && txt.Contains(".@") && txt.Contains(";"))
+        {
+            TempArrayVariables newTempArrayVariables = new TempArrayVariables();
+
+            //setarray .@skills$, "AL_HEAL", "PR_SANCTUARY", "AM_POTIONPITCHER", "AB_HIGHNESSHEAL", "AB_CHEAL";
+
+            txt = txt.Replace("setarray", "");// .@skills$, "AL_HEAL", "PR_SANCTUARY", "AM_POTIONPITCHER", "AB_HIGHNESSHEAL", "AB_CHEAL";
+            txt = MergeWhiteSpace.RemoveWhiteSpace(txt);//.@skills$,"AL_HEAL","PR_SANCTUARY","AM_POTIONPITCHER","AB_HIGHNESSHEAL","AB_CHEAL";
+
+            string tempArrayVarName = txt.Substring(0, txt.IndexOf(','));
+            newTempArrayVariables.variableName = tempArrayVarName;
+
+            txt = txt.Replace(tempArrayVarName, "");//,"AL_HEAL","PR_SANCTUARY","AM_POTIONPITCHER","AB_HIGHNESSHEAL","AB_CHEAL";
+            txt = txt.Substring(1);//"AL_HEAL","PR_SANCTUARY","AM_POTIONPITCHER","AB_HIGHNESSHEAL","AB_CHEAL";
+            txt = txt.Substring(0, txt.Length - 1);//"AL_HEAL","PR_SANCTUARY","AM_POTIONPITCHER","AB_HIGHNESSHEAL","AB_CHEAL"
+
+            var splitArrays = StringSplit.GetStringSplit(txt, ',');
+            for (int i = 0; i < splitArrays.Count; i++)
+                newTempArrayVariables.arrays.Add(splitArrays[i]);
+
+            tempArrayVariables.Add(newTempArrayVariables);
+
+            //Add normal temp var for ref
+            TempVariables newTempVariables = new TempVariables();
+            newTempVariables.variableName = tempArrayVarName;
+            bool isFound = false;
+            for (int j = 0; j < tempVariables.Count; j++)
+            {
+                if (tempVariables[j].variableName == newTempVariables.variableName)
+                {
+                    isFound = true;
+                    break;
+                }
+            }
+            if (!isFound)
+            {
+                newTempVariables.aka = "ค่าที่ " + (tempVariables.Count + 1);
+                Log("New temporary variables added"
+                    + " | variableName: " + newTempVariables.variableName
+                    + " | value: " + newTempVariables.value
+                    + " | aka: " + newTempVariables.aka
+                    + " | txtDefault: " + newTempVariables.txtDefault, false, "#FE93C7");
+                tempVariables.Add(newTempVariables);
+            }
+            return true;
+        }
+        return false;
+    }
+
     /// <summary>
     /// Add temporary variables
     /// </summary>
@@ -9390,7 +9511,8 @@ public class ItemDbScriptData
 
             for (int i = 0; i < tempValues.Count; i++)
             {
-                tempValues[i] = tempValues[i].Replace(";", "");
+                if (!string.IsNullOrEmpty(tempValues[i]))
+                    tempValues[i] = tempValues[i].Replace(";", "");
                 //Log(functionName + " >>  tempValues[i]: " + tempValues[i]);
             }
 
