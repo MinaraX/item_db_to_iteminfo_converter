@@ -322,11 +322,15 @@ public class ItemDbScriptData
 
             if (currentLine.Contains("setarray") && !currentLine.Contains(";"))
             {
+                //Log("currentLine contains setarray", true);
+
                 MergeItemScripts(lines, i);
                 goto L_MergeLines;
             }
             else if (currentLine.Contains("for(") && !IsEven.IsCircleEven(currentLine))
             {
+                //Log("currentLine contains for(", true);
+
                 MergeItemScripts(lines, i);
                 goto L_MergeLines;
             }
@@ -8563,6 +8567,7 @@ public class ItemDbScriptData
         lines.RemoveAt(i + 1);
     }
 
+    //if (IsContainsTemporaryVariables(currentLine, lines, i, true))
     bool IsContainsTemporaryVariables(string txt, List<string> allCut, int mergeIndex, bool isNotAddCheckMatching = false)
     {
         if (txt.Contains(".@"))
@@ -8646,7 +8651,11 @@ public class ItemDbScriptData
 
         int declareAt = txt.IndexOf("=");
 
-        if (declareAt <= -1 || txt.Length < declareAt)
+        if (declareAt <= -1
+            || txt.Length < declareAt
+            || (declareAt - 1) < 0
+            || txt[declareAt - 1] == '<'
+            || txt[declareAt - 1] == '>')
             return;
 
         int startCut = 0;
