@@ -37,4 +37,20 @@
         else
             return true;
     }
+
+    public static bool IsQuoteEven(string txt)
+    {
+        int a = 0;
+
+        foreach (char c in txt)
+        {
+            if (c == '"')
+                a++;
+        }
+
+        if (a % 2 != 0)
+            return false;
+        else
+            return true;
+    }
 }

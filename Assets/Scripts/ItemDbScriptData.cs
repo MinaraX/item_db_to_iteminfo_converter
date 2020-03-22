@@ -118,6 +118,7 @@ public class ItemDbScriptData
         sum = sum.Replace("bonus buseSPRate", "bonus bUseSPrate");
         sum = sum.Replace("bonus bIgnoreMdefRace", "bonus bIgnoreMDefRace");
         sum = sum.Replace("bonus bHPRecovRate", "bonus bHPrecovRate");
+        sum = sum.Replace("bonus bFixedCastRate", "bonus bFixedCastrate");
         sum = sum.Replace("GetSkillLv", "getskilllv");
 
         //Replace temporary variables in autobonus or bonus_script
@@ -205,9 +206,9 @@ public class ItemDbScriptData
             string currentLine = lines[i];
 
             //Merge autobonus / bonus_script
-            if ((currentLine.Contains("autobonus") || currentLine.Contains("bonus_script")) && !currentLine.Contains("[END_MERGE]"))
+            if (currentLine.Contains("autobonus") && !currentLine.Contains("[END_MERGE]"))
             {
-                Log("Found autobonus or bonus_script", true, "yellow");
+                Log("Found autobonus", true, "yellow");
 
                 if (!currentLine.Contains("}"))
                 {
@@ -282,6 +283,36 @@ public class ItemDbScriptData
                     else
                     {
                         lines[i] = lines[i].Replace("\"", "");
+                        lines[i] = lines[i].Replace("{", "[");
+                        lines[i] = lines[i].Replace("}", "]");
+                        lines[i] = "[END_MERGE]" + lines[i] + "[/END_MERGE]";
+                    }
+                }
+            }
+            else if (currentLine.Contains("bonus_script") && !currentLine.Contains("[END_MERGE]"))
+            {
+                Log("Found bonus_script", true, "yellow");
+
+                //Count "
+                if (!IsEven.IsQuoteEven(currentLine) || !currentLine.Contains("\""))
+                {
+                    lines[i] = lines[i] + lines[i + 1];
+                    lines.RemoveAt(i + 1);
+                    goto L_MergeAutoBonusLines;
+                }
+                //Find ; after last "
+                else
+                {
+                    int lastQuoteIndex = currentLine.LastIndexOf('"');
+                    int lastSemicolonIndex = currentLine.IndexOf(';', lastQuoteIndex);
+                    if (lastSemicolonIndex <= -1)
+                    {
+                        lines[i] = lines[i] + lines[i + 1];
+                        lines.RemoveAt(i + 1);
+                        goto L_MergeAutoBonusLines;
+                    }
+                    else
+                    {
                         lines[i] = lines[i].Replace("{", "[");
                         lines[i] = lines[i].Replace("}", "]");
                         lines[i] = "[END_MERGE]" + lines[i] + "[/END_MERGE]";
@@ -2413,6 +2444,11 @@ public class ItemDbScriptData
                 MergeItemScripts(lines, i);
                 goto L_MergeLines;
             }
+            else if (currentLine.Contains("warp") && !currentLine.Contains(";"))
+            {
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
+            }
         }
         #endregion
 
@@ -3195,7 +3231,7 @@ public class ItemDbScriptData
             L_ReMerge:
                 for (int j = 0; j < allParam.Count; j++)
                 {
-                    if ((j + 1) < allParam.Count && allParam[j].Contains("{") && !allParam[j].Contains("}"))
+                    if ((j + 1) < allParam.Count && (!IsEven.IsQuoteEven(allParam[j]) || !IsEven.IsCurlyEven(allParam[j])))
                     {
                         allParam[j] = allParam[j] + allParam[j + 1];
                         allParam.RemoveAt(j + 1);
@@ -3875,6 +3911,27 @@ public class ItemDbScriptData
 
                 if (isHadParam1)
                     sum += AddDescription(sum, "กดใช้เพื่อรับ " + param1 + " Roulette Silver");
+            }
+            #endregion
+            #region warp
+            functionName = "warp";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = allParam[0];
+                string param2 = GetValue(allParam[1], 2, true);
+                string param3 = GetValue(allParam[2], 3, true);
+
+                if (!string.IsNullOrEmpty(param1))
+                    param1 = param1.Replace("\"", "");
+
+                if (isHadParam2 && isHadParam3)
+                    sum += AddDescription(sum, "กดใช้เพื่อเคลื่อนย้ายไปยัง " + param1 + " พิกัด x: " + param2 + " พิกัด y: " + param3);
+
+                data = "";
             }
             #endregion
 
