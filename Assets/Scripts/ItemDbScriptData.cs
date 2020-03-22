@@ -2425,6 +2425,25 @@ public class ItemDbScriptData
             }
         }
 
+    #region Extract after [/END_MERGE]
+    L_ReExtract:
+        for (int i = 0; i < lines.Count; i++)
+        {
+            if (lines[i].Contains("[/END_MERGE]"))
+            {
+                int lastEndMergeIndex = lines[i].IndexOf("[/END_MERGE]");
+                int startWordIndex = lastEndMergeIndex + 12;
+                if (lines[i].Length > startWordIndex)
+                {
+                    string toAdd = lines[i].Substring(startWordIndex);
+                    lines[i] = lines[i].Substring(0, startWordIndex);
+                    lines.Insert(i + 1, toAdd);
+                    goto L_ReExtract;
+                }
+            }
+        }
+        #endregion
+
         #region Replace temporary variables
         for (int i = 0; i < lines.Count; i++)
         {
@@ -3169,18 +3188,16 @@ public class ItemDbScriptData
                 sumCut = sumCut.Replace(functionName, "");
                 sumCut = sumCut.Replace("[", "{");
                 sumCut = sumCut.Replace("]", "}");
-                Log("sumCut: " + sumCut);
+
                 List<string> allParam = GetAllParamerters(sumCut, true);
 
             L_ReMerge:
                 for (int j = 0; j < allParam.Count; j++)
                 {
-                    //Log("allParam[j]: " + allParam[j]);
                     if ((j + 1) < allParam.Count && allParam[j].Contains("{") && !allParam[j].Contains("}"))
                     {
                         allParam[j] = allParam[j] + allParam[j + 1];
                         allParam.RemoveAt(j + 1);
-                        //Log("allParam[j]: " + allParam[j]);
                         goto L_ReMerge;
                     }
                     else
@@ -3192,8 +3209,11 @@ public class ItemDbScriptData
 
                 string param1 = GetBonusScript(allParam[0]);
                 string param2 = GetValue(allParam[1], 2);
-                string param3 = GetValue(allParam[2], 3);
-                string param4 = GetValue(allParam[3], 4);
+                string param3 = null;
+                string param4 = null;
+
+                if (allParam.Count > 2)
+                    param3 = GetValue(allParam[2], 3);
 
                 if (allParam.Count > 3)
                     param4 = allParam[3];
@@ -3218,7 +3238,7 @@ public class ItemDbScriptData
                             sumType = "(เป็น Debuff)";
                     }
 
-                    sum += AddDescription(sum, "เมื่อสวมใส่จะ " + param1 + " เป็นเวลา " + TimerToStringTimer(float.Parse(param2)) + GetBonusScriptFlag(sumFlag) + sumType);
+                    sum += AddDescription(sum, "เมื่อใช้หรือสวมใส่จะ " + param1 + " เป็นเวลา " + TimerToStringTimer(float.Parse(param2), 1) + GetBonusScriptFlag(sumFlag) + sumType);
                 }
 
                 data = "";
@@ -10202,6 +10222,11 @@ public class ItemDbScriptData
             if (!string.IsNullOrEmpty(sumId))
                 value = value.Replace(sumId, GetItemName(sumId));
         }
+
+        if (value.Contains("strcharinfo(3)"))
+            value = value.Replace("\"", "");
+
+        value = value.Replace("strcharinfo(3)", "Map ที่อยู่");
 
         value = value.Replace("getrefine();", "[ตามจำนวนตีบวก]");
 
