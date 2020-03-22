@@ -2582,7 +2582,9 @@ public class ItemDbScriptData
             lines[i] = lines[i].Replace("bonus 3", "bonus3");
             lines[i] = lines[i].Replace("bonus 2", "bonus2");
             lines[i] = lines[i].Replace("heal", "heal ");
-            lines[i] = lines[i].Replace("  ", " ");
+
+            while (lines[i].Contains("  "))
+                lines[i] = lines[i].Replace("  ", " ");
 
             data = lines[i];
 
@@ -2601,6 +2603,8 @@ public class ItemDbScriptData
                 //bonus_script inside room
                 while (data.Contains("bonus_script"))
                 {
+                    data = CorrectScriptSyntax(data, "bonus_script");
+
                     //Loop all char
                     for (int j = 0; j < data.Length; j++)
                     {
@@ -2628,6 +2632,8 @@ public class ItemDbScriptData
                 //autobonus inside room
                 while (data.Contains("autobonus"))
                 {
+                    data = CorrectScriptSyntax(data, "autobonus");
+
                     //Loop all char
                     for (int j = 0; j < data.Length; j++)
                     {
@@ -2655,6 +2661,8 @@ public class ItemDbScriptData
                 //itemheal inside room
                 while (data.Contains("itemheal"))
                 {
+                    data = CorrectScriptSyntax(data, "itemheal");
+
                     //Loop all char
                     for (int j = 0; j < data.Length; j++)
                     {
@@ -2682,6 +2690,8 @@ public class ItemDbScriptData
                 //percentheal inside room
                 while (data.Contains("percentheal"))
                 {
+                    data = CorrectScriptSyntax(data, "percentheal");
+
                     //Loop all char
                     for (int j = 0; j < data.Length; j++)
                     {
@@ -2709,6 +2719,8 @@ public class ItemDbScriptData
                 //heal inside room
                 while (data.Contains("heal"))
                 {
+                    data = CorrectScriptSyntax(data, "heal");
+
                     //Loop all char
                     for (int j = 0; j < data.Length; j++)
                     {
@@ -2736,6 +2748,8 @@ public class ItemDbScriptData
                 //sc_start inside room
                 while (data.Contains("sc_start"))
                 {
+                    data = CorrectScriptSyntax(data, "sc_start");
+
                     //Loop all char
                     for (int j = 0; j < data.Length; j++)
                     {
@@ -2763,6 +2777,8 @@ public class ItemDbScriptData
                 //sc_end inside room
                 while (data.Contains("sc_end"))
                 {
+                    data = CorrectScriptSyntax(data, "sc_end");
+
                     //Loop all char
                     for (int j = 0; j < data.Length; j++)
                     {
@@ -3464,7 +3480,7 @@ public class ItemDbScriptData
                 else
                     timer = " เป็นเวลา " + TimerToStringTimer(float.Parse(param2));
 
-                string percent = "0";
+                string percent = "100";
                 if (isHadParam4)
                     percent = GetRateByDivider(param4, 100);
 
@@ -8327,6 +8343,8 @@ public class ItemDbScriptData
         //itemheal inside room
         while (data.Contains("itemheal"))
         {
+            data = CorrectScriptSyntax(data, "itemheal");
+
             //Loop all char
             for (int j = 0; j < data.Length; j++)
             {
@@ -8354,6 +8372,8 @@ public class ItemDbScriptData
         //percentheal inside room
         while (data.Contains("percentheal"))
         {
+            data = CorrectScriptSyntax(data, "percentheal");
+
             //Loop all char
             for (int j = 0; j < data.Length; j++)
             {
@@ -8381,6 +8401,8 @@ public class ItemDbScriptData
         //heal inside room
         while (data.Contains("heal"))
         {
+            data = CorrectScriptSyntax(data, "heal");
+
             //Loop all char
             for (int j = 0; j < data.Length; j++)
             {
@@ -8408,6 +8430,11 @@ public class ItemDbScriptData
         //sc_start inside room
         while (data.Contains("sc_start"))
         {
+            data = CorrectScriptSyntax(data, "sc_start");
+
+            if (!data.Contains("sc_start "))
+                data.Replace("sc_start", "sc_start ");
+
             //Loop all char
             for (int j = 0; j < data.Length; j++)
             {
@@ -8435,6 +8462,8 @@ public class ItemDbScriptData
         //sc_end inside room
         while (data.Contains("sc_end"))
         {
+            data = CorrectScriptSyntax(data, "sc_end");
+
             //Loop all char
             for (int j = 0; j < data.Length; j++)
             {
@@ -9900,6 +9929,14 @@ public class ItemDbScriptData
     }
 
     #region Utilities
+    string CorrectScriptSyntax(string txt, string func)
+    {
+        if (txt.Contains(func) && !txt.Contains(func + " "))
+            return txt.Replace(func, func + " ");
+        else
+            return txt;
+    }
+
     /// <summary>
     /// Get item name by ID
     /// </summary>
