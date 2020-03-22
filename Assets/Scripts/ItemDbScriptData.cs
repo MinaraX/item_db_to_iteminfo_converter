@@ -110,6 +110,7 @@ public class ItemDbScriptData
         sum = sum.Replace("}", " } ");
         sum = sum.Replace("else", "else ");
         sum = sum.Replace(";", "; ");
+        sum = sum.Replace("for (", "for(");
         while (sum.Contains("  "))
             sum = sum.Replace("  ", " ");
         sum = sum.Replace("bonus bDelayrate", "bonus bDelayRate");
@@ -315,7 +316,20 @@ public class ItemDbScriptData
 
             Log("Lines #" + i + ":\n" + currentLine, false, "#DEC9FF");
 
-            if (currentLine == "if" && !currentLine.Contains("(") && nextLine.Contains("("))
+            if (currentLine.Contains("setarray") && !currentLine.Contains(";"))
+            {
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
+            }
+            else if (currentLine.Contains("for(") && !currentLine.Contains(")"))
+            {
+                if (!IsEven.IsCircleEven(currentLine))
+                {
+                    MergeItemScripts(lines, i);
+                    goto L_MergeLines;
+                }
+            }
+            else if (currentLine == "if" && !currentLine.Contains("(") && nextLine.Contains("("))
             {
                 MergeItemScripts(lines, i);
                 goto L_MergeLines;
@@ -2401,7 +2415,65 @@ public class ItemDbScriptData
 
             #region Scripts
             string findTempVar = lines[i];
-            if (findTempVar.Contains(".@"))
+            if (findTempVar.Contains("for("))
+            {
+                bool isLowerOrEqual = false;
+
+                int index = findTempVar.IndexOf('=');
+                string value = findTempVar.Substring(index + 1);
+                value = value.Substring(0, value.IndexOf(';'));
+                string value1 = value;
+                //Log("value1: " + value1);
+
+                index = findTempVar.IndexOf('<', index + 1);
+                if (findTempVar[index + 1] == '=')
+                    isLowerOrEqual = true;
+                value = findTempVar.Substring(index + 1);
+                value = value.Substring(0, value.IndexOf(';'));
+                string value2 = value;
+                value2 = value2.Replace("=", "");
+                //Log("value2: " + value2);
+
+                for (int j = 0; j < tempVariables.Count; j++)
+                {
+                    if (findTempVar.Contains(tempVariables[j].variableName))
+                    {
+                        //Check is both integer
+                        bool isValue1Integer = IsStringInteger.Check(value1);
+                        bool isValue2Integer = IsStringInteger.Check(value2);
+                        //Log("isValue1Integer: " + isValue1Integer);
+                        //Log("isValue2Integer: " + isValue2Integer);
+                        if (isValue1Integer && isValue2Integer)
+                        {
+                            int value1Int = int.Parse(value1);
+                            int value2Int = int.Parse(value2);
+                            //Log("value1Int: " + value1Int);
+                            //Log("value2Int: " + value2Int);
+                            if (isLowerOrEqual)
+                            {
+                                for (int k = value1Int; k <= value2Int; k++)
+                                    tempVariables[j].arrays.Add(k);
+                            }
+                            else
+                            {
+                                for (int k = value1Int; k < value2Int; k++)
+                                    tempVariables[j].arrays.Add(k);
+                            }
+                        }
+                        else
+                        {
+                            //Just loop add from setarray
+                            if (findTempVar.Contains("getarraysize"))
+                            {
+
+                            }
+                        }
+                        break;
+                    }
+                }
+                lines[i] = "[FOR_LOOP]";
+            }
+            else if (findTempVar.Contains(".@"))
             {
                 // +=, -=, *=, /=
                 if (findTempVar.Contains("+=") || findTempVar.Contains("-=") || findTempVar.Contains("*=") || findTempVar.Contains("/="))
@@ -3183,7 +3255,35 @@ public class ItemDbScriptData
                         sum += AddDescription(sum, "รับชิ้นใดชิ้นนึงจาก (" + allItemName + ") จำนวน " + param2 + " ชิ้น");
                     }
                     else
-                        sum += AddDescription(sum, "รับ " + GetItemName(allParam[0]) + " จำนวน " + param2 + " ชิ้น");
+                    {
+                        bool isFoundTempVar = false;
+                        int tempVarIndex = 0;
+                        for (int j = 0; j < tempVariables.Count; j++)
+                        {
+                            Log("tempVariables[j].arrays.Count: " + tempVariables[j].arrays.Count);
+                            if (allParam[0].Contains(tempVariables[j].variableName) && tempVariables[j].arrays.Count > 0)
+                            {
+                                tempVarIndex = j;
+                                isFoundTempVar = true;
+                                break;
+                            }
+                        }
+
+
+                        Log("isFoundTempVar: " + isFoundTempVar);
+                        Log("tempVarIndex: " + tempVarIndex);
+
+                        if (!isFoundTempVar)
+                            sum += AddDescription(sum, "รับ " + GetItemName(allParam[0]) + " จำนวน " + param2 + " ชิ้น");
+                        else
+                        {
+                            for (int j = 0; j < tempVariables[tempVarIndex].arrays.Count; j++)
+                            {
+                                var array = tempVariables[tempVarIndex].arrays[j];
+                                sum += AddDescription(sum, "รับ " + GetItemName(array.ToString()) + " จำนวน " + param2 + " ชิ้น");
+                            }
+                        }
+                    }
                 }
 
                 data = "";
@@ -8379,18 +8479,18 @@ public class ItemDbScriptData
     /// <summary>
     /// Merge item script from split
     /// </summary>
-    /// <param name="allCut"></param>
+    /// <param name="lines"></param>
     /// <param name="i"></param>
     /// <param name="isRemoveWhiteSpace"></param>
-    void MergeItemScripts(List<string> allCut, int i, bool isRemoveWhiteSpace = false)
+    void MergeItemScripts(List<string> lines, int i, bool isRemoveWhiteSpace = false)
     {
         if (isRemoveWhiteSpace)
         {
-            allCut[i] = allCut[i].Replace(" ,", ",");
-            allCut[i] = allCut[i].Replace(" ;", ";");
+            lines[i] = lines[i].Replace(" ,", ",");
+            lines[i] = lines[i].Replace(" ;", ";");
         }
-        allCut[i] += " " + allCut[i + 1];
-        allCut.RemoveAt(i + 1);
+        lines[i] += " " + lines[i + 1];
+        lines.RemoveAt(i + 1);
     }
 
     bool IsContainsTemporaryVariables(string txt, List<string> allCut, int mergeIndex, bool isNotAddCheckMatching = false)
@@ -8444,6 +8544,8 @@ public class ItemDbScriptData
             }
         }
         string txtLeftSide = txt.Substring(startCut, declareAt - startCut);
+        if (txtLeftSide[0] != '.')
+            txtLeftSide = txtLeftSide.Substring(txt.IndexOf('.'));
         string txtRightSide = txt.Substring(declareAt + 1);
         int semiColonAt = txtRightSide.IndexOf(";");
         txtRightSide = txtRightSide.Substring(0, semiColonAt);

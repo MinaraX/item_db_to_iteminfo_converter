@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 [Serializable]
 public class ItemDb
@@ -133,6 +134,7 @@ public class TempVariables
     public string toCheckMatching;
     public string txtDefault;
     public bool isOneLineIfElse;
+    public List<object> arrays = new List<object>();
 }
 
 [Serializable]
