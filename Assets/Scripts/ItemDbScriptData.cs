@@ -61,9 +61,9 @@ public class ItemDbScriptData
 
         string sumDesc = GetScriptsDescription(onEquipScript);
         if (!string.IsNullOrEmpty(sumScript) && !string.IsNullOrEmpty(sumDesc) && !string.IsNullOrWhiteSpace(sumDesc))
-            sumEquipScript = "\n[เมื่อสวมใส่]\n" + sumDesc;
+            sumEquipScript = "\n\"[เมื่อสวมใส่]\",\n" + sumDesc;
         else if (!string.IsNullOrEmpty(sumDesc) && !string.IsNullOrWhiteSpace(sumDesc))
-            sumEquipScript = "[เมื่อสวมใส่]\n" + sumDesc;
+            sumEquipScript = "\"[เมื่อสวมใส่]\",\n" + sumDesc;
         else
             sumEquipScript = sumDesc;
 
@@ -83,10 +83,10 @@ public class ItemDbScriptData
         onUnequipScript = CorrectScriptToConvert(onUnequipScript);
 
         string sumDesc = GetScriptsDescription(onUnequipScript);
-        if (!string.IsNullOrEmpty(sumEquipScript) && !string.IsNullOrEmpty(sumDesc) && !string.IsNullOrWhiteSpace(sumDesc))
-            sumUnequipScript = "\n[เมื่อถอด]\n" + sumDesc;
+        if ((!string.IsNullOrEmpty(sumEquipScript) || !string.IsNullOrEmpty(sumScript)) && !string.IsNullOrEmpty(sumDesc) && !string.IsNullOrWhiteSpace(sumDesc))
+            sumUnequipScript = "\n\"[เมื่อถอด]\",\n" + sumDesc;
         else if (!string.IsNullOrEmpty(sumDesc) && !string.IsNullOrWhiteSpace(sumDesc))
-            sumUnequipScript = "[เมื่อถอด]\n" + sumDesc;
+            sumUnequipScript = "\"[เมื่อถอด]\",\n" + sumDesc;
         else
             sumUnequipScript = sumDesc;
 
@@ -8597,7 +8597,6 @@ public class ItemDbScriptData
         lines.RemoveAt(i + 1);
     }
 
-    //if (IsContainsTemporaryVariables(currentLine, lines, i, true))
     bool IsContainsTemporaryVariables(string txt, List<string> allCut, int mergeIndex, bool isNotAddCheckMatching = false)
     {
         if (txt.Contains(".@"))
