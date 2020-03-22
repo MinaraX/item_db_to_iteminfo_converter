@@ -117,6 +117,7 @@ public class ItemDbScriptData
         sum = sum.Replace("bonus bDelayrate", "bonus bDelayRate");
         sum = sum.Replace("bonus buseSPRate", "bonus bUseSPrate");
         sum = sum.Replace("bonus bIgnoreMdefRace", "bonus bIgnoreMDefRace");
+        sum = sum.Replace("bonus bHPRecovRate", "bonus bHPrecovRate");
         sum = sum.Replace("GetSkillLv", "getskilllv");
 
         //Replace temporary variables in autobonus or bonus_script
