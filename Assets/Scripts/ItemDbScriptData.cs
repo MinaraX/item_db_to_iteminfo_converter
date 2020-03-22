@@ -116,6 +116,7 @@ public class ItemDbScriptData
             sum = sum.Replace("  ", " ");
         sum = sum.Replace("bonus bDelayrate", "bonus bDelayRate");
         sum = sum.Replace("bonus buseSPRate", "bonus bUseSPrate");
+        sum = sum.Replace("bonus bIgnoreMdefRace", "bonus bIgnoreMDefRace");
 
         //Replace temporary variables in autobonus or bonus_script
         while (sum.Contains("\"+.@") && (sum.Contains("autobonus") || sum.Contains("bonus_script")))
@@ -395,7 +396,7 @@ public class ItemDbScriptData
                     }
 
                     if (!isNoAdd)
-                        lines.Insert(i + 2 + loop, "[TXT_END_IF];");
+                        lines.Insert(i + 2, "[TXT_END_IF];");
                 }
                 else if (!nextLine.Contains("{") && !nextLine.Contains("}") && currentLine.Contains(";"))
                 {
@@ -791,7 +792,7 @@ public class ItemDbScriptData
                     }
 
                     if (!isNoAdd)
-                        lines.Insert(i + 2 + loop, "[TXT_END_ELSE];");
+                        lines.Insert(i + 2, "[TXT_END_ELSE];");
                 }
                 else if (!nextLine.Contains("{") && !nextLine.Contains("}") && currentLine.Contains(";"))
                 {
@@ -10195,6 +10196,18 @@ public class ItemDbScriptData
                 Log("newValue: " + newValue);
             }
             value = newValue;
+        }
+
+        if (value.Contains("getequipid()"))
+        {
+            int indexToFindId = value.IndexOf("getequipid()");
+            indexToFindId = value.IndexOf(')', indexToFindId + 12);
+            int firstIndexOfId = value.LastIndexOf('=', indexToFindId);
+            string sumId = value.Substring(firstIndexOfId + 1);
+            sumId = sumId.Substring(0, sumId.IndexOf(')'));
+            value = value.Replace("getequipid()", "สวมใส่");
+            if (!string.IsNullOrEmpty(sumId))
+                value = value.Replace(sumId, GetItemName(sumId));
         }
 
         value = value.Replace("getrefine();", "[ตามจำนวนตีบวก]");
