@@ -543,7 +543,108 @@ public class ItemDbScriptData
                                 lines.Insert(i + 2, "[TXT_END_IF];");
 
                                 //Split it out and insert it
-                                if (cutRemains.Contains("if("))
+                                if (cutRemains.Contains("elseif("))
+                                {
+                                    var cutRemainLines = StringSplit.GetStringSplitMoreThanOneChar(cutRemains, new string[] { "elseif(" });
+                                L_RemergeRemainLines1:
+                                    for (int j = 0; j < cutRemainLines.Count; j++)
+                                    {
+                                        if (!string.IsNullOrEmpty(cutRemainLines[j]) && !string.IsNullOrWhiteSpace(cutRemainLines[j]))
+                                            cutRemainLines[j] = "elseif(" + cutRemainLines[j];
+                                        else
+                                        {
+                                            cutRemainLines.RemoveAt(j);
+                                            goto L_RemergeRemainLines1;
+                                        }
+                                    }
+
+                                L_RemergeRemainLines2:
+                                    for (int j = 0; j < cutRemainLines.Count; j++)
+                                    {
+                                        //Log(cutRemainLines[j],false,"yellow");
+                                        if (!string.IsNullOrEmpty(cutRemainLines[j]) && !string.IsNullOrWhiteSpace(cutRemainLines[j]))
+                                        {
+                                            //Example: if(readparam(bInt)>=90){bonusbMatk,(.@r>=9)?50:30;}
+
+                                            //Split if and {}
+                                            if (cutRemainLines[j].Contains("elseif(") && cutRemainLines[j].Contains("{"))
+                                            {
+                                                //Count {}
+                                                if (!IsEven.IsCurlyEven(cutRemainLines[j]))
+                                                {
+                                                    cutRemainLines[j] += cutRemainLines[j + 1];
+                                                    cutRemainLines.RemoveAt(j + 1);
+                                                    goto L_RemergeRemainLines2;
+                                                }
+                                                else
+                                                {
+                                                    //Split now
+                                                    //Log("Before:\n" + cutRemainLines[j]);
+                                                    int firstCurlyIndex = cutRemainLines[j].IndexOf('{');
+                                                    string saveTxt = cutRemainLines[j];
+                                                    cutRemainLines[j] = cutRemainLines[j].Substring(0, firstCurlyIndex);
+
+                                                    //Find and split if inside if?
+                                                    string toInsert = saveTxt.Substring(firstCurlyIndex);
+                                                    if (toInsert.Contains("elseif("))
+                                                    {
+                                                        int startIfIndex = 0;
+                                                        for (int k = 0; k < toInsert.Length; k++)
+                                                        {
+                                                            if (toInsert[k] == 'e' && toInsert[k + 1] == 'l' && toInsert[k + 2] == 's' && toInsert[k + 3] == 'e' && toInsert[k + 4] == 'i' && toInsert[k + 5] == 'f' && toInsert[k + 6] == '(')
+                                                            {
+                                                                startIfIndex = k;
+                                                                break;
+                                                            }
+                                                        }
+                                                        string foundIf = toInsert.Substring(startIfIndex);
+                                                        foundIf = foundIf.Substring(0, foundIf.IndexOf('}') + 1);
+                                                        cutRemainLines.Insert(j + 1, "[TXT_END_IF];");
+                                                        cutRemainLines.Insert(j + 1, foundIf);
+                                                        toInsert = toInsert.Replace(foundIf, "");
+                                                        cutRemainLines.Insert(j + 1, toInsert + "[TXT_NO_END_IF_BELOW]");
+                                                    }
+                                                    else
+                                                        cutRemainLines.Insert(j + 1, toInsert);
+
+                                                    //Log("After:\n" + cutRemainLines[j]);
+                                                    //Log("Insert:\n" + cutRemainLines[j + 1]);
+
+                                                    goto L_RemergeRemainLines2;
+                                                }
+                                            }
+                                            //Example: if(readparam(bInt)>=90)bonusbMatk,(.@r>=9)?50:30;
+
+                                            //Split if and last ) +1
+                                            else if (cutRemainLines[j].Contains("elseif(") && cutRemainLines[j][cutRemainLines[j].Length - 1] != ')')
+                                            {
+                                                //Split now
+                                                Log("(Before):\n" + cutRemainLines[j]);
+                                                int firstCircleIndex = cutRemainLines[j].IndexOf('(');
+                                                string saveTxt = cutRemainLines[j];
+                                                cutRemainLines[j] = cutRemainLines[j].Substring(0, firstCircleIndex);
+                                                cutRemainLines.Insert(j + 1, saveTxt.Substring(firstCircleIndex));
+                                                Log("(After):\n" + cutRemainLines[j]);
+                                                Log("(Insert):\n" + cutRemainLines[j + 1]);
+                                                goto L_RemergeRemainLines2;
+                                            }
+                                            //Split if and last ) +1
+                                            else if (cutRemainLines[j].Contains("elseif(") && !cutRemainLines[j].Contains(";"))
+                                                cutRemainLines[j] = cutRemainLines[j] + ";";
+                                        }
+                                        else
+                                        {
+                                            cutRemainLines.RemoveAt(j);
+                                            goto L_RemergeRemainLines2;
+                                        }
+                                    }
+
+                                    cutRemainLines.Reverse();
+
+                                    for (int j = 0; j < cutRemainLines.Count; j++)
+                                        lines.Insert(i + 2, cutRemainLines[j]);
+                                }
+                                else if (cutRemains.Contains("if("))
                                 {
                                     var cutRemainLines = StringSplit.GetStringSplitMoreThanOneChar(cutRemains, new string[] { "if(" });
                                 L_RemergeRemainLines1:
@@ -936,7 +1037,108 @@ public class ItemDbScriptData
                                 lines.Insert(i + 2, "[TXT_END_ELSE];");
 
                                 //Split it out and insert it
-                                if (cutRemains.Contains("if("))
+                                if (cutRemains.Contains("elseif("))
+                                {
+                                    var cutRemainLines = StringSplit.GetStringSplitMoreThanOneChar(cutRemains, new string[] { "elseif(" });
+                                L_RemergeRemainLines1:
+                                    for (int j = 0; j < cutRemainLines.Count; j++)
+                                    {
+                                        if (!string.IsNullOrEmpty(cutRemainLines[j]) && !string.IsNullOrWhiteSpace(cutRemainLines[j]))
+                                            cutRemainLines[j] = "elseif(" + cutRemainLines[j];
+                                        else
+                                        {
+                                            cutRemainLines.RemoveAt(j);
+                                            goto L_RemergeRemainLines1;
+                                        }
+                                    }
+
+                                L_RemergeRemainLines2:
+                                    for (int j = 0; j < cutRemainLines.Count; j++)
+                                    {
+                                        //Log(cutRemainLines[j],false,"yellow");
+                                        if (!string.IsNullOrEmpty(cutRemainLines[j]) && !string.IsNullOrWhiteSpace(cutRemainLines[j]))
+                                        {
+                                            //Example: if(readparam(bInt)>=90){bonusbMatk,(.@r>=9)?50:30;}
+
+                                            //Split if and {}
+                                            if (cutRemainLines[j].Contains("elseif(") && cutRemainLines[j].Contains("{"))
+                                            {
+                                                //Count {}
+                                                if (!IsEven.IsCurlyEven(cutRemainLines[j]))
+                                                {
+                                                    cutRemainLines[j] += cutRemainLines[j + 1];
+                                                    cutRemainLines.RemoveAt(j + 1);
+                                                    goto L_RemergeRemainLines2;
+                                                }
+                                                else
+                                                {
+                                                    //Split now
+                                                    //Log("Before:\n" + cutRemainLines[j]);
+                                                    int firstCurlyIndex = cutRemainLines[j].IndexOf('{');
+                                                    string saveTxt = cutRemainLines[j];
+                                                    cutRemainLines[j] = cutRemainLines[j].Substring(0, firstCurlyIndex);
+
+                                                    //Find and split if inside if?
+                                                    string toInsert = saveTxt.Substring(firstCurlyIndex);
+                                                    if (toInsert.Contains("elseif("))
+                                                    {
+                                                        int startIfIndex = 0;
+                                                        for (int k = 0; k < toInsert.Length; k++)
+                                                        {
+                                                            if (toInsert[k] == 'e' && toInsert[k + 1] == 'l' && toInsert[k + 2] == 's' && toInsert[k + 3] == 'e' && toInsert[k + 4] == 'i' && toInsert[k + 5] == 'f' && toInsert[k + 6] == '(')
+                                                            {
+                                                                startIfIndex = k;
+                                                                break;
+                                                            }
+                                                        }
+                                                        string foundIf = toInsert.Substring(startIfIndex);
+                                                        foundIf = foundIf.Substring(0, foundIf.IndexOf('}') + 1);
+                                                        cutRemainLines.Insert(j + 1, "[TXT_END_IF];");
+                                                        cutRemainLines.Insert(j + 1, foundIf);
+                                                        toInsert = toInsert.Replace(foundIf, "");
+                                                        cutRemainLines.Insert(j + 1, toInsert + "[TXT_NO_END_IF_BELOW]");
+                                                    }
+                                                    else
+                                                        cutRemainLines.Insert(j + 1, toInsert);
+
+                                                    //Log("After:\n" + cutRemainLines[j]);
+                                                    //Log("Insert:\n" + cutRemainLines[j + 1]);
+
+                                                    goto L_RemergeRemainLines2;
+                                                }
+                                            }
+                                            //Example: if(readparam(bInt)>=90)bonusbMatk,(.@r>=9)?50:30;
+
+                                            //Split if and last ) +1
+                                            else if (cutRemainLines[j].Contains("elseif(") && cutRemainLines[j][cutRemainLines[j].Length - 1] != ')')
+                                            {
+                                                //Split now
+                                                Log("(Before):\n" + cutRemainLines[j]);
+                                                int firstCircleIndex = cutRemainLines[j].IndexOf('(');
+                                                string saveTxt = cutRemainLines[j];
+                                                cutRemainLines[j] = cutRemainLines[j].Substring(0, firstCircleIndex);
+                                                cutRemainLines.Insert(j + 1, saveTxt.Substring(firstCircleIndex));
+                                                Log("(After):\n" + cutRemainLines[j]);
+                                                Log("(Insert):\n" + cutRemainLines[j + 1]);
+                                                goto L_RemergeRemainLines2;
+                                            }
+                                            //Split if and last ) +1
+                                            else if (cutRemainLines[j].Contains("elseif(") && !cutRemainLines[j].Contains(";"))
+                                                cutRemainLines[j] = cutRemainLines[j] + ";";
+                                        }
+                                        else
+                                        {
+                                            cutRemainLines.RemoveAt(j);
+                                            goto L_RemergeRemainLines2;
+                                        }
+                                    }
+
+                                    cutRemainLines.Reverse();
+
+                                    for (int j = 0; j < cutRemainLines.Count; j++)
+                                        lines.Insert(i + 2, cutRemainLines[j]);
+                                }
+                                else if (cutRemains.Contains("if("))
                                 {
                                     var cutRemainLines = StringSplit.GetStringSplitMoreThanOneChar(cutRemains, new string[] { "if(" });
                                 L_RemergeRemainLines1:
