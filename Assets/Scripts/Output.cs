@@ -563,6 +563,18 @@ public class Output : ScriptableObject
                 ItemDbScriptData data = new ItemDbScriptData();
                 data.m_output = this;
                 data = sumData;
+                string allItemName = null;
+                for (int j = 0; j < data.idCombo.Count; j++)
+                {
+                    if (!string.IsNullOrEmpty(allItemName))
+                        allItemName += ", " + GetItemName(data.idCombo[j]);
+                    else
+                        allItemName += GetItemName(data.idCombo[j]);
+                }
+                string comboReq = "\"[หากสวมใส่คู่กับ " + allItemName + "]\"";
+                if (!string.IsNullOrEmpty(sum))
+                    comboReq = "\n\"[หากสวมใส่คู่กับ " + allItemName + "]\"";
+                sum += comboReq;
                 if (!string.IsNullOrEmpty(sum))
                     sum += "\n" + data.GetScriptDescription();
                 else
@@ -1452,6 +1464,18 @@ public class Output : ScriptableObject
         return currentItemDb.view.ToString("f0");
     }
     #endregion
+
+    string GetItemName(int data)
+    {
+        for (int i = 0; i < m_currentItemWithoutScriptDbs.Count; i++)
+        {
+            var sum = m_currentItemWithoutScriptDbs[i];
+            if (sum.id == data)
+                return sum.name;
+        }
+
+        return null;
+    }
 
     #region Debug / View Database
     [Button]
