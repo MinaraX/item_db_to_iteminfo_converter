@@ -189,4 +189,9 @@ public class Converter : MonoBehaviour
     {
         Debug.Log(obj);
     }
+
+    public void Donate()
+    {
+        Application.OpenURL("https://kanintemsrisukgames.wordpress.com/2019/04/05/support-kt-games/");
+    }
 }
