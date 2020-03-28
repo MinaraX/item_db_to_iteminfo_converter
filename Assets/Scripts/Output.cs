@@ -437,6 +437,7 @@ public class Output : ScriptableObject
         itemScript = itemScript.Substring(scriptStartAt);
 
         itemScript = RemoveComment(itemScript);
+        itemScript = itemScript.Replace("\\", "");
 
         ItemDbScriptData itemDbScriptData = new ItemDbScriptData();
         itemDbScriptData.idCombo = idComBo;

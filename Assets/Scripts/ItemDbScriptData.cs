@@ -107,7 +107,11 @@ public class ItemDbScriptData
     /// <returns></returns>
     string CorrectScriptToConvert(string data)
     {
+        if (string.IsNullOrEmpty(data))
+            return data;
+
         string sum = data;
+        sum = sum.Replace(".@heal", ".@h");
         sum = sum.Replace("{", " { ");
         sum = sum.Replace("}", " } ");
         sum = sum.Replace("else", "else ");
@@ -1760,7 +1764,7 @@ public class ItemDbScriptData
                 MergeItemScripts(lines, i);
                 goto L_MergeLines;
             }
-            else if (currentLine.Contains("bonus bDelayrate") && !currentLine.Contains(";"))
+            else if (currentLine.Contains("bonus bDelayRate") && !currentLine.Contains(";"))
             {
                 MergeItemScripts(lines, i);
                 goto L_MergeLines;
@@ -2663,7 +2667,7 @@ public class ItemDbScriptData
                 List<string> toReplaceValue = new List<string>();
 
                 //bonus_script inside room
-                while (data.Contains("bonus_script"))
+                while (data.Contains("bonus_script") && data.Contains(";"))
                 {
                     //Loop all char
                     for (int j = 0; j < data.Length; j++)
@@ -2690,7 +2694,7 @@ public class ItemDbScriptData
                 }
 
                 //autobonus inside room
-                while (data.Contains("autobonus"))
+                while (data.Contains("autobonus") && data.Contains(";"))
                 {
                     //Loop all char
                     for (int j = 0; j < data.Length; j++)
@@ -2717,7 +2721,7 @@ public class ItemDbScriptData
                 }
 
                 //itemheal inside room
-                while (data.Contains("itemheal"))
+                while (data.Contains("itemheal") && data.Contains(";"))
                 {
                     //Loop all char
                     for (int j = 0; j < data.Length; j++)
@@ -2744,7 +2748,7 @@ public class ItemDbScriptData
                 }
 
                 //percentheal inside room
-                while (data.Contains("percentheal"))
+                while (data.Contains("percentheal") && data.Contains(";"))
                 {
                     //Loop all char
                     for (int j = 0; j < data.Length; j++)
@@ -2771,7 +2775,7 @@ public class ItemDbScriptData
                 }
 
                 //heal inside room
-                while (data.Contains("heal"))
+                while (data.Contains("heal") && data.Contains(";"))
                 {
                     //Loop all char
                     for (int j = 0; j < data.Length; j++)
@@ -2798,7 +2802,7 @@ public class ItemDbScriptData
                 }
 
                 //sc_start inside room
-                while (data.Contains("sc_start"))
+                while (data.Contains("sc_start") && data.Contains(";"))
                 {
                     //Loop all char
                     for (int j = 0; j < data.Length; j++)
@@ -2825,7 +2829,7 @@ public class ItemDbScriptData
                 }
 
                 //sc_end inside room
-                while (data.Contains("sc_end"))
+                while (data.Contains("sc_end") && data.Contains(";"))
                 {
                     //Loop all char
                     for (int j = 0; j < data.Length; j++)
@@ -2852,7 +2856,7 @@ public class ItemDbScriptData
                 }
 
                 //Bonus inside room
-                while (data.Contains("bonus"))
+                while (data.Contains("bonus") && data.Contains(";"))
                 {
                     //Loop all char
                     for (int j = 0; j < data.Length; j++)
@@ -3589,10 +3593,6 @@ public class ItemDbScriptData
                     param3 = allParam[2];
 
                     skillFlag = (SkillFlag)Enum.Parse(typeof(SkillFlag), param3, true);
-
-                    // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
-                    if (!Enum.IsDefined(typeof(SkillFlag), param3) && !param3.Contains(","))
-                        throw new InvalidOperationException($"{param3} is not an underlying value of the YourEnum enumeration.");
                 }
 
                 Log("isHadParam1: " + isHadParam1 + " | param1: " + param1);
@@ -8400,7 +8400,7 @@ public class ItemDbScriptData
         List<string> toReplaceValue = new List<string>();
 
         //itemheal inside room
-        while (data.Contains("itemheal"))
+        while (data.Contains("itemheal") && data.Contains(";"))
         {
             //Loop all char
             for (int j = 0; j < data.Length; j++)
@@ -8427,7 +8427,7 @@ public class ItemDbScriptData
         }
 
         //percentheal inside room
-        while (data.Contains("percentheal"))
+        while (data.Contains("percentheal") && data.Contains(";"))
         {
             //Loop all char
             for (int j = 0; j < data.Length; j++)
@@ -8454,7 +8454,7 @@ public class ItemDbScriptData
         }
 
         //heal inside room
-        while (data.Contains("heal"))
+        while (data.Contains("heal") && data.Contains(";"))
         {
             //Loop all char
             for (int j = 0; j < data.Length; j++)
@@ -8481,7 +8481,7 @@ public class ItemDbScriptData
         }
 
         //sc_start inside room
-        while (data.Contains("sc_start"))
+        while (data.Contains("sc_start") && data.Contains(";"))
         {
             //Loop all char
             for (int j = 0; j < data.Length; j++)
@@ -8508,7 +8508,7 @@ public class ItemDbScriptData
         }
 
         //sc_end inside room
-        while (data.Contains("sc_end"))
+        while (data.Contains("sc_end") && data.Contains(";"))
         {
             //Loop all char
             for (int j = 0; j < data.Length; j++)
@@ -8535,7 +8535,7 @@ public class ItemDbScriptData
         }
 
         //Bonus inside room
-        while (data.Contains("bonus"))
+        while (data.Contains("bonus") && data.Contains(";"))
         {
             //Loop all char
             for (int j = 0; j < data.Length; j++)
