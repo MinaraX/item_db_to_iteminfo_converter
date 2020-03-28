@@ -17,12 +17,15 @@ public class Output : ScriptableObject
         currentItemDbData = new List<string>();
         currentItemDb = new ItemDb();
         m_lines = new List<string>();
+        m_lines_combo = new List<string>();
         m_lines_resourceNames = new List<string>();
         m_lines_SkillName = new List<string>();
         m_lines_MonsterDatabase = new List<string>();
         m_currentItemDbs = new List<ItemDb>();
+        m_currentItemComboDbs = new List<ItemComboDb>();
         m_currentItemWithoutScriptDbs = new List<ItemDb>();
         m_currentItemScriptDatas = new List<ItemDbScriptData>();
+        m_currentItemComboScriptDatas = new List<ItemDbScriptData>();
         m_currentResourceNames = new List<ItemResourceName>();
         m_currentSkillNames = new List<SkillName>();
         m_currentMonsterDatabases = new List<MonsterDatabase>();
@@ -70,7 +73,25 @@ public class Output : ScriptableObject
         //item_combo_db
         Log("Converter >> is item_combo_db null: " + string.IsNullOrEmpty(itemDatabase.m_item_combo_db));
 
-        //Do nothing for now
+        //Parsing item_combo_db to List
+        Log("Converter: Parsing item_combo_db to list");
+        m_lines_combo = StringSplit.GetStringSplit(itemDatabase.m_item_combo_db, '\n');
+
+        //Remove comment from List
+        Log("Converter: Remove comment from list");
+        for (int i = m_lines_combo.Count - 1; i >= 0; i--)
+        {
+            if (m_lines_combo[i].Contains("//"))
+                m_lines_combo.RemoveAt(i);
+        }
+
+        //Remove empty from List
+        Log("Converter: Remove empty from list");
+        for (int i = m_lines_combo.Count - 1; i >= 0; i--)
+        {
+            if (string.IsNullOrEmpty(m_lines_combo[i]) || string.IsNullOrWhiteSpace(m_lines_combo[i]))
+                m_lines_combo.RemoveAt(i);
+        }
     }
     #endregion
 
@@ -192,6 +213,11 @@ public class Output : ScriptableObject
         targetArray = index;
         ConvertCurrentTargetArrayToItemInfo(null, isNoScript);
     }
+    public void ConvertSpecificArrayToItemComboDB(int index)
+    {
+        targetArray = index;
+        ConvertSpecificArrayToItemComboDB();
+    }
 
     /// <summary>
     /// Convert string to item info database
@@ -300,8 +326,48 @@ public class Output : ScriptableObject
 
         Log("Success convert item_db id: " + currentItemDbData[0]);
     }
+    void ConvertSpecificArrayToItemComboDB()
+    {
+        currentItemComboDbData = new List<string>();
+
+        currentItemComboDbData = ConvertItemComboDbToListWithoutScript(m_lines_combo[targetArray]);
+
+
+        currentItemComboDb = new ItemComboDb();
+
+        if (currentItemComboDbData.Count > 0)
+        {
+            for (int i = 0; i < currentItemComboDbData.Count; i++)
+            {
+                if (!string.IsNullOrEmpty(currentItemComboDbData[0]))
+                {
+                    string sum = currentItemComboDbData[0];
+                    if (sum.Contains(":"))
+                    {
+                        List<string> sumSplit = StringSplit.GetStringSplit(sum, ':');
+                        for (int j = 0; j < sumSplit.Count; j++)
+                            currentItemComboDb.id.Add(int.Parse(sumSplit[j]));
+                    }
+                }
+            }
+        }
+
+        FetchItemComboDbScript(m_lines_combo[targetArray], currentItemComboDb.id);
+
+        if (Application.isPlaying)
+            m_currentItemComboDbs.Add(currentItemComboDb);
+
+        Log("Success convert item_combo_db: " + currentItemComboDbData[0] + ", Count: " + m_currentItemComboDbs.Count);
+    }
 
     List<string> ConvertItemDbToListWithoutScript(string data)
+    {
+        string sum = data;
+        int scriptStartAt = sum.IndexOf("{");
+        sum = sum.Substring(0, scriptStartAt - 1);
+        return new List<string>(sum.Split(','));
+    }
+    List<string> ConvertItemComboDbToListWithoutScript(string data)
     {
         string sum = data;
         int scriptStartAt = sum.IndexOf("{");
@@ -361,6 +427,25 @@ public class Output : ScriptableObject
 
         m_currentItemScriptDatas.Add(itemDbScriptData);
     }
+    void FetchItemComboDbScript(string data, List<int> idComBo)
+    {
+        string sum = data;
+        string itemScript = data;
+
+        int scriptStartAt = sum.IndexOf("{");
+        sum = sum.Substring(0, scriptStartAt - 1);
+        itemScript = itemScript.Substring(scriptStartAt);
+
+        itemScript = RemoveComment(itemScript);
+
+        ItemDbScriptData itemDbScriptData = new ItemDbScriptData();
+        itemDbScriptData.idCombo = idComBo;
+        itemDbScriptData.script = itemScript;
+
+        Log("combo:\n" + itemScript);
+
+        m_currentItemComboScriptDatas.Add(itemDbScriptData);
+    }
 
     string RemoveComment(string data)
     {
@@ -403,8 +488,11 @@ public class Output : ScriptableObject
     {
         string sum = null;
         string sumItemScripts = GetItemScripts();
+        string sumItemComboScripts = GetItemComboScripts(currentItemDb.id);
         if (!isItemScriptNull)
-            sum += "\n" + GetItemScripts();
+            sum += "\n" + sumItemScripts;
+        if (!isItemComboScriptNull)
+            sum += "\n" + sumItemComboScripts;
         sum += "\n\"^0000CCประเภท:^000000 " + GetItemType() + "\",";
         if (IsLocNeeded())
             sum += "\n\"^0000CCตำแหน่ง:^000000 " + GetItemLoc() + "\",";
@@ -459,6 +547,30 @@ public class Output : ScriptableObject
         sum += data.GetOnUnequipScriptDescription();
 
         isItemScriptNull = string.IsNullOrEmpty(sum);
+
+        return sum;
+    }
+    bool isItemComboScriptNull;
+    string GetItemComboScripts(int itemId)
+    {
+        string sum = null;
+
+        for (int i = 0; i < m_currentItemComboScriptDatas.Count; i++)
+        {
+            var sumData = m_currentItemComboScriptDatas[i];
+            if (sumData.idCombo.Contains(itemId))
+            {
+                ItemDbScriptData data = new ItemDbScriptData();
+                data.m_output = this;
+                data = sumData;
+                if (!string.IsNullOrEmpty(sum))
+                    sum += "\n" + data.GetScriptDescription();
+                else
+                    sum += data.GetScriptDescription();
+            }
+        }
+
+        isItemComboScriptNull = string.IsNullOrEmpty(sum);
 
         return sum;
     }
@@ -1372,11 +1484,16 @@ public class Output : ScriptableObject
 
     //item_db
     List<string> currentItemDbData = new List<string>();
+    //item_combo_db
+    List<string> currentItemComboDbData = new List<string>();
 
     //itemInfo
     ItemDb currentItemDb = new ItemDb();
+    ItemComboDb currentItemComboDb = new ItemComboDb();
     List<ItemDb> currentItemDbs = new List<ItemDb>();
     public List<ItemDb> m_currentItemDbs { get { return currentItemDbs; } set { currentItemDbs = value; } }
+    List<ItemComboDb> currentItemComboDbs = new List<ItemComboDb>();
+    public List<ItemComboDb> m_currentItemComboDbs { get { return currentItemComboDbs; } set { currentItemComboDbs = value; } }
     List<ItemDb> currentItemWithoutScriptDbs = new List<ItemDb>();
     public List<ItemDb> m_currentItemWithoutScriptDbs { get { return currentItemWithoutScriptDbs; } set { currentItemWithoutScriptDbs = value; } }
 
@@ -1395,10 +1512,15 @@ public class Output : ScriptableObject
     //Item Script
     List<ItemDbScriptData> currentItemScriptDatas = new List<ItemDbScriptData>();
     public List<ItemDbScriptData> m_currentItemScriptDatas { get { return currentItemScriptDatas; } set { currentItemScriptDatas = value; } }
+    //Item Combo Script
+    List<ItemDbScriptData> currentItemComboScriptDatas = new List<ItemDbScriptData>();
+    public List<ItemDbScriptData> m_currentItemComboScriptDatas { get { return currentItemComboScriptDatas; } set { currentItemComboScriptDatas = value; } }
 
     //lines
     List<string> lines = new List<string>();
     public List<string> m_lines { get { return lines; } set { lines = value; } }
+    List<string> lines_combo = new List<string>();
+    public List<string> m_lines_combo { get { return lines_combo; } set { lines_combo = value; } }
     List<string> lines_resourceNames = new List<string>();
     public List<string> m_lines_resourceNames { get { return lines_resourceNames; } set { lines_resourceNames = value; } }
     List<string> lines_SkillName = new List<string>();
@@ -1407,9 +1529,9 @@ public class Output : ScriptableObject
     public List<string> m_lines_MonsterDatabase { get { return lines_MonsterDatabase; } set { lines_MonsterDatabase = value; } }
     #endregion
 
-    void Log(object obj)
+    void Log(object obj, bool isForce = false)
     {
-        if (!Application.isPlaying)
+        if (!Application.isPlaying || isForce)
             Debug.Log(obj);
     }
 }

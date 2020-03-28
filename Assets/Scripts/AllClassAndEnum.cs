@@ -27,6 +27,13 @@ public class ItemDb
     public int view;
 }
 
+[Serializable]
+public class ItemComboDb
+{
+    public List<int> id = new List<int>();
+    public string combo_description;
+}
+
 [Flags]
 public enum ItemLoc
 {

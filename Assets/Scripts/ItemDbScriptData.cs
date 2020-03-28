@@ -9,6 +9,7 @@ public class ItemDbScriptData
 
     #region Variable
     public int id;
+    public List<int> idCombo = new List<int>();
     public string script;
     public string onEquipScript;
     public string onUnequipScript;
