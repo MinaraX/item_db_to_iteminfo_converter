@@ -10409,7 +10409,7 @@ public class ItemDbScriptData
 
         value = value.Replace("strcharinfo(3)", "Map ที่อยู่");
 
-        if (value.Contains("getequiprefinerycnt((getequipid("))
+        while (value.Contains("getequiprefinerycnt((getequipid("))
         {
             int findIndex = value.IndexOf("getequipid");
             int findIndex2 = value.IndexOf("(", findIndex);
@@ -10422,7 +10422,7 @@ public class ItemDbScriptData
             Log("sumEquipSlot:\n" + sumEquipSlot, false, "yellow");
             value = value.Replace("getequiprefinerycnt((getequipid(" + sumEquipSlot + ")==" + sumItemName, "จำนวนตีบวกถ้า " + GetEquipSlot(sumEquipSlot) + " คือ " + GetItemName(sumItemName));
         }
-        if (value.Contains("getequiprefinerycnt"))
+        while (value.Contains("getequiprefinerycnt"))
         {
             int findIndex = value.IndexOf("getequiprefinerycnt");
             int findIndex2 = value.IndexOf("(", findIndex);
@@ -10432,7 +10432,7 @@ public class ItemDbScriptData
             Log("sumEquipSlot:\n" + sumEquipSlot, false, "yellow");
             value = value.Replace("getequiprefinerycnt(" + sumEquipSlot + ")", "จำนวนตีบวก " + GetEquipSlot(sumEquipSlot));
         }
-        if (value.Contains("getiteminfo(getequipid"))
+        while (value.Contains("getiteminfo(getequipid"))
         {
             int findIndex = value.IndexOf("getequipid");
             int findIndex2 = value.IndexOf("(", findIndex);
@@ -10502,7 +10502,7 @@ public class ItemDbScriptData
 
         data = data.Replace("getrefine", "หากจำนวนตีบวก");
         data = data.Replace("getrefine()", "หากจำนวนตีบวก");
-        if (data.Contains("getequiprefinerycnt((getequipid("))
+        while (data.Contains("getequiprefinerycnt((getequipid("))
         {
             int findIndex = data.IndexOf("getequipid");
             int findIndex2 = data.IndexOf("(", findIndex);
@@ -10515,7 +10515,7 @@ public class ItemDbScriptData
             Log("sumEquipSlot:\n" + sumEquipSlot, false, "yellow");
             data = data.Replace("getequiprefinerycnt((getequipid(" + sumEquipSlot + ")==" + sumItemName, "จำนวนตีบวกถ้า " + GetEquipSlot(sumEquipSlot) + " คือ " + GetItemName(sumItemName));
         }
-        if (data.Contains("getequiprefinerycnt"))
+        while (data.Contains("getequiprefinerycnt"))
         {
             int findIndex = data.IndexOf("getequiprefinerycnt");
             int findIndex2 = data.IndexOf("(", findIndex);
@@ -10525,7 +10525,7 @@ public class ItemDbScriptData
             Log("sumEquipSlot:\n" + sumEquipSlot, false, "yellow");
             data = data.Replace("getequiprefinerycnt(" + sumEquipSlot + ")", "จำนวนตีบวก " + GetEquipSlot(sumEquipSlot));
         }
-        if (data.Contains("getiteminfo(getequipid"))
+        while (data.Contains("getiteminfo(getequipid"))
         {
             int findIndex = data.IndexOf("getequipid");
             int findIndex2 = data.IndexOf("(", findIndex);
