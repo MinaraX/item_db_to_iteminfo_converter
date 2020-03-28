@@ -8354,6 +8354,8 @@ public class ItemDbScriptData
                 data = data.Replace("[TEMP_VAR_DECLARE]", "");
                 data = GetValue(data, -1, true, true);
                 data = data.Replace("ค่าที่", "ค่าที่ ");
+                data = data.Replace("หากอุปกรณ์สวมใส่", "หากอุปกรณ์สวมใส่ ");
+                data = data.Replace("หากจำนวนตีบวก", "หากจำนวนตีบวก ");
                 data = data.Replace("+=", " เพิ่ม ");
                 data = data.Replace("-=", " ลด ");
                 data = data.Replace("*=", " คูณ ");
@@ -8641,17 +8643,17 @@ public class ItemDbScriptData
         lines.RemoveAt(i + 1);
     }
 
-    bool IsContainsTemporaryVariables(string txt, List<string> allCut, int mergeIndex, bool isNotAddCheckMatching = false)
+    bool IsContainsTemporaryVariables(string txt, List<string> lines, int mergeIndex, bool isNotAddCheckMatching = false)
     {
         if (txt.Contains(".@"))
         {
             if (txt.Contains(".@") && !txt.Contains(";"))
             {
-                MergeItemScripts(allCut, mergeIndex);
+                MergeItemScripts(lines, mergeIndex);
                 return true;
             }
             else if (!isNotAddCheckMatching)
-                AddTemporaryVariable(txt, allCut[mergeIndex - 1]);
+                AddTemporaryVariable(txt, lines[mergeIndex - 1]);
             else
                 AddTemporaryVariable(txt);
         }
@@ -8731,6 +8733,20 @@ public class ItemDbScriptData
             || txt[declareAt - 1] == '>')
             return;
 
+        bool isFoundDot = false;
+        //Find '.' before = if not found == return
+        for (int i = declareAt; i >= 0; i--)
+        {
+            if (txt[i] == '.')
+            {
+                isFoundDot = true;
+                break;
+            }
+        }
+
+        if (!isFoundDot)
+            return;
+
         int startCut = 0;
         int foundTempVarCount = 0;
         if (isFromAutoBonusOneLine)
@@ -8788,6 +8804,8 @@ public class ItemDbScriptData
                 newTempVariables.aka = sameAka;
             newTempVariables.txtDefault = txt;
             if (newTempVariables.value.Contains("getiteminfo(getequipid("))
+                newTempVariables.value = ConvertOneLineIfElse(newTempVariables.value);
+            if (newTempVariables.value.Contains("getequiprefinerycnt"))
                 newTempVariables.value = ConvertOneLineIfElse(newTempVariables.value);
             Log("New temporary variables added"
                 + " | variableName: " + newTempVariables.variableName
@@ -8914,6 +8932,9 @@ public class ItemDbScriptData
         List<string> akaFromTempVar = new List<string>();
         for (int i = 0; i < tempVariables.Count; i++)
         {
+            if (valueFromTempVar.Contains(tempVariables[i].value))
+                continue;
+
             if (isForceNoCircle)
             {
                 string targetVarName = MergeWhiteSpace.RemoveWhiteSpace(tempVariables[i].aka);
@@ -9972,6 +9993,71 @@ public class ItemDbScriptData
     }
 
     #region Utilities
+    string GetEquipSlot(string data)
+    {
+        if (string.IsNullOrEmpty(data))
+            return null;
+
+        if (!data.ToLower().Contains("eqi_"))
+        {
+            Log("<color=red>Wrong equipment slot!</color>");
+            return data;
+        }
+
+        EquipmentSlotFlag equipmentSlotFlag = (EquipmentSlotFlag)Enum.Parse(typeof(EquipmentSlotFlag), data, true);
+
+        // The foo.ToString().Contains(",") check is necessary for enumerations marked with an [Flags] attribute
+        if (!Enum.IsDefined(typeof(EquipmentSlotFlag), equipmentSlotFlag) && !equipmentSlotFlag.ToString().Contains(","))
+            throw new InvalidOperationException($"{data} is not an underlying value of the YourEnum enumeration.");
+
+        if (equipmentSlotFlag == EquipmentSlotFlag.EQI_COMPOUND_ON)
+            return "อุปกรณ์ที่ผนึก";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_ACC_L)
+            return "Left Accessory";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_ACC_R)
+            return "Right Accessory";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_SHOES)
+            return "Footgear";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_GARMENT)
+            return "Garment";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_HEAD_LOW)
+            return "Lower Headgear";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_HEAD_MID)
+            return "Middle Headgear";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_HEAD_TOP)
+            return "Upper Headgear";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_ARMOR)
+            return "Armor";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_HAND_L)
+            return "Left hand";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_HAND_R)
+            return "Right hand";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_COSTUME_HEAD_TOP)
+            return "Upper Costume Headgear";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_COSTUME_HEAD_MID)
+            return "Middle Costume Headgear";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_COSTUME_HEAD_LOW)
+            return "Lower Costume Headgear";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_COSTUME_GARMENT)
+            return "Costume Garment";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_AMMO)
+            return "Ammunition";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_SHADOW_ARMOR)
+            return "Shadow Armor";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_SHADOW_WEAPON)
+            return "Shadow Weapon";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_SHADOW_SHIELD)
+            return "Shadow Shield";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_SHADOW_SHOES)
+            return "Shadow Shoes";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_SHADOW_ACC_R)
+            return "Right Shadow Accessory";
+        else if (equipmentSlotFlag == EquipmentSlotFlag.EQI_SHADOW_ACC_L)
+            return "Left Shadow Accessory";
+
+        return null;
+    }
+
     /// <summary>
     /// Get item name by ID
     /// </summary>
@@ -10344,8 +10430,24 @@ public class ItemDbScriptData
 
         data = data.Replace("getrefine", "หากจำนวนตีบวก");
         data = data.Replace("getrefine()", "หากจำนวนตีบวก");
-        data = data.Replace("getiteminfo(getequipid(EQI_HAND_R),11)", "หากมือขวาสวมใส่");
-        data = data.Replace("getiteminfo(getequipid(EQI_HAND_L),11)", "หากมือซ้ายสวมใส่");
+        if (data.Contains("getequiprefinerycnt"))
+        {
+            int findIndex = data.IndexOf("getequiprefinerycnt");
+            int findIndex2 = data.IndexOf("(", findIndex);
+            int findIndex3 = data.IndexOf(")", findIndex);
+            string sumEquipSlot = data.Substring(findIndex2 + 1);
+            sumEquipSlot = sumEquipSlot.Substring(0, sumEquipSlot.IndexOf(")"));
+            data = data.Replace("getequiprefinerycnt(" + sumEquipSlot + ")", "หากจำนวนตีบวก " + GetEquipSlot(sumEquipSlot));
+        }
+        if (data.Contains("getiteminfo(getequipid"))
+        {
+            int findIndex = data.IndexOf("getequipid");
+            int findIndex2 = data.IndexOf("(", findIndex);
+            int findIndex3 = data.IndexOf(")", findIndex);
+            string sumEquipSlot = data.Substring(findIndex2 + 1);
+            sumEquipSlot = sumEquipSlot.Substring(0, sumEquipSlot.IndexOf(")"));
+            data = data.Replace("getiteminfo(getequipid(" + sumEquipSlot + "),11)", "หากอุปกรณ์สวมใส่ " + GetEquipSlot(sumEquipSlot));
+        }
         data = data.Replace("==W_FIST", " ไม่มีอาวุธ ");
         data = data.Replace("==W_DAGGER", " Dagger ");
         data = data.Replace("==W_1HSWORD", " One-handed swords ");
