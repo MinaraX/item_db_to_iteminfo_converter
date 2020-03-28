@@ -10057,6 +10057,42 @@ public class ItemDbScriptData
 
         return null;
     }
+    string ReplaceEquipSlot(string data)
+    {
+        if (string.IsNullOrEmpty(data))
+            return null;
+
+        if (!data.ToLower().Contains("eqi_"))
+        {
+            Log("<color=red>Wrong equipment slot!</color>");
+            return data;
+        }
+
+        data = data.Replace("EQI_COMPOUND_ON", "อุปกรณ์ที่ผนึก");
+        data = data.Replace("EQI_ACC_L", "Left Accessory");
+        data = data.Replace("EQI_ACC_R", "Right Accessory");
+        data = data.Replace("EQI_SHOES", "Footgear");
+        data = data.Replace("EQI_GARMENT", "Garment");
+        data = data.Replace("EQI_HEAD_LOW", "Lower Headgear");
+        data = data.Replace("EQI_HEAD_MID", "Middle Headgear");
+        data = data.Replace("EQI_HEAD_TOP", "Upper Headgear");
+        data = data.Replace("EQI_ARMOR", "Armor");
+        data = data.Replace("EQI_HAND_L", "Left hand");
+        data = data.Replace("EQI_HAND_R", "Right hand");
+        data = data.Replace("EQI_COSTUME_HEAD_TOP", "Upper Costume Headgear");
+        data = data.Replace("EQI_COSTUME_HEAD_MID", "Middle Costume Headgear");
+        data = data.Replace("EQI_COSTUME_HEAD_LOW", "Lower Costume Headgear");
+        data = data.Replace("EQI_COSTUME_GARMENT", "Costume Garment");
+        data = data.Replace("EQI_AMMO", "Ammunition");
+        data = data.Replace("EQI_SHADOW_ARMOR", "Shadow Armor");
+        data = data.Replace("EQI_SHADOW_WEAPON", "Shadow Weapon");
+        data = data.Replace("EQI_SHADOW_SHIELD", "Shadow Shield");
+        data = data.Replace("EQI_SHADOW_SHOES", "Shadow Shoes");
+        data = data.Replace("EQI_SHADOW_ACC_R", "Right Shadow Accessory");
+        data = data.Replace("EQI_SHADOW_ACC_L", "Left Shadow Accessory");
+
+        return data;
+    }
 
     /// <summary>
     /// Get item name by ID
@@ -10373,6 +10409,40 @@ public class ItemDbScriptData
 
         value = value.Replace("strcharinfo(3)", "Map ที่อยู่");
 
+        if (value.Contains("getequiprefinerycnt((getequipid("))
+        {
+            int findIndex = value.IndexOf("getequipid");
+            int findIndex2 = value.IndexOf("(", findIndex);
+            int findIndex3 = value.IndexOf(")", findIndex);
+            int findIndex4 = value.IndexOf("==", findIndex);
+            string sumEquipSlot = value.Substring(findIndex2 + 1);
+            string sumItemName = value.Substring(findIndex4 + 2);
+            sumEquipSlot = sumEquipSlot.Substring(0, sumEquipSlot.IndexOf(")"));
+            sumItemName = sumItemName.Substring(0, sumItemName.IndexOf(")"));
+            Log("sumEquipSlot:\n" + sumEquipSlot, false, "yellow");
+            value = value.Replace("getequiprefinerycnt((getequipid(" + sumEquipSlot + ")==" + sumItemName, "จำนวนตีบวกถ้า " + GetEquipSlot(sumEquipSlot) + " คือ " + GetItemName(sumItemName));
+        }
+        if (value.Contains("getequiprefinerycnt"))
+        {
+            int findIndex = value.IndexOf("getequiprefinerycnt");
+            int findIndex2 = value.IndexOf("(", findIndex);
+            int findIndex3 = value.IndexOf(")", findIndex);
+            string sumEquipSlot = value.Substring(findIndex2 + 1);
+            sumEquipSlot = sumEquipSlot.Substring(0, sumEquipSlot.IndexOf(")"));
+            Log("sumEquipSlot:\n" + sumEquipSlot, false, "yellow");
+            value = value.Replace("getequiprefinerycnt(" + sumEquipSlot + ")", "จำนวนตีบวก " + GetEquipSlot(sumEquipSlot));
+        }
+        if (value.Contains("getiteminfo(getequipid"))
+        {
+            int findIndex = value.IndexOf("getequipid");
+            int findIndex2 = value.IndexOf("(", findIndex);
+            int findIndex3 = value.IndexOf(")", findIndex);
+            string sumEquipSlot = value.Substring(findIndex2 + 1);
+            sumEquipSlot = sumEquipSlot.Substring(0, sumEquipSlot.IndexOf(")"));
+            Log("sumEquipSlot:\n" + sumEquipSlot, false, "yellow");
+            value = value.Replace("getiteminfo(getequipid(" + sumEquipSlot + "),11)", "หากอุปกรณ์สวมใส่ " + GetEquipSlot(sumEquipSlot));
+        }
+
         value = value.Replace("getrefine();", "[ตามจำนวนตีบวก]");
 
         value = value.Replace("getrefine()", "[ตามจำนวนตีบวก]");
@@ -10403,6 +10473,8 @@ public class ItemDbScriptData
 
         value = value.Replace("JobLevel", "[Job Level]");
 
+        value = ReplaceEquipSlot(value);
+
         return value;
     }
 
@@ -10430,6 +10502,19 @@ public class ItemDbScriptData
 
         data = data.Replace("getrefine", "หากจำนวนตีบวก");
         data = data.Replace("getrefine()", "หากจำนวนตีบวก");
+        if (data.Contains("getequiprefinerycnt((getequipid("))
+        {
+            int findIndex = data.IndexOf("getequipid");
+            int findIndex2 = data.IndexOf("(", findIndex);
+            int findIndex3 = data.IndexOf(")", findIndex);
+            int findIndex4 = data.IndexOf("==", findIndex);
+            string sumEquipSlot = data.Substring(findIndex2 + 1);
+            string sumItemName = data.Substring(findIndex4 + 2);
+            sumEquipSlot = sumEquipSlot.Substring(0, sumEquipSlot.IndexOf(")"));
+            sumItemName = sumItemName.Substring(0, sumItemName.IndexOf(")"));
+            Log("sumEquipSlot:\n" + sumEquipSlot, false, "yellow");
+            data = data.Replace("getequiprefinerycnt((getequipid(" + sumEquipSlot + ")==" + sumItemName, "จำนวนตีบวกถ้า " + GetEquipSlot(sumEquipSlot) + " คือ " + GetItemName(sumItemName));
+        }
         if (data.Contains("getequiprefinerycnt"))
         {
             int findIndex = data.IndexOf("getequiprefinerycnt");
@@ -10437,7 +10522,8 @@ public class ItemDbScriptData
             int findIndex3 = data.IndexOf(")", findIndex);
             string sumEquipSlot = data.Substring(findIndex2 + 1);
             sumEquipSlot = sumEquipSlot.Substring(0, sumEquipSlot.IndexOf(")"));
-            data = data.Replace("getequiprefinerycnt(" + sumEquipSlot + ")", "หากจำนวนตีบวก " + GetEquipSlot(sumEquipSlot));
+            Log("sumEquipSlot:\n" + sumEquipSlot, false, "yellow");
+            data = data.Replace("getequiprefinerycnt(" + sumEquipSlot + ")", "จำนวนตีบวก " + GetEquipSlot(sumEquipSlot));
         }
         if (data.Contains("getiteminfo(getequipid"))
         {
@@ -10446,6 +10532,7 @@ public class ItemDbScriptData
             int findIndex3 = data.IndexOf(")", findIndex);
             string sumEquipSlot = data.Substring(findIndex2 + 1);
             sumEquipSlot = sumEquipSlot.Substring(0, sumEquipSlot.IndexOf(")"));
+            Log("sumEquipSlot:\n" + sumEquipSlot, false, "yellow");
             data = data.Replace("getiteminfo(getequipid(" + sumEquipSlot + "),11)", "หากอุปกรณ์สวมใส่ " + GetEquipSlot(sumEquipSlot));
         }
         data = data.Replace("==W_FIST", " ไม่มีอาวุธ ");
@@ -10487,6 +10574,7 @@ public class ItemDbScriptData
         data = data.Replace("?", " จะได้ ");
         data = data.Replace(":", ", หรือหากไม่ตรงเงื่อนไขจะได้ ");
         data = data.Replace("pow", " ยกกำลัง ");
+        data = ReplaceEquipSlot(data);
 
         Log("ConvertOneLineIfElse >> data: " + data);
 
