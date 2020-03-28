@@ -62,9 +62,9 @@ public class ItemDbScriptData
 
         string sumDesc = GetScriptsDescription(onEquipScript);
         if (!string.IsNullOrEmpty(sumScript) && !string.IsNullOrEmpty(sumDesc) && !string.IsNullOrWhiteSpace(sumDesc))
-            sumEquipScript = "\n\"[เมื่อสวมใส่]\",\n" + sumDesc;
+            sumEquipScript = "\n\"^009974[เมื่อสวมใส่]^000000\",\n" + sumDesc;
         else if (!string.IsNullOrEmpty(sumDesc) && !string.IsNullOrWhiteSpace(sumDesc))
-            sumEquipScript = "\"[เมื่อสวมใส่]\",\n" + sumDesc;
+            sumEquipScript = "\"^009974[เมื่อสวมใส่]^000000\",\n" + sumDesc;
         else
             sumEquipScript = sumDesc;
 
@@ -85,9 +85,9 @@ public class ItemDbScriptData
 
         string sumDesc = GetScriptsDescription(onUnequipScript);
         if ((!string.IsNullOrEmpty(sumEquipScript) || !string.IsNullOrEmpty(sumScript)) && !string.IsNullOrEmpty(sumDesc) && !string.IsNullOrWhiteSpace(sumDesc))
-            sumUnequipScript = "\n\"[เมื่อถอด]\",\n" + sumDesc;
+            sumUnequipScript = "\n\"^009974[เมื่อถอด]^000000\",\n" + sumDesc;
         else if (!string.IsNullOrEmpty(sumDesc) && !string.IsNullOrWhiteSpace(sumDesc))
-            sumUnequipScript = "\"[เมื่อถอด]\",\n" + sumDesc;
+            sumUnequipScript = "\"^009974[เมื่อถอด]^000000\",\n" + sumDesc;
         else
             sumUnequipScript = sumDesc;
 
@@ -132,6 +132,45 @@ public class ItemDbScriptData
             sum = sum.Replace("\"+", "");
             sum = sum.Replace("+\"", "");
         }
+        //[TODO]Replace to function description later
+        sum = sum.Replace("if (callfunc(\"F_time_limit_recorder\") == 1) { recorder_quest_type = 1;", "");
+        sum = sum.Replace("if (callfunc(\"F_time_limit_recorder\") == 1) { recorder_quest_type = 2;", "");
+        sum = sum.Replace("if (callfunc(\"F_time_limit_recorder\") == 1) { recorder_quest_type = 3;", "");
+        sum = sum.Replace("if (callfunc(\"F_time_limit_recorder\") == 1) { recorder_quest_type = 4;", "");
+        sum = sum.Replace("if (callfunc(\"F_time_limit_recorder\") == 1) { recorder_quest_type = 5;", "");
+        sum = sum.Replace("callfunc \"F_Cat_Hard_Biscuit\";", "");
+        sum = sum.Replace("callfunc \"F_Rice_Weevil_Bug\";", "");
+        sum = sum.Replace("callfunc \"F_CashStore\";", "");
+        sum = sum.Replace("callfunc \"F_CashPartyCall\";", "");
+        sum = sum.Replace("callfunc \"F_CashReset\";", "");
+        sum = sum.Replace("callfunc \"F_CashDungeon\",3;", "");
+        sum = sum.Replace("callfunc \"F_CashSiegeTele\";", "");
+        sum = sum.Replace("callfunc \"F_Snowball\";", "");
+        sum = sum.Replace("callfunc \"F_CashCity\",1;", "");
+        sum = sum.Replace("callfunc \"F_CashCity\",2;", "");
+        sum = sum.Replace("callfunc \"F_CashCity\",3;", "");
+        sum = sum.Replace("callfunc \"F_CashCity\",4;", "");
+        sum = sum.Replace("callfunc \"F_CashCity\",5;", "");
+        sum = sum.Replace("callfunc \"F_CashTele\",1;", "");
+        sum = sum.Replace("callfunc \"F_CashTele\",2;", "");
+        sum = sum.Replace("callfunc \"F_CashTele\",3;", "");
+        sum = sum.Replace("callfunc \"F_CashTele\",4;", "");
+        sum = sum.Replace("callfunc \"F_CashTele\",5;", "");
+        sum = sum.Replace("callfunc \"F_CashTele\",6;", "");
+        sum = sum.Replace("callfunc \"F_CashDungeon\",1;", "");
+        sum = sum.Replace("callfunc \"F_CashDungeon\",2;", "");
+        sum = sum.Replace("callfunc \"F_22507\";", "");
+        sum = sum.Replace("callfunc(\"F_Pieces_Of_Sentiment\");", "");
+        sum = sum.Replace("callfunc \"F_CashReduceStat\",bStr,-1,22702;", "");
+        sum = sum.Replace("callfunc \"F_CashReduceStat\",bAgi,-1,22703;", "");
+        sum = sum.Replace("callfunc \"F_CashReduceStat\",bVit,-1,22704;", "");
+        sum = sum.Replace("callfunc \"F_CashReduceStat\",bInt,-1,22705;", "");
+        sum = sum.Replace("callfunc \"F_CashReduceStat\",bDex,-1,22706;", "");
+        sum = sum.Replace("callfunc \"F_CashReduceStat\",bLuk,-1,22707;", "");
+        sum = sum.Replace("callfunc(\"F_Mysterious_box\");", "");
+        sum = sum.Replace("callfunc(\"F_Cursed_Fragment\");", "");
+        sum = sum.Replace("callfunc(\"F_Cursed_Crystal\");", "");
+        sum = sum.Replace("callfunc \"F_CashStore\";", "");
         return sum;
     }
     #endregion
@@ -318,6 +357,7 @@ public class ItemDbScriptData
                     }
                     else
                     {
+                        lines[i] = lines[i].Replace("\"", "");
                         lines[i] = lines[i].Replace("{", "[");
                         lines[i] = lines[i].Replace("}", "]");
                         lines[i] = "[END_MERGE]" + lines[i] + "[/END_MERGE]";
@@ -3187,23 +3227,23 @@ public class ItemDbScriptData
                 //Replace special variables
                 data = ReplaceAllSpecialValue(data);
 
-                sum += AddDescription(sum, "[" + data + "]");
+                sum += AddDescription(sum, "^994100[" + data + "]^000000");
             }
             #endregion
             #region [TXT_ELSE]
             functionName = "[TXT_ELSE]";
             if (data.Contains(functionName))
-                sum += AddDescription(sum, "[หากไม่ตรงเงื่อนไข]");
+                sum += AddDescription(sum, "^994100[หากไม่ตรงเงื่อนไข]^000000");
             #endregion
             #region [TXT_END_ELSE]
             functionName = "[TXT_END_ELSE]";
             if (data.Contains(functionName))
-                sum += AddDescription(sum, "[สิ้นสุดหากไม่ตรงเงื่อนไข]");
+                sum += AddDescription(sum, "^898685[สิ้นสุดหากไม่ตรงเงื่อนไข]^000000");
             #endregion
             #region [TXT_END_IF]
             functionName = "[TXT_END_IF]";
             if (data.Contains(functionName))
-                sum += AddDescription(sum, "[สิ้นสุดหากตรงเงื่อนไข]");
+                sum += AddDescription(sum, "^898685[สิ้นสุดหากตรงเงื่อนไข]^000000");
             #endregion 
             #region [TXT_END]
             functionName = "[TXT_END]";
@@ -8562,9 +8602,9 @@ public class ItemDbScriptData
                 data = data.Replace("-=", " ลด ");
                 data = data.Replace("*=", " คูณ ");
                 data = data.Replace("/=", " หาร ");
-                data = data.Replace(":", ": ");
-                data = data.Replace("꞉", "꞉ ");
-                sum += AddDescription(sum, "● " + data);
+                data = data.Replace(":", " คือ ");
+                data = data.Replace("꞉", " คือ ");
+                sum += AddDescription(sum, data);
             }
             #endregion
             #region Set Temporary Variables

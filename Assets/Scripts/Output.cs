@@ -574,9 +574,9 @@ public class Output : ScriptableObject
                     else
                         allItemName += GetItemName(data.idCombo[j]);
                 }
-                string comboReq = "\"[หากสวมใส่คู่กับ " + allItemName + "]\"";
+                string comboReq = "\"^009974[หากสวมใส่คู่กับ " + allItemName + "]^000000\",";
                 if (!string.IsNullOrEmpty(sum))
-                    comboReq = "\n\"[หากสวมใส่คู่กับ " + allItemName + "]\"";
+                    comboReq = "\n\"^009974[หากสวมใส่คู่กับ " + allItemName + "]^000000\",";
                 sum += comboReq;
                 if (!string.IsNullOrEmpty(sum))
                     sum += "\n" + data.GetScriptDescription();
