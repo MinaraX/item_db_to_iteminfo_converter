@@ -13,6 +13,5 @@ MonoBehaviour:
   m_Name: Output
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 11400000, guid: 630cf34160fdbb5459afe2ad44e0a776, type: 2}
-  targetArray: 13141
-  _string: 12561,Mysterious_Seed,Mysterious Seed,2,20,,10,,,,,0xFFFFFFFF,63,2,,,,,,{
-    warp "bif_fild01",32,382; },{},{}
+  targetArray: 621
+  _string: 

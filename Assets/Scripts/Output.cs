@@ -561,11 +561,13 @@ public class Output : ScriptableObject
             if (sumData.idCombo.Contains(itemId))
             {
                 ItemDbScriptData data = new ItemDbScriptData();
-                data.m_output = this;
                 data = sumData;
+                data.m_output = this;
                 string allItemName = null;
                 for (int j = 0; j < data.idCombo.Count; j++)
                 {
+                    if (itemId == data.idCombo[j])
+                        continue;
                     if (!string.IsNullOrEmpty(allItemName))
                         allItemName += ", " + GetItemName(data.idCombo[j]);
                     else

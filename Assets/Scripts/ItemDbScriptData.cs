@@ -10795,7 +10795,7 @@ public class ItemDbScriptData
 
         if (isInteger)
         {
-            //Log("GetSkillName >> Integer " + paramInt);
+            //Log("GetSkillName >> Integer >> paramInt: " + paramInt);
             for (int i = 0; i < m_output.m_currentSkillNames.Count; i++)
             {
                 var sumData = m_output.m_currentSkillNames[i];
@@ -10805,7 +10805,7 @@ public class ItemDbScriptData
         }
         else
         {
-            //Log("GetSkillName >> Not Integer " + data);
+            //Log("GetSkillName >> Not Integer >> data: " + data);
             for (int i = 0; i < m_output.m_currentSkillNames.Count; i++)
             {
                 var sumData = m_output.m_currentSkillNames[i];
