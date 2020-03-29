@@ -8157,9 +8157,9 @@ public class ItemDbScriptData
                 if (isHadParam1)
                 {
                     if (isParam1Negative)
-                        sum += AddDescription(sum, "ลดโอกาส " + param1 + "% ที่จะทำให้อาวุธศัตรูชำรุด");
+                        sum += AddDescription(sum, "ลดโอกาส " + GetRateByDivider(param1, 100) + "% ที่จะทำให้อาวุธศัตรูชำรุด");
                     else
-                        sum += AddDescription(sum, "มีโอกาส " + param1 + "% ที่จะทำให้อาวุธศัตรูชำรุด");
+                        sum += AddDescription(sum, "มีโอกาส " + GetRateByDivider(param1, 100) + "% ที่จะทำให้อาวุธศัตรูชำรุด");
                 }
             }
             #endregion
