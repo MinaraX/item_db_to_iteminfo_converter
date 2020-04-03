@@ -7440,7 +7440,7 @@ public class ItemDbScriptData
                 string param2 = GetValue(allParam[1], 2);
                 string param3 = GetValue(allParam[2], 3);
                 string param4 = GetValue(allParam[3], 4);
-                string param5 = GetValue(allParam[4], 5);
+                string param5 = GetValue(allParam[4], 5, true);
 
                 if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4 && isHadParam5)
                 {
