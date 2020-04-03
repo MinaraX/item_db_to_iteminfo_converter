@@ -34,6 +34,11 @@ public class Converter : MonoBehaviour
         ItemDatabase.onResourceNamesChanged += ItemDatabase_onResourceNamesChanged;
         ItemDatabase.onSkillNamesChanged += ItemDatabase_onSkillNamesChanged;
         ItemDatabase.onMobDbChanged += ItemDatabase_onMobDbChanged;
+        isItemDbNull = true;
+        isItemComboDbNull = true;
+        isResourceNamesNull = true;
+        isSkillNamesNull = true;
+        isMobDbNull = true;
     }
     void OnDestroy()
     {
@@ -43,40 +48,50 @@ public class Converter : MonoBehaviour
         ItemDatabase.onSkillNamesChanged -= ItemDatabase_onSkillNamesChanged;
         ItemDatabase.onMobDbChanged -= ItemDatabase_onMobDbChanged;
     }
+    bool isItemDbNull;
     void ItemDatabase_onItemDbChanged(bool isNull)
     {
+        isItemDbNull = isNull;
         if (isNull)
             imgCurrent_item_db.color = colors[0];
         else
             imgCurrent_item_db.color = colors[1];
         CheckButtonState();
     }
+    bool isItemComboDbNull;
     void ItemDatabase_onItemComboDbChanged(bool isNull)
     {
+        isItemComboDbNull = isNull;
         if (isNull)
             imgCurrent_item_combo_db.color = colors[0];
         else
             imgCurrent_item_combo_db.color = colors[1];
         CheckButtonState();
     }
+    bool isResourceNamesNull;
     void ItemDatabase_onResourceNamesChanged(bool isNull)
     {
+        isResourceNamesNull = isNull;
         if (isNull)
             imgCurrent_resourceNames.color = colors[0];
         else
             imgCurrent_resourceNames.color = colors[1];
         CheckButtonState();
     }
+    bool isSkillNamesNull;
     void ItemDatabase_onSkillNamesChanged(bool isNull)
     {
+        isSkillNamesNull = isNull;
         if (isNull)
             imgCurrent_skillNames.color = colors[0];
         else
             imgCurrent_skillNames.color = colors[1];
         CheckButtonState();
     }
+    bool isMobDbNull;
     void ItemDatabase_onMobDbChanged(bool isNull)
     {
+        isMobDbNull = isNull;
         if (isNull)
             imgCurrent_mob_db.color = colors[0];
         else
@@ -124,6 +139,9 @@ public class Converter : MonoBehaviour
     /// </summary>
     void Sync()
     {
+        if (isItemDbNull || isItemComboDbNull || isResourceNamesNull || isSkillNamesNull || isMobDbNull)
+            return;
+
         output.ClearAll();
         output.ParseItemDatabase();
         output.FetchResourceName();

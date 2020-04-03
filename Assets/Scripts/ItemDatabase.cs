@@ -108,15 +108,18 @@ public class ItemDatabase : ScriptableObject
         skillNames = null;
         mob_db = null;
 
-        if (textAsset_item_db)
-            m_item_db = textAsset_item_db.text;
-        if (textAsset_item_combo_db)
-            m_item_combo_db = textAsset_item_combo_db.text;
-        if (textAsset_resourceNames)
-            m_resourceNames = textAsset_resourceNames.text;
-        if (textAsset_skillNames)
-            m_skillNames = textAsset_skillNames.text;
-        if (textAsset_mob_db)
-            m_mob_db = textAsset_mob_db.text;
+        if (Application.isEditor)
+        {
+            if (textAsset_item_db)
+                m_item_db = textAsset_item_db.text;
+            if (textAsset_item_combo_db)
+                m_item_combo_db = textAsset_item_combo_db.text;
+            if (textAsset_resourceNames)
+                m_resourceNames = textAsset_resourceNames.text;
+            if (textAsset_skillNames)
+                m_skillNames = textAsset_skillNames.text;
+            if (textAsset_mob_db)
+                m_mob_db = textAsset_mob_db.text;
+        }
     }
 }
