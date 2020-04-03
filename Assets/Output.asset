@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: Output
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 11400000, guid: 630cf34160fdbb5459afe2ad44e0a776, type: 2}
-  targetArray: 1248
-  _string: '11600,Shining_Holy_Water,Shining Holy Water,0,10,,15,,,,0,0xFFFFFFFF,63,2,,,,,,{
-    if(strcharinfo(3)=="prt_q") { bonus_script "{ bonus2 bSubSize,Size_All,10; }",600;
-    sc_end SC_SILENCE; sc_end SC_POISON; sc_end SC_CURSE; heal 1000,0; } },{},{} '
+  targetArray: 13141
+  _string: '4363,B_Magaleta_Card,High Priest Card,6,20,,10,,,,,,,,16,,,,,{ bonus5
+    bAutoSpellWhenHit,"HP_ASSUMPTIO",5,50,BF_WEAPON|BF_MAGIC,0; },{},{} '
