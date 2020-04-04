@@ -10369,69 +10369,69 @@ public class ItemDbScriptData
         if (!Enum.IsDefined(typeof(WeaponTypeFlag), weaponTypeFlag) && !weaponTypeFlag.ToString().Contains(","))
             throw new InvalidOperationException($"{data} is not an underlying value of the YourEnum enumeration.");
 
-        if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_FIST))
+        if (weaponTypeFlag == WeaponTypeFlag.W_FIST)
             return "ไม่มีอาวุธ";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_DAGGER))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_DAGGER)
             return "Daggers";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_1HSWORD))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_1HSWORD)
             return "One-handed swords";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_2HSWORD))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_2HSWORD)
             return "Two-handed swords";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_1HSPEAR))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_1HSPEAR)
             return "One-handed spears";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_2HSPEAR))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_2HSPEAR)
             return "Two-handed spears";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_1HAXE))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_1HAXE)
             return "One-handed axes";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_2HAXE))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_2HAXE)
             return "Two-handed axes";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_MACE))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_MACE)
             return "Maces";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_2HMACE))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_2HMACE)
             return "Two-handed Maces";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_STAFF))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_STAFF)
             return "Staff";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_BOW))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_BOW)
             return "Bows";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_KNUCKLE))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_KNUCKLE)
             return "Knuckles";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_MUSICAL))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_MUSICAL)
             return "Musical Instruments";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_WHIP))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_WHIP)
             return "Whips";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_BOOK))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_BOOK)
             return "Books";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_KATAR))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_KATAR)
             return "Katars";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_REVOLVER))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_REVOLVER)
             return "Revolvers";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_RIFLE))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_RIFLE)
             return "Rifles";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_GATLING))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_GATLING)
             return "Gatling guns";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_SHOTGUN))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_SHOTGUN)
             return "Shotguns";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_GRENADE))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_GRENADE)
             return "Grenade launchers";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_HUUMA))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_HUUMA)
             return "Fuuma Shurikens";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_2HSTAFF))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_2HSTAFF)
             return "Two-handed Staff";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.MAX_WEAPON_TYPE))
+        else if (weaponTypeFlag == WeaponTypeFlag.MAX_WEAPON_TYPE)
             return null;
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_DOUBLE_DD))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_DOUBLE_DD)
             return "Dual-wield Daggers";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_DOUBLE_SS))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_DOUBLE_SS)
             return "Dual-wield Swords";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_DOUBLE_AA))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_DOUBLE_AA)
             return "Dual-wield Axes";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_DOUBLE_DS))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_DOUBLE_DS)
             return "Dagger + Sword";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_DOUBLE_DA))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_DOUBLE_DA)
             return "Dagger + Axe";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.W_DOUBLE_SA))
+        else if (weaponTypeFlag == WeaponTypeFlag.W_DOUBLE_SA)
             return "Sword + Axe";
-        else if (weaponTypeFlag.HasFlag(WeaponTypeFlag.MAX_WEAPON_TYPE_ALL))
+        else if (weaponTypeFlag == WeaponTypeFlag.MAX_WEAPON_TYPE_ALL)
             return null;
 
         return null;
@@ -10683,6 +10683,23 @@ public class ItemDbScriptData
             sumEquipSlot = sumEquipSlot.Substring(0, sumEquipSlot.IndexOf(")"));
             Log("sumEquipSlot:\n" + sumEquipSlot, false, "yellow");
             value = value.Replace("getiteminfo(getequipid(" + sumEquipSlot + "),11)", "หากอุปกรณ์สวมใส่ " + GetEquipSlot(sumEquipSlot));
+
+            int findViewValue = value.IndexOf("หากอุปกรณ์สวมใส่");
+            if (findViewValue != -1)
+            {
+                int findViewValue2 = value.IndexOf("==", findViewValue);
+                if (findViewValue2 != -1)
+                {
+                    string viewValue = value.Substring(findViewValue2 + 2);
+                    int findViewValue3 = viewValue.IndexOf(")");
+                    viewValue = viewValue.Substring(0, findViewValue3);
+                    if (!string.IsNullOrEmpty(viewValue) && IsStringInteger.Check(viewValue))
+                    {
+                        if (!string.IsNullOrEmpty(viewValue))
+                            value = value.Replace("หากอุปกรณ์สวมใส่ " + GetEquipSlot(sumEquipSlot) + "==" + viewValue, "หากอุปกรณ์สวมใส่ " + GetEquipSlot(sumEquipSlot) + "==" + GetWeaponType(viewValue));
+                    }
+                }
+            }
         }
 
         value = value.Replace("getrefine();", "[ตามจำนวนตีบวก]");
@@ -10776,6 +10793,23 @@ public class ItemDbScriptData
             sumEquipSlot = sumEquipSlot.Substring(0, sumEquipSlot.IndexOf(")"));
             Log("sumEquipSlot:\n" + sumEquipSlot, false, "yellow");
             data = data.Replace("getiteminfo(getequipid(" + sumEquipSlot + "),11)", "หากอุปกรณ์สวมใส่ " + GetEquipSlot(sumEquipSlot));
+
+            int findViewValue = data.IndexOf("หากอุปกรณ์สวมใส่");
+            if (findViewValue != -1)
+            {
+                int findViewValue2 = data.IndexOf("==", findViewValue);
+                if (findViewValue2 != -1)
+                {
+                    string viewValue = data.Substring(findViewValue2 + 2);
+                    int findViewValue3 = viewValue.IndexOf(")");
+                    viewValue = viewValue.Substring(0, findViewValue3);
+                    if (!string.IsNullOrEmpty(viewValue) && IsStringInteger.Check(viewValue))
+                    {
+                        if (!string.IsNullOrEmpty(viewValue))
+                            data = data.Replace("หากอุปกรณ์สวมใส่ " + GetEquipSlot(sumEquipSlot) + "==" + viewValue, "หากอุปกรณ์สวมใส่ " + GetEquipSlot(sumEquipSlot) + "==" + GetWeaponType(viewValue));
+                    }
+                }
+            }
         }
         data = data.Replace("==W_FIST", " ไม่มีอาวุธ ");
         data = data.Replace("==W_DAGGER", " Dagger ");
