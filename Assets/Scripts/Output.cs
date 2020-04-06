@@ -513,7 +513,7 @@ public class Output : ScriptableObject
             sum += "\n\"^0000CCเพศที่ใช้ได้:^000000 " + GetItemGender() + "\",";
         if (IsWeaponLevelNeeded())
             sum += "\n\"^0000CCLv. อาวุธ:^000000 " + GetItemWeaponLevel() + "\",";
-        if (IsEquipMaxLevelNeeded())
+        if (IsEquipLevelNeeded())
             sum += "\n\"^0000CCLv. ที่ต้องการ:^000000 " + GetItemEquipLevel() + "\",";
         if (IsEquipMaxLevelNeeded())
             sum += "\n\"^0000CCLv. ห้ามเกิน:^000000 " + GetItemEquipMaxLevel() + "\",";
@@ -1515,7 +1515,7 @@ public class Output : ScriptableObject
     List<string> currentItemComboDbData = new List<string>();
 
     //itemInfo
-    ItemDb currentItemDb = new ItemDb();
+    [SerializeField] ItemDb currentItemDb = new ItemDb();
     ItemComboDb currentItemComboDb = new ItemComboDb();
     List<ItemDb> currentItemDbs = new List<ItemDb>();
     public List<ItemDb> m_currentItemDbs { get { return currentItemDbs; } set { currentItemDbs = value; } }

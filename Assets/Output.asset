@@ -13,6 +13,28 @@ MonoBehaviour:
   m_Name: Output
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 11400000, guid: 630cf34160fdbb5459afe2ad44e0a776, type: 2}
-  targetArray: 13141
-  _string: '4363,B_Magaleta_Card,High Priest Card,6,20,,10,,,,,,,,16,,,,,{ bonus5
-    bAutoSpellWhenHit,"HP_ASSUMPTIO",5,50,BF_WEAPON|BF_MAGIC,0; },{},{} '
+  targetArray: 1248
+  _string: '19156,Lunar_Rainbow,Lunar Rainbow,4,20,,200,,10,,1,0xFFFFFFFF,63,2,256,,80,1,704,{
+    bonus bAgi,3; bonus bMdef,10; bonus bMatk,(10*getrefine()); },{},{} '
+  currentItemDb:
+    id: 19156
+    aegisName: Lunar_Rainbow
+    name: Lunar Rainbow
+    type: 4
+    buy: 20
+    sell: 0
+    weight: 200
+    atk: 0
+    mAtk: 0
+    def: 10
+    range: 0
+    slots: 1
+    job: 4294967295
+    _class: 63
+    gender: 2
+    loc: 256
+    wLv: 0
+    eLv: 80
+    eMaxLv: 0
+    refineable: 1
+    view: 704
