@@ -1515,7 +1515,7 @@ public class Output : ScriptableObject
     List<string> currentItemComboDbData = new List<string>();
 
     //itemInfo
-    [SerializeField] ItemDb currentItemDb = new ItemDb();
+    ItemDb currentItemDb = new ItemDb();
     ItemComboDb currentItemComboDb = new ItemComboDb();
     List<ItemDb> currentItemDbs = new List<ItemDb>();
     public List<ItemDb> m_currentItemDbs { get { return currentItemDbs; } set { currentItemDbs = value; } }

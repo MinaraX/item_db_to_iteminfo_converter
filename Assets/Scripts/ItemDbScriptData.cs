@@ -7395,7 +7395,7 @@ public class ItemDbScriptData
                 string param2 = GetValue(allParam[1], 2);
                 string param3 = GetValue(allParam[2], 3);
                 string param4 = GetValue(allParam[3], 4);
-                string param5 = GetValue(allParam[4], 5);
+                string param5 = GetValue(allParam[4], 5, true);
 
                 if (isHadParam1 && isHadParam2 && isHadParam3 && isHadParam4 && isHadParam5)
                 {
@@ -9967,6 +9967,19 @@ public class ItemDbScriptData
 
         Log("<color=yellow>" + functionName + " >> Final: " + data + "</color>");
 
+        if (data.Contains("-"))
+        {
+            if (data.Length >= 1 && data[0] == '-')
+            {
+                data = data.Substring(1);
+                SetParamCheck(paramCount, true, true);
+            }
+            else if (data.Length >= 2 && data[1] == '-')
+            {
+                data = data[0] + data.Substring(2);
+                SetParamCheck(paramCount, true, true);
+            }
+        }
         if (isForceNoCircle)
         {
             data = data.Replace("[", "");
