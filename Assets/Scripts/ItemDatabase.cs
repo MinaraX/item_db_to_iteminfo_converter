@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using EasyButtons;
-using System.Text;
+﻿using UnityEngine;
+using System.IO;
 
 [CreateAssetMenu(fileName = "ItemDatabase", menuName = "Start/ItemDatabase")]
 public class ItemDatabase : ScriptableObject
@@ -108,18 +105,44 @@ public class ItemDatabase : ScriptableObject
         skillNames = null;
         mob_db = null;
 
-        if (Application.isEditor)
+        string path = Application.dataPath + "/Resources/item_db.txt";
+        if (File.Exists(path))
         {
-            if (textAsset_item_db)
-                m_item_db = textAsset_item_db.text;
-            if (textAsset_item_combo_db)
-                m_item_combo_db = textAsset_item_combo_db.text;
-            if (textAsset_resourceNames)
-                m_resourceNames = textAsset_resourceNames.text;
-            if (textAsset_skillNames)
-                m_skillNames = textAsset_skillNames.text;
-            if (textAsset_mob_db)
-                m_mob_db = textAsset_mob_db.text;
+            StreamReader reader = new StreamReader(path);
+            m_item_db = reader.ReadToEnd();
+            reader.Close();
+        }
+
+        path = Application.dataPath + "/Resources/item_combo_db.txt";
+        if (File.Exists(path))
+        {
+            StreamReader reader = new StreamReader(path);
+            m_item_combo_db = reader.ReadToEnd();
+            reader.Close();
+        }
+
+        path = Application.dataPath + "/Resources/resourceNames.txt";
+        if (File.Exists(path))
+        {
+            StreamReader reader = new StreamReader(path);
+            m_resourceNames = reader.ReadToEnd();
+            reader.Close();
+        }
+
+        path = Application.dataPath + "/Resources/skillNames.txt";
+        if (File.Exists(path))
+        {
+            StreamReader reader = new StreamReader(path);
+            m_skillNames = reader.ReadToEnd();
+            reader.Close();
+        }
+
+        path = Application.dataPath + "/Resources/mob_db.txt";
+        if (File.Exists(path))
+        {
+            StreamReader reader = new StreamReader(path);
+            m_mob_db = reader.ReadToEnd();
+            reader.Close();
         }
     }
 }

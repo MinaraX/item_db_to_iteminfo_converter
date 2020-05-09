@@ -12,11 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97311497f13e3424fa4fe66f4912648a, type: 3}
   m_Name: ItemDatabase
   m_EditorClassIdentifier: 
-  textAsset_item_db: {fileID: 4900000, guid: c6ac92b3f9b13174da1db15f2d555961, type: 3}
-  textAsset_item_combo_db: {fileID: 4900000, guid: 70a2c2b2b58a7ab4199b2bfe939d5aae,
-    type: 3}
-  textAsset_resourceNames: {fileID: 4900000, guid: fc1b3e1308e75e84ca9d3c12d134360b,
-    type: 3}
-  textAsset_skillNames: {fileID: 4900000, guid: 9ac3cc22fbb61684bbb6ddbecdeb7656,
-    type: 3}
-  textAsset_mob_db: {fileID: 4900000, guid: d29cd0230f87cfb4fa8353a04474b261, type: 3}
+  textAsset_item_db: {fileID: 0}
+  textAsset_item_combo_db: {fileID: 0}
+  textAsset_resourceNames: {fileID: 0}
+  textAsset_skillNames: {fileID: 0}
+  textAsset_mob_db: {fileID: 0}

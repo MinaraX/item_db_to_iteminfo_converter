@@ -1,8 +1,6 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using EasyButtons;
 
 public class Converter : MonoBehaviour
 {
@@ -140,7 +138,18 @@ public class Converter : MonoBehaviour
     void Sync()
     {
         if (isItemDbNull || isItemComboDbNull || isResourceNamesNull || isSkillNamesNull || isMobDbNull)
-            return;
+        {
+            itemDatabase.Initialize();
+
+            if (isItemDbNull || isItemComboDbNull || isResourceNamesNull || isSkillNamesNull || isMobDbNull)
+            {
+                PopUp.Instance.ShowPopUp("โปรดตรวจสอบ File หรือชื่อไฟล์ผิด");
+                return;
+            }
+        }
+
+        PopUp.Instance.ShowPopUp("พร้อม Convert");
+
 
         output.ClearAll();
         output.ParseItemDatabase();
