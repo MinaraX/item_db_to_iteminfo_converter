@@ -7640,7 +7640,7 @@ public class ItemDbScriptData
                     else
                         sumParam2 = "ฟื้นฟู";
 
-                    sum += AddDescription(sum, sumParam1 + " " + param1 + "% ที่จะ" + sumParam2 + " HP " + GetRateByDivider(param2, 10) + "% จาก Damage การโจมตีกายภาพที่ทำไป");
+                    sum += AddDescription(sum, sumParam1 + " " + GetRateByDivider(param1, 10) + "% ที่จะ" + sumParam2 + " HP " + param2 + "% จาก Damage การโจมตีกายภาพที่ทำไป");
                 }
             }
             #endregion
@@ -7670,7 +7670,7 @@ public class ItemDbScriptData
                     else
                         sumParam2 = "ฟื้นฟู";
 
-                    sum += AddDescription(sum, sumParam1 + " " + param1 + "% ที่จะ" + sumParam2 + " SP " + GetRateByDivider(param2, 10) + "% จาก Damage การโจมตีกายภาพที่ทำไป");
+                    sum += AddDescription(sum, sumParam1 + " " + GetRateByDivider(param1, 10) + "% ที่จะ" + sumParam2 + " SP " + param2 + "% จาก Damage การโจมตีกายภาพที่ทำไป");
                 }
             }
             #endregion
