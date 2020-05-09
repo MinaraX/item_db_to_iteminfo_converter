@@ -7700,7 +7700,7 @@ public class ItemDbScriptData
                     else
                         sumParam2 = "เสีย";
 
-                    sum += AddDescription(sum, sumParam1 + " " + param1 + "% ที่ศัตรูจะ" + sumParam2 + " HP " + GetRateByDivider(param2, 10) + "% จาก Damage การโจมตีกายภาพที่ทำไป");
+                    sum += AddDescription(sum, sumParam1 + " " + GetRateByDivider(param1, 10) + "% ที่ศัตรูจะ" + sumParam2 + " HP " + param2 + "% จาก Damage การโจมตีกายภาพที่ทำไป");
                 }
             }
             #endregion
@@ -7731,7 +7731,7 @@ public class ItemDbScriptData
                     else
                         sumParam3 = "เสีย";
 
-                    sum += AddDescription(sum, sumParam2 + " " + param2 + "% ที่ศัตรูจะ" + sumParam3 + " HP " + GetRateByDivider(param3, 10) + "% กับเผ่า " + GetRaceName(allParam[0]) + " จาก Damage การโจมตีกายภาพที่ทำไป");
+                    sum += AddDescription(sum, sumParam2 + " " + GetRateByDivider(param2, 10) + "% ที่ศัตรูจะ" + sumParam3 + " HP " + param3 + "% กับเผ่า " + GetRaceName(allParam[0]) + " จาก Damage การโจมตีกายภาพที่ทำไป");
                 }
             }
             #endregion
@@ -7762,7 +7762,7 @@ public class ItemDbScriptData
                     else
                         sumParam2 = "เสีย";
 
-                    sum += AddDescription(sum, sumParam1 + " " + param1 + "% ที่ศัตรูจะ" + sumParam2 + " HP " + GetRateByDivider(param2, 10) + "% จาก Damage การโจมตีกายภาพที่ทำไป" + GetTriggerCriteria(allParam[2]));
+                    sum += AddDescription(sum, sumParam1 + " " + GetRateByDivider(param1, 10) + "% ที่ศัตรูจะ" + sumParam2 + " HP " + param2 + "% จาก Damage การโจมตีกายภาพที่ทำไป" + GetTriggerCriteria(allParam[2]));
                 }
             }
             #endregion
@@ -7792,7 +7792,7 @@ public class ItemDbScriptData
                     else
                         sumParam2 = "เสีย";
 
-                    sum += AddDescription(sum, sumParam1 + " " + param1 + "% ที่ศัตรูจะ" + sumParam2 + " SP " + GetRateByDivider(param2, 10) + "% จาก Damage การโจมตีกายภาพที่ทำไป");
+                    sum += AddDescription(sum, sumParam1 + " " + GetRateByDivider(param1, 10) + "% ที่ศัตรูจะ" + sumParam2 + " SP " + param2 + "% จาก Damage การโจมตีกายภาพที่ทำไป");
                 }
             }
             #endregion
@@ -7823,7 +7823,7 @@ public class ItemDbScriptData
                     else
                         sumParam3 = "เสีย";
 
-                    sum += AddDescription(sum, sumParam2 + " " + param2 + "% ที่ศัตรูจะ" + sumParam3 + " SP " + GetRateByDivider(param3, 10) + "% กับเผ่า " + GetRaceName(allParam[0]) + " จาก Damage การโจมตีกายภาพที่ทำไป");
+                    sum += AddDescription(sum, sumParam2 + " " + GetRateByDivider(param2, 10) + "% ที่ศัตรูจะ" + sumParam3 + " SP " + param3 + "% กับเผ่า " + GetRaceName(allParam[0]) + " จาก Damage การโจมตีกายภาพที่ทำไป");
                 }
             }
             #endregion
@@ -7854,7 +7854,7 @@ public class ItemDbScriptData
                     else
                         sumParam2 = "เสีย";
 
-                    sum += AddDescription(sum, sumParam1 + " " + param1 + "% ที่ศัตรูจะ" + sumParam2 + " SP " + GetRateByDivider(param2, 10) + "% จาก Damage การโจมตีกายภาพที่ทำไป" + GetTriggerCriteria(allParam[2]));
+                    sum += AddDescription(sum, sumParam1 + " " + GetRateByDivider(param1, 10) + "% ที่ศัตรูจะ" + sumParam2 + " SP " + param2 + "% จาก Damage การโจมตีกายภาพที่ทำไป" + GetTriggerCriteria(allParam[2]));
                 }
             }
             #endregion
