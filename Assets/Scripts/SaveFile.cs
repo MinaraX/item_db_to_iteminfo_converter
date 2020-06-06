@@ -20,7 +20,7 @@ public class SaveFile : MonoBehaviour, IPointerDownHandler
 
     void OnClick()
     {
-        string path = Application.dataPath + "/Output/itemInfo_Sak.txt";
+        string path = Application.dataPath + "/Output/itemInfo_true.txt";
         File.WriteAllText(path, _data, Encoding.UTF8);
         PopUp.Instance.ShowPopUp("ไฟล์ถูก Save ไว้ที่ " + path);
     }
