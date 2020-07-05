@@ -5346,6 +5346,25 @@ public class ItemDbScriptData
                 }
             }
             #endregion
+            #region bonus bCritDefRate
+            functionName = "bonus bCritDefRate";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+
+                if (isHadParam1)
+                {
+                    if (isParam1Negative)
+                        sum += AddDescription(sum, "โดน Critical แรงขึ้น " + param1 + "%");
+                    else
+                        sum += AddDescription(sum, "โดน Critical เบาลง " + param1 + "%");
+                }
+            }
+            #endregion
             #region bonus bCriticalDef
             functionName = "bonus bCriticalDef";
             if (data.Contains(functionName))
@@ -6347,6 +6366,27 @@ public class ItemDbScriptData
                 }
             }
             #endregion
+            #region bonus3 bSubRace,
+            functionName = "bonus3 bSubRace,";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName, 1);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+                string param3 = GetValue(allParam[2], 3);
+
+                if (isHadParam1 && isHadParam2 && isHadParam3)
+                {
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โดนโจมตีแรงขึ้น " + param2 + "% กับเผ่า " + GetRaceName(allParam[0]) + GetTriggerCriteria(allParam[2]));
+                    else
+                        sum += AddDescription(sum, "โดนโจมตีเบาลง " + param2 + "% กับเผ่า " + GetRaceName(allParam[0]) + GetTriggerCriteria(allParam[2]));
+                }
+            }
+            #endregion
             #region bonus2 bAddClass,
             functionName = "bonus2 bAddClass,";
             if (data.Contains(functionName))
@@ -6464,6 +6504,26 @@ public class ItemDbScriptData
                         sum += AddDescription(sum, "โดนโจมตีแรงขึ้น " + param2 + "% กับ Size " + GetSizeName(allParam[0]));
                     else
                         sum += AddDescription(sum, "โดนโจมตีเบาลง " + param2 + "% กับ Size " + GetSizeName(allParam[0]));
+                }
+            }
+            #endregion
+            #region bonus2 bMagicSubSize
+            functionName = "bonus2 bMagicSubSize";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+
+                if (isHadParam1 && isHadParam2)
+                {
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โดนโจมตีเวทย์แรงขึ้น " + param2 + "% กับ Size " + GetSizeName(allParam[0]));
+                    else
+                        sum += AddDescription(sum, "โดนโจมตีเวทย์เบาลง " + param2 + "% กับ Size " + GetSizeName(allParam[0]));
                 }
             }
             #endregion
