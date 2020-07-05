@@ -127,9 +127,15 @@ public class Output : ScriptableObject
         newCurrentResourceName.id = int.Parse(sumSplit[0]);
         string sumResourceName = sumSplit[1];
         sumResourceName = sumResourceName.Substring(0, sumResourceName.Length - 1);
+        if (string.IsNullOrEmpty(sumResourceName))
+        {
+            Log("Null resource name: " + newCurrentResourceName.id);
+            return;
+        }
         newCurrentResourceName.resourceName = sumResourceName;
 
-        m_currentResourceNames.Add(newCurrentResourceName);
+        if (!m_currentResourceNames.Contains(newCurrentResourceName))
+            m_currentResourceNames.Add(newCurrentResourceName);
     }
     #endregion
 
