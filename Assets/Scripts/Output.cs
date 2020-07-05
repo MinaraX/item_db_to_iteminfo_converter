@@ -116,6 +116,9 @@ public class Output : ScriptableObject
     }
     void Convert_resourceNames_ToList(string data)
     {
+        if (string.IsNullOrEmpty(data))
+            return;
+
         Log(data);
 
         List<string> sumSplit = StringSplit.GetStringSplit(data, '=');
@@ -151,6 +154,9 @@ public class Output : ScriptableObject
     }
     void Convert_SkillName_ToList(string data)
     {
+        if (string.IsNullOrEmpty(data))
+            return;
+
         Log(data);
 
         List<string> sumSplit = StringSplit.GetStringSplit(data, '=');
@@ -187,6 +193,9 @@ public class Output : ScriptableObject
     }
     void Convert_mob_db_ToList(string data)
     {
+        if (string.IsNullOrEmpty(data))
+            return;
+
         Log(data);
 
         if (!data.Contains("//") && !string.IsNullOrEmpty(data) && !string.IsNullOrWhiteSpace(data))
