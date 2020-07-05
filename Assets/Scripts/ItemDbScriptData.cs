@@ -11445,8 +11445,10 @@ public class ItemDbScriptData
             return "Insect";
         else if (raceFlag == Race.RC_Plant)
             return "Plant";
-        else if (raceFlag == Race.RC_Player)
-            return "Player";
+        else if (raceFlag == Race.RC_Player_Human)
+            return "Human";
+        else if (raceFlag == Race.RC_Player_Doram)
+            return "Doram";
         else if (raceFlag == Race.RC_Undead)
             return "Undead";
         else if (raceFlag == Race.RC_All)

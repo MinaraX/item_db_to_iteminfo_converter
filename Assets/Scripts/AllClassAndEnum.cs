@@ -232,7 +232,7 @@ public enum Element
 public enum Race
 {
     RC_Angel, RC_Brute, RC_DemiHuman, RC_Demon, RC_Dragon, RC_Fish, RC_Formless,
-    RC_Insect, RC_Plant, RC_Player, RC_Undead, RC_All
+    RC_Insect, RC_Plant, RC_Player_Human, RC_Player_Doram, RC_Undead, RC_All
 }
 
 [Flags]
