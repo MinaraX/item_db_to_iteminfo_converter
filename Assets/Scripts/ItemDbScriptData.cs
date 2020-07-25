@@ -49,6 +49,7 @@ public class ItemDbScriptData
         {
             sumScript = sumScript.Replace("[", "(");
             sumScript = sumScript.Replace("]", ")");
+            sumScript = sumScript.Replace(" \",", "\",");
         }
 
         return sumScript;
@@ -11972,6 +11973,9 @@ public class ItemDbScriptData
         }
         else
             return null;
+
+        toAdd = toAdd.Replace(" \",\n", "\",\n");
+        toAdd = toAdd.Replace("\",\n\" ", "\",\n\"");
 
         if (string.IsNullOrEmpty(data))
             return "\"" + toAdd + "\",";
