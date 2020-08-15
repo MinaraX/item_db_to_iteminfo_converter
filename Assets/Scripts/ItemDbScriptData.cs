@@ -2052,6 +2052,11 @@ public class ItemDbScriptData
                 MergeItemScripts(lines, i);
                 goto L_MergeLines;
             }
+            else if (currentLine.Contains("bonus2 bMagicSubDefEle") && !currentLine.Contains(";"))
+            {
+                MergeItemScripts(lines, i);
+                goto L_MergeLines;
+            }
             else if ((currentLine.Contains("bonus2 bAddRace,") || currentLine.Contains("bonus2 bAddRace ,")) && !currentLine.Contains(";"))
             {
                 MergeItemScripts(lines, i, true);
@@ -6301,9 +6306,29 @@ public class ItemDbScriptData
                 if (isHadParam1 && isHadParam2)
                 {
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "โดนโจมตีแรงขึ้น " + param2 + "% กับศัตรูที่การป้องกันเป็นธาตุ " + GetElementName(allParam[0]));
+                        sum += AddDescription(sum, "โดนโจมตีกายภาพแรงขึ้น " + param2 + "% กับศัตรูที่การป้องกันเป็นธาตุ " + GetElementName(allParam[0]));
                     else
-                        sum += AddDescription(sum, "โดนโจมตีเบาลง " + param2 + "% กับศัตรูที่การป้องกันเป็นธาตุ " + GetElementName(allParam[0]));
+                        sum += AddDescription(sum, "โดนโจมตีกายภาพเบาลง " + param2 + "% กับศัตรูที่การป้องกันเป็นธาตุ " + GetElementName(allParam[0]));
+                }
+            }
+            #endregion
+            #region bonus2 bMagicSubDefEle
+            functionName = "bonus2 bMagicSubDefEle";
+            if (data.Contains(functionName))
+            {
+                string sumCut = CutFunctionName(data, functionName);
+
+                List<string> allParam = GetAllParamerters(sumCut);
+
+                string param1 = GetValue(allParam[0], 1);
+                string param2 = GetValue(allParam[1], 2);
+
+                if (isHadParam1 && isHadParam2)
+                {
+                    if (isParam2Negative)
+                        sum += AddDescription(sum, "โดนโจมตีเวทย์แรงขึ้น " + param2 + "% กับศัตรูที่การป้องกันเป็นธาตุ " + GetElementName(allParam[0]));
+                    else
+                        sum += AddDescription(sum, "โดนโจมตีเวทย์เบาลง " + param2 + "% กับศัตรูที่การป้องกันเป็นธาตุ " + GetElementName(allParam[0]));
                 }
             }
             #endregion

@@ -112,7 +112,10 @@ public class Output : ScriptableObject
         Log("FetchResourceName >> Parsing txt to database done");
 
         for (int i = 0; i < m_lines_resourceNames.Count; i++)
+        {
+            Log("i: " + i);
             Convert_resourceNames_ToList(m_lines_resourceNames[i]);
+        }
     }
     void Convert_resourceNames_ToList(string data)
     {
