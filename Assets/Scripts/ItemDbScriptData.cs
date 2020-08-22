@@ -45,34 +45,7 @@ public class ItemDbScriptData
         string sumDesc = GetScriptsDescription(script);
         sumScript = sumDesc;
 
-        if (!string.IsNullOrEmpty(sumScript))
-        {
-            sumScript = sumScript.Replace("[", "(");
-            sumScript = sumScript.Replace("]", ")");
-            sumScript = sumScript.Replace(" \",", "\",");
-
-            sumScript = sumScript.Replace("จำนวนตีบวกอุปกรณ์ที่ผนึก", "จำนวนตีบวก อุปกรณ์ที่ผนึก");
-            sumScript = sumScript.Replace("จำนวนตีบวกLeftAccessory", "จำนวนตีบวก Left Accessory");
-            sumScript = sumScript.Replace("จำนวนตีบวกRightAccessory", "จำนวนตีบวก Right Accessory");
-            sumScript = sumScript.Replace("จำนวนตีบวกFootgear", "จำนวนตีบวก Footgear");
-            sumScript = sumScript.Replace("จำนวนตีบวกGarment", "จำนวนตีบวก Garment");
-            sumScript = sumScript.Replace("จำนวนตีบวกLowerHeadgear", "จำนวนตีบวก Lower Headgear");
-            sumScript = sumScript.Replace("จำนวนตีบวกMiddleHeadgear", "จำนวนตีบวก Middle Headgear");
-            sumScript = sumScript.Replace("จำนวนตีบวกUpperHeadgear", "จำนวนตีบวก Upper Headgear");
-            sumScript = sumScript.Replace("จำนวนตีบวกArmor", "จำนวนตีบวก Armor");
-            sumScript = sumScript.Replace("จำนวนตีบวกLefthand", "จำนวนตีบวก Left hand");
-            sumScript = sumScript.Replace("จำนวนตีบวกRighthand", "จำนวนตีบวก Right hand");
-            sumScript = sumScript.Replace("จำนวนตีบวกUpperCostumeHeadgear", "จำนวนตีบวก Upper Costume Headgear");
-            sumScript = sumScript.Replace("จำนวนตีบวกMiddleCostumeHeadgear", "จำนวนตีบวก Middle Costume Headgear");
-            sumScript = sumScript.Replace("จำนวนตีบวกLowerCostumeHeadgear", "จำนวนตีบวก Lower Costume Headgear");
-            sumScript = sumScript.Replace("จำนวนตีบวกCostumeGarment", "จำนวนตีบวก Costume Garment");
-            sumScript = sumScript.Replace("จำนวนตีบวกShadowArmor", "จำนวนตีบวก Shadow Armor");
-            sumScript = sumScript.Replace("จำนวนตีบวกShadowWeapon", "จำนวนตีบวก Shadow Weapon");
-            sumScript = sumScript.Replace("จำนวนตีบวกShadowShield", "จำนวนตีบวก Shadow Shield");
-            sumScript = sumScript.Replace("จำนวนตีบวกShadowShoes", "จำนวนตีบวก Shadow Shoes");
-            sumScript = sumScript.Replace("จำนวนตีบวกRightShadowAccessory", "จำนวนตีบวก Right Shadow Accessory");
-            sumScript = sumScript.Replace("จำนวนตีบวกLeftShadowAccessory", "จำนวนตีบวก Left Shadow Accessory");
-        }
+        sumScript = HardCodeCorrecting(sumScript);
 
         return sumScript;
     }
@@ -91,11 +64,7 @@ public class ItemDbScriptData
         else
             sumEquipScript = sumDesc;
 
-        if (!string.IsNullOrEmpty(sumEquipScript))
-        {
-            sumEquipScript = sumEquipScript.Replace("[", "(");
-            sumEquipScript = sumEquipScript.Replace("]", ")");
-        }
+        sumEquipScript = HardCodeCorrecting(sumEquipScript);
 
         return sumEquipScript;
     }
@@ -114,13 +83,47 @@ public class ItemDbScriptData
         else
             sumUnequipScript = sumDesc;
 
-        if (!string.IsNullOrEmpty(sumUnequipScript))
-        {
-            sumUnequipScript = sumUnequipScript.Replace("[", "(");
-            sumUnequipScript = sumUnequipScript.Replace("]", ")");
-        }
+        sumUnequipScript = HardCodeCorrecting(sumUnequipScript);
 
         return sumUnequipScript;
+    }
+
+    string HardCodeCorrecting(string data)
+    {
+        if (!string.IsNullOrEmpty(data))
+        {
+            data = data.Replace("[", "(");
+            data = data.Replace("]", ")");
+            data = data.Replace(" \",", "\",");
+
+            data = data.Replace("จำนวนตีบวกอุปกรณ์ที่ผนึก", "จำนวนตีบวก อุปกรณ์ที่ผนึก");
+            data = data.Replace("จำนวนตีบวกLeftAccessory", "จำนวนตีบวก Left Accessory");
+            data = data.Replace("จำนวนตีบวกRightAccessory", "จำนวนตีบวก Right Accessory");
+            data = data.Replace("จำนวนตีบวกFootgear", "จำนวนตีบวก Footgear");
+            data = data.Replace("จำนวนตีบวกGarment", "จำนวนตีบวก Garment");
+            data = data.Replace("จำนวนตีบวกLowerHeadgear", "จำนวนตีบวก Lower Headgear");
+            data = data.Replace("จำนวนตีบวกMiddleHeadgear", "จำนวนตีบวก Middle Headgear");
+            data = data.Replace("จำนวนตีบวกUpperHeadgear", "จำนวนตีบวก Upper Headgear");
+            data = data.Replace("จำนวนตีบวกArmor", "จำนวนตีบวก Armor");
+            data = data.Replace("จำนวนตีบวกLefthand", "จำนวนตีบวก Left hand");
+            data = data.Replace("จำนวนตีบวกRighthand", "จำนวนตีบวก Right hand");
+            data = data.Replace("จำนวนตีบวกUpperCostumeHeadgear", "จำนวนตีบวก Upper Costume Headgear");
+            data = data.Replace("จำนวนตีบวกMiddleCostumeHeadgear", "จำนวนตีบวก Middle Costume Headgear");
+            data = data.Replace("จำนวนตีบวกLowerCostumeHeadgear", "จำนวนตีบวก Lower Costume Headgear");
+            data = data.Replace("จำนวนตีบวกCostumeGarment", "จำนวนตีบวก Costume Garment");
+            data = data.Replace("จำนวนตีบวกShadowArmor", "จำนวนตีบวก Shadow Armor");
+            data = data.Replace("จำนวนตีบวกShadowWeapon", "จำนวนตีบวก Shadow Weapon");
+            data = data.Replace("จำนวนตีบวกShadowShield", "จำนวนตีบวก Shadow Shield");
+            data = data.Replace("จำนวนตีบวกShadowShoes", "จำนวนตีบวก Shadow Shoes");
+            data = data.Replace("จำนวนตีบวกRightShadowAccessory", "จำนวนตีบวก Right Shadow Accessory");
+            data = data.Replace("จำนวนตีบวกLeftShadowAccessory", "จำนวนตีบวก Left Shadow Accessory");
+
+            data = data.Replace("ค่าที่ 0.", "ค่าที่ ");
+
+            //data = ThaiNumber.ThaiToInt(data);
+        }
+
+        return data;
     }
 
     /// <summary>
@@ -3223,7 +3226,7 @@ public class ItemDbScriptData
                 //Use store temporary variables if found in this value
                 bool isFoundTempVariable = false;
                 List<string> tempVarName = new List<string>();
-                List<string> valueFromTempVar = new List<string>();
+                List<string> akaFromTempVar = new List<string>();
                 for (int j = 0; j < tempVariables.Count; j++)
                 {
                     if (data.Contains(tempVariables[j].variableName))
@@ -3233,16 +3236,10 @@ public class ItemDbScriptData
                         tempVarName.Add(tempVariables[j].variableName);
                         Log("GetDescription >> Found variableName: " + tempVariables[j].variableName);
 
-                        string value = tempVariables[j].aka;
-                        bool isContainRand = value.Contains("rand");
-                        if (isContainRand)
-                        {
-                            value = GetValue(value);
-                            valueFromTempVar.Add("สุ่ม " + value);
-                        }
-                        else
-                            valueFromTempVar.Add(value);
-                        Log("GetDescription >> Found value: " + tempVariables[j].value);
+                        string aka = tempVariables[j].aka;
+                        akaFromTempVar.Add(aka);
+
+                        Log("GetDescription >> Found aka: " + tempVariables[j].aka);
                     }
                 }
 
@@ -3250,7 +3247,7 @@ public class ItemDbScriptData
                 if (isFoundTempVariable)
                 {
                     for (int j = 0; j < tempVarName.Count; j++)
-                        data = data.Replace(tempVarName[j], valueFromTempVar[j]);
+                        data = data.Replace(tempVarName[j], akaFromTempVar[j]);
                 }
 
                 //Replace special variables
@@ -9056,6 +9053,7 @@ public class ItemDbScriptData
             }
             if (!isFound)
             {
+                //newTempVariables.aka = "ค่าที่ " + ThaiNumber.IntToThai((tempVariables.Count + 1));
                 newTempVariables.aka = "ค่าที่ " + (tempVariables.Count + 1);
                 Log("New temporary variables added"
                     + " | variableName: " + newTempVariables.variableName
@@ -9152,6 +9150,7 @@ public class ItemDbScriptData
         }
         if (!isFound)
         {
+            //newTempVariables.aka = "ค่าที่ " + ThaiNumber.IntToThai((tempVariables.Count + 1));
             newTempVariables.aka = "ค่าที่ " + (tempVariables.Count + 1);
             if (!string.IsNullOrEmpty(sameAka))
                 newTempVariables.aka = sameAka;
@@ -9301,17 +9300,15 @@ public class ItemDbScriptData
             {
                 if (data.Contains(tempVariables[i].variableName)
                     && !string.IsNullOrEmpty(tempVariables[i].variableName)
-                    && !string.IsNullOrWhiteSpace(tempVariables[i].variableName))
+                    && !string.IsNullOrWhiteSpace(tempVariables[i].variableName)
+                    && data.Length <= tempVariables[i].variableName.Length)
                 {
                     isFoundTempVariable = true;
 
                     tempVarName.Add(tempVariables[i].variableName);
                     Log(functionName + " >> Found variableName: " + tempVariables[i].variableName);
 
-                    if (tempVariables[i].isOneLineIfElse)
-                        valueFromTempVar.Add(tempVariables[i].aka);
-                    else
-                        valueFromTempVar.Add(tempVariables[i].aka);
+                    valueFromTempVar.Add(tempVariables[i].aka);
 
                     akaFromTempVar.Add(" ~ [" + tempVariables[i].aka + "]");
                     Log(functionName + " >> Found value: " + valueFromTempVar[valueFromTempVar.Count - 1]);
@@ -10065,6 +10062,26 @@ public class ItemDbScriptData
             else
                 SetParamCheck(paramCount, true, false);
         }
+        else
+        {
+            //Still need to replace temporary variable name.
+            for (int j = 0; j < tempVariables.Count; j++)
+            {
+                if (data.Contains(tempVariables[j].variableName))
+                {
+                    data = data.Replace(tempVariables[j].variableName, tempVariables[j].aka);
+
+                    if (isForceNegative)
+                        SetParamCheck(paramCount, true, true);
+                    else
+                        SetParamCheck(paramCount, true, false);
+
+                    isFoundTempVariable = true;
+
+                    break;
+                }
+            }
+        }
 
         Log(functionName + " >> data: " + data + " >> Replace special variables");
 
@@ -10351,7 +10368,7 @@ public class ItemDbScriptData
         }
 
         if (mathCalculations.Count > 0)
-            toReturn = toReturn.Substring(1);
+            toReturn = toReturn.Substring(2);
         else
             toReturn = data;
 
