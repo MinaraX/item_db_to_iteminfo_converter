@@ -50,6 +50,28 @@ public class ItemDbScriptData
             sumScript = sumScript.Replace("[", "(");
             sumScript = sumScript.Replace("]", ")");
             sumScript = sumScript.Replace(" \",", "\",");
+
+            sumScript = sumScript.Replace("จำนวนตีบวกอุปกรณ์ที่ผนึก", "จำนวนตีบวก อุปกรณ์ที่ผนึก");
+            sumScript = sumScript.Replace("จำนวนตีบวกLeftAccessory", "จำนวนตีบวก Left Accessory");
+            sumScript = sumScript.Replace("จำนวนตีบวกRightAccessory", "จำนวนตีบวก Right Accessory");
+            sumScript = sumScript.Replace("จำนวนตีบวกFootgear", "จำนวนตีบวก Footgear");
+            sumScript = sumScript.Replace("จำนวนตีบวกGarment", "จำนวนตีบวก Garment");
+            sumScript = sumScript.Replace("จำนวนตีบวกLowerHeadgear", "จำนวนตีบวก Lower Headgear");
+            sumScript = sumScript.Replace("จำนวนตีบวกMiddleHeadgear", "จำนวนตีบวก Middle Headgear");
+            sumScript = sumScript.Replace("จำนวนตีบวกUpperHeadgear", "จำนวนตีบวก Upper Headgear");
+            sumScript = sumScript.Replace("จำนวนตีบวกArmor", "จำนวนตีบวก Armor");
+            sumScript = sumScript.Replace("จำนวนตีบวกLefthand", "จำนวนตีบวก Left hand");
+            sumScript = sumScript.Replace("จำนวนตีบวกRighthand", "จำนวนตีบวก Right hand");
+            sumScript = sumScript.Replace("จำนวนตีบวกUpperCostumeHeadgear", "จำนวนตีบวก Upper Costume Headgear");
+            sumScript = sumScript.Replace("จำนวนตีบวกMiddleCostumeHeadgear", "จำนวนตีบวก Middle Costume Headgear");
+            sumScript = sumScript.Replace("จำนวนตีบวกLowerCostumeHeadgear", "จำนวนตีบวก Lower Costume Headgear");
+            sumScript = sumScript.Replace("จำนวนตีบวกCostumeGarment", "จำนวนตีบวก Costume Garment");
+            sumScript = sumScript.Replace("จำนวนตีบวกShadowArmor", "จำนวนตีบวก Shadow Armor");
+            sumScript = sumScript.Replace("จำนวนตีบวกShadowWeapon", "จำนวนตีบวก Shadow Weapon");
+            sumScript = sumScript.Replace("จำนวนตีบวกShadowShield", "จำนวนตีบวก Shadow Shield");
+            sumScript = sumScript.Replace("จำนวนตีบวกShadowShoes", "จำนวนตีบวก Shadow Shoes");
+            sumScript = sumScript.Replace("จำนวนตีบวกRightShadowAccessory", "จำนวนตีบวก Right Shadow Accessory");
+            sumScript = sumScript.Replace("จำนวนตีบวกLeftShadowAccessory", "จำนวนตีบวก Left Shadow Accessory");
         }
 
         return sumScript;
@@ -6184,9 +6206,9 @@ public class ItemDbScriptData
                         }
                     }
                     if (isParam2Negative)
-                        sum += AddDescription(sum, "Cooldown Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + UseFunctionWithString(param2, 0));
+                        sum += AddDescription(sum, "Cooldown Skill " + GetSkillName(allParam[0]) + " เร็วขึ้น " + UseFunctionWithString(param2, 0, null, 2));
                     else
-                        sum += AddDescription(sum, "Cooldown Skill " + GetSkillName(allParam[0]) + " ช้าลง " + UseFunctionWithString(param2, 0));
+                        sum += AddDescription(sum, "Cooldown Skill " + GetSkillName(allParam[0]) + " ช้าลง " + UseFunctionWithString(param2, 0, null, 2));
                 }
             }
             #endregion
@@ -10579,7 +10601,7 @@ public class ItemDbScriptData
     /// <param name="data"></param>
     /// <param name="functionType"></param>
     /// <returns></returns>
-    string UseFunctionWithString(string data, int functionType, string additionalParam = null)
+    string UseFunctionWithString(string data, int functionType, string additionalParam = null, int minChar = 0)
     {
         string functionName = "UseFunctionWithString";
 
@@ -10607,11 +10629,18 @@ public class ItemDbScriptData
                     {
                         if (!string.IsNullOrEmpty(sum))
                         {
-                            float toParse = float.Parse(sum);
-                            toReplace.Add(sum);
-                            toReplaceTo.Add(TimerToStringTimer(toParse));
-                            Log(functionName + " >> Add: " + sum + ", " + TimerToStringTimer(toParse));
-                            sum = null;
+                            if (minChar > 0 && sum.Length < minChar)
+                            {
+                                sum = null;
+                            }
+                            else
+                            {
+                                float toParse = float.Parse(sum);
+                                toReplace.Add(sum);
+                                toReplaceTo.Add(TimerToStringTimer(toParse));
+                                Log(functionName + " >> Add: " + sum + ", " + TimerToStringTimer(toParse));
+                                sum = null;
+                            }
                         }
                     }
                 }

@@ -108,6 +108,7 @@ public class Output : ScriptableObject
     {
         m_lines_resourceNames = new List<string>();
         Log("FetchResourceName >> Parsing txt to database start");
+        data = data + "\r\n";
         m_lines_resourceNames = StringSplit.GetStringSplit(data, '\n');
         Log("FetchResourceName >> Parsing txt to database done");
 
@@ -135,6 +136,9 @@ public class Output : ScriptableObject
             Log("Null resource name: " + newCurrentResourceName.id);
             return;
         }
+        //else
+        //    Log("sumResourceName: " + sumResourceName, true);
+
         newCurrentResourceName.resourceName = sumResourceName;
 
         if (!m_currentResourceNames.Contains(newCurrentResourceName))

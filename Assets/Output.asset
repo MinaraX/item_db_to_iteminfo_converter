@@ -13,7 +13,5 @@ MonoBehaviour:
   m_Name: Output
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 11400000, guid: 630cf34160fdbb5459afe2ad44e0a776, type: 2}
-  targetArray: 13397
-  _string: '1737,Ixion_Wing,Ixion Wings,5,20,,300,135,,5,1,0x00000800,18,2,34,4,70,1,11,{
-    autobonus "{ bonus bAspdRate,7; }",10+(getrefine()*2),7000,BF_WEAPON,"{ specialeffect2
-    EF_HASTEUP; }"; bonus2 bAddSkillBlow,"AC_CHARGEARROW",3; },{},{} '
+  targetArray: 0
+  _string: 
