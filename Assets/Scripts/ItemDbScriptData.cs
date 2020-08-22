@@ -3233,7 +3233,7 @@ public class ItemDbScriptData
                         tempVarName.Add(tempVariables[j].variableName);
                         Log("GetDescription >> Found variableName: " + tempVariables[j].variableName);
 
-                        string value = tempVariables[j].value;
+                        string value = tempVariables[j].aka;
                         bool isContainRand = value.Contains("rand");
                         if (isContainRand)
                         {
@@ -8717,6 +8717,7 @@ public class ItemDbScriptData
             }
             #endregion
             #region Set Temporary Variables
+            /*List<string> addedAka = new List<string>();
             for (int j = 0; j < tempVariables.Count; j++)
             {
                 functionName = tempVariables[j].variableName;
@@ -8724,14 +8725,15 @@ public class ItemDbScriptData
                 {
                     if ((i - 1) < 0)
                         break;
-                    if (lines[i - 1] == tempVariables[j].toCheckMatching)
+                    if (lines[i - 1] == tempVariables[j].toCheckMatching && !addedAka.Contains(tempVariables[j].aka))
                     {
                         string tempVarValue = tempVariables[j].value;
                         tempVarValue = tempVarValue.Replace(";", "");
                         sum += AddDescription(sum, "เปลี่ยนค่าที่ได้รับเป็น " + tempVarValue);
+                        addedAka.Add(tempVariables[j].aka);
                     }
                 }
-            }
+            }*/
             #endregion
         }
 
@@ -9309,7 +9311,7 @@ public class ItemDbScriptData
                     if (tempVariables[i].isOneLineIfElse)
                         valueFromTempVar.Add(tempVariables[i].aka);
                     else
-                        valueFromTempVar.Add(tempVariables[i].value);
+                        valueFromTempVar.Add(tempVariables[i].aka);
 
                     akaFromTempVar.Add(" ~ [" + tempVariables[i].aka + "]");
                     Log(functionName + " >> Found value: " + valueFromTempVar[valueFromTempVar.Count - 1]);
@@ -9956,7 +9958,7 @@ public class ItemDbScriptData
                             if (tempVariables[j].isOneLineIfElse)
                                 tempValues.Add(tempVariables[j].aka);
                             else
-                                tempValues.Add(tempVariables[j].value);
+                                tempValues.Add(tempVariables[j].aka);
                             break;
                         }
                     }
