@@ -148,6 +148,7 @@ public class ItemDbScriptData
         sum = sum.Replace("bonus bHPRecovRate", "bonus bHPrecovRate");
         sum = sum.Replace("bonus bFixedCastRate", "bonus bFixedCastrate");
         sum = sum.Replace("GetSkillLv", "getskilllv");
+        sum = sum.Replace(".@r_", ".@r");
 
         //Replace temporary variables in autobonus or bonus_script
         while (sum.Contains("\"+.@") && (sum.Contains("autobonus") || sum.Contains("bonus_script")))
