@@ -114,13 +114,13 @@ public class Output : ScriptableObject
 
         for (int i = 0; i < m_lines_resourceNames.Count; i++)
         {
-            Log("i: " + i);
+            Log("i: " + i + " :" + m_lines_resourceNames[i]);
             Convert_resourceNames_ToList(m_lines_resourceNames[i]);
         }
     }
     void Convert_resourceNames_ToList(string data)
     {
-        if (string.IsNullOrEmpty(data))
+        if (string.IsNullOrEmpty(data) || string.IsNullOrWhiteSpace(data))
             return;
 
         Log(data);
@@ -130,7 +130,8 @@ public class Output : ScriptableObject
         ItemResourceName newCurrentResourceName = new ItemResourceName();
         newCurrentResourceName.id = int.Parse(sumSplit[0]);
         string sumResourceName = sumSplit[1];
-        sumResourceName = sumResourceName.Substring(0, sumResourceName.Length - 1);
+        if (sumResourceName.Length > 0)
+            sumResourceName = sumResourceName.Substring(0, sumResourceName.Length - 1);
         if (string.IsNullOrEmpty(sumResourceName))
         {
             Log("Null resource name: " + newCurrentResourceName.id);
