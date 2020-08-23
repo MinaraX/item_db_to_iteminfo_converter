@@ -10162,27 +10162,23 @@ public class ItemDbScriptData
             else
                 SetParamCheck(paramCount, true, false);
         }
-        else
+
+        //Still need to replace temporary variable name.
+        for (int j = 0; j < tempVariables.Count; j++)
         {
-            //Still need to replace temporary variable name.
-            for (int j = 0; j < tempVariables.Count; j++)
+            if (tempVariables[j].variableName.Contains("for("))
+                continue;
+
+            if (data.IsSafeContains(tempVariables[j].variableName))
             {
-                if (tempVariables[j].variableName.Contains("for("))
-                    continue;
+                data = data.SafeReplace(tempVariables[j].variableName, tempVariables[j].aka, true);
 
-                if (data.IsSafeContains(tempVariables[j].variableName))
-                {
-                    data = data.SafeReplace(tempVariables[j].variableName, tempVariables[j].aka, true);
+                if (isForceNegative)
+                    SetParamCheck(paramCount, true, true);
+                else
+                    SetParamCheck(paramCount, true, false);
 
-                    if (isForceNegative)
-                        SetParamCheck(paramCount, true, true);
-                    else
-                        SetParamCheck(paramCount, true, false);
-
-                    isFoundTempVariable = true;
-
-                    break;
-                }
+                isFoundTempVariable = true;
             }
         }
 
