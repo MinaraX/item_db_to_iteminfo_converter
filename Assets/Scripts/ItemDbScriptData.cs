@@ -31,6 +31,23 @@ public class ItemDbScriptData
 
     bool isUseAkaTempVar = false;
     List<TempVariables> tempVariables = new List<TempVariables>();
+    public int GetTemporaryVariablesCount
+    {
+        get
+        {
+            int sum = 0;
+            List<string> txts = new List<string>();
+            for (int i = 0; i < tempVariables.Count; i++)
+            {
+                if (!txts.Contains(tempVariables[i].variableName))
+                {
+                    txts.Add(tempVariables[i].variableName);
+                    sum++;
+                }
+            }
+            return sum;
+        }
+    }
     List<TempArrayVariables> tempArrayVariables = new List<TempArrayVariables>();
     #endregion
 
@@ -118,9 +135,7 @@ public class ItemDbScriptData
             data = data.Replace("จำนวนตีบวกRightShadowAccessory", "จำนวนตีบวก Right Shadow Accessory");
             data = data.Replace("จำนวนตีบวกLeftShadowAccessory", "จำนวนตีบวก Left Shadow Accessory");
 
-            data = data.Replace("ค่าที่ 0.", "ค่าที่ ");
-
-            //data = ThaiNumber.ThaiToInt(data);
+            data = ThaiNumber.ThaiToInt(data);
         }
 
         return data;
@@ -440,6 +455,13 @@ public class ItemDbScriptData
                 MergeItemScripts(lines, i);
                 goto L_MergeLines;
             }
+            else if (currentLine.Contains("for(") && currentLine.Contains("{"))
+            {
+                var indexRoom = lines[i].IndexOf("{");
+                lines.Insert(i + 1, lines[i].Substring(indexRoom));
+                lines[i] = lines[i].Substring(0, indexRoom);
+                goto L_MergeLines;
+            }
             else if (currentLine == "if" && !currentLine.Contains("(") && nextLine.Contains("("))
             {
                 MergeItemScripts(lines, i);
@@ -546,7 +568,6 @@ public class ItemDbScriptData
                         if (lines[i + 1].Contains("if("))
                         {
                             int ifStartAt = lines[i + 1].IndexOf("if(");
-
                             string cut = lines[i + 1].Substring(ifStartAt);
                             Log("cut:\n" + cut, true);
 
@@ -2889,6 +2910,75 @@ public class ItemDbScriptData
         }
         #endregion
 
+        int tempVarDelcareCount = 0;
+        for (int i = 0; i < lines.Count; i++)
+        {
+            if (lines[i].Contains("[TEMP_VAR_DECLARE]"))
+                tempVarDelcareCount++;
+        }
+
+        if (GetTemporaryVariablesCount > tempVarDelcareCount && !isNotClearTempVar)
+        {
+            //Save delcared temporary variables
+            List<TempVariables> declaredTemp = new List<TempVariables>();
+            for (int i = 0; i < lines.Count; i++)
+            {
+                if (lines[i].Contains("[TEMP_VAR_DECLARE]"))
+                {
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        if (lines[i].IsSafeContains(tempVariables[j].aka) && !declaredTemp.Contains(tempVariables[j]))
+                        {
+                            declaredTemp.Add(tempVariables[j]);
+                            break;
+                        }
+                    }
+                }
+            }
+            List<TempVariables> undeclaredTemp = new List<TempVariables>();
+            List<string> undeclaredTempVarName = new List<string>();
+            for (int i = 0; i < lines.Count; i++)
+            {
+                if (!lines[i].Contains("[TEMP_VAR_DECLARE]"))
+                {
+                    for (int j = 0; j < tempVariables.Count; j++)
+                    {
+                        if (tempVariables[j].variableName.Contains("for("))
+                            continue;
+
+                        if (lines[i].IsSafeContains(tempVariables[j].variableName)
+                            && !undeclaredTemp.Contains(tempVariables[j])
+                            && !declaredTemp.Contains(tempVariables[j])
+                            && !undeclaredTempVarName.Contains(tempVariables[j].variableName))
+                        {
+                            undeclaredTemp.Add(tempVariables[j]);
+                            undeclaredTempVarName.Add(tempVariables[j].variableName);
+                            break;
+                        }
+                    }
+                }
+            }
+
+        //Now declare undeclared
+        L_ReUnDeclared:
+            if (undeclaredTemp.Count > 0)
+            {
+                for (int i = 0; i < lines.Count; i++)
+                {
+                    for (int j = 0; j < undeclaredTemp.Count; j++)
+                    {
+                        if (lines[i].IsSafeContains(undeclaredTemp[j].variableName))
+                        {
+                            var sumUndeclared = "[TEMP_VAR_DECLARE]" + undeclaredTemp[j].aka + "꞉ " + undeclaredTemp[j].value;
+                            lines.Insert(i, sumUndeclared);
+                            undeclaredTemp.RemoveAt(j);
+                            goto L_ReUnDeclared;
+                        }
+                    }
+                }
+            }
+        }
+
         for (int i = 0; i < lines.Count; i++)
         {
             Log("Lines #" + i + ":\n" + lines[i]);
@@ -3270,7 +3360,7 @@ public class ItemDbScriptData
             functionName = "[TXT_END_IF]";
             if (data.Contains(functionName))
                 sum += AddDescription(sum, "^898685[สิ้นสุดหากตรงเงื่อนไข]^000000");
-            #endregion 
+            #endregion
             #region [TXT_END]
             functionName = "[TXT_END]";
             if (data.Contains(functionName))
@@ -8995,6 +9085,18 @@ public class ItemDbScriptData
 
     bool IsContainsTemporaryVariables(string txt, List<string> lines, int mergeIndex, bool isNotAddCheckMatching = false)
     {
+        if (!txt.Contains("for("))
+        {
+            int semicolon = 0;
+            for (int i = 0; i < txt.Length; i++)
+            {
+                if (txt[i] == ';')
+                    semicolon++;
+                if (semicolon >= 2)
+                    return false;
+            }
+        }
+
         if (txt.Contains(".@"))
         {
             if (txt.Contains(".@") && !txt.Contains(";"))
@@ -9053,8 +9155,7 @@ public class ItemDbScriptData
             }
             if (!isFound)
             {
-                //newTempVariables.aka = "ค่าที่ " + ThaiNumber.IntToThai((tempVariables.Count + 1));
-                newTempVariables.aka = "ค่าที่ " + (tempVariables.Count + 1);
+                newTempVariables.aka = "ค่าที่ " + ThaiNumber.IntToThai((GetTemporaryVariablesCount + 1));
                 Log("New temporary variables added"
                     + " | variableName: " + newTempVariables.variableName
                     + " | value: " + newTempVariables.value
@@ -9150,8 +9251,7 @@ public class ItemDbScriptData
         }
         if (!isFound)
         {
-            //newTempVariables.aka = "ค่าที่ " + ThaiNumber.IntToThai((tempVariables.Count + 1));
-            newTempVariables.aka = "ค่าที่ " + (tempVariables.Count + 1);
+            newTempVariables.aka = "ค่าที่ " + ThaiNumber.IntToThai((GetTemporaryVariablesCount + 1));
             if (!string.IsNullOrEmpty(sameAka))
                 newTempVariables.aka = sameAka;
             newTempVariables.txtDefault = txt;
@@ -9896,7 +9996,7 @@ public class ItemDbScriptData
                 bool isNotRunNegativeCheck = false;
                 for (int i = 0; i < tempVariables.Count; i++)
                 {
-                    if (data.Contains(MergeWhiteSpace.RemoveWhiteSpace(tempVariables[i].aka)))
+                    if (data.Contains(MergeWhiteSpace.RemoveWhiteSpace(tempVariables[i].aka)) || data.Contains(MergeWhiteSpace.RemoveWhiteSpace(tempVariables[i].variableName)))
                     {
                         isNotRunNegativeCheck = true;
                         break;
@@ -10067,9 +10167,12 @@ public class ItemDbScriptData
             //Still need to replace temporary variable name.
             for (int j = 0; j < tempVariables.Count; j++)
             {
-                if (data.Contains(tempVariables[j].variableName))
+                if (tempVariables[j].variableName.Contains("for("))
+                    continue;
+
+                if (data.IsSafeContains(tempVariables[j].variableName))
                 {
-                    data = data.Replace(tempVariables[j].variableName, tempVariables[j].aka);
+                    data = data.SafeReplace(tempVariables[j].variableName, tempVariables[j].aka, true);
 
                     if (isForceNegative)
                         SetParamCheck(paramCount, true, true);
@@ -10998,6 +11101,7 @@ public class ItemDbScriptData
         data = data.Replace("?", " จะได้ ");
         data = data.Replace(":", ", หรือหากไม่ตรงเงื่อนไขจะได้ ");
         data = data.Replace("pow", " ยกกำลัง ");
+        data = data.Replace(",", " ,");
         data = ReplaceEquipSlot(data);
 
         Log("ConvertOneLineIfElse >> data: " + data);

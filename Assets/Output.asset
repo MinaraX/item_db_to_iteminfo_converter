@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Output
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 11400000, guid: 630cf34160fdbb5459afe2ad44e0a776, type: 2}
-  targetArray: 13444
+  targetArray: 0
   _string: 
