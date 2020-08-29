@@ -174,6 +174,7 @@ public class ItemDbScriptData
             sum = sum.Replace("\"+", "");
             sum = sum.Replace("+\"", "");
         }
+
         //[TODO]Replace to function description later
         sum = sum.Replace("if (callfunc(\"F_time_limit_recorder\") == 1) { recorder_quest_type = 1;", "");
         sum = sum.Replace("if (callfunc(\"F_time_limit_recorder\") == 1) { recorder_quest_type = 2;", "");
@@ -213,6 +214,145 @@ public class ItemDbScriptData
         sum = sum.Replace("callfunc(\"F_Cursed_Fragment\");", "");
         sum = sum.Replace("callfunc(\"F_Cursed_Crystal\");", "");
         sum = sum.Replace("callfunc \"F_CashStore\";", "");
+
+        //Log("CorrectScriptToConvert Phase 1 >> sum: " + sum);
+
+        string builtWord = null;
+
+        for (int i = 0; i < sum.Length; i++)
+        {
+            builtWord += sum[i];
+
+            if (builtWord[0] != 's')
+                builtWord = null;
+            else if (builtWord.Length >= 6 && !builtWord.Contains("set .@"))
+                builtWord = null;
+            else if (builtWord.Contains("set .@") && builtWord.Contains(","))
+            {
+                //Log("builtWord: " + builtWord);
+
+                var toReplace = builtWord;
+
+                builtWord = builtWord.Substring(4);
+                builtWord = builtWord.Substring(0, builtWord.IndexOf(",")) + "=";
+
+                //Log("builtWord: " + builtWord);
+
+                //Log("CorrectScriptToConvert Phase 2.1 >> sum: " + sum);
+
+                sum = sum.Replace(toReplace, builtWord);
+
+                //Log("CorrectScriptToConvert Phase 2.2 >> sum: " + sum);
+
+                builtWord = null;
+            }
+        }
+
+        //Log("CorrectScriptToConvert Phase 2 >> sum: " + sum);
+
+        builtWord = null;
+
+        for (int i = 0; i < sum.Length; i++)
+        {
+            builtWord += sum[i];
+
+            if (builtWord[0] != '.')
+                builtWord = null;
+            else if (builtWord.Length >= 4 && !builtWord.Contains(".@") && !builtWord.Contains("["))
+                builtWord = null;
+            else if (builtWord.Contains(".@") && builtWord.Contains("[") && builtWord.Contains("]"))
+            {
+                //Log("builtWord: " + builtWord);
+
+                var toReplace = builtWord;
+
+                builtWord = builtWord.Replace("[", "tempvar");
+                builtWord = builtWord.Replace("]", "");
+
+                //Log("builtWord: " + builtWord);
+
+                //Log("CorrectScriptToConvert Phase 3.1 >> sum: " + sum);
+
+                sum = sum.Replace(toReplace, builtWord);
+
+                //Log("CorrectScriptToConvert Phase 3.2 >> sum: " + sum);
+
+                builtWord = null;
+            }
+        }
+
+        Log("CorrectScriptToConvert Phase 3 >> sum: " + sum);
+
+        List<string> undeclareTempVar = new List<string>();
+        List<string> declaredTempVar = new List<string>();
+
+        builtWord = null;
+
+        for (int i = 0; i < sum.Length; i++)
+        {
+            builtWord += sum[i];
+
+            if (builtWord[0] != '.')
+                builtWord = null;
+            else if (builtWord.Split('.').Length - 1 > 1)
+                builtWord = ".";
+            else if (builtWord.Contains(".@")
+                 && (builtWord.Contains("+=") || builtWord.Contains("-=") || builtWord.Contains("*=") || builtWord.Contains("/=") || builtWord.Contains("++") || builtWord.Contains("--")))
+            {
+                builtWord = MergeWhiteSpace.RemoveWhiteSpace(builtWord);
+
+                Log("builtWord: " + builtWord);
+
+                if (builtWord.Contains("+="))
+                    builtWord = builtWord.Substring(0, builtWord.IndexOf("+="));
+                if (builtWord.Contains("-="))
+                    builtWord = builtWord.Substring(0, builtWord.IndexOf("-="));
+                if (builtWord.Contains("*="))
+                    builtWord = builtWord.Substring(0, builtWord.IndexOf("*="));
+                if (builtWord.Contains("/="))
+                    builtWord = builtWord.Substring(0, builtWord.IndexOf("/="));
+
+                if (declaredTempVar.Contains(builtWord))
+                {
+                    builtWord = null;
+                    continue;
+                }
+
+                Log("builtWord: " + builtWord);
+
+                if (builtWord.Contains("=") && !undeclareTempVar.Contains(builtWord.Substring(0, builtWord.IndexOf("="))))
+                    undeclareTempVar.Add(builtWord.Substring(0, builtWord.IndexOf("=")));
+                else if (!undeclareTempVar.Contains(builtWord))
+                    undeclareTempVar.Add(builtWord);
+
+                builtWord = null;
+            }
+            else if (builtWord.Contains(".@") && builtWord.Contains("=")
+                 && !builtWord.Contains("+") && !builtWord.Contains("-") && !builtWord.Contains("*") && !builtWord.Contains("/"))
+            {
+                builtWord = MergeWhiteSpace.RemoveWhiteSpace(builtWord);
+
+                if (!declaredTempVar.Contains(builtWord.Substring(0, builtWord.IndexOf("="))))
+                    declaredTempVar.Add(builtWord.Substring(0, builtWord.IndexOf("=")));
+
+                builtWord = null;
+            }
+        }
+
+        for (int i = 0; i < declaredTempVar.Count; i++)
+        {
+            Log("declaredTempVar: " + declaredTempVar[i]);
+        }
+
+        for (int i = 0; i < undeclareTempVar.Count; i++)
+        {
+            Log("undeclareTempVar: " + undeclareTempVar[i]);
+            if (!declaredTempVar.Contains(undeclareTempVar[i]))
+                sum = "{ " + undeclareTempVar[i] + "=0; " + sum.Substring(sum.IndexOf("{") + 1);
+        }
+
+        Log("CorrectScriptToConvert Phase 4 >> sum: " + sum);
+
         return sum;
     }
     #endregion
@@ -2893,7 +3033,7 @@ public class ItemDbScriptData
                     Log("findTempVar: " + findTempVar);
                     for (int j = 0; j < tempVariables.Count; j++)
                     {
-                        Log(" tempVariables[" + j + "].txtDefault: " + tempVariables[j].txtDefault);
+                        Log("tempVariables[" + j + "].txtDefault: " + tempVariables[j].txtDefault);
                         if (findTempVar == tempVariables[j].txtDefault && !findTempVar.Contains("[DONT_DECLARE]"))
                         {
                             lines[i] = "[TEMP_VAR_DECLARE]" + tempVariables[j].aka + "꞉ " + tempVariables[j].value;
@@ -8800,6 +8940,7 @@ public class ItemDbScriptData
                 data = data.Replace("/=", " หาร ");
                 data = data.Replace(":", " คือ ");
                 data = data.Replace("꞉", " คือ ");
+                data = data.Replace("if(", "ถ้า ");
                 sum += AddDescription(sum, data);
             }
             #endregion
@@ -9012,28 +9153,7 @@ public class ItemDbScriptData
         for (int j = 0; j < toReplace.Count; j++)
             data = data.Replace(MergeWhiteSpace.RemoveWhiteSpace(toReplace[j]), toReplaceValue[j]);
 
-        data = data.Replace("elseif(", " หรือถ้า ");
-        data = data.Replace("if(", " ถ้า ");
-        data = ReplaceAllSpecialValue(data);
-        data = data.Replace("(", "");
-        data = data.Replace(")", "");
-        data = data.Replace(";", "");
-
-        data = data.Replace("==", " คือ ");
-        data = data.Replace("!=", " ไม่เท่ากับ ");
-        data = data.Replace("||", " หรือ ");
-        data = data.Replace("&&", " และ ");
-        data = data.Replace(">=", " มากกว่าหรือเท่ากับ ");
-        data = data.Replace(">", " มากกว่า ");
-        data = data.Replace("<=", " น้อยกว่าหรือเท่ากับ ");
-        data = data.Replace("<", " น้อยกว่า ");
-        data = data.Replace("Job_", "");
-        data = data.Replace("_", " ");
-        data = data.Replace("getpartnerid()", "มีคู่สมรส");
-        data = data.Replace("{", " รับ ");
-        data = data.Replace("}", " ");
-        data = data.Replace("ค่าที่", " ค่าที่ ");
-        data = data.Replace(" , ", ", ");
+        data = ReplaceCondition(data);
 
         //Use store temporary variables if found in this value
         bool isFoundTempVariable = false;
@@ -9063,6 +9183,33 @@ public class ItemDbScriptData
         //Replace special variables
         data = ReplaceAllSpecialValue(data);
 
+        return data;
+    }
+
+    string ReplaceCondition(string data)
+    {
+        data = data.Replace("elseif(", " หรือถ้า ");
+        data = data.Replace("if(", " ถ้า ");
+        data = ReplaceAllSpecialValue(data);
+        data = data.Replace("(", "");
+        data = data.Replace(")", "");
+        data = data.Replace(";", "");
+
+        data = data.Replace("==", " คือ ");
+        data = data.Replace("!=", " ไม่เท่ากับ ");
+        data = data.Replace("||", " หรือ ");
+        data = data.Replace("&&", " และ ");
+        data = data.Replace(">=", " มากกว่าหรือเท่ากับ ");
+        data = data.Replace(">", " มากกว่า ");
+        data = data.Replace("<=", " น้อยกว่าหรือเท่ากับ ");
+        data = data.Replace("<", " น้อยกว่า ");
+        data = data.Replace("Job_", "");
+        data = data.Replace("_", " ");
+        data = data.Replace("getpartnerid()", "มีคู่สมรส");
+        data = data.Replace("{", " รับ ");
+        data = data.Replace("}", " ");
+        data = data.Replace("ค่าที่", " ค่าที่ ");
+        data = data.Replace(" , ", ", ");
         return data;
     }
 
