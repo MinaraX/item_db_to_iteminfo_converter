@@ -113,6 +113,9 @@ public class ItemDbScriptData
             data = data.Replace("]", ")");
             data = data.Replace(" \",", "\",");
 
+            data = data.Replace("==", " คือ ");
+            data = data.Replace("Job_", "");
+
             data = data.Replace("จำนวนตีบวกอุปกรณ์ที่ผนึก", "จำนวนตีบวก อุปกรณ์ที่ผนึก");
             data = data.Replace("จำนวนตีบวกLeftAccessory", "จำนวนตีบวก Left Accessory");
             data = data.Replace("จำนวนตีบวกRightAccessory", "จำนวนตีบวก Right Accessory");
@@ -288,54 +291,57 @@ public class ItemDbScriptData
 
         builtWord = null;
 
-        for (int i = 0; i < sum.Length; i++)
+        if (!sum.Contains("for("))
         {
-            builtWord += sum[i];
-
-            if (builtWord[0] != '.')
-                builtWord = null;
-            else if (builtWord.Split('.').Length - 1 > 1)
-                builtWord = ".";
-            else if (builtWord.Contains(".@")
-                 && (builtWord.Contains("+=") || builtWord.Contains("-=") || builtWord.Contains("*=") || builtWord.Contains("/=") || builtWord.Contains("++") || builtWord.Contains("--")))
+            for (int i = 0; i < sum.Length; i++)
             {
-                builtWord = MergeWhiteSpace.RemoveWhiteSpace(builtWord);
+                builtWord += sum[i];
 
-                Log("builtWord: " + builtWord);
-
-                if (builtWord.Contains("+="))
-                    builtWord = builtWord.Substring(0, builtWord.IndexOf("+="));
-                if (builtWord.Contains("-="))
-                    builtWord = builtWord.Substring(0, builtWord.IndexOf("-="));
-                if (builtWord.Contains("*="))
-                    builtWord = builtWord.Substring(0, builtWord.IndexOf("*="));
-                if (builtWord.Contains("/="))
-                    builtWord = builtWord.Substring(0, builtWord.IndexOf("/="));
-
-                if (declaredTempVar.Contains(builtWord))
-                {
+                if (builtWord[0] != '.')
                     builtWord = null;
-                    continue;
+                else if (builtWord.Split('.').Length - 1 > 1)
+                    builtWord = ".";
+                else if (builtWord.Contains(".@")
+                     && (builtWord.Contains("+=") || builtWord.Contains("-=") || builtWord.Contains("*=") || builtWord.Contains("/=") || builtWord.Contains("++") || builtWord.Contains("--")))
+                {
+                    builtWord = MergeWhiteSpace.RemoveWhiteSpace(builtWord);
+
+                    Log("builtWord: " + builtWord);
+
+                    if (builtWord.Contains("+="))
+                        builtWord = builtWord.Substring(0, builtWord.IndexOf("+="));
+                    if (builtWord.Contains("-="))
+                        builtWord = builtWord.Substring(0, builtWord.IndexOf("-="));
+                    if (builtWord.Contains("*="))
+                        builtWord = builtWord.Substring(0, builtWord.IndexOf("*="));
+                    if (builtWord.Contains("/="))
+                        builtWord = builtWord.Substring(0, builtWord.IndexOf("/="));
+
+                    if (declaredTempVar.Contains(builtWord))
+                    {
+                        builtWord = null;
+                        continue;
+                    }
+
+                    Log("builtWord: " + builtWord);
+
+                    if (builtWord.Contains("=") && !undeclareTempVar.Contains(builtWord.Substring(0, builtWord.IndexOf("="))))
+                        undeclareTempVar.Add(builtWord.Substring(0, builtWord.IndexOf("=")));
+                    else if (!undeclareTempVar.Contains(builtWord))
+                        undeclareTempVar.Add(builtWord);
+
+                    builtWord = null;
                 }
+                else if (builtWord.Contains(".@") && builtWord.Contains("=")
+                     && !builtWord.Contains("+") && !builtWord.Contains("-") && !builtWord.Contains("*") && !builtWord.Contains("/"))
+                {
+                    builtWord = MergeWhiteSpace.RemoveWhiteSpace(builtWord);
 
-                Log("builtWord: " + builtWord);
+                    if (!declaredTempVar.Contains(builtWord.Substring(0, builtWord.IndexOf("="))))
+                        declaredTempVar.Add(builtWord.Substring(0, builtWord.IndexOf("=")));
 
-                if (builtWord.Contains("=") && !undeclareTempVar.Contains(builtWord.Substring(0, builtWord.IndexOf("="))))
-                    undeclareTempVar.Add(builtWord.Substring(0, builtWord.IndexOf("=")));
-                else if (!undeclareTempVar.Contains(builtWord))
-                    undeclareTempVar.Add(builtWord);
-
-                builtWord = null;
-            }
-            else if (builtWord.Contains(".@") && builtWord.Contains("=")
-                 && !builtWord.Contains("+") && !builtWord.Contains("-") && !builtWord.Contains("*") && !builtWord.Contains("/"))
-            {
-                builtWord = MergeWhiteSpace.RemoveWhiteSpace(builtWord);
-
-                if (!declaredTempVar.Contains(builtWord.Substring(0, builtWord.IndexOf("="))))
-                    declaredTempVar.Add(builtWord.Substring(0, builtWord.IndexOf("=")));
-
-                builtWord = null;
+                    builtWord = null;
+                }
             }
         }
 
@@ -9661,8 +9667,6 @@ public class ItemDbScriptData
                         sumToCut = CheckSpecialValue(sumToCut);
                         sumToCut = ReplaceAllSpecialValue(sumToCut);
                         Log(subFunctionName + " >> sumToCut#2: " + sumToCut);
-                        //int sumCircleStartAt = sumToCut.IndexOf("(");
-                        //sumToCut = sumToCut.Substring(sumCircleStartAt + 1);
                         Log(subFunctionName + " >> sumToCut#3: " + sumToCut);
                         int sumCircleEndAt = sumToCut.IndexOf(")");
                         sumToCut = sumToCut.Substring(0, sumCircleEndAt);
@@ -9754,8 +9758,6 @@ public class ItemDbScriptData
                         sumToCut = CheckSpecialValue(sumToCut);
                         sumToCut = ReplaceAllSpecialValue(sumToCut);
                         Log(subFunctionName + " >> sumToCut#2: " + sumToCut);
-                        //int sumCircleStartAt = sumToCut.IndexOf("(");
-                        //sumToCut = sumToCut.Substring(sumCircleStartAt + 1);
                         Log(subFunctionName + " >> sumToCut#3: " + sumToCut);
                         int sumCircleEndAt = sumToCut.IndexOf(")");
                         sumToCut = sumToCut.Substring(0, sumCircleEndAt);
@@ -9848,8 +9850,6 @@ public class ItemDbScriptData
                         sumToCut = CheckSpecialValue(sumToCut);
                         sumToCut = ReplaceAllSpecialValue(sumToCut);
                         Log(subFunctionName + " >> sumToCut#2: " + sumToCut);
-                        //int sumCircleStartAt = sumToCut.IndexOf("(");
-                        //sumToCut = sumToCut.Substring(sumCircleStartAt + 1);
                         Log(subFunctionName + " >> sumToCut#3: " + sumToCut);
                         int sumCircleEndAt = sumToCut.IndexOf(")");
                         sumToCut = sumToCut.Substring(0, sumCircleEndAt);
@@ -9983,8 +9983,6 @@ public class ItemDbScriptData
                         sumToCut = CheckSpecialValue(sumToCut);
                         sumToCut = ReplaceAllSpecialValue(sumToCut);
                         Log(subFunctionName + " >> sumToCut#2: " + sumToCut);
-                        //int sumCircleStartAt = sumToCut.IndexOf("(");
-                        //sumToCut = sumToCut.Substring(sumCircleStartAt + 1);
                         Log(subFunctionName + " >> sumToCut#3: " + sumToCut);
                         int sumCircleEndAt = sumToCut.IndexOf(")");
                         sumToCut = sumToCut.Substring(0, sumCircleEndAt);
@@ -10977,6 +10975,15 @@ public class ItemDbScriptData
         if (IsOneLineIfElse(value))
             value = ConvertOneLineIfElse(value);
 
+        value = value.Replace("!getmapflag(strcharinfo(3),mf_pvp)", "ไม่ได้อยู่ใน Map PvP");
+        value = value.Replace("getmapflag(strcharinfo(3),mf_pvp)", "อยู่ใน Map PvP");
+
+        value = value.Replace("!getmapflag(strcharinfo(3),mf_pvp_noparty)", "ไม่ได้อยู่ใน Map Party PvP");
+        value = value.Replace("getmapflag(strcharinfo(3),mf_pvp_noparty)", "อยู่ใน Map Party PvP");
+
+        value = value.Replace("!getmapflag(strcharinfo(3),mf_pvp_noguild)", "ไม่ได้อยู่ใน Map Guild PvP");
+        value = value.Replace("getmapflag(strcharinfo(3),mf_pvp_noguild)", "อยู่ใน Map Guild PvP");
+
         string functionName = "getskilllv";
         if (value.Contains(functionName))
         {
@@ -11058,6 +11065,7 @@ public class ItemDbScriptData
             Log("sumEquipSlot:\n" + sumEquipSlot, false, "yellow");
             value = value.Replace("getequiprefinerycnt((getequipid(" + sumEquipSlot + ")==" + sumItemName, "จำนวนตีบวกถ้า " + GetEquipSlot(sumEquipSlot) + " คือ " + GetItemName(sumItemName));
         }
+
         while (value.Contains("getequiprefinerycnt"))
         {
             int findIndex = value.IndexOf("getequiprefinerycnt");
@@ -11068,6 +11076,7 @@ public class ItemDbScriptData
             Log("sumEquipSlot:\n" + sumEquipSlot, false, "yellow");
             value = value.Replace("getequiprefinerycnt(" + sumEquipSlot + ")", "จำนวนตีบวก " + GetEquipSlot(sumEquipSlot));
         }
+
         while (value.Contains("getiteminfo(getequipid"))
         {
             int findIndex = value.IndexOf("getequipid");
@@ -11096,6 +11105,34 @@ public class ItemDbScriptData
             }
         }
 
+        while (value.Contains("getequipid(") && value.Contains("=="))
+        {
+            value = MergeWhiteSpace.RemoveWhiteSpace(value);
+
+            int findIndex = value.IndexOf("getequipid");
+            int findIndex2 = value.IndexOf("(", findIndex);
+            string sumEquipSlot = value.Substring(findIndex2 + 1);
+            sumEquipSlot = sumEquipSlot.Substring(0, sumEquipSlot.IndexOf(")"));
+            Log("sumEquipSlot:\n" + sumEquipSlot, false, "yellow");
+
+            int indexToFindId = value.IndexOf(sumEquipSlot);
+            int firstIndexOfId = value.IndexOf("==", indexToFindId);
+            string sumId = value.Substring(firstIndexOfId + 2);
+            sumId = sumId.Substring(0, sumId.IndexOf(')'));
+            Log("sumId:\n" + sumId, false, "yellow");
+
+            if (!string.IsNullOrEmpty(sumId))
+                value = value.Replace("getequipid(" + sumEquipSlot + ")==" + sumId, "อุปกรณ์ช่อง " + GetEquipSlot(sumEquipSlot) + " คือ " + GetItemName(sumId));
+        }
+
+        value = value.Replace("gettime(DT_DAYOFMONTH)", "วันที่");
+
+        value = value.Replace("gettime(DT_MONTH)", "เดือน");
+
+        value = value.Replace("getequipweaponlv(-1)", "Level อาวุธ");
+
+        value = value.Replace("getpartnerid()", "มีคู่สมรส");
+
         value = value.Replace("getrefine();", "[ตามจำนวนตีบวก]");
 
         value = value.Replace("getrefine()", "[ตามจำนวนตีบวก]");
@@ -11121,6 +11158,8 @@ public class ItemDbScriptData
         value = value.Replace("readparam(bLuk)", "[ตาม LUK ที่ฝึกฝน]");
 
         value = value.Replace("BaseLevel", "[Level]");
+
+        value = value.Replace("BaseClass", "ฐานอาชีพ");
 
         value = value.Replace("BaseJob", "ฐานอาชีพ");
 
@@ -11155,6 +11194,7 @@ public class ItemDbScriptData
 
         data = data.Replace("getrefine", "หากจำนวนตีบวก");
         data = data.Replace("getrefine()", "หากจำนวนตีบวก");
+
         while (data.Contains("getequiprefinerycnt((getequipid("))
         {
             int findIndex = data.IndexOf("getequipid");
@@ -11168,6 +11208,7 @@ public class ItemDbScriptData
             Log("sumEquipSlot:\n" + sumEquipSlot, false, "yellow");
             data = data.Replace("getequiprefinerycnt((getequipid(" + sumEquipSlot + ")==" + sumItemName, "จำนวนตีบวกถ้า " + GetEquipSlot(sumEquipSlot) + " คือ " + GetItemName(sumItemName));
         }
+
         while (data.Contains("getequiprefinerycnt"))
         {
             int findIndex = data.IndexOf("getequiprefinerycnt");
@@ -11178,6 +11219,7 @@ public class ItemDbScriptData
             Log("sumEquipSlot:\n" + sumEquipSlot, false, "yellow");
             data = data.Replace("getequiprefinerycnt(" + sumEquipSlot + ")", "จำนวนตีบวก " + GetEquipSlot(sumEquipSlot));
         }
+
         while (data.Contains("getiteminfo(getequipid"))
         {
             int findIndex = data.IndexOf("getequipid");
@@ -11205,6 +11247,27 @@ public class ItemDbScriptData
                 }
             }
         }
+
+        while (data.Contains("getequipid(") && data.Contains("=="))
+        {
+            data = MergeWhiteSpace.RemoveWhiteSpace(data);
+
+            int findIndex = data.IndexOf("getequipid");
+            int findIndex2 = data.IndexOf("(", findIndex);
+            string sumEquipSlot = data.Substring(findIndex2 + 1);
+            sumEquipSlot = sumEquipSlot.Substring(0, sumEquipSlot.IndexOf(")"));
+            Log("sumEquipSlot:\n" + sumEquipSlot, false, "yellow");
+
+            int indexToFindId = data.IndexOf(sumEquipSlot);
+            int firstIndexOfId = data.IndexOf("==", indexToFindId);
+            string sumId = data.Substring(firstIndexOfId + 2);
+            sumId = sumId.Substring(0, sumId.IndexOf(')'));
+            Log("sumId:\n" + sumId, false, "yellow");
+
+            if (!string.IsNullOrEmpty(sumId))
+                data = data.Replace("getequipid(" + sumEquipSlot + ")==" + sumId, "อุปกรณ์ช่อง " + GetEquipSlot(sumEquipSlot) + " คือ " + GetItemName(sumId));
+        }
+
         data = data.Replace("==W_FIST", " ไม่มีอาวุธ ");
         data = data.Replace("==W_DAGGER", " Dagger ");
         data = data.Replace("==W_1HSWORD", " One-handed swords ");

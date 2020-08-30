@@ -8882,7 +8882,7 @@
 15177,Elemental_Robe,Elemental Robe,4,0,,500,,40,,0,0x00010000,56,2,16,,100,1,0,{ .@r = getrefine(); bonus bAspdRate,10; bonus bMatk,5*(.@r/2); if (.@r>=9) bonus3 bAutoSpell,"MG_THUNDERSTORM",max(5,getskilllv("MG_THUNDERSTORM")),50; },{},{}
 15178,Golden_Ninja_Suit,Golden Ninja Suit,4,0,,500,,50,,0,0x20000000,63,2,16,,100,1,0,{ .@r = getrefine(); bonus bflee,5*(.@r/2); if (.@r>=9) bonus2 bSkillAtk,"KO_HAPPOKUNAI",20; },{},{}
 15179,Mine_Worker's_Vest,Mine Worker's Vest,4,0,,1500,,80,,0,0x00000400,56,2,16,,100,1,0,{ .@r = getrefine(); bonus bFlee,(10+4*(.@r/2)); if (.@r>=9) bonus bCritical,5; },{},{}
-15180,Hippie_Clothes,Hippie Clothes,4,0,,50,,50,,0,0x00080000,56,2,16,,100,1,0,{ bonus bBaseAtk,20; if (.@r >= getrefine()) bonus3 bAutoSpell,"AC_DOUBLE",max(3,getskilllv("AC_DOUBLE")),10; },{},{}
+15180,Hippie_Clothes,Hippie Clothes,4,0,,50,,50,,0,0x00080000,56,2,16,,100,1,0,{ .@r = getrefine(); bonus bBaseAtk,20; if (.@r >= 9) bonus3 bAutoSpell,"AC_DOUBLE",max(3,getskilllv("AC_DOUBLE")),10; },{},{}
 15181,Para_Team_Uniform100,Awakened Eden Group Uniform I,4,20,,0,,80,,0,0xFFFFFFFF,63,2,16,,100,,,{ bonus bAllStats,1; bonus bMaxHP,700; bonus bMaxSP,100; bonus bMdef,7; },{},{}
 15182,Para_Team_Uniform115,Awakened Eden Group Uniform II,4,20,,0,,85,,0,0xFFFFFFFF,63,2,16,,115,,,{ bonus bAllStats,1; bonus bMaxHP,1100; bonus bMaxSP,120; bonus bMdef,11; },{},{}
 15183,Para_Team_Uniform130,Awakened Eden Group Uniform III,4,20,,0,,90,,0,0xFFFFFFFF,63,2,16,,130,,,{ bonus bAllStats,2; bonus bMaxHP,1100; bonus bMaxSP,120; bonus bMdef,11; },{},{}

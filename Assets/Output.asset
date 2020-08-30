@@ -14,6 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 11400000, guid: 630cf34160fdbb5459afe2ad44e0a776, type: 2}
   targetArray: 13581
-  _string: '1296,Metal_Katar,Metal Katar,5,20,,0,75,,1,1,0x00001000,63,2,34,3,1,1,16,{
-    .@r = getrefine(); bonus bBaseAtk,(.@r*5); bonus bCritAtkRate,.@r; .@i = min(BaseLevel/10,12);
-    if(.@i>2) bonus bBaseAtk,((.@i-2)*5); },{},{} '
+  _string: '4517,Cendrawasih_Card,Cendrawasih Card,6,20,,10,,,,,,,,769,,,,,{ bonus
+    bInt,2; if(BaseClass==Job_Mage){ bonus bInt,getrefine()/3; } },{},{} '
