@@ -13,6 +13,9 @@ MonoBehaviour:
   m_Name: Output
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 11400000, guid: 630cf34160fdbb5459afe2ad44e0a776, type: 2}
-  targetArray: 13581
-  _string: '4517,Cendrawasih_Card,Cendrawasih Card,6,20,,10,,,,,,,,769,,,,,{ bonus
-    bInt,2; if(BaseClass==Job_Mage){ bonus bInt,getrefine()/3; } },{},{} '
+  targetArray: 13654
+  _string: '4662,Big_Eggring_Card,Big Eggring Card,6,20,,10,,,,,,,,4,,,,,{ bonus
+    bAtk,25-5*min(readParam(bStr)/10,5); bonus bMatk,25-5*min(readParam(bInt)/10,5);
+    bonus bAspdRate,10-2*min(readParam(bAgi)/10,5); bonus bMaxHP,1000-200*min(readParam(bVit)/10,5);
+    bonus bLongAtkRate,5-1*min(readParam(bDex)/10,5); bonus bCritAtkRate,10-2*min(readParam(bLuk)/10,5);
+    },{},{} '
