@@ -1359,9 +1359,9 @@ public class Output : ScriptableObject
         if (itemClass.HasFlag(ItemClass.TranscedentClasses))
         {
             if (string.IsNullOrEmpty(sum))
-                sum += "Class 1 และ 2";
+                sum += "Hi-Class 1 และ 2";
             else
-                sum += ", Class 1 และ 2";
+                sum += ", Hi-Class 1 และ 2";
         }
         if (itemClass.HasFlag(ItemClass.BabyClasses))
         {
