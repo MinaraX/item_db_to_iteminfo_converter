@@ -506,6 +506,9 @@ public class Output : ScriptableObject
             }
         }
 
+        if (string.IsNullOrEmpty(copier))
+            copier = "Bio_Reseearch_Docu";
+
         return copier;
     }
     string GetDescription()

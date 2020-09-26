@@ -102,7 +102,6 @@ public class Converter : MonoBehaviour
         btnSaveAs.interactable = false;
 
         if (string.IsNullOrEmpty(itemDatabase.m_item_db)
-            || string.IsNullOrEmpty(itemDatabase.m_item_combo_db)
             || string.IsNullOrEmpty(itemDatabase.m_resourceNames)
             || string.IsNullOrEmpty(itemDatabase.m_skillNames)
             || string.IsNullOrEmpty(itemDatabase.m_mob_db)

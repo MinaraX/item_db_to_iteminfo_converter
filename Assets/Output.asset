@@ -13,6 +13,5 @@ MonoBehaviour:
   m_Name: Output
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 11400000, guid: 630cf34160fdbb5459afe2ad44e0a776, type: 2}
-  targetArray: 13654
-  _string: '2374,Diabolus_Robe,Diabolus Robe,4,20,,300,,57,,4,0x00098B1C,18,2,16,,55,1,0,{
-    bonus bMaxSP,150; bonus bMdef,5; bonus bHealPower,6; bonus bDelayRate,-10; },{},{} '
+  targetArray: 0
+  _string: 

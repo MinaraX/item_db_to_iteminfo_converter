@@ -4,11 +4,6 @@ using System.IO;
 [CreateAssetMenu(fileName = "ItemDatabase", menuName = "Start/ItemDatabase")]
 public class ItemDatabase : ScriptableObject
 {
-    public TextAsset textAsset_item_db;
-    public TextAsset textAsset_item_combo_db;
-    public TextAsset textAsset_resourceNames;
-    public TextAsset textAsset_skillNames;
-    public TextAsset textAsset_mob_db;
     string item_db;
     public string m_item_db
     {
@@ -35,10 +30,7 @@ public class ItemDatabase : ScriptableObject
         set
         {
             item_combo_db = value;
-            if (!string.IsNullOrEmpty(item_combo_db))
-                onItemComboDbChanged?.Invoke(false);
-            else
-                onItemComboDbChanged?.Invoke(true);
+            onItemComboDbChanged?.Invoke(false);
         }
     }
     string resourceNames;
