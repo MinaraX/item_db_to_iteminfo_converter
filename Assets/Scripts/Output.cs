@@ -519,7 +519,15 @@ public class Output : ScriptableObject
         if (currentItemDb.type == 0 || currentItemDb.type == 2 || currentItemDb.type == 3 || currentItemDb.type == 7 || currentItemDb.type == 8
             || currentItemDb.type == 10 || currentItemDb.type == 11 || currentItemDb.type == 18)
         {
-            copier = "";
+            for (int i = 0; i < m_currentResourceNames.Count; i++)
+            {
+                var sumData = m_currentResourceNames[i];
+                if (sumData.id == currentItemDb.id)
+                {
+                    copier = sumData.resourceName;
+                    break;
+                }
+            }
         }
         else if (currentItemDb.type == 6)
         {
