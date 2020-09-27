@@ -86,8 +86,9 @@ public class FixedDescription : ScriptableObject
             }
         }
 
+#if UNITY_EDITOR
         EditorUtility.SetDirty(this);
-
+#endif
         onGoogleSynced?.Invoke();
     }
     public delegate void NoArg();
