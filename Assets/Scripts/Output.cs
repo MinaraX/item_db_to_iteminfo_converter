@@ -336,9 +336,9 @@ public class Output : ScriptableObject
 
         if (!isExcludeItemScripts)
             m_currentOutput += "[" + currentItemDb.id + "] = {"
-                + "\nunidentifiedDisplayName = \"" + GetName() + "\","
-                + "\nunidentifiedResourceName = \"" + GetResourceName() + "\","
-                + "\nunidentifiedDescriptionName = {" + GetDescription() + ""
+                + "\nunidentifiedDisplayName = \"" + GetUnidentifiedName() + "\","
+                + "\nunidentifiedResourceName = \"" + GetUnidentifiedResourceName() + "\","
+                + "\nunidentifiedDescriptionName = {" + GetDescription(true) + ""
                 + "\n},"
                 + "\nidentifiedDisplayName = \"" + GetName() + "\","
                 + "\nidentifiedResourceName = \"" + GetResourceName() + "\","
@@ -488,9 +488,60 @@ public class Output : ScriptableObject
     }
 
     #region Item Description
+    string GetUnidentifiedName()
+    {
+        string copier = null;
+
+        if (currentItemDb.type == 0 || currentItemDb.type == 2 || currentItemDb.type == 3 || currentItemDb.type == 7 || currentItemDb.type == 8
+            || currentItemDb.type == 10 || currentItemDb.type == 11 || currentItemDb.type == 18)
+        {
+            copier = "";
+        }
+        else if (currentItemDb.type == 6)
+        {
+            copier = currentItemDb.name;
+        }
+        else
+        {
+            copier = "?";
+        }
+
+        return copier;
+    }
     string GetName()
     {
         return currentItemDb.name;
+    }
+    string GetUnidentifiedResourceName()
+    {
+        string copier = null;
+
+        if (currentItemDb.type == 0 || currentItemDb.type == 2 || currentItemDb.type == 3 || currentItemDb.type == 7 || currentItemDb.type == 8
+            || currentItemDb.type == 10 || currentItemDb.type == 11 || currentItemDb.type == 18)
+        {
+            copier = "";
+        }
+        else if (currentItemDb.type == 6)
+        {
+            for (int i = 0; i < m_currentResourceNames.Count; i++)
+            {
+                var sumData = m_currentResourceNames[i];
+                if (sumData.id == currentItemDb.id)
+                {
+                    copier = sumData.resourceName;
+                    break;
+                }
+            }
+
+            if (string.IsNullOrEmpty(copier))
+                copier = "Bio_Reseearch_Docu";
+        }
+        else
+        {
+            copier = "cÀº»ö¹°À½Ç¥";
+        }
+
+        return copier;
     }
     string GetResourceName()
     {
@@ -506,13 +557,23 @@ public class Output : ScriptableObject
             }
         }
 
+        //Fixed Description
+        var fixedResName = fixedDescription.GetData(currentItemDb.id);
+        if (fixedResName != null && !string.IsNullOrEmpty(fixedResName.resName))
+        {
+            copier = fixedResName.resName;
+        }
+
         if (string.IsNullOrEmpty(copier))
             copier = "Bio_Reseearch_Docu";
 
         return copier;
     }
-    string GetDescription()
+    string GetDescription(bool isUnidentified = false)
     {
+        if (isUnidentified && currentItemDb.type != 6)
+            return "\n\"โปรดตรวจสอบ Item\"";
+
         string sum = null;
         string sumItemScripts = GetItemScripts();
         string sumItemComboScripts = GetItemComboScripts(currentItemDb.id);
@@ -549,6 +610,7 @@ public class Output : ScriptableObject
         return sum;
     }
     bool isItemScriptNull;
+    [SerializeField] FixedDescription fixedDescription;
     string GetItemScripts()
     {
         string sum = null;
@@ -567,11 +629,21 @@ public class Output : ScriptableObject
 
         data.m_output = this;
 
-        sum += data.GetScriptDescription();
+        //Fixed Description
+        var fixedDesc = fixedDescription.GetData(data.id);
+        if (fixedDesc != null)
+        {
+            sum += "\"" + fixedDesc.desc + "\",";
+        }
+        //Convert Description
+        else
+        {
+            sum += data.GetScriptDescription();
 
-        sum += data.GetOnEquipScriptDescription();
+            sum += data.GetOnEquipScriptDescription();
 
-        sum += data.GetOnUnequipScriptDescription();
+            sum += data.GetOnUnequipScriptDescription();
+        }
 
         isItemScriptNull = string.IsNullOrEmpty(sum);
 

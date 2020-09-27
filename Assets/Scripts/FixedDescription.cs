@@ -6,6 +6,7 @@ using GoogleSheetsToUnity;
 using UnityEngine.Events;
 using GoogleSheetsToUnity.ThirdPary;
 using EasyButtons;
+using com.spacepuppy.Collections;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -16,7 +17,20 @@ public class FixedDescription : ScriptableObject
     public string associatedSheet = "1tVrEtp2IAf_cGmMKZVzxL9-Aaq86Vc4BMqB_SxdLNNA";
     public string associatedWorksheet = "Description";
 
-    public List<Data> datas = new List<Data>();
+    public VisibleData datas = new VisibleData();
+
+    public Data GetData(int id)
+    {
+        if (datas.ContainsKey(id))
+            return datas[id];
+        else
+            return null;
+    }
+
+    [Serializable]
+    public class VisibleData : SerializableDictionaryBase<int, Data>
+    {
+    }
 
     [Serializable]
     public class Data
@@ -52,24 +66,30 @@ public class FixedDescription : ScriptableObject
     }
 
     [Button]
-    public void UpdateMethodOne()
+    public void Sync()
     {
         SpreadsheetManager.Read(new GSTU_Search(associatedSheet, associatedWorksheet), OnSheetLoaded);
     }
 
     void OnSheetLoaded(GstuSpreadSheet ss)
     {
-        datas = new List<Data>();
+        datas = new VisibleData();
+
         for (int i = 1; i < ss.columns["A"].Count; i++)
         {
-            datas.Add(new Data());
+            int id = int.Parse(ss.rows[i + 1][0].value);
+            datas.Add(id, new Data());
             for (int j = 0; j < ss.rows[i + 1].Count; j++)
             {
                 //Debug.Log("ss.rows[i]: " + ss.rows[i + 1][j].value);
-                datas[i - 1].UpdateStats(ss.rows[i + 1]);
+                datas[id].UpdateStats(ss.rows[i + 1]);
             }
         }
 
         EditorUtility.SetDirty(this);
+
+        onGoogleSynced?.Invoke();
     }
+    public delegate void NoArg();
+    public static event NoArg onGoogleSynced;
 }

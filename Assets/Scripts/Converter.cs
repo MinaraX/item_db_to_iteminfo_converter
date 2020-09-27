@@ -32,6 +32,7 @@ public class Converter : MonoBehaviour
         ItemDatabase.onResourceNamesChanged += ItemDatabase_onResourceNamesChanged;
         ItemDatabase.onSkillNamesChanged += ItemDatabase_onSkillNamesChanged;
         ItemDatabase.onMobDbChanged += ItemDatabase_onMobDbChanged;
+        FixedDescription.onGoogleSynced += FixedDescription_onGoogleSynced;
         isItemDbNull = true;
         isItemComboDbNull = true;
         isResourceNamesNull = true;
@@ -45,6 +46,11 @@ public class Converter : MonoBehaviour
         ItemDatabase.onResourceNamesChanged -= ItemDatabase_onResourceNamesChanged;
         ItemDatabase.onSkillNamesChanged -= ItemDatabase_onSkillNamesChanged;
         ItemDatabase.onMobDbChanged -= ItemDatabase_onMobDbChanged;
+        FixedDescription.onGoogleSynced -= FixedDescription_onGoogleSynced;
+    }
+    void FixedDescription_onGoogleSynced()
+    {
+        objGoogleSyncing.SetActive(false);
     }
     bool isItemDbNull;
     void ItemDatabase_onItemDbChanged(bool isNull)
@@ -219,5 +225,18 @@ public class Converter : MonoBehaviour
     public void Donate()
     {
         Application.OpenURL("https://kanintemsrisukgames.wordpress.com/2019/04/05/support-kt-games/");
+    }
+
+    [SerializeField] GameObject objGoogleSyncing;
+    [SerializeField] FixedDescription fixedDescription;
+    public void SyncGoogle()
+    {
+        objGoogleSyncing.SetActive(true);
+        fixedDescription.Sync();
+    }
+
+    public void HelpTranslate()
+    {
+        Application.OpenURL("https://docs.google.com/spreadsheets/d/1tVrEtp2IAf_cGmMKZVzxL9-Aaq86Vc4BMqB_SxdLNNA/edit#gid=0");
     }
 }
