@@ -538,7 +538,7 @@ public class Output : ScriptableObject
         }
         else
         {
-            copier = "cÀº»ö¹°À½Ç¥";
+            copier = "cภบป๖นฐภฝวฅ";
         }
 
         return copier;
