@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Output
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 11400000, guid: 630cf34160fdbb5459afe2ad44e0a776, type: 2}
-  targetArray: 0
+  targetArray: 1489
+  isPrintItemId: 1
   fixedDescription: {fileID: 11400000, guid: 46f8f8a8bcb000247a09ba465095e18a, type: 2}
   _string: '2220,Hat,Hat,4,1000,,200,,2,,0,0xFFFFFFFF,63,2,256,,0,1,16,{},{},{} '

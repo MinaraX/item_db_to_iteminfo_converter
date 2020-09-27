@@ -569,6 +569,7 @@ public class Output : ScriptableObject
 
         return copier;
     }
+    public bool isPrintItemId = true;
     string GetDescription(bool isUnidentified = false)
     {
         if (isUnidentified && currentItemDb.type != 6)
@@ -581,6 +582,8 @@ public class Output : ScriptableObject
             sum += "\n" + sumItemScripts;
         if (!isItemComboScriptNull)
             sum += "\n" + sumItemComboScripts;
+        if (isPrintItemId)
+            sum += "\n\"^0000CCID:^000000 " + currentItemDb.id.ToString("f0") + "\",";
         sum += "\n\"^0000CCประเภท:^000000 " + GetItemType() + "\",";
         if (IsLocNeeded())
             sum += "\n\"^0000CCตำแหน่ง:^000000 " + GetItemLoc() + "\",";

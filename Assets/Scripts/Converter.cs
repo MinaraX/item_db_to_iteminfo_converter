@@ -135,6 +135,9 @@ public class Converter : MonoBehaviour
 
         btnSync.onClick.AddListener(Sync);
         btnConvert.onClick.AddListener(Convert);
+
+        togglePrintItemId.onValueChanged.AddListener(OnTogglePrintItemTap);
+        togglePrintItemId.isOn = true;
     }
 
     /// <summary>
@@ -238,5 +241,11 @@ public class Converter : MonoBehaviour
     public void HelpTranslate()
     {
         Application.OpenURL("https://docs.google.com/spreadsheets/d/1tVrEtp2IAf_cGmMKZVzxL9-Aaq86Vc4BMqB_SxdLNNA/edit#gid=0");
+    }
+
+    [SerializeField] Toggle togglePrintItemId;
+    void OnTogglePrintItemTap(bool isOn)
+    {
+        output.isPrintItemId = isOn;
     }
 }
