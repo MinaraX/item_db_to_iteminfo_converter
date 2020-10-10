@@ -590,34 +590,34 @@ public class Output : ScriptableObject
             sum += "\n" + sumItemScripts;
         if (!isItemComboScriptNull)
             sum += "\n" + sumItemComboScripts;
-        if (isPrintItemId)
-            sum += "\n\"^0000CCID:^000000 " + currentItemDb.id.ToString("f0") + "\",";
-        sum += "\n\"^0000CCประเภท:^000000 " + GetItemType() + "\",";
+        sum += "\n\"^0000CCประเภท: ^000000 " + GetItemType() + "\",";
         if (IsLocNeeded())
-            sum += "\n\"^0000CCตำแหน่ง:^000000 " + GetItemLoc() + "\",";
+            sum += "\n\"^0000CCตำแหน่ง: ^000000 " + GetItemLoc() + "\",";
         if (IsAtkNeeded())
-            sum += "\n\"^0000CCAtk:^000000 " + GetItemAtk() + "\",";
+            sum += "\n\"^0000CCAtk: ^000000 " + GetItemAtk() + "\",";
         if (IsMAtkNeeded())
-            sum += "\n\"^0000CCMAtk:^000000 " + GetItemMAtk() + "\",";
+            sum += "\n\"^0000CCMAtk: ^000000 " + GetItemMAtk() + "\",";
         if (IsDefNeeded())
-            sum += "\n\"^0000CCDef:^000000 " + GetItemDef() + "\",";
+            sum += "\n\"^0000CCDef: ^000000 " + GetItemDef() + "\",";
         if (IsRangeNeeded())
-            sum += "\n\"^0000CCระยะโจมตี:^000000 " + GetItemRange() + "\",";
+            sum += "\n\"^0000CCระยะโจมตี: ^000000 " + GetItemRange() + "\",";
         if (IsJobNeeded())
-            sum += "\n\"^0000CCอาชีพที่ใช้ได้:^000000 " + GetItemJob() + "\",";
+            sum += "\n\"^0000CCอาชีพที่ใช้ได้: ^000000 " + GetItemJob() + "\",";
         if (IsClassNeeded())
             sum += "\n\"^0000CCClass ที่ใช้ได้:^000000 " + GetItemClass() + "\",";
         if (IsGenderNeeded())
-            sum += "\n\"^0000CCเพศที่ใช้ได้:^000000 " + GetItemGender() + "\",";
+            sum += "\n\"^0000CCเพศที่ใช้ได้ :^000000 " + GetItemGender() + "\",";
         if (IsWeaponLevelNeeded())
-            sum += "\n\"^0000CCLv. อาวุธ:^000000 " + GetItemWeaponLevel() + "\",";
+            sum += "\n\"^0000CCLv. อาวุธ: ^000000 " + GetItemWeaponLevel() + "\",";
         if (IsEquipLevelNeeded())
-            sum += "\n\"^0000CCLv. ที่ต้องการ:^000000 " + GetItemEquipLevel() + "\",";
+            sum += "\n\"^0000CCLv. ที่ต้องการ: ^000000 " + GetItemEquipLevel() + "\",";
         if (IsEquipMaxLevelNeeded())
-            sum += "\n\"^0000CCLv. ห้ามเกิน:^000000 " + GetItemEquipMaxLevel() + "\",";
+            sum += "\n\"^0000CCLv. ห้ามเกิน: ^000000 " + GetItemEquipMaxLevel() + "\",";
         if (IsRefineableNeeded())
-            sum += "\n\"^0000CCตีบวก:^000000 " + GetItemRefineable() + "\",";
-        sum += "\n\"^0000CCน้ำหนัก:^000000 " + GetItemWeight() + "\"";
+            sum += "\n\"^0000CCตีบวก: ^000000 " + GetItemRefineable() + "\",";
+        sum += "\n\"^0000CCน้ำหนัก: ^000000 " + GetItemWeight() + "\"";
+		if (isPrintItemId)
+            sum += "\n\"^0000CCitem ID: ^000000 " + currentItemDb.id.ToString("f0") + "\",";
         return sum;
     }
     bool isItemScriptNull;
